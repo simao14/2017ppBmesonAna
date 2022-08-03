@@ -30,8 +30,8 @@ const std::array<double, nptBinsBP + 1> ptbinsvecBP = { 5, 7, 10, 15, 20, 30, 50
 const unsigned nyBins_both = 8;
 const std::array<double, nyBins_both + 1> ybinsvec = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4};
 
-//const unsigned nyBins_both = 2;
-//const std::array<double, nyBins_both + 1> ybinsvec = {0.5, 1.0,1.5};
+//const unsigned nyBins_both = 1;
+//const std::array<double, nyBins_both + 1> ybinsvec = {0.5, 1.0};
 
 const unsigned nyBins_both_full = 1;
 const std::array<double, nyBins_both_full + 1> ybinsvec_full = {-2.4, 2.4};
