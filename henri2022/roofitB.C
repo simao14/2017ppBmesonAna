@@ -309,7 +309,7 @@ cout << endl << endl;
 	//    TString ptbinning;
 
 	std::vector<std::string> background = {"1st", "2nd","mass_range"};
-	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb"};
+	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb", "2cb"};
 	
 	std::vector<std::vector<double>> background_syst;
 	std::vector<std::vector<double>> signal_syst;
@@ -328,11 +328,17 @@ cout << endl << endl;
 	double resol_vec[_nBins];
 	double resol_vec_err_low[_nBins];
 	double resol_vec_err_high[_nBins];
+	double yield_vec_systerr_low[_nBins];
+	double yield_vec_systerr_high[_nBins];
+	double var_mean_av[_nBins];
 	
 	std::vector<std::vector<double>> stat_error;
 	double var_mean[_nBins];
 	double hori_low[_nBins];
 	double hori_high[_nBins];
+	double hori_av_low[_nBins];
+	double hori_av_high[_nBins];
+
 	for(int i=0;i<_nBins;i++)
 	{
 		_count++;
@@ -360,14 +366,24 @@ if(doubly==0) {if(varExp == "Bpt"){
 							      ds_cut =
 							        new RooDataSet(Form("ds_cut%d",_count),"",ds,
 							                       RooArgSet(*mass, *pt, *y, *trackSelection),
-							                       Form("(Bpt>%f && Bpt < %f)&&((Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10))",_ptBins[i] , _ptBins[i+1]));}
+							                       Form("(Bpt>%f && Bpt < %f)&&((Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10))",_ptBins[i] , _ptBins[i+1]));
+							      var_mean_av[i] = ds_cut->mean(*pt);
+							    }
+						        
 						        else if(varExp == "By"){
-											       ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("By>%f && By< %f", _ptBins[i], _ptBins[i+1]));}
+											       ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("By>%f && By< %f", _ptBins[i], _ptBins[i+1]));
+											       var_mean_av[i] = ds_cut->mean(*y);
+											     }
 										else if(varExp == "nMult"){
-											       ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("nMult>%f && nMult< %f", _ptBins[i], _ptBins[i+1]));}
+											       ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("nMult>%f && nMult< %f", _ptBins[i], _ptBins[i+1]));
+											       var_mean_av[i] = ds_cut->mean(*nMult);
+											     }
   }
-		if(doubly==1)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto)); 
-		if(doubly==2)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto)); 
+		if(doubly==1){
+			ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
+			var_mean_av[i] = ds_cut->mean(*nMult);
+	}
+		if(doubly==2)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
 
 
 
@@ -485,6 +501,8 @@ if(doubly==0) {if(varExp == "Bpt"){
 		var_mean[i] = (_ptBins[i+1]+_ptBins[i]) / 2;
 		hori_low[i] = var_mean[i]-_ptBins[i];
 		hori_high[i] = _ptBins[i+1]-var_mean[i];
+		hori_av_low[i] = var_mean_av[i]-_ptBins[i];
+		hori_av_high[i] = _ptBins[i+1]-var_mean_av[i];
 
 //Resolution MC
 		//TString nominal = "";
@@ -806,7 +824,10 @@ if (varExp=="Bpt"){
 
 		}
 	
-std::cout << "The size of general_err is " << general_err.size() << std::endl;		
+if(syst==1){
+		yield_vec_systerr_low[i] = general_err[2] / 100 * yield_vec[i];
+		yield_vec_systerr_high[i] = general_err[2] / 100 * yield_vec[i];
+	}	
 
 	//validate_fit(outputw,1,Form("model%d",_count),Form("nsig%d",_count));
 	}
@@ -867,7 +888,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 
 	std::vector<std::string> labels_back = {"Linear", "2nd Poly", "mass range" };
 	std::vector<std::string> col_name_back;
-	std::vector<std::string> labels_signal = {"Triple Gaussian", "Fixed Mean", "CB+Gaussian"};
+	std::vector<std::string> labels_signal = {"Triple Gaussian", "Fixed Mean", "CB+Gaussian","Double CB"};
 	std::vector<std::string> labels_general = {"Background", "Signal", "Total"};
 	std::vector<std::string> labels_general_stat = {"Statistical error"};
 	std::vector<std::string> col_name_general;
@@ -908,7 +929,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 //	cout<<stat_error.size()<<general_syst.size()<<endl;
 	//stat_error.push_back(aa);
 	if(syst==1 && full==0){
-		gSystem->mkdir("tabels",true); 
+		gSystem->mkdir("./results/tabels",true); 
 		latex_table(Path + "background_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()), _nBins+1,  (int)(1+background.size()),  col_name_back,labels_back,back_syst_rel_values, "Background PDF Systematic Errors");
 		latex_table(Path + "signal_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()), _nBins+1, (int)(1+signal.size()),    col_name_signal, labels_signal,sig_syst_rel_values, "Signal PDF Systematic Errors");
 		latex_table(Path + "general_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()),  _nBins+1, 4 , col_name_general, labels_general, general_syst, "Overall PDF Variation Systematic Errors");	
@@ -938,12 +959,12 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 		m_back->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 		m_back->Draw("A*");
 		legback->Draw();
-		c_back->SaveAs(Form("./tabels/background_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+		c_back->SaveAs(Form("./results/tabels/background_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	TCanvas* c_sig= new TCanvas();
 	TLegend* legsig=new TLegend(0.7,0.7,0.9,0.9);
 	TMultiGraph* m_sig= new TMultiGraph();
-	const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian"};
+	const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian","2 CB"};
 	for (int j=0;j<(int)(signal.size());j++){
 		Double_t x[_nBins],y[_nBins];
 		for (int i=0;i<_nBins;i++){
@@ -960,7 +981,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 	m_sig->Draw("A*");
 	legsig->Draw();
-	c_sig->SaveAs(Form("./tabels/signal_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+	c_sig->SaveAs(Form("./results/tabels/signal_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	
 
@@ -997,7 +1018,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	m_gen->GetYaxis()->SetTitle("Total Uncertainty(%)");
 	m_gen->Draw("A*");
 	legen->Draw();
-	c_gen->SaveAs(Form("./tabels/general_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+	c_gen->SaveAs(Form("./results/tabels/general_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	}
 
@@ -1008,13 +1029,21 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	cout << "Final Yield = " << yieldRec << endl;
 
 // Differential plot part starts
-	 gSystem->mkdir("Graphs",true); 
+	 gSystem->mkdir("./results/Graphs",true); 
 	 TCanvas c_diff;
 	 TMultiGraph* mg = new TMultiGraph();
+	 TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
 
-	 TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(_nBins,var_mean,yield_vec,hori_low,hori_high,yield_vec_err_low,yield_vec_err_high);
+	 TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,hori_av_low,hori_av_high,yield_vec_err_low,yield_vec_err_high);
 	 gr_staterr->SetLineColor(1); 
-	
+	 mg->Add(gr_staterr);
+
+   if(syst==1){
+		TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,nullptr,nullptr,yield_vec_systerr_low,yield_vec_systerr_high);
+		gr_systerr->SetLineColor(2);
+		mg->Add(gr_systerr);
+		leg_d->AddEntry(gr_systerr, "Systematic Uncertainty", "e");
+	}
 	 if(varExp == "By"){
 		 mg->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg->GetYaxis()->SetTitle("dN_{S}/dy");
@@ -1032,11 +1061,11 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 		 mg->GetXaxis()->SetLimits(0, 110);
 	 }
 
-	 mg->Add(gr_staterr);
+	 //mg->Add(gr_staterr);
 	 mg->Draw("ap");
 	 //mg->SetTitle("Differential Signal Yield");  
 	 
-         TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
+         //TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
 	 leg_d->AddEntry(gr_staterr, "Statistical Uncertainty", "e");
 	 //leg_d->AddEntry(grs, "Systematic Uncertainty", "e");
 	 leg_d->SetBorderSize(0);
@@ -1044,12 +1073,12 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	 leg_d->SetTextSize(0);
 	 leg_d->Draw();
 
-	 const char* pathc =Form("./Graphs/raw_yield_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.png",tree.Data(),varExp.Data()); 
 	 c_diff.SaveAs(pathc);
 // Differential plot part ends
 
 // Parameters vs variables part starts
-	 	 TCanvas c_par;
+	 TCanvas c_par;
 	 TMultiGraph* mg_par = new TMultiGraph();
 
 	 TGraphAsymmErrors* gr_scale = new TGraphAsymmErrors(_nBins,var_mean,scale_vec,hori_low,hori_high,scale_vec_err_low,scale_vec_err_high);
@@ -1088,7 +1117,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	 leg_par->SetTextSize(0);
 	 leg_par->Draw();
 */
-	 const char* pathc_par =Form("./Graphs/parameters_variation_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc_par =Form("./results/Graphs/parameters_variation_%s_%s.png",tree.Data(),varExp.Data()); 
 	 c_par.SaveAs(pathc_par);
 //Parameters vs variables part ends
 
@@ -1123,7 +1152,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	 mg_resol->Add(gr_resol);
 	 mg_resol->Draw("ap");
 
-	 const char* pathc_resol =Form("./Graphs/resolution_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc_resol =Form("./results/Graphs/resolution_%s_%s.png",tree.Data(),varExp.Data()); 
 	 c_resol.SaveAs(pathc_resol);
 
 //Resolution plot part ends
