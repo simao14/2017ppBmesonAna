@@ -309,7 +309,7 @@ cout << endl << endl;
 	//    TString ptbinning;
 
 	std::vector<std::string> background = {"1st", "2nd","mass_range"};
-	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb", "2cb"};
+	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb"};
 	
 	std::vector<std::vector<double>> background_syst;
 	std::vector<std::vector<double>> signal_syst;
@@ -867,7 +867,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 
 	std::vector<std::string> labels_back = {"Linear", "2nd Poly", "mass range" };
 	std::vector<std::string> col_name_back;
-	std::vector<std::string> labels_signal = {"Triple Gaussian", "Fixed Mean", "CB+Gaussian","Double CB"};
+	std::vector<std::string> labels_signal = {"Triple Gaussian", "Fixed Mean", "CB+Gaussian"};
 	std::vector<std::string> labels_general = {"Background", "Signal", "Total"};
 	std::vector<std::string> labels_general_stat = {"Statistical error"};
 	std::vector<std::string> col_name_general;
@@ -908,7 +908,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 //	cout<<stat_error.size()<<general_syst.size()<<endl;
 	//stat_error.push_back(aa);
 	if(syst==1 && full==0){
-		gSystem->mkdir("./results/tabels",true); 
+		gSystem->mkdir("tabels",true); 
 		latex_table(Path + "background_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()), _nBins+1,  (int)(1+background.size()),  col_name_back,labels_back,back_syst_rel_values, "Background PDF Systematic Errors");
 		latex_table(Path + "signal_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()), _nBins+1, (int)(1+signal.size()),    col_name_signal, labels_signal,sig_syst_rel_values, "Signal PDF Systematic Errors");
 		latex_table(Path + "general_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()),  _nBins+1, 4 , col_name_general, labels_general, general_syst, "Overall PDF Variation Systematic Errors");	
@@ -938,12 +938,12 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 		m_back->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 		m_back->Draw("A*");
 		legback->Draw();
-		c_back->SaveAs(Form("./results/tabels/background_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+		c_back->SaveAs(Form("./tabels/background_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	TCanvas* c_sig= new TCanvas();
 	TLegend* legsig=new TLegend(0.7,0.7,0.9,0.9);
 	TMultiGraph* m_sig= new TMultiGraph();
-	const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian","2 CB"};
+	const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian"};
 	for (int j=0;j<(int)(signal.size());j++){
 		Double_t x[_nBins],y[_nBins];
 		for (int i=0;i<_nBins;i++){
@@ -960,7 +960,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 	m_sig->Draw("A*");
 	legsig->Draw();
-	c_sig->SaveAs(Form("./results/tabels/signal_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+	c_sig->SaveAs(Form("./tabels/signal_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	
 
@@ -997,7 +997,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	m_gen->GetYaxis()->SetTitle("Total Uncertainty(%)");
 	m_gen->Draw("A*");
 	legen->Draw();
-	c_gen->SaveAs(Form("./results/tabels/general_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+	c_gen->SaveAs(Form("./tabels/general_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	}
 
@@ -1008,7 +1008,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	cout << "Final Yield = " << yieldRec << endl;
 
 // Differential plot part starts
-	 //gSystem->mkdir("./results/Graphs",true); 
+	 gSystem->mkdir("Graphs",true); 
 	 TCanvas c_diff;
 	 TMultiGraph* mg = new TMultiGraph();
 
@@ -1044,12 +1044,12 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	 leg_d->SetTextSize(0);
 	 leg_d->Draw();
 
-	 const char* pathc =Form("raw_yield_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc =Form("./Graphs/raw_yield_%s_%s.png",tree.Data(),varExp.Data()); 
 	 c_diff.SaveAs(pathc);
 // Differential plot part ends
 
 // Parameters vs variables part starts
-	 TCanvas c_par;
+	 	 TCanvas c_par;
 	 TMultiGraph* mg_par = new TMultiGraph();
 
 	 TGraphAsymmErrors* gr_scale = new TGraphAsymmErrors(_nBins,var_mean,scale_vec,hori_low,hori_high,scale_vec_err_low,scale_vec_err_high);
@@ -1088,7 +1088,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	 leg_par->SetTextSize(0);
 	 leg_par->Draw();
 */
-	 const char* pathc_par =Form("parameters_variation_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc_par =Form("./Graphs/parameters_variation_%s_%s.png",tree.Data(),varExp.Data()); 
 	 c_par.SaveAs(pathc_par);
 //Parameters vs variables part ends
 
@@ -1123,7 +1123,7 @@ std::cout << "The size of general_err is " << general_err.size() << std::endl;
 	 mg_resol->Add(gr_resol);
 	 mg_resol->Draw("ap");
 
-	 const char* pathc_resol =Form("resolution_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc_resol =Form("./Graphs/resolution_%s_%s.png",tree.Data(),varExp.Data()); 
 	 c_resol.SaveAs(pathc_resol);
 
 //Resolution plot part ends
