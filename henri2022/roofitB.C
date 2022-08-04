@@ -381,7 +381,8 @@ if(doubly==0) {if(varExp == "Bpt"){
   }
 		if(doubly==1){
 			ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
-			var_mean_av[i] = ds_cut->mean(*nMult);
+			if(varExp == "nMult"){var_mean_av[i] = ds_cut->mean(*nMult);}
+			if(varExp == "By"){var_mean_av[i] = ds_cut->mean(*y);}
 	}
 		if(doubly==2)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
 
@@ -1029,6 +1030,13 @@ if(syst==1){
 	cout << "Final Yield = " << yieldRec << endl;
 
 // Differential plot part starts
+	double yield_max = 0;
+
+	for(int i = 0; i < _nBins; i++){
+		if(yield_vec[i] > yield_max){
+		yield_max = yield_vec[i];
+	}
+}
 	 gSystem->mkdir("./results/Graphs",true); 
 	 TCanvas c_diff;
 	 TMultiGraph* mg = new TMultiGraph();
@@ -1048,6 +1056,7 @@ if(syst==1){
 		 mg->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg->GetYaxis()->SetTitle("dN_{S}/dy");
 		 mg->GetXaxis()->SetLimits(-2.4 ,2.4);
+		 mg->GetYaxis()->SetLimits(0, yield_max * 1.5);
 	 }
 	 if(varExp == "Bpt"){
 		 mg->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
@@ -1081,7 +1090,7 @@ if(syst==1){
 	 TCanvas c_par;
 	 TMultiGraph* mg_par = new TMultiGraph();
 
-	 TGraphAsymmErrors* gr_scale = new TGraphAsymmErrors(_nBins,var_mean,scale_vec,hori_low,hori_high,scale_vec_err_low,scale_vec_err_high);
+	 TGraphAsymmErrors* gr_scale = new TGraphAsymmErrors(_nBins,var_mean_av,scale_vec,hori_av_low,hori_av_high,scale_vec_err_low,scale_vec_err_high);
 	 gr_scale->SetLineColor(1); 
 	
 	 if(varExp == "By"){
@@ -1125,7 +1134,7 @@ if(syst==1){
 	 	 TCanvas c_resol;
 	 TMultiGraph* mg_resol = new TMultiGraph();
 
-	 TGraphAsymmErrors* gr_resol = new TGraphAsymmErrors(_nBins,var_mean,resol_vec,hori_low,hori_high,resol_vec_err_low,resol_vec_err_high);
+	TGraphAsymmErrors* gr_resol = new TGraphAsymmErrors(_nBins,var_mean_av,resol_vec,hori_av_low,hori_av_high,resol_vec_err_low,resol_vec_err_high);
 	 gr_resol->SetLineColor(1); 
 	
 	 if(varExp == "By"){
