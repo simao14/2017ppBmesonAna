@@ -63,107 +63,6 @@ RooWorkspace* outputw = new RooWorkspace("w");
 RooWorkspace* w_val= new RooWorkspace("w_vl");
 
 
-//This first function is only for obtaining parameters related to Monte Carlo, for the actual fit, please use 
-//the one below this one.
-RooFitResult *fitMC(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooDataHist* dhMC, RooRealVar* mass, RooPlot* &outframe, Double_t ptmin, Double_t ptmax, int isMC, TString npfit)
-{
-	//extern TString pdf_ext = pdf;	
-
-	cout<<"total data: "<<ds->numEntries()<<endl;
-	TH1* h = dh->createHistogram("Bmass");
-	h->Sumw2(kFALSE);
-	h->SetBinErrorOption(TH1::kPoisson);
-	h->SetMarkerSize(1);
-	h->SetMarkerStyle(20);
-	h->SetLineColor(1);
-	h->SetLineWidth(2);
-	RooPlot* frameMC = mass->frame();
-	frameMC->SetTitle("");
-	if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
-	if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psiK^{+}K^{-}} (GeV/c^{2})");
-
-	frameMC->SetYTitle("Events / (20 MeV/c^{2})");
-	frameMC->GetXaxis()->CenterTitle();
-	frameMC->GetXaxis()->SetTitleOffset(1.0);
-	frameMC->GetYaxis()->SetTitleOffset(2.);
-	frameMC->GetXaxis()->SetTitleSize(0.055);
-	frameMC->GetYaxis()->SetTitleSize(0.035);
-	frameMC->GetXaxis()->SetTitleFont(42);
-	frameMC->GetYaxis()->SetTitleFont(42);
-	frameMC->GetXaxis()->SetLabelFont(42);
-	frameMC->GetYaxis()->SetLabelFont(42);
-	frameMC->GetXaxis()->SetLabelSize(0.055);
-	frameMC->GetYaxis()->SetLabelSize(0.035);
-	frameMC->SetStats(0);
-	frameMC->GetXaxis()->SetNdivisions(-50205);
-
-	cMC->cd();
-	double init_mean;
-	if(tree=="ntphi") init_mean = BS_MASS;
-	if(tree=="ntKp") init_mean = BP_MASS;
-
-	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,5.2,5.4) ;
-	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.02,0.01,0.1) ;
-	RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.055,0.001,0.1) ;
-	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.05,0.001,0.1) ;
-	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-	RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",5.,0,50);
-	RooRealVar alphaMC1(Form("alphaMC1%d_%s",_count,pdf.Data()),"",5.,0,50);
-	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",100,0,500);
-	RooRealVar nMC1(Form("nMC1_%d_%s", _count, pdf.Data()),"",100,0,500);
-
-	RooRealVar* scale;
-	scale = new RooRealVar("scale","scale",1,0,2);
-
-	RooProduct scaled_sigma1MC("scaled_sigma1MC","scaled_sigma1MC", RooArgList(*scale,sigma1MC));
-	RooProduct scaled_sigma2MC("scaled_sigma2MC","scaled_sigma2MC", RooArgList(*scale,sigma2MC));
-	RooProduct scaled_sigma3MC("scaled_sigma3MC","scaled_sigma3MC", RooArgList(*scale,sigma3MC));
-	RooProduct scaled_sigma4cbMC("scaled_sigma4cbMC","scaled_sigma4cbMC", RooArgList(*scale,sigma4cbMC));
-	RooProduct scaled_sigma5cbMC("scaled_sigma5cbMC","scaled_sigma5cbMC", RooArgList(*scale,sigma5cbMC));
-
-	RooGaussian sig1MC(Form("sig1MC%d_%s",_count,pdf.Data()),"",*mass,meanMC,scaled_sigma1MC);  
-	RooGaussian sig2MC(Form("sig2MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma2MC);  
-	RooGaussian sig3MC(Form("sig3MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma3MC);  
-	RooCBShape  CBMC(Form("CBMC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma4cbMC, alphaMC, nMC);
-	RooCBShape  CBMC1(Form("CBMC1%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma5cbMC, alphaMC1, nMC1);
-
-
-	RooRealVar sig1fracMC(Form("sig1fracMC%d",_count),"",0.5,0.,1.);
-	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.,0.,1.);
-	//RooRealVar sig3fracMC(Form("sig3fracMC%d_%s",_count, pdf.Data()),"",0.5,0.,1.);
-
-	RooAddPdf* sigMC;
-	RooRealVar nsigMC(Form("nsigMC%d",_count),"",1, 0, 1.2 * dsMC->sumEntries());
-
-	if((variation=="signal" && pdf=="2cb")) sigMC = new RooAddPdf(Form("sigMC%d_%s",_count,pdf.Data()),"",RooArgList(CBMC,CBMC1),sig1fracMC);
-	if((variation=="" && pdf=="") || variation== "background" || (variation=="signal" && pdf=="fixed" )) sigMC = new RooAddPdf(Form("sigMC%d_%s",_count,pdf.Data()),"",RooArgList(sig1MC,sig2MC),sig1fracMC);
-	if(variation=="signal" && pdf=="3gauss") sigMC = new RooAddPdf(Form("sigMC%d_%s",_count, pdf.Data()), "", RooArgList(sig1MC, sig2MC, sig3MC), RooArgList(sig1fracMC, sig2fracMC));
-	if(variation=="signal" && pdf=="gauss_cb") sigMC = new RooAddPdf(Form("sigMC%d_%s",_count, pdf.Data()), "", RooArgList(sig1MC, CBMC), sig1fracMC);
-
-	RooAddPdf* modelMC;
-	//if(variation =="signal" && pdf=="1gauss") modelMC = new RooAddPdf(Form("modelMC%d_%s",_count, pdf.Data()),"",RooArgList(sig1MC),RooArgList(nsigMC));
-
-	if((variation=="signal" && (pdf=="gauss_cb"|| pdf=="3gauss"|| pdf=="fixed"||pdf=="2cb"))||variation=="background") modelMC = new RooAddPdf(Form("modelMC%d_%s",_count, pdf.Data()),"",RooArgList(*sigMC),RooArgList(nsigMC)); 
-	if(variation =="" && pdf=="") modelMC = new RooAddPdf(Form("modelMC%d_%s",_count, pdf.Data()),"",RooArgList(*sigMC),RooArgList(nsigMC));
-
-//////////ROOFIT ROOFIT ROOFIT  MC MC MC MC 
-
-	double SignalWidth = 0.2;
-	mass->setRange("signal",init_mean-SignalWidth, init_mean+SignalWidth);    //focous the MC fit to the signal region to prevent statistical flutuations
-	std::cout<<"sum Entries: "<<dsMC->sumEntries()<<std::endl;
-	
-	RooFitResult* fitResultMC;
-	scale->setConstant();
-	fitResultMC = modelMC->fitTo(*dsMC,Save(), Range("signal"));
-	scale->setConstant(false);
-	std::cout << "sigma1MC is " << sigma1MC.getVal() << std::endl;
-
-	return fitResultMC;
-}
-
-//The function above is only for the extraction of parameters related to Monte Carlo, please use the below one for the actual fit.
-
 RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooDataHist* dhMC, RooRealVar* mass, RooPlot* &outframe, Double_t ptmin, Double_t ptmax, int isMC, TString npfit)
 {
 	//extern TString pdf_ext = pdf;	
@@ -266,7 +165,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	std::cout<<"fraction2_MC= "<<sig2fracMC.getVal()<<std::endl;
 */
 
-	dsMC->plotOn(frameMC,Name(Form("dsMC_cut%d",_count)),Binning(nbinsmasshisto),MarkerSize(1.55),MarkerStyle(20),LineColor(1),LineWidth(4));
+	dsMC->plotOn(frameMC,Name(Form("dsMC_cut%d",_count)),Binning(nbinsmasshisto,5.3,5.5),MarkerSize(1.55),MarkerStyle(20),LineColor(1),LineWidth(4));
 	if(pdf!="1gauss"){
 		modelMC->plotOn(frameMC,Name(Form("sigMC%d_%s",_count, pdf.Data())),Components(*sigMC),Normalization(1.0,RooAbsReal::RelativeExpected),Precision(1e-6),DrawOption("L"),FillStyle(3002),FillColor(kOrange-3),LineStyle(7),LineColor(kOrange-3),LineWidth(4));
 		modelMC->plotOn(frameMC,Name(Form("sigFMC%d_%s",_count, pdf.Data())),Components(*sigMC),Normalization(1.0,RooAbsReal::RelativeExpected),Precision(1e-6),DrawOption("F"),FillStyle(3002),FillColor(kOrange-3),LineStyle(7),LineColor(kOrange-3),LineWidth(4));
@@ -288,6 +187,8 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	modelMC->paramOn(frameMC,Layout(x_1, x_2, y_1), Format("NEU",AutoPrecision(1)));
 	frameMC->getAttText()->SetTextSize(0.02);
 	frameMC->SetMaximum(nsigMC.getVal()*1.2);
+	frameMC->GetXaxis()->SetRangeUser(5.3,5.5);
+	frameMC->GetYaxis()->SetRangeUser(0,2000);
 	frameMC->Draw();
 	cMC->RedrawAxis();
 	//  cMC->SetLogy();
@@ -468,7 +369,7 @@ RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(),Extended(kTRUE), Rang
         }
 */
 
- ds->plotOn(frame, Name(Form("ds_cut%d", _count)), Binning(nbinsmasshisto),
+ ds->plotOn(frame, Name(Form("ds_cut%d", _count)), Binning(nbinsmasshisto/*,5.3,5.5*/),
              MarkerSize(1), MarkerStyle(20), MarkerColor(1),
              LineColor(1), LineWidth(2));//draw an transparent hist
   if(npfit != "1") {
@@ -527,7 +428,9 @@ RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(),Extended(kTRUE), Rang
 	(frame->GetXaxis())->SetRangeUser(minhisto,maxhisto);
 //	(frame->GetYaxis())->SetRangeUser(0,nsig.getVal()*0.8);
 
-	frame->GetXaxis()->SetNdivisions(-50205);	
+	frame->GetXaxis()->SetNdivisions(-50205);
+	frame->GetXaxis()->SetRangeUser(5.3,5.5);
+	//frame->GetYaxis()->SetRangeUser(0,2000);	
 	frame->Draw();
 	
 if(tree == "ntKpi"){
