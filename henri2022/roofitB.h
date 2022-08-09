@@ -101,10 +101,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	if(tree=="ntKp") init_mean = BP_MASS;
 
 	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,5.2,5.4) ;
-	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.02,0.01,0.1) ;
+	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.02,-0.001,0.15) ;
 	RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.055,0.001,0.1) ;
 	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.05,0.001,0.1) ;
-	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
+	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.2) ;
 	RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
 	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",5.,0,50);
 	RooRealVar alphaMC1(Form("alphaMC1%d_%s",_count,pdf.Data()),"",5.,0,50);
@@ -188,7 +188,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	frameMC->getAttText()->SetTextSize(0.02);
 	frameMC->SetMaximum(nsigMC.getVal()*1.2);
 	frameMC->GetXaxis()->SetRangeUser(5.3,5.5);
-	frameMC->GetYaxis()->SetRangeUser(0,2000);
+	frameMC->GetYaxis()->SetRangeUser(0,4500);
 	frameMC->Draw();
 	cMC->RedrawAxis();
 	//  cMC->SetLogy();
@@ -226,10 +226,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	p1->cd();
 
 	RooRealVar mean(Form("mean%d",_count),"",meanMC.getVal(),5.,6.) ;
-	RooRealVar sigma1(Form("sigma1%d",_count),"",sigma1MC.getVal(),0.01,0.1) ;
+	RooRealVar sigma1(Form("sigma1%d",_count),"",sigma1MC.getVal(),0.001,0.15) ;
 	RooRealVar sigma2(Form("sigma2%d",_count),"",sigma2MC.getVal(),0.001,0.1) ;
 	RooRealVar sigma3(Form("sigma3%d",_count),"",sigma3MC.getVal(),0.001,0.1) ;
-	RooRealVar sigma4cb(Form("sigma4cb%d",_count),"",sigma4cbMC.getVal(),0.01,0.1) ;
+	RooRealVar sigma4cb(Form("sigma4cb%d",_count),"",sigma4cbMC.getVal(),0.01,0.2) ;
 	RooRealVar sigma5cb(Form("sigma5cb%d",_count),"",sigma5cbMC.getVal(),0.01,0.1) ;
 	RooRealVar alpha(Form("alpha%d_%s",_count,pdf.Data()),"",alphaMC.getVal(),0,50);
 	RooRealVar alpha1(Form("alpha1%d_%s",_count,pdf.Data()),"",alphaMC1.getVal(),0,50);
@@ -426,13 +426,13 @@ RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(),Extended(kTRUE), Rang
 	frame->GetYaxis()->SetLabelSize(0.05);
 	frame->SetStats(0);
 	(frame->GetXaxis())->SetRangeUser(minhisto,maxhisto);
-//	(frame->GetYaxis())->SetRangeUser(0,nsig.getVal()*0.8);
+	//(frame->GetYaxis())->SetRangeUser(0,nsig.getVal()*0.8);
 
-	frame->GetXaxis()->SetNdivisions(-50205);
-	frame->GetXaxis()->SetRangeUser(5.3,5.5);
-	//frame->GetYaxis()->SetRangeUser(0,2000);	
-	frame->Draw();
 	
+	frame->GetXaxis()->SetRangeUser(5.3,5.5);
+	frame->GetXaxis()->SetNdivisions(-50205);	
+	frame->Draw();
+/*	
 if(tree == "ntKpi"){
 if(ptmin==5 && ptmax==60){ (frame->GetYaxis())->SetRangeUser(0,12100);}
 else if (ptmin == 5) { (frame->GetYaxis())->SetRangeUser(0,900);}
@@ -448,7 +448,7 @@ else if (ptmin == 7) { (frame->GetYaxis())->SetRangeUser(0,100);}
 else if (ptmin == 10) { (frame->GetYaxis())->SetRangeUser(0,510);}
 else if (ptmin == 15) { (frame->GetYaxis())->SetRangeUser(0,300);}
 else if (ptmin == 20) { (frame->GetYaxis())->SetRangeUser(0,340);}}
-
+*/
 
 	RooHist* pull_hist = frame->pullHist(Form("ds_cut%d",_count),Form("model%d",_count));
 	//  RooHist* pull_hist = frame->pullHist("Data","Fit");

@@ -1162,7 +1162,7 @@ if(syst==1){
 		 mg_par->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg_par->GetYaxis()->SetTitle("Mass resolution scale factor");
 		 mg_par->GetXaxis()->SetLimits(-2.4 ,2.4);
-		 mg_par->GetYaxis()->SetLimits(0, 2.0);
+		 //mg_par->GetYaxis()->SetLimits(0, 2.0);
 
 	 }
 	 if(varExp == "Bpt"){
@@ -1170,16 +1170,17 @@ if(syst==1){
 		 mg_par->GetYaxis()->SetTitle("Mass resolution scale factor");
 		 if (tree == "ntKp"){ mg_par->GetXaxis()->SetLimits(0 ,80); }
 		 if (tree == "ntphi"){ mg_par->GetXaxis()->SetLimits(0 ,60); }
-		 mg_par->GetYaxis()->SetLimits(0, 2.0);
+		 //mg_par->GetYaxis()->SetLimits(0, 2.0);
 	 }
 	 if(varExp == "nMult"){
 		 mg_par->GetXaxis()->SetTitle("Multiplicity (Mult)");
 		 mg_par->GetYaxis()->SetTitle("Mass resolution scale factor");
 		 mg_par->GetXaxis()->SetLimits(0, 110);
-		 mg_par->GetYaxis()->SetLimits(0, 2.0);
+		 //mg_par->GetYaxis()->SetLimits(0, 2.0);
 	 }
 
 	 mg_par->Add(gr_scale);
+	 mg_par->GetYaxis()->SetLimits(0.8, 1.5);
 	 mg_par->Draw("ap");
 	 //mg->SetTitle("Differential Signal Yield");  
 /*	 
@@ -1258,11 +1259,11 @@ if(varExp == "nMult"){
  mg_chi2->GetXaxis()->SetLimits(0, 110);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
-
+mg_chi2->GetYaxis()->SetLimits(0, 2.0);
 mg_chi2->Add(gr_chi2);
 mg_chi2->Draw("ap");
 
-const char* pathc_chi2 =Form("./Graphs/chi2_%s_%s.png",tree.Data(),varExp.Data()); 
+const char* pathc_chi2 =Form("./results/Graphs/chi2_%s_%s.png",tree.Data(),varExp.Data()); 
 c_chi2.SaveAs(pathc_chi2);
 
 //chi2 plot part ends
