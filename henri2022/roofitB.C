@@ -1180,7 +1180,7 @@ if(syst==1){
 	 }
 
 	 mg_par->Add(gr_scale);
-	 mg_par->GetYaxis()->SetLimits(0.8, 1.5);
+	 mg_par->GetYaxis()->SetRangeUser(0.8, 1.5);
 	 mg_par->Draw("ap");
 	 //mg->SetTitle("Differential Signal Yield");  
 /*	 
@@ -1259,7 +1259,7 @@ if(varExp == "nMult"){
  mg_chi2->GetXaxis()->SetLimits(0, 110);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
-mg_chi2->GetYaxis()->SetLimits(0, 2.0);
+mg_chi2->GetYaxis()->SetRangeUser(0, 2.0);
 mg_chi2->Add(gr_chi2);
 mg_chi2->Draw("ap");
 
