@@ -52,7 +52,7 @@ double Significance;
 double real_significance;
 double minhisto=5.;
 double maxhisto=6.;
-int nbinsmasshisto=50;
+int nbinsmasshisto=100;
 
 TString seldata;
 TString selmc;
@@ -80,7 +80,8 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
 	if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psiK^{+}K^{-}} (GeV/c^{2})");
 
-	frameMC->SetYTitle("Events / (20 MeV/c^{2})");
+	
+	frameMC->GetYaxis()->SetTitle(TString::Format("Events / (%g MeV/c^{2})",(mass->getMax()-mass->getMin())/nbinsmasshisto*1000));
 	frameMC->GetXaxis()->CenterTitle();
 	frameMC->GetXaxis()->SetTitleOffset(1.0);
 	frameMC->GetYaxis()->SetTitleOffset(2.);
@@ -100,13 +101,13 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	if(tree=="ntphi") init_mean = BS_MASS;
 	if(tree=="ntKp") init_mean = BP_MASS;
 
-	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,5.2,5.4) ;
-	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.02,-0.001,0.15) ;
-	RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.055,0.001,0.1) ;
-	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.05,0.001,0.1) ;
-	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.2) ;
+	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,init_mean*0.99,init_mean*1.01) ;
+	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.05,0.01,0.11) ;
+	RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.03,0.005,0.06) ;
+	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.005,0.025) ;
+	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
 	RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",5.,0,50);
+	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,20);
 	RooRealVar alphaMC1(Form("alphaMC1%d_%s",_count,pdf.Data()),"",5.,0,50);
 	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",100,0,500);
 	RooRealVar nMC1(Form("nMC1_%d_%s", _count, pdf.Data()),"",100,0,500);
@@ -127,9 +128,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	RooCBShape  CBMC1(Form("CBMC1%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma5cbMC, alphaMC1, nMC1);
 
 
-	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"",0.5,0.,1.);
-	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.,0.,1.);
+	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"",0.2,0.001,.999);
+	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.7,0.001,.999);
 	//RooRealVar sig3fracMC(Form("sig3fracMC%d_%s",_count, pdf.Data()),"",0.5,0.,1.);
+
 
 	RooAddPdf* sigMC;
 	RooRealVar nsigMC(Form("nsigMC%d",_count),"",1, 0, 1.2 * dsMC->sumEntries());
@@ -147,7 +149,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 //////////ROOFIT ROOFIT ROOFIT  MC MC MC MC 
 
-	double SignalWidth = 0.2;
+	double SignalWidth = 0.2;//0.2
 	mass->setRange("signal",init_mean-SignalWidth, init_mean+SignalWidth);    //focous the MC fit to the signal region to prevent statistical flutuations
 	std::cout<<"sum Entries: "<<dsMC->sumEntries()<<std::endl;
 	
@@ -182,13 +184,16 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	double y_space = 0.04;
 	int nitems = 7;
 
-	y_1 = y_2 - y_space*nitems;
+	//y_1 = y_2 - y_space*nitems;
+	y_1=.95;
 
 	modelMC->paramOn(frameMC,Layout(x_1, x_2, y_1), Format("NEU",AutoPrecision(1)));
 	frameMC->getAttText()->SetTextSize(0.02);
 	frameMC->SetMaximum(nsigMC.getVal()*1.2);
 	frameMC->GetXaxis()->SetRangeUser(5.3,5.5);
-	frameMC->GetYaxis()->SetRangeUser(0,4500);
+	frameMC->GetYaxis()->SetRangeUser(0,4000);
+	//frameMC->GetYaxis()->SetRangeUser(0,frameMC->GetMaximum());
+	cout<< "Y AXIS RANGE "<<frameMC->GetMaximum()<<endl;
 	frameMC->Draw();
 	cMC->RedrawAxis();
 	//  cMC->SetLogy();
@@ -226,10 +231,10 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	p1->cd();
 
 	RooRealVar mean(Form("mean%d",_count),"",meanMC.getVal(),5.,6.) ;
-	RooRealVar sigma1(Form("sigma1%d",_count),"",sigma1MC.getVal(),0.001,0.15) ;
-	RooRealVar sigma2(Form("sigma2%d",_count),"",sigma2MC.getVal(),0.001,0.1) ;
-	RooRealVar sigma3(Form("sigma3%d",_count),"",sigma3MC.getVal(),0.001,0.1) ;
-	RooRealVar sigma4cb(Form("sigma4cb%d",_count),"",sigma4cbMC.getVal(),0.01,0.2) ;
+	RooRealVar sigma1(Form("sigma1%d",_count),"",sigma1MC.getVal(),0.01,0.1) ;
+	RooRealVar sigma2(Form("sigma2%d",_count),"",sigma2MC.getVal(),0.01,0.1) ;
+	RooRealVar sigma3(Form("sigma3%d",_count),"",sigma3MC.getVal(),0.01,0.1) ;
+	RooRealVar sigma4cb(Form("sigma4cb%d",_count),"",sigma4cbMC.getVal(),0.01,0.1) ;
 	RooRealVar sigma5cb(Form("sigma5cb%d",_count),"",sigma5cbMC.getVal(),0.01,0.1) ;
 	RooRealVar alpha(Form("alpha%d_%s",_count,pdf.Data()),"",alphaMC.getVal(),0,50);
 	RooRealVar alpha1(Form("alpha1%d_%s",_count,pdf.Data()),"",alphaMC1.getVal(),0,50);
@@ -315,7 +320,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 		alpha.setConstant();
 	}
 	if(variation=="signal" && pdf=="fixed") mean.setConstant();
-/*	if(variation=="signal" && pdf=="2cb"){
+	if(variation=="signal" && pdf=="2cb"){
 		sigma5cb.setConstant();
 		n1.setConstant();
 		alpha1.setConstant();
@@ -324,7 +329,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 		alpha.setConstant();
 
 	}
-*/
+
 ////// ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT
 
 /*RooFitResult* fitResult;
@@ -412,6 +417,8 @@ RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(),Extended(kTRUE), Rang
 	frame->getAttLine()->SetLineWidth(0);
 	frame->SetTitle("");
 	frame->SetYTitle("Events / (20 MeV/c^{2})");
+	frame->GetYaxis()->SetTitle(TString::Format("Events / (%g MeV/c^{2})",(mass->getMax()-mass->getMin())/nbinsmasshisto*1000));
+
 
 	frame->GetXaxis()->CenterTitle();
 	frame->GetYaxis()->CenterTitle();

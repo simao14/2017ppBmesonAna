@@ -9,6 +9,7 @@
 #include "TMultiGraph.h"
 #include "TGraphErrors.h"
 
+
 int syst=1;
 
 TTree* makeTTree(TTree* intree, TString treeTitle) 
@@ -753,9 +754,9 @@ if (varExp=="Bpt"){
 		gSystem->mkdir("filesbs",true); 
 		gSystem->mkdir(Form("%s", outplotf.Data()),true); 
 		//c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1], doubly)+tree+".pdf");
-		c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1], doubly)+tree+".png");
+		c->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_Nominal_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),_ptBins[i],_ptBins[i+1], doubly)+tree+".png");
 		//c->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d%d_cutY%d",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_postfix.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1], doubly)+tree+".C");
-		cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1], doubly)+tree+".pdf");
+		cMC->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_Nominal_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), _ptBins[i], _ptBins[i+1], doubly)+tree+".pdf");
 		// cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1], doubly)+tree+".png");
 
 
@@ -820,7 +821,7 @@ if (varExp=="Bpt"){
 				CMS_lumi(c,19011,0);
 				c->Update();
 				
-				c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str(), doubly)+tree+".png");
+				c->SaveAs(Form("%s/%s_%s_%s_%.1f_%.1f_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),_ptBins[i],_ptBins[i+1],background[j].c_str(), doubly)+tree+".png");
 				//c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str(), doubly)+tree+".pdf");
 			
 				modelcurve_back = frame->getCurve(Form("model%d",_count));
@@ -851,8 +852,8 @@ if (varExp=="Bpt"){
 
 				//tex_y->Draw();
 			//	c->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d_%d_%s_cutY%d",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_count,_postfix.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
-				cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
-				c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".png");
+				cMC->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), _ptBins[i], _ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
+				c->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),_ptBins[i],_ptBins[i+1],signal[j].c_str(), doubly)+tree+".png");
 				//c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
 				modelcurve_signal = frame->getCurve(Form("model%d",_count));
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d",_count))));
@@ -1152,6 +1153,12 @@ if(syst==1){
 //chi2 test ends
 
 // Parameters vs variables part starts
+	 double scale_max = 0;
+	for(int i = 0; i < _nBins; i++){
+		if(scale_vec[i] > scale_max){
+		scale_max = scale_vec[i];
+	}
+}
 	 TCanvas c_par;
 	 TMultiGraph* mg_par = new TMultiGraph();
 
@@ -1180,7 +1187,7 @@ if(syst==1){
 	 }
 
 	 mg_par->Add(gr_scale);
-	 mg_par->GetYaxis()->SetRangeUser(0.8, 1.5);
+	 mg_par->GetYaxis()->SetRangeUser(0,scale_max*1.4);
 	 mg_par->Draw("ap");
 	 //mg->SetTitle("Differential Signal Yield");  
 /*	 
@@ -1197,6 +1204,16 @@ if(syst==1){
 //Parameters vs variables part ends
 
 //Resolution plot part starts
+	 double resol_max = 0;
+	 double resol_min = 100000;
+	for(int i = 0; i < _nBins; i++){
+		if(resol_vec[i] > resol_max){
+		resol_max = resol_vec[i];
+	}
+	if(resol_vec[i] < resol_min){
+		resol_min = resol_vec[i];
+	}
+}
 	 TCanvas c_resol;
 	 TMultiGraph* mg_resol = new TMultiGraph();
 
@@ -1207,7 +1224,6 @@ if(syst==1){
 		 mg_resol->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg_resol->GetYaxis()->SetTitle("Resolution");
 		 mg_resol->GetXaxis()->SetLimits(-2.4 ,2.4);
-		 mg_resol->GetYaxis()->SetRangeUser(0, 0.1);
 
 	 }
 	 if(varExp == "Bpt"){
@@ -1215,15 +1231,14 @@ if(syst==1){
 		 mg_resol->GetYaxis()->SetTitle("Resolution");
 		 if (tree == "ntKp"){ mg_resol->GetXaxis()->SetLimits(0 ,80); }
 		 if (tree == "ntphi"){ mg_resol->GetXaxis()->SetLimits(0 ,60); }
-		 mg_resol->GetYaxis()->SetRangeUser(0, 0.1);
 	 }
 	 if(varExp == "nMult"){
 		 mg_resol->GetXaxis()->SetTitle("Multiplicity (Mult)");
 		 mg_resol->GetYaxis()->SetTitle("Resolution");
 		 mg_resol->GetXaxis()->SetLimits(0, 110);
-		 mg_resol->GetYaxis()->SetRangeUser(0, 0.1);
+		 
 	 }
-
+	 mg_resol->GetYaxis()->SetRangeUser(resol_min*0.6, resol_max*1.4);
 	 mg_resol->Add(gr_resol);
 	 mg_resol->Draw("ap");
 
@@ -1233,6 +1248,16 @@ if(syst==1){
 //Resolution plot part ends
 
 //chi2 plot part starts
+	 double chi2_max = 0;
+	 double chi2_min = 100000;
+	for(int i = 0; i < _nBins; i++){
+		if(chi2_vec[i] > chi2_max){
+		chi2_max = chi2_vec[i];
+	}
+	if(chi2_vec[i] < chi2_min){
+		chi2_min = chi2_vec[i];
+	}
+}
 TCanvas c_chi2;
 TMultiGraph* mg_chi2 = new TMultiGraph();
 
@@ -1259,7 +1284,7 @@ if(varExp == "nMult"){
  mg_chi2->GetXaxis()->SetLimits(0, 110);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
-mg_chi2->GetYaxis()->SetRangeUser(0, 2.0);
+mg_chi2->GetYaxis()->SetRangeUser(chi2_min*0.6, chi2_max*1.4);
 mg_chi2->Add(gr_chi2);
 mg_chi2->Draw("ap");
 
