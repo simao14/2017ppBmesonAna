@@ -172,14 +172,14 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 //nMult
 
 	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,init_mean*0.99,init_mean*1.01) ;
-	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.05,0.005,0.11) ;
-	RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.03,0.005,0.08) ;
+	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.05,0.008,0.15) ;
+	RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.03,0.005,0.11) ;
 	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.005,0.025) ;
 	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
 	RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,20);
+	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,40);
 	RooRealVar alphaMC1(Form("alphaMC1%d_%s",_count,pdf.Data()),"",5.,0,50);
-	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",100,0,300);
+	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",50,0,100);
 	RooRealVar nMC1(Form("nMC1_%d_%s", _count, pdf.Data()),"",100,0,500);
 
 	RooRealVar* scale;
@@ -199,7 +199,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 
 
 	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"",0.2,0.001,.999);
-	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.7,0.001,.999);
+	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.7,0.0001,.999);
 	//RooRealVar sig3fracMC(Form("sig3fracMC%d_%s",_count, pdf.Data()),"",0.5,0.,1.);
 
 //nMult

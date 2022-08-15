@@ -40,7 +40,7 @@ const unsigned nmBins_both = 7;
 const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100};
 
 //const unsigned nmBins_both = 1;
-//const std::array<double, nmBins_both + 1> nmbinsvec = {40,50};
+//const std::array<double, nmBins_both + 1> nmbinsvec = {30,40};
 
 const unsigned nmBins_both_full = 1;
 const std::array<double, nmBins_both_full + 1> nmbinsvec_full = {0,100};
