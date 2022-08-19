@@ -100,109 +100,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	if(tree=="ntphi") init_mean = BS_MASS;
 	if(tree=="ntKp") init_mean = BP_MASS;
 
-/*	
 
-//By
-
-//nMult
-	else if(varExp=="nMult"){
-		RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,init_mean*0.99,init_mean*1.01) ;
-		RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.05,0.008,0.15) ;
-		RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.03,0.005,0.11) ;
-		RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.005,0.025) ;
-		RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-		RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-		RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,40);
-		RooRealVar alphaMC1(Form("alphaMC1%d_%s",_count,pdf.Data()),"",5.,0,50);
-		RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",50,0,100);
-		RooRealVar nMC1(Form("nMC1_%d_%s", _count, pdf.Data()),"",100,0,500);
-
-		RooRealVar* scale;
-		scale = new RooRealVar("scale","scale",1,0,2);
-
-		RooProduct scaled_sigma1MC("scaled_sigma1MC","scaled_sigma1MC", RooArgList(*scale,sigma1MC));
-		RooProduct scaled_sigma2MC("scaled_sigma2MC","scaled_sigma2MC", RooArgList(*scale,sigma2MC));
-		RooProduct scaled_sigma3MC("scaled_sigma3MC","scaled_sigma3MC", RooArgList(*scale,sigma3MC));
-		RooProduct scaled_sigma4cbMC("scaled_sigma4cbMC","scaled_sigma4cbMC", RooArgList(*scale,sigma4cbMC));
-		RooProduct scaled_sigma5cbMC("scaled_sigma5cbMC","scaled_sigma5cbMC", RooArgList(*scale,sigma5cbMC));
-
-		RooGaussian sig1MC(Form("sig1MC%d_%s",_count,pdf.Data()),"",*mass,meanMC,scaled_sigma1MC);  
-		RooGaussian sig2MC(Form("sig2MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma2MC);  
-		RooGaussian sig3MC(Form("sig3MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma3MC);  
-		RooCBShape  CBMC(Form("CBMC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma4cbMC, alphaMC, nMC);
-		RooCBShape  CBMC1(Form("CBMC1%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma5cbMC, alphaMC1, nMC1);
-
-
-		RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"",0.2,0.001,.999);
-		RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.7,0.0001,.999);
-		//RooRealVar sig3fracMC(Form("sig3fracMC%d_%s",_count, pdf.Data()),"",0.5,0.,1.);
-}
-
-//nMult
-
-//needed for the code not to break at the start
-/*
-	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",0.1,0,0.2) ;
-	RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.1,0,0.2) ;
-	RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.1,0,0.2) ;
-	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.1,0,0.2) ;
-	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.1,0,0.2) ;
-	RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.1,0,0.2) ;
-	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",0.1,0,0.2);
-	RooRealVar alphaMC1(Form("alphaMC1%d_%s",_count,pdf.Data()),"",0.1,0,0.2);
-	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",0.1,0,0.2);
-	RooRealVar nMC1(Form("nMC1_%d_%s", _count, pdf.Data()),"",0.1,0,0.2);
-
-	RooRealVar* scale;
-	scale = new RooRealVar("scale","scale",1,0,2);
-
-	RooProduct scaled_sigma1MC("scaled_sigma1MC","scaled_sigma1MC", RooArgList(*scale,sigma1MC));
-	RooProduct scaled_sigma2MC("scaled_sigma2MC","scaled_sigma2MC", RooArgList(*scale,sigma2MC));
-	RooProduct scaled_sigma3MC("scaled_sigma3MC","scaled_sigma3MC", RooArgList(*scale,sigma3MC));
-	RooProduct scaled_sigma4cbMC("scaled_sigma4cbMC","scaled_sigma4cbMC", RooArgList(*scale,sigma4cbMC));
-	RooProduct scaled_sigma5cbMC("scaled_sigma5cbMC","scaled_sigma5cbMC", RooArgList(*scale,sigma5cbMC));
-
-	RooGaussian sig1MC(Form("sig1MC%d_%s",_count,pdf.Data()),"",*mass,meanMC,scaled_sigma1MC);  
-	RooGaussian sig2MC(Form("sig2MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma2MC);  
-	RooGaussian sig3MC(Form("sig3MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma3MC);  
-	RooCBShape  CBMC(Form("CBMC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma4cbMC, alphaMC, nMC);
-	RooCBShape  CBMC1(Form("CBMC1%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma5cbMC, alphaMC1, nMC1);
-
-
-	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"",0.1,0,0.2);
-	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.1,0,0.2);
-	*/
-		/* RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,init_mean*0.999,init_mean*1.0001) ;
-		RooRealVar sigma1MC(Form("sigma1MC%d",_count),"",0.05,0.005,0.15) ;
-		RooRealVar sigma2MC(Form("sigma2MC%d",_count),"",0.03,0.005,0.06) ;
-		RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.005,0.025) ;
-		RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-		RooRealVar sigma5cbMC(Form("sigma5cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.1) ;
-		RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,40);
-		RooRealVar alphaMC1(Form("alphaMC1%d_%s",_count,pdf.Data()),"",5.,0,50);
-		RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",100,0,250);
-		RooRealVar nMC1(Form("nMC1_%d_%s", _count, pdf.Data()),"",100,0,500);
-
-		RooRealVar* scale;
-		scale = new RooRealVar("scale","scale",1,0,2);
-
-		RooProduct scaled_sigma1MC("scaled_sigma1MC","scaled_sigma1MC", RooArgList(*scale,sigma1MC));
-		RooProduct scaled_sigma2MC("scaled_sigma2MC","scaled_sigma2MC", RooArgList(*scale,sigma2MC));
-		RooProduct scaled_sigma3MC("scaled_sigma3MC","scaled_sigma3MC", RooArgList(*scale,sigma3MC));
-		RooProduct scaled_sigma4cbMC("scaled_sigma4cbMC","scaled_sigma4cbMC", RooArgList(*scale,sigma4cbMC));
-		RooProduct scaled_sigma5cbMC("scaled_sigma5cbMC","scaled_sigma5cbMC", RooArgList(*scale,sigma5cbMC));
-
-		RooGaussian sig1MC(Form("sig1MC%d_%s",_count,pdf.Data()),"",*mass,meanMC,scaled_sigma1MC);  
-		RooGaussian sig2MC(Form("sig2MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma2MC);  
-		RooGaussian sig3MC(Form("sig3MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma3MC);  
-		RooCBShape  CBMC(Form("CBMC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma4cbMC, alphaMC, nMC);
-		RooCBShape  CBMC1(Form("CBMC1%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma5cbMC, alphaMC1, nMC1);
-
-
-		RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"",0.2,0.001,.999);
-		RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",0.7,0.001,.999);
-		//RooRealVar sig3fracMC(Form("sig3fracMC%d_%s",_count, pdf.Data()),"",0.5,0.,1.);
-*/
 double init[12];
 double lolimit[12];
 double hilimit[12];
@@ -243,8 +141,8 @@ if(tree=="ntphi"){
 	if (varExp=="Bpt"){
 		
 		double init2[12]={init_mean,0.05,0.03,0.01,0.0266,0.0266,4.,5.,100,100,0.2,0.7};
-		double lolimit2[12]={init_mean*0.99,0.01,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001};
-		double hilimit2[12]={init_mean*1.01,0.11,0.06,0.025,0.1,0.1,20,50,500,500,.999,.999};
+		double lolimit2[12]={init_mean*0.999,0.01,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001};
+		double hilimit2[12]={init_mean*1.0001,0.11,0.06,0.025,0.1,0.1,20,50,500,500,.999,.999};
 		for (int i=0;i<12;i++){
 			init[i]=init2[i];
 			lolimit[i]=lolimit2[i];
@@ -611,7 +509,7 @@ RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(),Extended(kTRUE), Rang
 	//(frame->GetYaxis())->SetRangeUser(0,nsig.getVal()*0.8);
 
 	
-	frame->GetXaxis()->SetRangeUser(init_mean*0.99,init_mean*1.02);
+	frame->GetXaxis()->SetRangeUser(init_mean*0.98,init_mean*1.02);
 	frame->GetXaxis()->SetNdivisions(-50205);	
 	frame->Draw();
 /*	

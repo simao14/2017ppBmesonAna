@@ -14,11 +14,11 @@
 //
 
 
-//const unsigned nptBins = 1;
-//const std::array<double, nptBins + 1> ptbinsvec = {7, 10};
+const unsigned nptBins = 1;
+const std::array<double, nptBins + 1> ptbinsvec = {7, 10};
 
-const unsigned nptBins = 4;
-const std::array<double, nptBins + 1> ptbinsvec = { 7, 10, 15, 20, 50};
+//const unsigned nptBins = 4;
+//const std::array<double, nptBins + 1> ptbinsvec = { 7, 10, 15, 20, 50};
 
 
 const unsigned nptBinsBP = 7;

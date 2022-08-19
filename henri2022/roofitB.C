@@ -639,42 +639,48 @@ if(doubly==0) {if(varExp == "Bpt"){
 		TLatex* tex_y1;
 		TLatex* tex_y11;
 		TLatex* tex_y2;
-		TLatex* chi_square=new TLatex(0.55,0.85,Form("#chi^{2} value : %.1f",Mychi2));
+		TLatex* chi_square;
 
 	if(varExp=="Bpt"){
       //for the paper run these
       if (drawLegend) {
-        tex_pt = new TLatex(0.55,0.4,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_y = new TLatex(0.55,0.34,"p_{T} > 10 GeV/c : |y| < 2.4");
-        tex_y2 = new TLatex(0.55,0.28,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
-        tex_y1 = new TLatex(0.55,0.34,"1.5 < |y| < 2.4");
-        tex_y11 =new TLatex(0.55,0.34,"|y| < 2.4");
+        tex_pt = new TLatex(0.7,0.4,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_y = new TLatex(0.7,0.34,"p_{T} > 10 GeV/c : |y| < 2.4");
+        tex_y2 = new TLatex(0.7,0.28,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+        tex_y1 = new TLatex(0.7,0.34,"1.5 < |y| < 2.4");
+        tex_y11 =new TLatex(0.7,0.34,"|y| < 2.4");
+        chi_square=new TLatex(0.7,0.29,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
-        tex_pt = new TLatex(0.55,0.8,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_y = new TLatex(0.55,0.74,"p_{T} > 10 GeV/c : |y| < 2.4");
-        tex_y2 = new TLatex(0.55,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
-        tex_y1 = new TLatex(0.55,0.74,"1.5 < |y| < 2.4");
-        tex_y11 =new TLatex(0.55,0.74,"|y| < 2.4");
+        tex_pt = new TLatex(0.7,0.8,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_y = new TLatex(0.7,0.74,"p_{T} > 10 GeV/c : |y| < 2.4");
+        tex_y2 = new TLatex(0.7,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+        tex_y1 = new TLatex(0.7,0.74,"1.5 < |y| < 2.4");
+        tex_y11 =new TLatex(0.7,0.74,"|y| < 2.4");
+        chi_square=new TLatex(0.7,0.69,Form("#chi^{2} value : %.1f",Mychi2));
       }
 		}
 
 if(varExp=="By"){
       //for the paper run these
       if (drawLegend) {    
-        tex_y = new TLatex(0.55,0.4,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
+        tex_y = new TLatex(0.7,0.4,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
+        chi_square=new TLatex(0.7,0.35,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
-        tex_y = new TLatex(0.55,0.8,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
+        tex_y = new TLatex(0.7,0.8,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
+        chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       }
 		}
 if(varExp=="nMult"){ 
 	//for the paper run these
       if (drawLegend) {
-      	tex_nMult = new TLatex(0.55,0.4,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+      	tex_nMult = new TLatex(0.7,0.4,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+      	chi_square=new TLatex(0.7,0.35,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
-        tex_nMult = new TLatex(0.55,0.8,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_nMult = new TLatex(0.7,0.8,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+        chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       }
 	}
 /*	if(varExp=="By"){
