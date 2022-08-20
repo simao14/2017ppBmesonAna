@@ -108,8 +108,8 @@ if(tree=="ntphi"){
 	if (varExp=="Bpt"){
 		
 		double init2[12]={init_mean,0.05,0.03,0.01,0.0266,0.0266,4.,5.,100,100,0.2,0.7};
-		double lolimit2[12]={init_mean*0.99,0.01,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001};
-		double hilimit2[12]={init_mean*1.01,0.11,0.06,0.025,0.1,0.1,20,50,500,500,.999,.999};
+		double lolimit2[12]={init_mean*0.999,0.01,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001};
+		double hilimit2[12]={init_mean*1.0001,0.11,0.06,0.025,0.1,0.1,20,50,500,500,.999,.999};
 		for (int i=0;i<12;i++){
 			init[i]=init2[i];
 			lolimit[i]=lolimit2[i];
@@ -141,8 +141,8 @@ if(tree=="ntphi"){
 	if (varExp=="Bpt"){
 		
 		double init2[12]={init_mean,0.05,0.03,0.01,0.0266,0.0266,4.,5.,100,100,0.2,0.7};
-		double lolimit2[12]={init_mean*0.999,0.01,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001};
-		double hilimit2[12]={init_mean*1.0001,0.11,0.06,0.025,0.1,0.1,20,50,500,500,.999,.999};
+		double lolimit2[12]={init_mean*0.9999,0.01,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001};
+		double hilimit2[12]={init_mean*1.00001,0.11,0.06,0.025,0.1,0.1,20,50,250,500,.999,.999};
 		for (int i=0;i<12;i++){
 			init[i]=init2[i];
 			lolimit[i]=lolimit2[i];
@@ -201,7 +201,7 @@ if(tree=="ntphi"){
 		RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"",init[11],lolimit[11],hilimit[11]);
 		//RooRealVar sig3fracMC(Form("sig3fracMC%d_%s",_count, pdf.Data()),"",0.5,0.,1.);
 
-//
+
 
 
 	RooAddPdf* sigMC;

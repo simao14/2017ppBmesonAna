@@ -584,7 +584,10 @@ if(doubly==0) {if(varExp == "Bpt"){
 
 		RooAddPdf* sig = new RooAddPdf(Form("sig%d",_count),"",RooArgList(sig1,sig2),*weight);
 
-		RooAddPdf* model = new RooAddPdf(Form("model%d",_count),"",RooArgList(*sig,bkg), RooArgList(*fitYield,*BackGround));
+		//RooAddPdf* model = new RooAddPdf(Form("model%d",_count),"",RooArgList(*sig,bkg), RooArgList(*fitYield,*BackGround));
+		RooRealVar* npeakbg = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("npeakbg%d",_count))));
+		RooGenericPdf peakbg(Form("peakbg%d",_count),"",Form("(%s)",npfit.Data()),RooArgSet(*mass));
+		RooAddPdf* model = new RooAddPdf(Form("model%d",_count),"",RooArgList(*sig,bkg,peakbg), RooArgList(*fitYield,*BackGround,*npeakbg));
 		RooChi2Var chi2("chi2","chi2",*model,*dh);
 		double Mychi2 = chi2.getVal()/(nbinsmasshisto-5); //normalised chi square
 		std::cout << "chi square value is " << Mychi2 << endl;
@@ -823,7 +826,7 @@ if (varExp=="Bpt"){
 				RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp);
 				
 				texB->Draw();
-				chi_square->Draw();
+				//chi_square->Draw();
 				if (varExp=="Bpt"){
 					tex_pt->Draw();
 					if(_ptBins[i] >= 10){tex_y11->Draw();}
@@ -851,7 +854,7 @@ if (varExp=="Bpt"){
 			for(int j=0; j<signal.size(); j++){
 				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp);
 				texB->Draw();
-				chi_square->Draw();
+				//chi_square->Draw();
 				if (varExp=="Bpt"){
 					tex_pt->Draw();
 					if(_ptBins[i] >= 10){tex_y11->Draw();}
