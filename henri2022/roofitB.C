@@ -10,7 +10,7 @@
 #include "TGraphErrors.h"
 
 
-int syst=1;
+int syst=0;
 
 TTree* makeTTree(TTree* intree, TString treeTitle) 
 {
@@ -267,6 +267,7 @@ cout << endl << endl;
 	RooDataHist* dhMC = new RooDataHist();   
 	std::cout<<"Created roodatahists"<<std::endl;
 	RooPlot* frame = new RooPlot();
+	RooPlot* frameMC = new RooPlot();
 	std::cout<<"Created d"<<std::endl;
 	RooHist* datahist = new RooHist();
 	RooCurve* modelcurve = new RooCurve();
@@ -313,14 +314,18 @@ cout << endl << endl;
 
 	std::vector<std::string> background = {"1st", "2nd","mass_range"};
 	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb", "2cb"};
+	//std::vector<std::string> background = {};
+	//std::vector<std::string> signal = {"gauss_cb", "2cb"};
 	
+
 	std::vector<std::vector<double>> background_syst;
 	std::vector<std::vector<double>> signal_syst;
 	std::vector<std::vector<double>> general_syst;
 	std::vector<double> nominal_yields;
 	std::vector<std::vector<double>> back_syst_rel_values;
 	std::vector<std::vector<double>> sig_syst_rel_values;
-
+	TString* back;
+	TString* sig;
 
 	double yield_vec[_nBins];
 	double yield_vec_err_low[_nBins];
@@ -344,6 +349,14 @@ cout << endl << endl;
 	double hori_av_high[_nBins];
 
 	double chi2_vec[_nBins];
+	double chi2MC_vec[_nBins];
+
+	double chi2_vec_sig[signal.size()][_nBins];
+	double chi2_vec_back[background.size()][_nBins];
+
+	double labels_x;
+	if(tree == "ntphi"){labels_x = 0.7;}
+	if(tree == "ntKp"){labels_x = 0.3;}
 
 	for(int i=0;i<_nBins;i++)
 	{
@@ -459,11 +472,21 @@ if(doubly==0) {if(varExp == "Bpt"){
 		  }*/
 
 
-		
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp);
+		RooWorkspace* w_pdf = new RooWorkspace("w_pdf");	
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, frameMC,  _ptBins[i], _ptBins[i+1], isMC, npfit,varExp,w_pdf);
 		//RooFitResult* f_MC = fitMC("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit);
+		std::cout << "The count number is " << _count << std::endl;
+		RooAbsPdf* model = (RooAbsPdf*)w_pdf->pdf(Form("model%d%s",_count,""));
+		RooAbsPdf* modelMC = (RooAbsPdf*)w_pdf->pdf(Form("modelMC%d",_count));
 
-
+		//outputw->Print();
+		w_pdf->Print();
+		//RooAbsPdf* modelMC = (RooAddPdf*)outputw->pdf(Form("modelMC%d",_count));
+		model->Print();
+		modelMC->Print();
+		std::cout << "The content of dhMC&dh is " <<  std::endl;
+		dhMC->Print();
+		dh->Print();
 	//	std::cout << "Now Finall We Validate Our Fits" << std::endl;
 	//	validate_fit(w_val, tree, varExp, full,centmin, centmax, _ptBins[i], _ptBins[i+1]);
 		//std::cout << "Now Finall We Scan Our Significance" << std::endl;
@@ -481,7 +504,7 @@ if(doubly==0) {if(varExp == "Bpt"){
 
 
 		//DF TRY
-		modelcurve = frame->getCurve(Form("model%d",_count));
+		modelcurve = frame->getCurve(Form("model%d%s",_count,""));
 		std::cout << "The fit results are" << f->floatParsFinal() << std::endl;
 		RooRealVar* fitYield = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("nsig%d",_count))));
 
@@ -574,7 +597,7 @@ if(doubly==0) {if(varExp == "Bpt"){
 //Resolution 
 
 //chi2 test
-		RooRealVar* mean = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("mean%d",_count))));
+/*		RooRealVar* mean = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("mean%d",_count))));
 		RooRealVar* lambda = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("lambda%d",_count))));
 		RooProduct scaled_sigma1("scaled_sigma1","scaled_sigma1", RooArgList(*width_scale,*sigma1));
 		RooProduct scaled_sigma2("scaled_sigma2","scaled_sigma2", RooArgList(*width_scale,*sigma2));
@@ -587,11 +610,17 @@ if(doubly==0) {if(varExp == "Bpt"){
 		//RooAddPdf* model = new RooAddPdf(Form("model%d",_count),"",RooArgList(*sig,bkg), RooArgList(*fitYield,*BackGround));
 		RooRealVar* npeakbg = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("npeakbg%d",_count))));
 		RooGenericPdf peakbg(Form("peakbg%d",_count),"",Form("(%s)",npfit.Data()),RooArgSet(*mass));
-		RooAddPdf* model = new RooAddPdf(Form("model%d",_count),"",RooArgList(*sig,bkg,peakbg), RooArgList(*fitYield,*BackGround,*npeakbg));
+		RooAddPdf* model = new RooAddPdf(Form("model%d",_count),"",RooArgList(*sig,bkg,peakbg), RooArgList(*fitYield,*BackGround,*npeakbg));*/
 		RooChi2Var chi2("chi2","chi2",*model,*dh);
-		double Mychi2 = chi2.getVal()/(nbinsmasshisto-5); //normalised chi square
+		double Mychi2 = chi2.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
 		std::cout << "chi square value is " << Mychi2 << endl;
 		chi2_vec[i] = Mychi2;
+
+		RooChi2Var chi2MC("chi2MC","chi2MC",*modelMC,*dhMC);
+		double Mychi2MC = chi2MC.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
+		std::cout << "chi square value(MC) is " << chi2MC.getVal() << endl;
+		chi2MC_vec[i] = Mychi2MC;
+
 //chi2 test 
  
 		std::vector<double> aa;
@@ -667,23 +696,23 @@ if(doubly==0) {if(varExp == "Bpt"){
 if(varExp=="By"){
       //for the paper run these
       if (drawLegend) {    
-        tex_y = new TLatex(0.7,0.4,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
-        chi_square=new TLatex(0.7,0.35,Form("#chi^{2} value : %.2f",Mychi2));
+        tex_y = new TLatex(labels_x,0.4,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
+        chi_square=new TLatex(labels_x,0.35,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
-        tex_y = new TLatex(0.7,0.8,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
-        chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.2f",Mychi2));
+        tex_y = new TLatex(labels_x,0.8,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
+        chi_square=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       }
 		}
 if(varExp=="nMult"){ 
 	//for the paper run these
       if (drawLegend) {
-      	tex_nMult = new TLatex(0.7,0.4,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
-      	chi_square=new TLatex(0.7,0.35,Form("#chi^{2} value : %.2f",Mychi2));
+      	tex_nMult = new TLatex(labels_x,0.4,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+      	chi_square=new TLatex(labels_x,0.35,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
-        tex_nMult = new TLatex(0.7,0.8,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
-        chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.2f",Mychi2));
+        tex_nMult = new TLatex(labels_x,0.8,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+        chi_square=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       }
 	}
 /*	if(varExp=="By"){
@@ -774,7 +803,7 @@ if (varExp=="Bpt"){
 		//c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1], doubly)+tree+".pdf");
 		c->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_Nominal_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),_ptBins[i],_ptBins[i+1], doubly)+tree+".png");
 		//c->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d%d_cutY%d",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_postfix.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1], doubly)+tree+".C");
-		cMC->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_Nominal_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), _ptBins[i], _ptBins[i+1], doubly)+tree+".pdf");
+		cMC->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_Nominal_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), _ptBins[i], _ptBins[i+1], doubly)+tree+".png");
 		// cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1], doubly)+tree+".png");
 
 
@@ -823,8 +852,19 @@ if (varExp=="Bpt"){
 		if(syst==1){
 
 				for(int j=0; j<background.size(); j++){
-				RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp);
-				
+				RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, frameMC, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp,w_pdf);
+				/*back = new TString(background[j]);
+				RooAbsPdf* model_back = (RooAbsPdf*)w_pdf->pdf(Form("model%d%s",_count,back->Data()));
+				std::cout << "p1p1p1" << std::endl;
+				model_back->Print();
+				std::cout << "p2p2p2" << std::endl;
+				RooChi2Var chi2_back("chi2_back","chi2_back",*model_back,*dh);
+				std::cout << "p3p3p3" << std::endl;
+				double Mychi2_back = chi2_back.getVal()/(nbinsmasshisto - f_back->floatParsFinal().getSize()); //normalised chi square
+				std::cout << "chi square value is " << Mychi2_back << " (" << background[j] << ")"<< endl;
+				chi2_vec_back[j][i] = Mychi2_back;*/
+
+	
 				texB->Draw();
 				//chi_square->Draw();
 				if (varExp=="Bpt"){
@@ -842,7 +882,7 @@ if (varExp=="Bpt"){
 				c->SaveAs(Form("%s/%s_%s_%s_%.1f_%.1f_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),_ptBins[i],_ptBins[i+1],background[j].c_str(), doubly)+tree+".png");
 				//c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str(), doubly)+tree+".pdf");
 			
-				modelcurve_back = frame->getCurve(Form("model%d",_count));
+				modelcurve_back = frame->getCurve(Form("model%d%s",_count,background[j].c_str()));
 				RooRealVar* fitYield_back = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d",_count))));
 				back_variation.push_back(fitYield_back->getVal());
 				back_err.push_back(abs(((yield-fitYield_back->getVal())/yield)*100));
@@ -852,7 +892,14 @@ if (varExp=="Bpt"){
 			general_err.push_back(max_back);
 
 			for(int j=0; j<signal.size(); j++){
-				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp);
+				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, frameMC, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp,w_pdf);
+			/*	RooAbsPdf* model_sig = (RooAbsPdf*)w_pdf->pdf(Form("model%d%s",_count,signal[j].c_str()));
+				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);
+				double Mychi2_sig = chi2_sig.getVal()/(nbinsmasshisto - f_signal->floatParsFinal().getSize()); //normalised chi square
+				std::cout << "chi square value is " << Mychi2_sig << " (" << signal[j] << ")"<< endl;
+				chi2_vec_sig[j][i] = Mychi2_sig;*/
+
+
 				texB->Draw();
 				//chi_square->Draw();
 				if (varExp=="Bpt"){
@@ -870,10 +917,10 @@ if (varExp=="Bpt"){
 
 				//tex_y->Draw();
 			//	c->SaveAs(Form("%s%s/%s_%s_%d%s_%s_%d_%d_%s_cutY%d",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),_count,_postfix.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
-				cMC->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), _ptBins[i], _ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
+				cMC->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), _ptBins[i], _ptBins[i+1],signal[j].c_str(), doubly)+tree+".png");
 				c->SaveAs(Form("%s%s/%s_%s_%s_%.1f_%.1f_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),_ptBins[i],_ptBins[i+1],signal[j].c_str(), doubly)+tree+".png");
 				//c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
-				modelcurve_signal = frame->getCurve(Form("model%d",_count));
+				modelcurve_signal = frame->getCurve(Form("model%d%s",_count,signal[j].c_str()));
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d",_count))));
 				signal_variation.push_back(fitYield_signal->getVal());
 				signal_err.push_back(abs(((yield-fitYield_signal->getVal())/yield)*100));
@@ -1278,9 +1325,13 @@ if(syst==1){
 }
 TCanvas c_chi2;
 TMultiGraph* mg_chi2 = new TMultiGraph();
+TLegend *leg_chi2 = new TLegend(0.7,0.7,0.9,0.9);
 
 TGraphAsymmErrors* gr_chi2 = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec,hori_av_low,hori_av_high,nullptr,nullptr);
 gr_chi2->SetLineColor(1); 
+TGraphAsymmErrors* grMC_chi2 = new TGraphAsymmErrors(_nBins,var_mean_av,chi2MC_vec,hori_av_low,hori_av_high,nullptr,nullptr);
+grMC_chi2->SetLineColor(2); 
+
 
 if(varExp == "By"){
  mg_chi2->GetXaxis()->SetTitle("Rapidity (y)");
@@ -1304,7 +1355,16 @@ if(varExp == "nMult"){
 }
 mg_chi2->GetYaxis()->SetRangeUser(chi2_min*0.6, chi2_max*1.4);
 mg_chi2->Add(gr_chi2);
+mg_chi2->Add(grMC_chi2);
 mg_chi2->Draw("ap");
+
+leg_chi2->AddEntry(gr_chi2, "Data", "e");
+leg_chi2->AddEntry(grMC_chi2, "Monte Carlo", "e");
+leg_chi2->SetBorderSize(0);
+leg_chi2->SetFillStyle(0);
+leg_chi2->SetTextSize(0);
+leg_chi2->Draw();
+
 
 const char* pathc_chi2 =Form("./results/Graphs/chi2_%s_%s.png",tree.Data(),varExp.Data()); 
 c_chi2.SaveAs(pathc_chi2);
