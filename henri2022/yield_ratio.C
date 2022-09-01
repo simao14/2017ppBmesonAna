@@ -1,12 +1,7 @@
 #include <cmath> 
 
-void yield_ratio(){
+void yield_ratio(int syst,TString varExp){
 
-	int _nBins = 7;
-	int syst=0;
-	//TString varExp="Bpt";
-	//TString varExp="By";
-	TString varExp="nMult";
 	
 
 
@@ -23,6 +18,7 @@ void yield_ratio(){
 	auto TG1 = (TGraphAsymmErrors *) tl1->At(0);
   	auto TG2 = (TGraphAsymmErrors *) tl2->At(0);
 	
+	const int _nBins = (TG1->GetN());
 	TCanvas* c=new TCanvas();
 	TLegend* leg_ratio=new TLegend(0.7,0.7,0.9,0.9);
 	TMultiGraph* m_ratio=new TMultiGraph();
