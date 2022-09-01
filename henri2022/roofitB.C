@@ -353,6 +353,8 @@ cout << endl << endl;
 
 	double chi2_vec_sig[signal.size()][_nBins];
 	double chi2_vec_back[background.size()][_nBins];
+	double chi2MC_vec_sig[signal.size()][_nBins];
+	double chi2MC_vec_back[background.size()][_nBins];
 
 	double labels_x;
 	if(tree == "ntphi"){labels_x = 0.7;}
@@ -448,12 +450,15 @@ if(doubly==0) {if(varExp == "Bpt"){
 		h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 		hMC = new TH1D(Form("hMC%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 		if(isMC==1) skimtree_new->Project(Form("h%d",_count),"Bmass",Form("%s*(%s&&%s>%f&&%s<%f && BgenNew == 23333)*(1/%s)",weightmc.Data(),seldata.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightdata.Data()));
-		else        skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)",                seldata.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightdata.Data()));
+		else        skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightdata.Data()));
+		std::cout << "The content of dhMC&dh is (p1) " <<  std::endl;
+		dhMC->Print();
+		dh->Print();
 //		std::string project_str=Form("(%s&&%s>%f&&%s<%f)*(1/%s)",                seldata.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightdata.Data());
 //		std::cout<<"string= "<<project_str<<std::endl;
 //		std::string project_str_mc= Form("%s*(%s&&%s>%f&&%s<%f && BgenNew == 23333)*(1/%s)",weightmc.Data(),seldata.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightdata.Data());
 //		std::cout<<"string isMC= "<<project_str_mc<<std::endl;
-		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass",Form("%s*(%s&&%s>%f&&%s<%f)",weightmc.Data(),Form("%s&&BgenNew==23333",selmc.Data()),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
+		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass", Form("(%s&&%s>%f&&%s<%f && BgenNew == 23333)*%s", selmc.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightmc.Data()));
 		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
 		dhMC = new RooDataHist(Form("dhMC%d",_count),"",*mass,Import(*hMC));
 		std::cout<<"RooDataHist "<<std::endl;
@@ -477,7 +482,16 @@ if(doubly==0) {if(varExp == "Bpt"){
 		//RooFitResult* f_MC = fitMC("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit);
 		std::cout << "The count number is " << _count << std::endl;
 		RooAbsPdf* model = (RooAbsPdf*)w_pdf->pdf(Form("model%d%s",_count,""));
-		RooAbsPdf* modelMC = (RooAbsPdf*)w_pdf->pdf(Form("modelMC%d",_count));
+		RRooAbsPdf* modelMC = (RooAbsPdf*)w_pdf->pdf(Form("modelMC%d%s",_count,""));
+
+
+		//RooPlot* frameMC_chi2 = new RooPlot(Form("frameMC_chi2%d",_count),"",*mass,nbinsmasshisto,minhisto,maxhisto);
+		RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d",_count)), Bins(nbinsmasshisto));
+		dsMC_cut->plotOn(frameMC_chi2);
+		modelMC->plotOn(frameMC_chi2);
+		//frameMC_chi2->Draw();
+
+		std::cout << "chi^2 = " << frameMC_chi2->chiSquare() << std::endl;
 
 		//outputw->Print();
 		w_pdf->Print();
@@ -616,10 +630,7 @@ if(doubly==0) {if(varExp == "Bpt"){
 		std::cout << "chi square value is " << Mychi2 << endl;
 		chi2_vec[i] = Mychi2;
 
-		RooChi2Var chi2MC("chi2MC","chi2MC",*modelMC,*dhMC);
-		double Mychi2MC = chi2MC.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
-		std::cout << "chi square value(MC) is " << chi2MC.getVal() << endl;
-		chi2MC_vec[i] = Mychi2MC;
+		chi2MC_vec[i] = frameMC_chi2->chiSquare();
 
 //chi2 test 
  
@@ -672,6 +683,8 @@ if(doubly==0) {if(varExp == "Bpt"){
 		TLatex* tex_y11;
 		TLatex* tex_y2;
 		TLatex* chi_square;
+		TLatex* chi_back;
+		TLatex* chi_sig;
 
 	if(varExp=="Bpt"){
       //for the paper run these
@@ -852,30 +865,52 @@ if (varExp=="Bpt"){
 		if(syst==1){
 
 				for(int j=0; j<background.size(); j++){
-				RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, frameMC, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp,w_pdf);
-				/*back = new TString(background[j]);
-				RooAbsPdf* model_back = (RooAbsPdf*)w_pdf->pdf(Form("model%d%s",_count,back->Data()));
-				std::cout << "p1p1p1" << std::endl;
+				RooWorkspace* w_pdf_back = new RooWorkspace("w_pdf_back");
+				RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, frameMC, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp,w_pdf_back);
+				w_pdf_back->Print();
+				back = new TString(background[j]);
+				std::cout << "The name of the background is " << back->Data() << std::endl;
+				RooAbsPdf* model_back = (RooAbsPdf*)w_pdf_back->pdf(Form("model%d%s",_count,back->Data()));
+				RooAbsPdf* modelMC_back = (RooAbsPdf*)w_pdf_back->pdf(Form("modelMC%d%s",_count,back->Data()));
+			//	std::cout << "p1p1p1" << std::endl;
 				model_back->Print();
-				std::cout << "p2p2p2" << std::endl;
+				//std::cout << "p2p2p2" << std::endl;
 				RooChi2Var chi2_back("chi2_back","chi2_back",*model_back,*dh);
-				std::cout << "p3p3p3" << std::endl;
+				//std::cout << "p3p3p3" << std::endl;
+				RooPlot* frameMC_back = mass->frame(Title(Form("frameMC_back%d%s",_count,back->Data())), Bins(nbinsmasshisto));
+				dsMC_cut->plotOn(frameMC_back);
+				modelMC_back->plotOn(frameMC_back);
 				double Mychi2_back = chi2_back.getVal()/(nbinsmasshisto - f_back->floatParsFinal().getSize()); //normalised chi square
 				std::cout << "chi square value is " << Mychi2_back << " (" << background[j] << ")"<< endl;
-				chi2_vec_back[j][i] = Mychi2_back;*/
+				chi2_vec_back[j][i] = Mychi2_back;
+				chi2MC_vec_back[j][i] = frameMC_back->chiSquare();
 
 	
 				texB->Draw();
 				//chi_square->Draw();
 				if (varExp=="Bpt"){
 					tex_pt->Draw();
+					chi_back=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2_back));
 					if(_ptBins[i] >= 10){tex_y11->Draw();}
 					else if(_ptBins[i+1]==50){
 							tex_y->Draw();
 							tex_y2->Draw();}
 					else{tex_y1->Draw();}
-				} else if (varExp=="By"){tex_y->Draw();}
-					else if (varExp=="nMult"){tex_nMult->Draw();}
+				} else if (varExp=="By"){
+					tex_y->Draw();
+					chi_back=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2_back));
+				}			
+					else if (varExp=="nMult"){
+						tex_nMult->Draw();
+						chi_back=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2_back));
+					}
+
+				chi_back->SetNDC();
+				chi_back->SetTextFont(42);
+				chi_back->SetTextSize(0.045);
+				chi_back->SetLineWidth(2);
+
+				chi_back->Draw();
 				CMS_lumi(c,19011,0);
 				c->Update();
 				
@@ -892,25 +927,47 @@ if (varExp=="Bpt"){
 			general_err.push_back(max_back);
 
 			for(int j=0; j<signal.size(); j++){
-				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, frameMC, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp,w_pdf);
-			/*	RooAbsPdf* model_sig = (RooAbsPdf*)w_pdf->pdf(Form("model%d%s",_count,signal[j].c_str()));
+				RooWorkspace* w_pdf_sig = new RooWorkspace("w_pdf_sig");
+				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, frameMC, _ptBins[i], _ptBins[i+1], isMC, npfit,varExp,w_pdf_sig);
+				sig = new TString(signal[j]);
+				RooAbsPdf* model_sig = (RooAbsPdf*)w_pdf_sig->pdf(Form("model%d%s",_count,sig->Data()));
+				RooAbsPdf* modelMC_sig = (RooAbsPdf*)w_pdf_sig->pdf(Form("modelMC%d%s",_count,sig->Data()));
 				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);
+				RooPlot* frameMC_sig = mass->frame(Title(Form("frameMC_sig%d%s",_count,sig->Data())), Bins(nbinsmasshisto));
+				dsMC_cut->plotOn(frameMC_sig);
+				modelMC_sig->plotOn(frameMC_sig);
 				double Mychi2_sig = chi2_sig.getVal()/(nbinsmasshisto - f_signal->floatParsFinal().getSize()); //normalised chi square
 				std::cout << "chi square value is " << Mychi2_sig << " (" << signal[j] << ")"<< endl;
-				chi2_vec_sig[j][i] = Mychi2_sig;*/
+				chi2_vec_sig[j][i] = Mychi2_sig;
+				chi2MC_vec_sig[j][i] = frameMC_sig->chiSquare();
 
 
 				texB->Draw();
 				//chi_square->Draw();
 				if (varExp=="Bpt"){
 					tex_pt->Draw();
-					if(_ptBins[i] >= 10){tex_y11->Draw();}
+					chi_sig=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2_sig));
+					if(_ptBins[i] >= 10){
+						tex_y11->Draw();
 					else if(_ptBins[i+1]==50){
 							tex_y->Draw();
 							tex_y2->Draw();}
 					else{tex_y1->Draw();}
-				} else if (varExp=="By"){tex_y->Draw();}
-					else if (varExp=="nMult"){tex_nMult->Draw();}
+				} else if (varExp=="By"){
+					tex_y->Draw();
+					chi_sig=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2_sig));
+				}
+					else if (varExp=="nMult"){tex_nMult->Draw();
+						chi_sig=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2_sig));
+
+					}
+
+				chi_sig->SetNDC();
+				chi_sig->SetTextFont(42);
+				chi_sig->SetTextSize(0.045);
+				chi_sig->SetLineWidth(2);
+
+				chi_sig->Draw();
 
 				CMS_lumi(c,19011,0);
 				c->Update();
@@ -1325,14 +1382,20 @@ if(syst==1){
 
 //chi2 plot part starts
 	 double chi2_max = 0;
-	 double chi2_min = 100000;
+	 double chi2_min = 10;
 	for(int i = 0; i < _nBins; i++){
 		if(chi2_vec[i] > chi2_max){
 		chi2_max = chi2_vec[i];
-	}
-	if(chi2_vec[i] < chi2_min){
-		chi2_min = chi2_vec[i];
-	}
+		}
+		else if(chi2MC_vec[i] > chi2_max){
+			chi2_max = chi2MC_vec[i];
+		}
+		if(chi2_vec[i] < chi2_min){
+			chi2_min = chi2_vec[i];
+		}
+		else if(chi2MC_vec[i] < chi2_min){
+			chi2_min = chi2MC_vec[i];
+		}
 }
 TCanvas c_chi2;
 TMultiGraph* mg_chi2 = new TMultiGraph();
@@ -1380,5 +1443,134 @@ leg_chi2->Draw();
 const char* pathc_chi2 =Form("./results/Graphs/chi2_%s_%s.png",tree.Data(),varExp.Data()); 
 c_chi2.SaveAs(pathc_chi2);
 
+if(syst==1){
+	for(int j=0; j<background.size(); j++){
+
+	double chi2_max_back = 0;
+	double chi2_min_back = 10;
+	for(int i = 0; i < _nBins; i++){
+		if(chi2_vec_back[j][i] > chi2_max_back){
+			chi2_max_back = chi2_vec_back[j][i];
+		}else if(chi2MC_vec_back[j][i] > chi2_max_back){
+			chi2_max_back = chi2MC_vec_back[j][i];
+		}
+		if(chi2_vec_back[j][i] < chi2_min_back){
+			chi2_min_back = chi2_vec_back[j][i];
+		}else if(chi2MC_vec_back[j][i] < chi2_min_back){
+			chi2_min_back = chi2MC_vec_back[j][i];
+		}
+	}
+
+TCanvas c_chi2_back;
+TMultiGraph* mg_chi2_back = new TMultiGraph();
+TLegend *leg_chi2_back = new TLegend(0.7,0.7,0.9,0.9);
+
+TGraphAsymmErrors* gr_chi2_back = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec_back[j],hori_av_low,hori_av_high,nullptr,nullptr);
+gr_chi2_back->SetLineColor(1); 
+TGraphAsymmErrors* grMC_chi2_back = new TGraphAsymmErrors(_nBins,var_mean_av,chi2MC_vec_back[j],hori_av_low,hori_av_high,nullptr,nullptr);
+grMC_chi2_back->SetLineColor(2); 
+
+
+if(varExp == "By"){
+ mg_chi2_back->GetXaxis()->SetTitle("Rapidity (y)");
+ mg_chi2_back->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_back->GetXaxis()->SetLimits(-2.4 ,2.4);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "Bpt"){
+ mg_chi2_back->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
+ mg_chi2_back->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ if (tree == "ntKp"){ mg_chi2_back->GetXaxis()->SetLimits(0 ,80); }
+ if (tree == "ntphi"){ mg_chi2_back->GetXaxis()->SetLimits(0 ,60); }
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "nMult"){
+ mg_chi2_back->GetXaxis()->SetTitle("Multiplicity (Mult)");
+ mg_chi2_back->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_back->GetXaxis()->SetLimits(0, 110);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+mg_chi2_back->GetYaxis()->SetRangeUser(chi2_min_back*0.6, chi2_max_back*1.4);
+mg_chi2_back->Add(gr_chi2_back);
+mg_chi2_back->Add(grMC_chi2_back);
+mg_chi2_back->Draw("ap");
+
+leg_chi2_back->AddEntry(gr_chi2_back, "Data", "e");
+leg_chi2_back->AddEntry(grMC_chi2_back, "Monte Carlo", "e");
+leg_chi2_back->SetBorderSize(0);
+leg_chi2_back->SetFillStyle(0);
+leg_chi2_back->SetTextSize(0);
+leg_chi2_back->Draw();
+
+
+const char* pathc_chi2_back =Form("./results/Graphs/chi2_%s_%s_%s.png",tree.Data(),varExp.Data(),background[j].c_str()); 
+c_chi2_back.SaveAs(pathc_chi2_back);
+
+	}
+
+	for(int j=0; j<signal.size(); j++){
+
+	double chi2_max_sig = 0;
+	double chi2_min_sig = 10;
+	for(int i = 0; i < _nBins; i++){
+		if(chi2_vec_sig[j][i] > chi2_max_sig){
+			chi2_max_sig = chi2_vec_sig[j][i];
+		}else if(chi2MC_vec_sig[j][i] > chi2_max_sig){
+			chi2_max_sig = chi2MC_vec_sig[j][i];
+		}
+		if(chi2_vec_sig[j][i] < chi2_min_sig){
+			chi2_min_sig = chi2_vec_sig[j][i];
+		}else if(chi2MC_vec_sig[j][i] < chi2_min_sig){
+			chi2_min_sig = chi2MC_vec_sig[j][i];
+		}
+	}
+
+TCanvas c_chi2_sig;
+TMultiGraph* mg_chi2_sig = new TMultiGraph();
+TLegend *leg_chi2_sig = new TLegend(0.7,0.7,0.9,0.9);
+
+TGraphAsymmErrors* gr_chi2_sig = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec_sig[j],hori_av_low,hori_av_high,nullptr,nullptr);
+gr_chi2_sig->SetLineColor(1); 
+TGraphAsymmErrors* grMC_chi2_sig = new TGraphAsymmErrors(_nBins,var_mean_av,chi2MC_vec_sig[j],hori_av_low,hori_av_high,nullptr,nullptr);
+grMC_chi2_sig->SetLineColor(2); 
+
+
+if(varExp == "By"){
+ mg_chi2_sig->GetXaxis()->SetTitle("Rapidity (y)");
+ mg_chi2_sig->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_sig->GetXaxis()->SetLimits(-2.4 ,2.4);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "Bpt"){
+ mg_chi2_sig->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
+ mg_chi2_sig->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ if (tree == "ntKp"){ mg_chi2_sig->GetXaxis()->SetLimits(0 ,80); }
+ if (tree == "ntphi"){ mg_chi2_sig->GetXaxis()->SetLimits(0 ,60); }
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "nMult"){
+ mg_chi2_sig->GetXaxis()->SetTitle("Multiplicity (Mult)");
+ mg_chi2_sig->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_sig->GetXaxis()->SetLimits(0, 110);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+mg_chi2_sig->GetYaxis()->SetRangeUser(chi2_min_sig*0.6, chi2_max_sig*1.4);
+mg_chi2_sig->Add(gr_chi2_sig);
+mg_chi2_sig->Add(grMC_chi2_sig);
+mg_chi2_sig->Draw("ap");
+
+leg_chi2_sig->AddEntry(gr_chi2_sig, "Data", "e");
+leg_chi2_sig->AddEntry(grMC_chi2_sig, "Monte Carlo", "e");
+leg_chi2_sig->SetBorderSize(0);
+leg_chi2_sig->SetFillStyle(0);
+leg_chi2_sig->SetTextSize(0);
+leg_chi2_sig->Draw();
+
+
+const char* pathc_chi2_sig =Form("./results/Graphs/chi2_%s_%s_%s.png",tree.Data(),varExp.Data(),signal[j].c_str()); 
+c_chi2_sig.SaveAs(pathc_chi2_sig);
+
+	}
+}	
 //chi2 plot part ends
 }
