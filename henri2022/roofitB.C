@@ -1163,20 +1163,28 @@ if(syst==1){
 	}
 }
 	 gSystem->mkdir("./results/Graphs",true); 
+	 
+	 TFile *ratio_f= new TFile(Form("./results/%s_%s_ratio.root",tree.Data(),varExp.Data()),"recreate");
+	 ratio_f->cd();
+	 
 	 TCanvas c_diff;
 	 TMultiGraph* mg = new TMultiGraph();
 	 TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
 
 	 TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,hori_av_low,hori_av_high,yield_vec_err_low,yield_vec_err_high);
 	 gr_staterr->SetLineColor(1); 
-	 mg->Add(gr_staterr);
+	 mg->Add(gr_staterr,"stat_ratio");
 
    if(syst==1){
 		TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,nullptr,nullptr,yield_vec_systerr_low,yield_vec_systerr_high);
 		gr_systerr->SetLineColor(2);
-		mg->Add(gr_systerr);
+		mg->Add(gr_systerr,"syst");
 		leg_d->AddEntry(gr_systerr, "Systematic Uncertainty", "e");
 	}
+	
+
+
+
 	 if(varExp == "By"){
 		 mg->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg->GetYaxis()->SetTitle("dN_{S}/dy");
@@ -1196,6 +1204,7 @@ if(syst==1){
 	 }
 
 	 //mg->Add(gr_staterr);
+	 mg->Write("TG");
 	 mg->Draw("ap");
 	 //mg->SetTitle("Differential Signal Yield");  
 	 
@@ -1209,6 +1218,8 @@ if(syst==1){
 
 	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.png",tree.Data(),varExp.Data()); 
 	 c_diff.SaveAs(pathc);
+
+	 ratio_f->Close();
 // Differential plot part ends
 
 //chi2 test starts
