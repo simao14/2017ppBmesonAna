@@ -10,7 +10,7 @@
 #include "TGraphErrors.h"
 
 
-int syst=0;
+int syst=1;
 
 TTree* makeTTree(TTree* intree, TString treeTitle) 
 {
@@ -482,7 +482,7 @@ if(doubly==0) {if(varExp == "Bpt"){
 		//RooFitResult* f_MC = fitMC("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, dhMC, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit);
 		std::cout << "The count number is " << _count << std::endl;
 		RooAbsPdf* model = (RooAbsPdf*)w_pdf->pdf(Form("model%d%s",_count,""));
-		RRooAbsPdf* modelMC = (RooAbsPdf*)w_pdf->pdf(Form("modelMC%d%s",_count,""));
+		RooAbsPdf* modelMC = (RooAbsPdf*)w_pdf->pdf(Form("modelMC%d%s",_count,""));
 
 
 		//RooPlot* frameMC_chi2 = new RooPlot(Form("frameMC_chi2%d",_count),"",*mass,nbinsmasshisto,minhisto,maxhisto);
@@ -694,7 +694,7 @@ if(doubly==0) {if(varExp == "Bpt"){
         tex_y2 = new TLatex(0.7,0.28,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
         tex_y1 = new TLatex(0.7,0.34,"1.5 < |y| < 2.4");
         tex_y11 =new TLatex(0.7,0.34,"|y| < 2.4");
-        chi_square=new TLatex(0.7,0.29,Form("#chi^{2} value : %.2f",Mychi2));
+        chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
         tex_pt = new TLatex(0.7,0.8,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
@@ -702,15 +702,15 @@ if(doubly==0) {if(varExp == "Bpt"){
         tex_y2 = new TLatex(0.7,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
         tex_y1 = new TLatex(0.7,0.74,"1.5 < |y| < 2.4");
         tex_y11 =new TLatex(0.7,0.74,"|y| < 2.4");
-        chi_square=new TLatex(0.7,0.69,Form("#chi^{2} value : %.1f",Mychi2));
+        chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.1f",Mychi2));
       }
 		}
 
 if(varExp=="By"){
       //for the paper run these
       if (drawLegend) {    
-        tex_y = new TLatex(labels_x,0.4,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
-        chi_square=new TLatex(labels_x,0.35,Form("#chi^{2} value : %.2f",Mychi2));
+        tex_y = new TLatex(labels_x,0.8,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
+        chi_square=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
         tex_y = new TLatex(labels_x,0.8,Form("%.1f < y < %.1f ",_ptBins[i],_ptBins[i+1]));
@@ -720,8 +720,8 @@ if(varExp=="By"){
 if(varExp=="nMult"){ 
 	//for the paper run these
       if (drawLegend) {
-      	tex_nMult = new TLatex(labels_x,0.4,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
-      	chi_square=new TLatex(labels_x,0.35,Form("#chi^{2} value : %.2f",Mychi2));
+      	tex_nMult = new TLatex(labels_x,0.8,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+      	chi_square=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
         tex_nMult = new TLatex(labels_x,0.8,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
@@ -948,7 +948,7 @@ if (varExp=="Bpt"){
 					tex_pt->Draw();
 					chi_sig=new TLatex(labels_x,0.75,Form("#chi^{2} value : %.2f",Mychi2_sig));
 					if(_ptBins[i] >= 10){
-						tex_y11->Draw();
+						tex_y11->Draw();}
 					else if(_ptBins[i+1]==50){
 							tex_y->Draw();
 							tex_y2->Draw();}
@@ -1427,7 +1427,7 @@ if(varExp == "nMult"){
  mg_chi2->GetXaxis()->SetLimits(0, 110);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
-mg_chi2->GetYaxis()->SetRangeUser(chi2_min*0.6, chi2_max*1.4);
+mg_chi2->GetYaxis()->SetRangeUser(0.0, chi2_max*1.4);
 mg_chi2->Add(gr_chi2);
 mg_chi2->Add(grMC_chi2);
 mg_chi2->Draw("ap");
@@ -1490,7 +1490,7 @@ if(varExp == "nMult"){
  mg_chi2_back->GetXaxis()->SetLimits(0, 110);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
-mg_chi2_back->GetYaxis()->SetRangeUser(chi2_min_back*0.6, chi2_max_back*1.4);
+mg_chi2_back->GetYaxis()->SetRangeUser(0.0, chi2_max_back*1.4);
 mg_chi2_back->Add(gr_chi2_back);
 mg_chi2_back->Add(grMC_chi2_back);
 mg_chi2_back->Draw("ap");
@@ -1554,7 +1554,7 @@ if(varExp == "nMult"){
  mg_chi2_sig->GetXaxis()->SetLimits(0, 110);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
-mg_chi2_sig->GetYaxis()->SetRangeUser(chi2_min_sig*0.6, chi2_max_sig*1.4);
+mg_chi2_sig->GetYaxis()->SetRangeUser(0.0, chi2_max_sig*1.4);
 mg_chi2_sig->Add(gr_chi2_sig);
 mg_chi2_sig->Add(grMC_chi2_sig);
 mg_chi2_sig->Draw("ap");
@@ -1571,6 +1571,128 @@ const char* pathc_chi2_sig =Form("./results/Graphs/chi2_%s_%s_%s.png",tree.Data(
 c_chi2_sig.SaveAs(pathc_chi2_sig);
 
 	}
+	//chi2 plot part (signal) ends
+
+
+//chi2 plot part (sigsum) starts
+
+TCanvas c_chi2_sigsum;
+TMultiGraph* mg_chi2_sigsum = new TMultiGraph();
+TLegend *leg_chi2_sigsum = new TLegend(0.7,0.7,0.9,0.9);
+
+	double chi2_max_sigsum = 0;
+	double chi2_min_sigsum = 10;
+
+	for(int j=0; j<signal.size(); j++){
+	for(int i = 0; i < _nBins; i++){
+		if(chi2_vec_sig[j][i] > chi2_max_sigsum){
+			chi2_max_sigsum = chi2_vec_sig[j][i];
+		}
+
+		if(chi2_vec_sig[j][i] < chi2_min_sigsum){
+			chi2_min_sigsum = chi2_vec_sig[j][i];
+		}
+	}
+
+TGraphAsymmErrors* gr_chi2_sigsum = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec_sig[j],hori_av_low,hori_av_high,nullptr,nullptr);
+gr_chi2_sigsum->SetLineColor(j+2);
+mg_chi2_sigsum->Add(gr_chi2_sigsum);
+leg_chi2_sigsum->AddEntry(gr_chi2_sigsum, Form("%s",signal[j].c_str()), "e");
+
+	}
+
+if(varExp == "By"){
+ mg_chi2_sigsum->GetXaxis()->SetTitle("Rapidity (y)");
+ mg_chi2_sigsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_sigsum->GetXaxis()->SetLimits(-2.4 ,2.4);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "Bpt"){
+ mg_chi2_sigsum->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
+ mg_chi2_sigsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ if (tree == "ntKp"){ mg_chi2_sigsum->GetXaxis()->SetLimits(0 ,80); }
+ if (tree == "ntphi"){ mg_chi2_sigsum->GetXaxis()->SetLimits(0 ,60); }
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "nMult"){
+ mg_chi2_sigsum->GetXaxis()->SetTitle("Multiplicity (Mult)");
+ mg_chi2_sigsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_sigsum->GetXaxis()->SetLimits(0, 110);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+mg_chi2_sigsum->Add(gr_chi2);
+mg_chi2_sigsum->GetYaxis()->SetRangeUser(0.0, chi2_max_sigsum*1.4);
+mg_chi2_sigsum->Draw("ap");
+
+leg_chi2_sigsum->AddEntry(gr_chi2, "Nominal", "e");
+leg_chi2_sigsum->SetFillStyle(0);
+leg_chi2_sigsum->SetTextSize(0);
+leg_chi2_sigsum->Draw();
+
+
+const char* pathc_chi2_sigsum =Form("./results/Graphs/chi2_%s_%s_signal_summary.png",tree.Data(),varExp.Data()); 
+c_chi2_sigsum.SaveAs(pathc_chi2_sigsum);
+
+//chi2 plot part (sigsum) ends
+
+//chi2 plot part (backsum) starts
+TCanvas c_chi2_backsum;
+TMultiGraph* mg_chi2_backsum = new TMultiGraph();
+TLegend *leg_chi2_backsum = new TLegend(0.7,0.7,0.9,0.9);
+
+	double chi2_max_backsum = 0;
+	double chi2_min_backsum = 10;
+
+	for(int j=0; j<background.size(); j++){
+	for(int i = 0; i < _nBins; i++){
+		if(chi2_vec_back[j][i] > chi2_max_backsum){
+			chi2_max_backsum = chi2_vec_back[j][i];
+		}
+
+		if(chi2_vec_back[j][i] < chi2_min_backsum){
+			chi2_min_backsum = chi2_vec_back[j][i];
+		}
+	}
+
+TGraphAsymmErrors* gr_chi2_backsum = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec_back[j],hori_av_low,hori_av_high,nullptr,nullptr);
+gr_chi2_backsum->SetLineColor(j+2);
+mg_chi2_backsum->Add(gr_chi2_backsum);
+leg_chi2_backsum->AddEntry(gr_chi2_backsum, Form("%s",background[j].c_str()), "e");
+
+	}
+
+if(varExp == "By"){
+ mg_chi2_backsum->GetXaxis()->SetTitle("Rapidity (y)");
+ mg_chi2_backsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_backsum->GetXaxis()->SetLimits(-2.4 ,2.4);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "Bpt"){
+ mg_chi2_backsum->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
+ mg_chi2_backsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ if (tree == "ntKp"){ mg_chi2_backsum->GetXaxis()->SetLimits(0 ,80); }
+ if (tree == "ntphi"){ mg_chi2_backsum->GetXaxis()->SetLimits(0 ,60); }
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+if(varExp == "nMult"){
+ mg_chi2_backsum->GetXaxis()->SetTitle("Multiplicity (Mult)");
+ mg_chi2_backsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
+ mg_chi2_backsum->GetXaxis()->SetLimits(0, 110);
+ //mg_par->GetYaxis()->SetLimits(0, 2.0);
+}
+mg_chi2_backsum->Add(gr_chi2);
+mg_chi2_backsum->GetYaxis()->SetRangeUser(0.0, chi2_max_backsum*1.4);
+mg_chi2_backsum->Draw("ap");
+
+leg_chi2_backsum->AddEntry(gr_chi2, "Nominal", "e");
+leg_chi2_backsum->SetFillStyle(0);
+leg_chi2_backsum->SetTextSize(0);
+leg_chi2_backsum->Draw();
+
+
+const char* pathc_chi2_backsum =Form("./results/Graphs/chi2_%s_%s_background_summary.png",tree.Data(),varExp.Data()); 
+c_chi2_backsum.SaveAs(pathc_chi2_backsum);
+//chi2 plot part (backsum) ends
 }	
 //chi2 plot part ends
 }
