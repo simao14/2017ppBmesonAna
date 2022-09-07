@@ -1117,14 +1117,16 @@ if(syst==1){
 			for (int i=0;i<_nBins;i++){zero[i]=0.;}
 
 		TCanvas* c_back= new TCanvas();
-		TLegend* legback=new TLegend(0.7,0.7,0.9,0.9);
+		TLegend* legback=new TLegend(0.7,0.8,0.9,0.9);
 		TMultiGraph* m_back= new TMultiGraph();
 		const char* backlabel[3]={"Linear", "2nd Poly", "mass range"};
+		double y_max_back=0;
 		for (int j=0;j<(int)(background.size());j++){
 			Double_t x[_nBins],y[_nBins];
 			for (int i=0;i<_nBins;i++){
 				x[i]=(_ptBins[i]+_ptBins[i+1])/2;
 				y[i]=	back_syst_rel_values[i][j];
+				if (y[i]>y_max_back){y_max_back=y[i];}
 		}
 			TGraph *g_back= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 			g_back->SetMarkerColor(j+1);
@@ -1134,19 +1136,24 @@ if(syst==1){
 	}
 		m_back->GetXaxis()->SetTitle(varExp.Data());
 		m_back->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
+		m_back->GetYaxis()->SetRangeUser(0, y_max_back*1.5);
 		m_back->Draw("A*");
+		legback->SetFillStyle(0);
+    legback->SetTextSize(0);
 		legback->Draw();
 		c_back->SaveAs(Form("./results/tables/background_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	TCanvas* c_sig= new TCanvas();
-	TLegend* legsig=new TLegend(0.7,0.7,0.9,0.9);
+	TLegend* legsig=new TLegend(0.7,0.8,0.9,0.9);
 	TMultiGraph* m_sig= new TMultiGraph();
 	const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian","2 CB"};
+	double y_max_sig=0;
 	for (int j=0;j<(int)(signal.size());j++){
 		Double_t x[_nBins],y[_nBins];
 		for (int i=0;i<_nBins;i++){
 			x[i]=(_ptBins[i]+_ptBins[i+1])/2;
 			y[i]=	sig_syst_rel_values[i][j];
+			if (y[i]>y_max_sig){y_max_sig=y[i];}
 	}
 		TGraph *g_sig= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 		g_sig->SetMarkerColor(j+1);
@@ -1156,21 +1163,26 @@ if(syst==1){
 }
 	m_sig->GetXaxis()->SetTitle(varExp.Data());
 	m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
+	m_sig->GetYaxis()->SetRangeUser(0, y_max_sig*1.5);
 	m_sig->Draw("A*");
+	legsig->SetFillStyle(0);
+  legsig->SetTextSize(0);
 	legsig->Draw();
 	c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
 	
 
 	TCanvas* c_gen= new TCanvas();
-	TLegend* legen=new TLegend(0.7,0.7,0.9,0.9);
+	TLegend* legen=new TLegend(0.7,0.8,0.9,0.9);
 	TMultiGraph* m_gen= new TMultiGraph();
 	const char* genlabel[3]={"Background", "Signal", "Total"};
+	double y_max_gen=0;
 	for (int j=0;j<(int)(labels_general.size());j++){
 		Double_t x[_nBins],y[_nBins];
 		for (int i=0;i<_nBins;i++){
 			x[i]=(_ptBins[i]+_ptBins[i+1])/2;
 			y[i]=	general_syst[i][j];
+			if (y[i]>y_max_gen){y_max_gen=y[i];}
 	}
 		TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 		g_gen->SetMarkerColor(j+1);
@@ -1193,11 +1205,14 @@ if(syst==1){
 
 	m_gen->GetXaxis()->SetTitle(varExp.Data());
 	m_gen->GetYaxis()->SetTitle("Total Uncertainty(%)");
+	m_gen->GetYaxis()->SetRangeUser(0, y_max_gen*1.5);
 	m_gen->Draw("A*");
+	legen->SetFillStyle(0);
+  legen->SetTextSize(0);
 	legen->Draw();
 	c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
 
-	}
+}
 
 
 
@@ -1226,7 +1241,7 @@ if(syst==1){
 	 
 	 TCanvas c_diff;
 	 TMultiGraph* mg = new TMultiGraph();
-	 TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
+	 TLegend *leg_d = new TLegend(0.7,0.8,0.9,0.9);
 
 	 TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,hori_av_low,hori_av_high,yield_vec_err_low,yield_vec_err_high);
 	 gr_staterr->SetLineColor(1); 
@@ -1286,7 +1301,7 @@ if(syst==1){
 //chi2 test ends
 
 // Parameters vs variables part starts
-	 double scale_max = 0;
+	double scale_max = 0;
 	for(int i = 0; i < _nBins; i++){
 		if(scale_vec[i] > scale_max){
 		scale_max = scale_vec[i];
@@ -1399,7 +1414,7 @@ if(syst==1){
 }
 TCanvas c_chi2;
 TMultiGraph* mg_chi2 = new TMultiGraph();
-TLegend *leg_chi2 = new TLegend(0.7,0.7,0.9,0.9);
+TLegend *leg_chi2 = new TLegend(0.7,0.8,0.9,0.9);
 
 TGraphAsymmErrors* gr_chi2 = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec,hori_av_low,hori_av_high,nullptr,nullptr);
 gr_chi2->SetLineColor(1); 
@@ -1463,7 +1478,7 @@ if(syst==1){
 
 TCanvas c_chi2_back;
 TMultiGraph* mg_chi2_back = new TMultiGraph();
-TLegend *leg_chi2_back = new TLegend(0.7,0.7,0.9,0.9);
+TLegend *leg_chi2_back = new TLegend(0.7,0.8,0.9,0.9);
 
 TGraphAsymmErrors* gr_chi2_back = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec_back[j],hori_av_low,hori_av_high,nullptr,nullptr);
 gr_chi2_back->SetLineColor(1); 
@@ -1527,7 +1542,7 @@ c_chi2_back.SaveAs(pathc_chi2_back);
 
 TCanvas c_chi2_sig;
 TMultiGraph* mg_chi2_sig = new TMultiGraph();
-TLegend *leg_chi2_sig = new TLegend(0.7,0.7,0.9,0.9);
+TLegend *leg_chi2_sig = new TLegend(0.7,0.8,0.9,0.9);
 
 TGraphAsymmErrors* gr_chi2_sig = new TGraphAsymmErrors(_nBins,var_mean_av,chi2_vec_sig[j],hori_av_low,hori_av_high,nullptr,nullptr);
 gr_chi2_sig->SetLineColor(1); 
@@ -1578,7 +1593,7 @@ c_chi2_sig.SaveAs(pathc_chi2_sig);
 
 TCanvas c_chi2_sigsum;
 TMultiGraph* mg_chi2_sigsum = new TMultiGraph();
-TLegend *leg_chi2_sigsum = new TLegend(0.7,0.7,0.9,0.9);
+TLegend *leg_chi2_sigsum = new TLegend(0.7,0.8,0.9,0.9);
 
 	double chi2_max_sigsum = 0;
 	double chi2_min_sigsum = 10;
@@ -1638,7 +1653,7 @@ c_chi2_sigsum.SaveAs(pathc_chi2_sigsum);
 //chi2 plot part (backsum) starts
 TCanvas c_chi2_backsum;
 TMultiGraph* mg_chi2_backsum = new TMultiGraph();
-TLegend *leg_chi2_backsum = new TLegend(0.7,0.7,0.9,0.9);
+TLegend *leg_chi2_backsum = new TLegend(0.7,0.8,0.9,0.9);
 
 	double chi2_max_backsum = 0;
 	double chi2_min_backsum = 10;

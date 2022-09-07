@@ -156,7 +156,7 @@ if(tree=="ntphi"){
 
 }else if (tree=="ntKp"){
 	if (varExp=="Bpt"){
-		//(mean,sigma1,sigma2,sigma3,sigma4cb,sigma5cb,alpha,alpha1,n1,n2,sig1frac,sig2frac,scale)	
+		//(mean,sigma1,sigma2,sigma3,sigma4cb,sigma5cb,alpha,alpha1,n1,n2,sig1frac,sig2frac)	
 		double init2[13]={init_mean,0.05,0.03,0.01,0.0266,0.0266,4.,5.,100,100,0.2,0.7,1.0};
 		double lolimit2[13]={init_mean*0.9999,0.01,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001,0.8};
 		double hilimit2[13]={init_mean*1.00001,0.11,0.06,0.025,0.1,0.1,20,50,250,500,.999,.999,2.0};
@@ -169,7 +169,7 @@ if(tree=="ntphi"){
 		
 		double init2[13]={init_mean,0.05,0.03,0.01,0.0266,0.0266,15.,5.,100,100,0.2,0.7,1.0};
 		double lolimit2[13]={init_mean*0.9999,0.005,0.005,0.005,0.01,0.01,0,0,0,0,0.001,0.001,0.8};
-		double hilimit2[13]={init_mean*1.0001,0.15,0.06,0.025,0.05,0.05,30,50,300,500,.999,.999,2.0};
+		double hilimit2[13]={init_mean*1.0001,0.15,0.06,0.025,0.05,0.05,30,50,300,200,.999,.999,2.0};
 		for (int i=0;i<13;i++){
 			init[i]=init2[i];
 			lolimit[i]=lolimit2[i];
@@ -177,9 +177,9 @@ if(tree=="ntphi"){
 		}
 	}else if (varExp=="nMult"){
 		
-		double init2[13]={init_mean,0.05,0.03,0.01,0.0266,0.0266,15.,5.,100,100,0.2,0.7,1.0};
-		double lolimit2[13]={init_mean*0.9999,0.008,0.008,0.005,0.005,0.005,0,0,0,0,0.05,0.05,0.8};
-		double hilimit2[13]={init_mean*1.0001,0.06,0.06,0.025,0.07,0.07,30,50,300,500,0.95,0.95,2.0};
+		double init2[13]={init_mean,0.05,0.03,0.015,0.0266,0.0266,4.,1.,100,25,0.2,0.7,1.0};
+		double lolimit2[13]={init_mean*0.9999,0.008,0.005,0.005,0.005,0.005,0,0,0,0,0.05,0.05,0.8};
+		double hilimit2[13]={init_mean*1.0001,0.06,0.06,0.015,0.07,0.09,40,20,300,50,0.999,0.999,2.0};
 		for (int i=0;i<13;i++){
 			init[i]=init2[i];
 			lolimit[i]=lolimit2[i];
@@ -510,7 +510,7 @@ w_pdf->import(*model);
   double y_3=0.7;
   double labels_x_1;
 	if(tree == "ntphi"){labels_x_1 = 0.7;}
-	if(tree == "ntKp"){labels_x_1 = 0.3;}
+	if(tree == "ntKp"){labels_x_1 = 0.18;}
   if(drawLegend){model->paramOn(frame,Layout(1, 1, 1), Format("NEU",AutoPrecision(3)));}   //this one does not print parameters
   else{model->paramOn(frame,Layout(labels_x_1, x_2, y_3), Format("NEU",AutoPrecision(3)));}
 

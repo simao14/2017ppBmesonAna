@@ -24,14 +24,17 @@ void yield_ratio(int syst,TString varExp){
 	TMultiGraph* m_ratio=new TMultiGraph();
 	double x[_nBins];
 	double y[_nBins];
-	double ex[_nBins];
 	double ey[_nBins];
+	double ex_l[_nBins];
+	double ex_h[_nBins];
+
 	
 	for (int i=0;i<_nBins;i++){
 		y[i]=TG1->GetY()[i]/TG2->GetY()[i];
 		x[i]=(TG1->GetX()[i]+TG2->GetX()[i])/2;
 		ey[i]=abs(y[i])*sqrt(pow(TG1->GetErrorY(i)/TG1->GetY()[i],2)+pow(TG2->GetErrorY(i)/TG2->GetY()[i],2));
-		ex[i]=sqrt(pow(TG1->GetErrorX(i),2)+pow(TG2->GetErrorX(i),2))/2;
+		ex_l[i]=sqrt(pow(TG1->GetErrorXlow(i),2)+pow(TG2->GetErrorXlow(i),2))/2;
+		ex_h[i]=sqrt(pow(TG1->GetErrorXhigh(i),2)+pow(TG2->GetErrorXhigh(i),2))/2;
 	}
 
 	if (syst==1){
@@ -39,23 +42,25 @@ void yield_ratio(int syst,TString varExp){
   		auto TG2_syst = (TGraphAsymmErrors *) tl2->At(1);
   		double x_syst[_nBins];
 		double y_syst[_nBins];
-		double ex_syst[_nBins];
 		double ey_syst[_nBins];
+		double ex_l_syst[_nBins];
+		double ex_h_syst[_nBins];
 	
 		for (int i=0;i<_nBins;i++){
 			y_syst[i]=TG1_syst->GetY()[i]/TG2_syst->GetY()[i];
 			x_syst[i]=(TG1_syst->GetX()[i]+TG2_syst->GetX()[i])/2;
 			ey_syst[i]=abs(y_syst[i])*sqrt(pow(TG1_syst->GetErrorY(i)/TG1_syst->GetY()[i],2)+pow(TG2_syst->GetErrorY(i)/TG2_syst->GetY()[i],2));
-			ex_syst[i]=sqrt(pow(TG1_syst->GetErrorX(i),2)+pow(TG2_syst->GetErrorX(i),2))/2;
+			ex_l_syst[i]=sqrt(pow(TG1_syst->GetErrorXlow(i),2)+pow(TG2_syst->GetErrorXlow(i),2))/2;
+			ex_h_syst[i]=sqrt(pow(TG1_syst->GetErrorXhigh(i),2)+pow(TG2_syst->GetErrorXhigh(i),2))/2;
 	}		
-		TGraph *g_ratio_syst= new TGraphErrors (_nBins,x_syst,y_syst,ex_syst,ey_syst);
+		TGraphAsymmErrors *g_ratio_syst= new TGraphAsymmErrors (_nBins,x_syst,y_syst,ex_l_syst,ex_h_syst,ey_syst,ey_syst);
 		g_ratio_syst->SetLineColor(2);
 		m_ratio->Add(g_ratio_syst);
 		leg_ratio->AddEntry(g_ratio_syst,"Systematic Uncertainty", "e");
 	}
 
 	
-	TGraph *g_ratio= new TGraphErrors (_nBins,x,y,ex,ey);
+	TGraphAsymmErrors *g_ratio= new TGraphAsymmErrors (_nBins,x,y,ex_l,ex_h,ey,ey);
 	g_ratio->SetMarkerColor(1);
 	g_ratio->SetMarkerStyle(21);
 	
