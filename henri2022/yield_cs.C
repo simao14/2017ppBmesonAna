@@ -54,7 +54,7 @@ void yield_cs(int syst,TString varExp,TString tree){
 	double ex_l[_nBins];
 	double ex_h[_nBins];
 	
-	for (int i=0;i<_nBins-1;i++){
+	for (int i=0;i<_nBins;i++){
 		y[i]=TG_diff->GetY()[i] * (TH_eff->GetBinContent(i+1) / (B*lumi));
 		x[i]=TG_diff->GetX()[i];
 		ey[i]=abs(y[i]) * (TG_diff->GetErrorY(i)/TG_diff->GetY()[i]);
@@ -70,7 +70,7 @@ void yield_cs(int syst,TString varExp,TString tree){
 		double ex_syst_h[_nBins];
 		double ey_syst[_nBins];
 	
-		for (int i=0;i<_nBins-1;i++){
+		for (int i=0;i<_nBins;i++){
 			y_syst[i]=TG_syst->GetY()[i] * (TH_eff->GetBinContent(i+1) / (B*lumi));
 			x_syst[i]=TG_syst->GetX()[i];
 			ey_syst[i]=abs(y_syst[i])*sqrt(pow(TG_syst->GetErrorY(i)/TG_syst->GetY()[i],2)+pow(TH_eff->GetBinError(i+1)/TH_eff->GetBinContent(i+1),2) + pow(B_err/B,2) + pow(0.019,2));

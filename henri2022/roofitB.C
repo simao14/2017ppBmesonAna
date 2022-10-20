@@ -697,11 +697,11 @@ if(doubly==0) {if(varExp == "Bpt"){
         chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.2f",Mychi2));
       } else {
         //fr the AN run these
-        tex_pt = new TLatex(0.7,0.8,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_y = new TLatex(0.7,0.74,"p_{T} > 10 GeV/c : |y| < 2.4");
-        tex_y2 = new TLatex(0.7,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
-        tex_y1 = new TLatex(0.7,0.74,"1.5 < |y| < 2.4");
-        tex_y11 =new TLatex(0.7,0.74,"|y| < 2.4");
+        tex_pt = new TLatex(0.7,0.85,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_y = new TLatex(0.7,0.8,"p_{T} > 10 GeV/c : |y| < 2.4");
+        tex_y2 = new TLatex(0.3,0.8,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+        tex_y1 = new TLatex(0.7,0.8,"1.5 < |y| < 2.4");
+        tex_y11 =new TLatex(0.7,0.8,"|y| < 2.4");
         chi_square=new TLatex(0.7,0.75,Form("#chi^{2} value : %.1f",Mychi2));
       }
 		}

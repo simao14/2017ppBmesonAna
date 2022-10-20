@@ -1,7 +1,26 @@
 #include <cmath> 
 
-void yield_ratio(int syst,TString varExp){
+void yield_cs_ratio(int syst,TString varExp){
 
+	
+	double B_bp = 0.00102;
+	double B_bp_err = 0.000019;
+
+	double B_bs = 0.00079;
+	double B_bs_err = 0.00007;
+	
+	TString* var;
+	if(varExp == "By"){var = new TString("Y");}
+	if(varExp == "nMult"){var = new TString("Mult");}
+	if(varExp == "Bpt"){var = new TString("PT");}
+
+
+	TFile *eff_bs = new TFile(Form("./FinalFiles/BsPPCorrYield%s.root",var->Data()),"read");
+	TFile *eff_bp = new TFile(Form("./FinalFiles/BPPPCorrYield%s.root",var->Data()),"read");
+
+	TH1D *TH_eff_bs = (TH1D*) eff_bs->Get("hInvEff");
+
+	TH1D *TH_eff_bp = (TH1D*) eff_bp->Get("hInvEff");
 
 	TFile *y1= new TFile(Form("./results/ntphi_%s_ratio.root",varExp.Data()),"read");
 	TFile *y2= new TFile(Form("./results/ntKp_%s_ratio.root",varExp.Data()),"read");
@@ -28,7 +47,7 @@ void yield_ratio(int syst,TString varExp){
 
 	
 	for (int i=0;i<_nBins;i++){
-		y[i]=TG1->GetY()[i]/TG2->GetY()[i];
+		y[i]=TG1->GetY()[i]/TG2->GetY()[i]*(TH_eff_bs->GetBinContent(i+1)*B_bp/TH_eff_bp->GetBinContent(i+1)/B_bs);
 		x[i]=(TG1->GetX()[i]+TG2->GetX()[i])/2;
 		ey[i]=abs(y[i])*sqrt(pow(TG1->GetErrorY(i)/TG1->GetY()[i],2)+pow(TG2->GetErrorY(i)/TG2->GetY()[i],2));
 		ex_l[i]=sqrt(pow(TG1->GetErrorXlow(i),2)+pow(TG2->GetErrorXlow(i),2))/2;
@@ -45,9 +64,9 @@ void yield_ratio(int syst,TString varExp){
 		double ex_h_syst[_nBins];
 	
 		for (int i=0;i<_nBins;i++){
-			y_syst[i]=TG1_syst->GetY()[i]/TG2_syst->GetY()[i];
+			y_syst[i]=TG1_syst->GetY()[i]/TG2_syst->GetY()[i]*(TH_eff_bs->GetBinContent(i+1)*B_bp/TH_eff_bp->GetBinContent(i+1)/B_bs);
 			x_syst[i]=(TG1_syst->GetX()[i]+TG2_syst->GetX()[i])/2;
-			ey_syst[i]=abs(y_syst[i])*sqrt(pow(TG1_syst->GetErrorY(i)/TG1_syst->GetY()[i],2)+pow(TG2_syst->GetErrorY(i)/TG2_syst->GetY()[i],2));
+			ey_syst[i]=abs(y_syst[i])*sqrt(pow(TG1_syst->GetErrorY(i)/TG1_syst->GetY()[i],2)+pow(TG2_syst->GetErrorY(i)/TG2_syst->GetY()[i],2)+pow(TH_eff_bs->GetBinError(i+1)/TH_eff_bs->GetBinContent(i+1),2)+pow(TH_eff_bp->GetBinError(i+1)/TH_eff_bp->GetBinContent(i+1),2)+pow(B_bs_err/B_bs,2)+pow(B_bp_err/B_bp,2));
 			ex_l_syst[i]=sqrt(pow(TG1_syst->GetErrorXlow(i),2)+pow(TG2_syst->GetErrorXlow(i),2))/2;
 			ex_h_syst[i]=sqrt(pow(TG1_syst->GetErrorXhigh(i),2)+pow(TG2_syst->GetErrorXhigh(i),2))/2;
 	}		
@@ -63,7 +82,7 @@ void yield_ratio(int syst,TString varExp){
 	g_ratio->SetMarkerStyle(21);
 	
 	m_ratio->Add(g_ratio);
-	m_ratio->GetYaxis()->SetTitle("B_{s}/B^{+} yield ratio");
+	m_ratio->GetYaxis()->SetTitle("B_{s}/B^{+} cross section ratio");
 	
 	double yield_max=0;
 	for(int i = 0; i < _nBins; i++){
@@ -96,6 +115,6 @@ void yield_ratio(int syst,TString varExp){
 	leg_ratio->SetFillStyle(0);
 	leg_ratio->SetTextSize(0);
 	leg_ratio->Draw();
-	c->SaveAs(Form("./results/%s_ratioplot.png",varExp.Data())); 
+	c->SaveAs(Form("./results/%s_cs_ratioplot.png",varExp.Data())); 
 	return;
 }
