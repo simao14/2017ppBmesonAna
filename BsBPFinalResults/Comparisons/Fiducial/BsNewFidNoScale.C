@@ -521,7 +521,6 @@ void BsNewFidNoScale(){
 	cRatio->cd();
 
 
-
 	MyPad3->cd();
 
 
@@ -534,9 +533,7 @@ void BsNewFidNoScale(){
 	HisEmpty4->GetYaxis()->SetTitleOffset(1.2);
 	HisEmpty4->Draw();
 
-
 	TGraphAsymmErrors *Ratio3 = new TGraphAsymmErrors(NBins, BsXsecPPX, Ratio3Y ,BsXSecPPXErrDown, BsXSecPPXErrUp,Ratio3YErr,Ratio3YErr);
-
 	TGraphAsymmErrors *Ratio4 = new TGraphAsymmErrors(NBins, BsXsecPPX, Ratio4Y,BsXSecPPXErrDown, BsXSecPPXErrUp,Ratio4YErr,Ratio4YErr);
 
 	Ratio3->SetLineColor(kBlue+2);
@@ -592,6 +589,7 @@ void BsNewFidNoScale(){
   std::vector<int> ptbins = {7, 10, 15, 20, 50};
   std::vector<float> abscissae = {8.75, 12.5, 17.5, 35.0};
 
+gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,true );
   string outFile = "../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/corryield_pt_Bs_New.txt";
   ofstream out;
   out.open(outFile);

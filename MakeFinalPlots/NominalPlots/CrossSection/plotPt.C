@@ -140,8 +140,6 @@ void plotPt(bool bSavePlots       = 1,
 						bs_low_yStatL[nEntry] = x[4]*x[2];
 						bs_low_yStatH[nEntry] =  x[3]*x[2];
 						//bin width
-				
-
 						bs_low_xErrL[nEntry] = x[9]-x[0];
 						bs_low_xErrH[nEntry] = x[1]-x[9];
 						//systm. uncert

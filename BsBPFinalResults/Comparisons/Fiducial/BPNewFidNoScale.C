@@ -561,6 +561,7 @@ void BPNewFidNoScale(){
   std::vector<int> ptbins = {5, 7, 10, 15, 20, 30, 50, 60};
   std::vector<float> abscissae = {6.0, 8.75, 12.5, 17.5, 25, 40, 55};
 
+gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,true );
   string outFile = "../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/corryield_pt_Bp_New.txt";
   ofstream out;
   out.open(outFile);

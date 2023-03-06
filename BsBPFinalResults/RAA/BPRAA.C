@@ -161,19 +161,15 @@ void BPRAA(){
 	float BPTotalSystUpRatio[NBins];
 
 	for(int i = 0; i < NBins; i++){
-		BPTotalSystDownRatio[i] =
-      TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst[i], 2) +
+		BPTotalSystDownRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst[i], 2) +
                   TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
                   TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystDown[i], 2)) / 100;
 		BPTotalSystUpRatio[i] = BPTotalSystDownRatio[i];
 	}
 
 	for(int i = 0; i < NBins; i++){
-
 		BPXSecPPYSystUp[i] = BPXsecPPY[i] * ( BPTotalSystUpRatio[i]);
-		BPXSecPPYSystDown[i] = BPXsecPPY[i] * (BPTotalSystDownRatio[i] );
-		//cout << "i = " << i << "     BPXSecPPYSystDown[i] = " << BPXSecPPYSystDown[i] << "  BPXSecPPYErrDown[i] =  " << BPXSecPPYErrDown[i] << endl;
-		
+		BPXSecPPYSystDown[i] = BPXsecPPY[i] * (BPTotalSystDownRatio[i] );		
 	}
 
 	//PbPb
@@ -184,10 +180,8 @@ void BPRAA(){
 	float BPXSecPbPbYSystDown[NBins];
 
 	for(int i = 0; i < NBins; i++){
-
 		BPXSecPbPbYSystDown[i] = (BPXSecPbPbYSystDownRatio[i]) * BPXsecPbPbY[i];
 		BPXSecPbPbYSystUp[i] = (BPXSecPbPbYSystUpRatio[i]) * BPXsecPbPbY[i];
-
 	}
 
 	TH2D * HisEmpty = new TH2D("HisEmpty","",100,5,60,100,100.0,2000000);
@@ -322,20 +316,16 @@ void BPRAA(){
 	HisEmptyRAA->GetXaxis()->CenterTitle();
 	HisEmptyRAA->GetYaxis()->CenterTitle();
 	HisEmptyRAA->GetYaxis()->SetTitleOffset(1.8);
-	
+	HisEmptyRAA->GetXaxis()->SetTitleOffset(1.3);
+
 	HisEmptyRAA->Draw();
 
 	
 
 
 	float BPRAAY[NBins];
-//	float BPRAAX[NBins] = {8.73,12.4,17.2,27.3};
 	float BPRAAX[NBins] = {6,8.73,12.4,17.2,25,40,55};
-
-
-//	float BPRAAXErrUp[NBins] = {1.27,2.6,2.8,22.7};
-//	float BPRAAXErrDown[NBins] = {1.73,2.4,2.2,7.3};
-
+	
 	float BPRAAXErrUp[NBins] = {1,1.27,2.6,2.8,5,10,5};
 	float BPRAAXErrDown[NBins] = {1,1.23,2.4,2.2,5,10,5};
 
@@ -496,6 +486,8 @@ void BPRAA(){
   std::vector<int> ptbins = {5, 7, 10, 15, 20, 30, 50, 60};
   std::vector<float> abscissae = {6.0, 8.5, 12.5, 17.5, 25, 40, 55};
 
+
+  gSystem->mkdir("../../MakeFinalPlots/NominalPlots/RAA/dataSource/" , true );
   string outFile = "../../MakeFinalPlots/NominalPlots/RAA/dataSource/RAA_pt_Bp_New.txt";
   ofstream out;
   out.open(outFile);

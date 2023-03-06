@@ -60,7 +60,6 @@ void plotPt(bool bSavePlots       = 1,
 		//set the style
 		setTDRStyle();
 
-
 		//samples:
 		const unsigned int nMes      = 2;
 		const char* inputFileType[2] = {"RAA_pt", "RAA_pt"};
@@ -88,14 +87,11 @@ void plotPt(bool bSavePlots       = 1,
 			getline(in,tmpstrg);//ignore first line/ the header
 
       cout << "start reading" << endl;
-			int nEntry=0;
-			// while(in >> x[0] >> x[1] >> x[2] >> x[3] >> x[4] >> x[5] >> x[6] >> x[7] >> x[8] >> x[9])
-			// {
-			for (auto iline = 0; iline < nlines[ib]; ++iline)
-			{
-        in >> x[0] >> x[1] >> x[2] >> x[3] >> x[4] >> x[5] >> x[6] >> x[7] >> x[8] >> x[9];
-				glbSystDown = x[8]*100;
-				glbSystUp   = x[7]*100;
+		int nEntry=0;
+		for (auto iline = 0; iline < nlines[ib]; ++iline){
+        	in >> x[0] >> x[1] >> x[2] >> x[3] >> x[4] >> x[5] >> x[6] >> x[7] >> x[8] >> x[9];
+			glbSystDown = x[8]*100;
+			glbSystUp   = x[7]*100;
 
         cout << x[0] << ", " << x[1] << ", " << x[2] << ", " << x[3] << ", " << x[4] << ", " << x[5] << ", " << x[6] << ", " << x[7] << ", " << x[8] << ", " << x[9] << endl;
 
@@ -109,8 +105,6 @@ void plotPt(bool bSavePlots       = 1,
 						bs_low_yStatL[nEntry] = x[4]*x[2];
 						bs_low_yStatH[nEntry] =  x[3]*x[2];
 						//bin width
-				
-
 						bs_low_xErrL[nEntry] = x[9]-x[0];
 						bs_low_xErrH[nEntry] = x[1]-x[9];
 						//systm. uncert
@@ -261,7 +255,6 @@ void plotPt(bool bSavePlots       = 1,
 				bs_high_xErrL, bs_high_xErrH,
 				bs_high_ySystL,bs_high_ySystH);
 
-
 		// Bp
 		TGraphAsymmErrors *pgBpl_syst_low    = new TGraphAsymmErrors(nBinsLowNew, binLowNew,  bpl_low,
 				bpl_low_xErrL, bpl_low_xErrH,
@@ -269,6 +262,8 @@ void plotPt(bool bSavePlots       = 1,
 		TGraphAsymmErrors *pgBpl_syst_high   = new TGraphAsymmErrors(nBinsHighNew,binHighNew, bpl_high,
 				bpl_high_xErrL,bpl_high_xErrH,
 				bpl_high_ySystL,bpl_high_ySystH);
+
+
 		// pgBs_syst_high->Draw("APL");
 		//==========================================
 		//------------------------------------------
@@ -323,26 +318,19 @@ void plotPt(bool bSavePlots       = 1,
 		pgBpl_lowWhite->SetMarkerStyle(markerHigh[1]);
 		pgBpl_low->SetMarkerStyle(markerLow[1]);
 		pgBpl_high->SetMarkerStyle(markerHigh[1]);
-			
-
 		pgRatio_low->SetMarkerStyle(markerRatio[0]);
 		pgRatio_lowWhite->SetMarkerStyle(markerRatio[1]);
-
 		pgRatio_high->SetMarkerStyle(markerRatio[1]);
 
 		// marker size
 		pgBs_low->SetMarkerSize(markerSizeLow[0]);
 		pgBs_lowWhite->SetMarkerSize(markerSizeLow[0]);
-		
 		pgBs_high->SetMarkerSize(markerSizeHigh[0]);
-
 		pgBpl_lowWhite->SetMarkerSize(markerSizeLow[1]*0.86);
 		pgBpl_low->SetMarkerSize(markerSizeLow[1]);
 		pgBpl_high->SetMarkerSize(markerSizeHigh[1]);
-
 		pgRatio_low->SetMarkerSize(markerSizeRatio[0]);
 		pgRatio_lowWhite->SetMarkerSize(markerSizeRatio[0]);
-		
 		pgRatio_high->SetMarkerSize(markerSizeRatio[1]);
 
 		// marker color
@@ -389,10 +377,8 @@ void plotPt(bool bSavePlots       = 1,
 		pgBs_syst_high->SetFillColorAlpha(kBlue-9,0.5);
 		pgBpl_syst_low->SetFillColorAlpha(kGreen-9,0.5);
 		pgBpl_syst_high->SetFillColorAlpha(kGreen-9,0.5);
-
 		pgRatio_syst_low->SetFillColorAlpha(colorRatio[0],0.2);
 		pgRatio_lowWhite->SetFillColor(kWhite);
-
 		pgRatio_syst_high->SetFillColorAlpha(colorRatio[1],0.2);
 
 		//Reference 
@@ -460,8 +446,6 @@ void plotPt(bool bSavePlots       = 1,
 		CAOTheory->SetMarkerColor(kGreen+1);
 		CAOTheory->SetLineColor(kGreen+1);
 
-
-
 		//-------------------------------------------
 		TF1 *f4 = new TF1("f4","1",5,60);
 		f4->SetLineWidth(1);
@@ -471,15 +455,13 @@ void plotPt(bool bSavePlots       = 1,
 		f4->GetXaxis()->SetTitle(xAxName[0]);
 		f4->GetXaxis()->CenterTitle(kTRUE);
 		f4->GetYaxis()->CenterTitle();
+		
 		if(whichPlot==1){
 			f4->GetYaxis()->SetTitleSize(0.06*0.83);
 			f4->GetXaxis()->SetTitleSize(0.06*0.83);
-		
 			f4->GetYaxis()->SetTitleOffset(1.40);
 			f4->GetXaxis()->SetTitleOffset(1.20);
-
-
-		}
+						}
 
 		if(whichPlot==0){
 			f4->GetYaxis()->SetTitleSize(0.06*0.80);
@@ -487,17 +469,12 @@ void plotPt(bool bSavePlots       = 1,
 			f4->GetXaxis()->SetTitleOffset(1.05);
 			f4->GetXaxis()->SetTitleSize(f4->GetXaxis()->GetTitleSize() * 0.77);
 			f4->GetXaxis()->SetTitleOffset(1.18);
-		
 			f4->GetXaxis()->SetTitleSize(0.06*0.83);  //Unify Textsize
 			f4->GetYaxis()->SetTitleSize(0.06*0.83);
 			f4->GetYaxis()->SetTitleOffset(1.40);
 			f4->GetXaxis()->SetTitleOffset(1.20);
-		
-
 			cout << "Offset = " << f4->GetYaxis()->GetTitleOffset() << endl;
-
-
-		}
+						}
 
 		f4->GetYaxis()->SetRangeUser(1e2,2e7);
 		//if(whichPlot==1) f4->GetYaxis()->SetRangeUser(0.0,1.8);
@@ -535,38 +512,26 @@ void plotPt(bool bSavePlots       = 1,
 		if(whichPlot==0)// x-section
 		{
 			//gPad->SetLogy();
-
-
 			pgBs_syst_high->SetLineWidth(1);
-
 			pgBs_syst_high->Draw("5same");
 			pgBs_syst_low->Draw("5same");	
-
 		//	pgBs_low->SetMarkerStyle(24);
 			
 			
 			pgBs_lowWhite->Draw("P");
-		
 			pgBs_low->Draw("P");
 			pgBs_high->Draw("P");
-
 			pgBpl_syst_low->Draw("5same");
 			pgBpl_syst_high->Draw("5same");
-			
 			pgBs_lowWhite->Draw("P");
-		
-			
 			pgBpl_lowWhite->Draw("P");
 			pgBpl_low->Draw("P");
-
 			pgBpl_high->Draw("P");
 			pgBpl_lowWhite->Draw("P");
-	
 			TLine * Unity = new TLine(5,1,60,1);
 			Unity->SetLineWidth(2);
 			Unity->SetLineStyle(2);
 			Unity->SetLineColor(1);
-		
 			Unity->Draw("SAME");
 
 		}
@@ -580,20 +545,15 @@ void plotPt(bool bSavePlots       = 1,
 
 			pgRatio_syst_low->SetLineColor(colorRatio[0]);
 			pgRatio_syst_high->SetLineColor(colorRatio[1]);
-
 			pgRatio_syst_low->Draw("5same");
 			pgRatio_low->Draw("P");
 			pgRatio_lowWhite->Draw("P");
-			
 			pgRatio_syst_high->Draw("5same");
 			pgRatio_high->Draw("P");
-
-
 		}
 
 		//supplemental info on plot:
 		if(whichPlot==0){
-
 
 			lat->SetTextFont(42);
 			lat->SetTextSize(ltxSetTextSize2 * 1.3);
@@ -602,15 +562,8 @@ void plotPt(bool bSavePlots       = 1,
 			//lat->DrawLatex(xsec_ltxText1_xStart,xsec_ltxText1_yStart,"Cent. 0-90%");
 			//lat->DrawLatex(xsec_ltxText1_xStart,xsec_ltxText1_yStart,"Centrality 0-90%"); //Expand Cent.
 			//lat->DrawLatex(xsec_ltxText1_xStart + 0.25,xsec_ltxText1_yStart,"Centrality 0-90%"); // Move Cent
-	//		lat->DrawLatex(xsec_ltxText1_xStart + 0.34,xsec_ltxText1_yStart - 0.22,"Centrality 0-90%"); // Move Cent
-
-			lat->SetTextFont(42);
-			lat->SetTextSize(ltxSetTextSize2 * 1.3);
-			lat->SetTextSize(ltxSetTextSize4); //Enlarge Labels
-		
+			//lat->DrawLatex(xsec_ltxText1_xStart + 0.34,xsec_ltxText1_yStart - 0.22,"Centrality 0-90%"); // Move Cent
 			cout << "ltxSetTextSize4 = " << ltxSetTextSize4 << endl;
-
-
 
 	//		lat->DrawLatex(xsec_ltxText1_xStart,xsec_ltxText1_yStart-0.65,Form("B_{s}^{0} global uncert.: #pm %.1f %%",glbSystUpBs));
 	//		lat->DrawLatex(xsec_ltxText1_xStart,xsec_ltxText1_yStart-0.70,Form("B^{+} global uncert.: #pm %.1f %%",glbSystUpBp));
@@ -647,7 +600,6 @@ void plotPt(bool bSavePlots       = 1,
 
 			lat->SetTextSize(0.05);
 			lat->SetTextSize(0.05 * ltxSetTextSize4/ltxSetTextSize2);  //Enlarge Labels
-			
 			lat->SetTextSize(0.048 * 1.15);  //Enlarge Labels
 		//	lat->SetTextSize(0.025);  //Enlarge Labels
 		

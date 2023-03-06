@@ -44,10 +44,6 @@ void BsRAA(){
 
 	gStyle->SetOptStat(0);
 
-	TCanvas * c = new TCanvas("c","c",600,600);
-	c->cd();
-	c->SetLeftMargin(0.16);
-
 	TString InfileBs = "../../Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root";
 	//TString InfileBs = "BsPPCorrYieldPT.root";
 
@@ -105,7 +101,7 @@ void BsRAA(){
 	TH1D * TnPSyst = (TH1D *) fError.Get("TnPSyst");
 	TH1D * BptSyst = (TH1D *) fError.Get("BptSyst");
 	TH1D * MCDataSyst = (TH1D *) fError.Get("MCDataSyst");
-  if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
+  	if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
 
   TString pdfErrorFile = "../../bs_pdf.root";
   TFile fPdfError(pdfErrorFile);
@@ -142,34 +138,28 @@ void BsRAA(){
 		BsTotalSystDownRatio[i] = TMath::Sqrt(TMath::Power(BsTrackingSyst[i], 2) + TMath::Power(BsMCDataSyst[i], 2) +
                                           TMath::Power(BsPDFSyst[i], 2) + TMath::Power(BsTrackSelSyst[i], 2) +
                                           TMath::Power(BsPtShapeSyst[i], 2) + TMath::Power(BsTnPSystDown[i], 2)) / 100;
+		BsTotalSystUpRatio[i] = BsTotalSystDownRatio[i];
 	}
-
 
 	for(int i = 0; i < NBins; i++){
 		BsXSecPPYSystUp[i] = BsXsecPPY[i] * BsTotalSystUpRatio[i];
 		BsXSecPPYSystDown[i] = BsXsecPPY[i] * BsTotalSystDownRatio[i];
-    std::cout << "i = " << i << "     BsXSecPPYSyst[i] = " <<
-      BsTotalSystUpRatio[i] << "%\n";
 	}
 
-
-
 	//PbPb
-
 	float BsXSecPbPbYSystUpPercent[NBins] = {0.4564,0.1482,0.1218,0.1647};
 	float BsXSecPbPbYSystDownPercent[NBins] = {0.4564,0.1454,0.1210,0.1640};
-
-
 	float BsXSecPbPbYSystUp[NBins];
 	float BsXSecPbPbYSystDown[NBins];
 
-
 	for(int i = 0; i < NBins; i++){
-
 		BsXSecPbPbYSystDown[i] = (BsXSecPbPbYSystDownPercent[i]) * BsXsecPbPbY[i];
 		BsXSecPbPbYSystUp[i] = (BsXSecPbPbYSystUpPercent[i]) * BsXsecPbPbY[i];
-
 	}
+
+	TCanvas * c = new TCanvas("c","c",600,600);
+	c->cd();
+	c->SetLeftMargin(0.16);
 
 	TH2D * HisEmpty = new TH2D("HisEmpty","",100,7,50,100,200.0,350000);
 	HisEmpty->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
@@ -377,20 +367,12 @@ void BsRAA(){
 	HisEmptyRAA->GetYaxis()->SetTitleOffset(1.8);
 	HisEmptyRAA->GetXaxis()->SetTitleOffset(1.3);
 	
-
-
-
-
-
-
+	HisEmptyRAA->Draw();
 
 	float BsRAAY[NBins];
 	float BsRAAX[NBins] = {8.73,12.4,17.2,27.3};
-
-
 	float BsRAAXErrUp[NBins] = {1.27,2.6,2.8,22.7};
 	float BsRAAXErrDown[NBins] = {1.73,2.4,2.2,7.3};
-
 	float BsRAAYErrUp[NBins];
 	float BsRAAYErrDown[NBins];
 
@@ -430,8 +412,6 @@ void BsRAA(){
 
 		BsRAAYErrUp[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYErrUpPercent[i] * BsXSecPbPbYErrUpPercent[i] + BsXSecPPYErrUpPercent[i] * BsXSecPPYErrUpPercent[i]);
 		BsRAAYErrDown[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYErrDownPercent[i] * BsXSecPbPbYErrDownPercent[i] + BsXSecPPYErrDownPercent[i] * BsXSecPPYErrDownPercent[i]);
-		
-
 		BsRAAYSystDown[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYSystDownPercent[i] * BsXSecPbPbYSystDownPercent[i] + BsTotalSystDownRatio[i] * BsTotalSystDownRatio[i]);
 		BsRAAYSystUp[i] = BsRAAY[i] * TMath::Sqrt(BsXSecPbPbYSystUpPercent[i] * BsXSecPbPbYSystUpPercent[i] + BsTotalSystUpRatio[i] * BsTotalSystUpRatio[i]);
 
@@ -445,54 +425,30 @@ void BsRAA(){
       "  BsRAAYErrDown[i] =   " << BsRAAYErrDownRatio[i] <<
       "   BsRAAYSystUp[i]  = "  << BsRAAYSystUpRatio[i]   <<
       "  BsRAAYSystDown[i] =   " << BsRAAYSystDownRatio[i] << endl;
-
-
 			
 	}
-
-
-
-	
-
-
-
-
 
 	TGraphAsymmErrors *BsRAAGraph = new TGraphAsymmErrors(NBins, BsRAAX, BsRAAY,BsRAAXErrDown, BsRAAXErrUp,BsRAAYErrDown,BsRAAYErrUp);
 
 	BsRAAGraph->SetName("BsRAAGraph");
 	TGraphAsymmErrors *BsRAAGraphSyst = new TGraphAsymmErrors(NBins, BsRAAX, BsRAAY,BsRAAXErrDown, BsRAAXErrUp,BsRAAYSystDown,BsRAAYSystUp);
-
-
-
 	TGraphAsymmErrors *BsRAAGraph2015 = new TGraphAsymmErrors(NBins2015, BsRAAX2015, BsRAAY2015,BsRAAXErrDown2015, BsRAAXErrUp2015,BsRAAYErrDown2015,BsRAAYErrUp2015);
 	TGraphAsymmErrors *BsRAAGraphSyst2015 = new TGraphAsymmErrors(NBins2015, BsRAAX2015, BsRAAY2015,BsRAAXErrDown2015, BsRAAXErrUp2015,BsRAAYSystDown2015,BsRAAYSystUp2015);
-
-
-
-
 
 	BsRAAGraph->SetLineColor(kRed+2);
 //	BsRAAGraph->SetFillColorAlpha(kRed+2,0.5);
 	BsRAAGraph->SetMarkerStyle(20);
 	BsRAAGraph->SetMarkerSize(1);
-
 	BsRAAGraph->SetMarkerColor(kRed+2);
-
 	BsRAAGraph2015->SetLineColor(kBlue+2);
 //	BsRAAGraph->SetFillColorAlpha(kRed+2,0.5);
 	BsRAAGraph2015->SetMarkerStyle(21);
 	BsRAAGraph2015->SetMarkerSize(1);
 	BsRAAGraph2015->SetMarkerColor(kBlue+2);
-
-
-
-
 	BsRAAGraphSyst->SetFillColorAlpha(kRed-9,0.5);
 	BsRAAGraphSyst->SetLineColor(kRed-9);
 	BsRAAGraphSyst2015->SetFillColorAlpha(kBlue-9,0.5);
 	BsRAAGraphSyst2015->SetLineColor(kBlue-9);
-
 
 	HisEmptyRAA->Draw();
 	BsRAAGraph->Draw("ep");
@@ -501,9 +457,7 @@ void BsRAA(){
 	c2->SaveAs("RAAPlots/Bs/BsRAA.png");
 	c2->SaveAs("RAAPlots/Bs/BsRAA.pdf");
 
-
 	HisEmptyRAA->Draw();
-
 	BsRAAGraph->Draw("ep");
 	BsRAAGraph2015->Draw("epSAME");
 	BsRAAGraph2015->Draw("epSAME");
@@ -545,6 +499,8 @@ void BsRAA(){
   // summary of errors (in ratio, not percent)
   std::vector<int> ptbins = {7, 10, 15, 20, 50};
   std::vector<float> abscissae = {8.5, 12.5, 17.5, 35.0};
+
+		gSystem->mkdir("../../MakeFinalPlots/NominalPlots/RAA/dataSource/" ,true );
 
   string outFile = "../../MakeFinalPlots/NominalPlots/RAA/dataSource/RAA_pt_Bs_New.txt";
   ofstream out;
