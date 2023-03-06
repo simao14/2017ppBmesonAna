@@ -44,8 +44,7 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 		}
 	} else if(varExp == "By"){
 		if(full == 1){_nBins = 1;}
-		else if(full == 0){ 
-			_nBins = nyBins_both;}
+		else if(full == 0){ _nBins = nyBins_both;}
 	}
 		else if(varExp == "nMult"){
 		if(full == 1){_nBins = 1;}

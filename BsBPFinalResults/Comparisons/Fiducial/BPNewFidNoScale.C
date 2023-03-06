@@ -12,25 +12,17 @@
 #include "TRandom.h"
 #include <iostream>
 #include <fstream>
-
 #include "TCanvas.h"
 #include "TF1.h"
 #include "TFile.h"
 #include "TGraphAsymmErrors.h"
 #include "TGraphErrors.h"
-
-#include "TH1.h"
 #include "TLatex.h"
 #include "TLegend.h"
 #include "TLegendEntry.h"
-#include "TMath.h"
-//#include "tnp_weight_lowptPbPb.h"
-
-
 
 //#include "his.h"
 using namespace std;
-
 using std::cout;
 using std::endl;
 
