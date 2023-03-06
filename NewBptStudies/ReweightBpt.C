@@ -50,12 +50,12 @@ void ReweightBpt(int Opt){
 	TCut GenCut;
 	if(Opt == 0){
 		ParName = "BP";
-		inputMC =  "../../Unskimmed/NewOfficialMC/BPMC.root";
+		inputMC =  "/data3/tasheng/presel/output/Bp_MC_BDTs_nom_tnp.root";
 		// inputFONLL = "FONLLFine/BPFONLLFine.root";
 		GenCut = "TMath::Abs(Gy)<2.4 && TMath::Abs(GpdgId)==521 && GisSignal==1 && GcollisionId==0";
 	} else if(Opt == 1){
 		ParName = "Bs";
-		inputMC =  "../../Unskimmed/NewOfficialMC/BsMC.root";
+		inputMC =  "/data3/tasheng/presel/output/Bs_MC_BDTs_nom_tnp.root";
 		// inputFONLL = "FONLLFine/BPFONLLFine.root";
 		GenCut = "(TMath::Abs(Gy)<2.4&&TMath::Abs(GpdgId)==531&&GisSignal>0)";
 	}
