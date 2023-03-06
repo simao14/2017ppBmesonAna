@@ -60,30 +60,12 @@ bsEff () {
     popd
 }
 
-nominal () {
-    # central value
-    cd BsBPFinalResults/BsBPRatio
-    root -b -l -q PlotBsBPRatio.C'(1)'
-    cd ../RAA
-    root -b -l -q BPRAA.C
-    root -b -l -q BsRAA.C
-    cd ..
-
-    cd Comparisons/Fiducial
-    root -b -l -q Bmeson_Comparisons.C'(0)'
-    root -b -l -q Bmeson_Comparisons.C'(1)'
-    root -b -l -q BPNewFidNoScale.C
-    root -b -l -q BsNewFidNoScale.C
-    cd ../../..
-}
-
 syst () {
     pushd 2DMapSyst
     root -b -l -q CalEffSystBP.C # >> outfiles/bpsyst2d.root
     root -b -l -q CalEffSystBs.C
     root -b -l -q PlotEffSyst2D.C'(0)'
     root -b -l -q PlotEffSyst2D.C'(1)'
-    # need to pass the above to cross calculation
     popd
 }
 
@@ -109,17 +91,24 @@ comp () {
     # get pdf variation errors
     python master.py
     # Get pre-selection error
-    python comppre.py
-    # comparison plot again
-    pushd BsBPFinalResults/Comparisons/Fiducial/
-    # << BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
+    python comppre.py                     #NOT RUNNING
+
+    cd BsBPFinalResults/BsBPRatio/
+    root -b -l -q PlotBsBPRatio.C'(1)'
+    cd ..
+
+    cd Comparisons/Fiducial/
     root -b -l -q Bmeson_Comparisons.C'(0)'
     root -b -l -q Bmeson_Comparisons.C'(1)'
-    python syst_table.py
-    cd ../../RAA/
-    root -b -l -q BPRAA.C
-    root -b -l -q BsRAA.C
-    popd
+    root -b -l -q BPNewFidNoScale.C                       #Unify w priotiy
+    root -b -l -q BsNewFidNoScale.C                       #Unify w priotiy (Bs results are visualy ugly)
+    python syst_table.py                  #NOT RUNNING
+    cd ../..
+
+    cd RAA/
+    root -b -l -q BPRAA.C                                 #UNIFY
+    root -b -l -q BsRAA.C                                 #UNIFY
+    cd ../..                                            
 }
 
 paperPlots () {
@@ -134,6 +123,7 @@ paperPlots () {
 #UNCOMMENT ACORDINGLY
 #(Run by THIS ORDER!)
 
+#makeTnP
 bptshape
 
 yield
@@ -145,8 +135,6 @@ wait
 
 #syst
 #wait
-
-#nominal
 
 # bpStat&
 # bsStat&
