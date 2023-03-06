@@ -45,12 +45,11 @@ TString inputFONLL = "FONLLFine/FONLL_rapidity.root";
 
 void ReweightBpt(int Opt){
 
-
 	TString inputMC;
 	TCut GenCut;
 	if(Opt == 0){
 		ParName = "BP";
-		inputMC =  "/data3/tasheng/presel/output/Bp_MC_BDTs_nom_tnp.root";
+		inputMC =  "/data3/tasheng/presel/output/BP_MC_BDTs_nom_tnp.root";
 		// inputFONLL = "FONLLFine/BPFONLLFine.root";
 		GenCut = "TMath::Abs(Gy)<2.4 && TMath::Abs(GpdgId)==521 && GisSignal==1 && GcollisionId==0";
 	} else if(Opt == 1){
@@ -70,7 +69,6 @@ void ReweightBpt(int Opt){
 	for(int i = 0; i < nBinsReweight + 1; i++){
 		ptBinsReweight[i] = BptMin + 0.25 * i;
 	}
-
 
 	TH1D * GptMC = new TH1D("GptMC","GptMC",nBinsReweight,ptBinsReweight);
 	GptMC->GetYaxis()->SetTitleOffset(1.1);
@@ -108,7 +106,6 @@ void reweightInY(TH1D* GptMC, TGraphAsymmErrors* gaeBplusReference, TCut weightp
 	c->Divide(3,1);
 
 	GptMC->Sumw2();
-
 	GptMC->GetXaxis()->SetTitle("Gen p_{T} (GeV)");
 	GptMC->GetYaxis()->SetTitle("PYTHIA, #entries ");
 	GptMC->SetTitle("");
@@ -145,9 +142,6 @@ void reweightInY(TH1D* GptMC, TGraphAsymmErrors* gaeBplusReference, TCut weightp
 		//GptFONLL->SetBinError(i+1,yReweightBptErr);
 	}
 
-
-
-
 	GptFONLL->GetYaxis()->SetTitleOffset(1.4);
 	GptFONLL->GetXaxis()->SetTitle(Form("%s p_{T} (GeV)",MethodLabel.Data()));
 	GptFONLL->GetYaxis()->SetTitle(Form("%s_pp, #entries ",MethodLabel.Data()));
@@ -160,7 +154,6 @@ void reweightInY(TH1D* GptMC, TGraphAsymmErrors* gaeBplusReference, TCut weightp
 	c->cd(2);
 	gPad->SetLogy();
 	GptFONLL->Draw("ep");
-
 
 	TH1D * BptRatio = (TH1D *) GptFONLL->Clone("BptRatio");
 	BptRatio->GetYaxis()->SetTitleOffset(1.3);
@@ -176,13 +169,9 @@ void reweightInY(TH1D* GptMC, TGraphAsymmErrors* gaeBplusReference, TCut weightp
 
 
 	// if(MethodLabel =="FONLL") f1 =  new TF1("f1"," [0]/x**[1] + [2] + [3] * x",
-	if(MethodLabel =="FONLL") f1 =  new TF1("f1"," [0]/x**[1] + [2] + [3] * TMath::Log(x)",
-                                          BptMin, BptMax);
-
+	if(MethodLabel =="FONLL") f1 =  new TF1("f1"," [0]/x**[1] + [2] + [3] * TMath::Log(x)", BptMin, BptMax);
 	if(MethodLabel =="NLO") f1 =  new TF1("f1"," ([0]-[1]*x)*TMath::Exp(-[2]*x) + [3] + [4] *x ",5,300);
-
 	if(MethodLabel == "DATAEXP") f1 =  new TF1("f1"," ([0]-[1]*x)*TMath::Exp(-[2]*x) + [3] + [4] *x ",5,300);
-
 
 	f1->SetParLimits(0,0,10000);
 	f1->SetParLimits(1,0,4);
@@ -213,7 +202,6 @@ void reweightInY(TH1D* GptMC, TGraphAsymmErrors* gaeBplusReference, TCut weightp
 	BptRatio->SetMarkerSize(1);
 	BptRatio->SetMinimum(0);
 	BptRatio->SetMaximum(2.5);
-
 	BptRatio->Draw("ep");
 
 	float Chi2 =  f1->GetChisquare();
@@ -281,7 +269,6 @@ void reweightInY(TH1D* GptMC, TGraphAsymmErrors* gaeBplusReference, TCut weightp
 	foutResults << "Paramater 1 Error = " << f1->GetParError(1) << endl;
 	foutResults << "Paramater 2 = " << f1->GetParameter(2) << endl;
 	foutResults << "Paramater 2 Error = " << f1->GetParError(2) << endl;
-
 	foutResults << "Paramater 3 = " << f1->GetParameter(3) << endl;
 	foutResults << "Paramater 3 Error = " << f1->GetParError(3) << endl;
 /*
