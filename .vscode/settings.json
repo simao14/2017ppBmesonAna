@@ -84,6 +84,7 @@
         "unordered_map": "cpp",
         "variant": "cpp",
         "algorithm": "cpp",
-        "Bmeson_Comparisons.C": "cpp"
+        "Bmeson_Comparisons.C": "cpp",
+        "ReweightBpt.C": "cpp"
     }
 }

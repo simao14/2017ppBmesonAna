@@ -63,6 +63,24 @@ float BPXSecPbPbXErrDown[nptBinsPbPb] = {1.23,2.4,2.2,7.3};
 
 float BPXSecPbPbYErrUpRatio[nptBinsPbPb] =   {0.159, 0.041, 0.0654, 0.0691};
 float BPXSecPbPbYErrDownRatio[nptBinsPbPb] = {0.145, 0.0795, 0.065, 0.0526};
-
 float BPXSecPbPbYSystUpRatio[nptBinsPbPb]   = {0.1404, 0.1714, 0.0775, 0.0715};
 float BPXSecPbPbYSystDownRatio[nptBinsPbPb] = {0.1359, 0.1705, 0.0761, 0.0698};
+
+
+
+
+
+
+
+
+
+    //TO BE USED IN Bmesons_Comparison.C (THESE ARE LEADLEAD INFO)
+
+	 vector<float> vect_BPXsecPbPbY = {4.82132e+06/11.1,311668,270167,64384.4,208537/11.1,28700.6/11.1,7000.73/11.1};
+	 vector<float> vect_BPXsecPbPbX = {6,8.73,12.4,17.2,25,40,55};
+	 vector<float> vect_BPXSecPbPbXErrUp = {1,1.27,2.6,2.8,5,10,5};
+	 vector<float> vect_BPXSecPbPbXErrDown = {1,1.23,2.4,2.2,5,10,5};
+	 vector<float> vect_BPXSecPbPbYErrUpRatio = {0.278198,0.159,0.041,0.0654,0.0690334,0.104543,0.24575};
+	 vector<float> vect_BPXSecPbPbYErrDownRatio = {0.278198,0.145,0.0795,0.065,0.0690334,0.104543,0.24575};
+	 vector<float> vect_BPXSecPbPbYSystUpRatio = {0.3577,0.1404,0.1714,0.0775,0.0858,0.0715,0.1253};
+	 vector<float> vect_BPXSecPbPbYSystDownRatio = {0.3210,0.1359,0.1705,0.0761,0.0843,0.0699,0.1220};

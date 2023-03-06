@@ -125,14 +125,6 @@ if (meson_n == 0){
 	float BPXSecPbPbYSystUp[NBins] ;
 	float BPXSecPbPbYSystDown[NBins] ;
 if(meson_n == 0){
-	 vector<float> vect_BPXsecPbPbY = {4.82132e+06/11.1,311668,270167,64384.4,208537/11.1,28700.6/11.1,7000.73/11.1};
-	 vector<float> vect_BPXsecPbPbX = {6,8.73,12.4,17.2,25,40,55};
-	 vector<float> vect_BPXSecPbPbXErrUp = {1,1.27,2.6,2.8,5,10,5};
-	 vector<float> vect_BPXSecPbPbXErrDown = {1,1.23,2.4,2.2,5,10,5};
-	 vector<float> vect_BPXSecPbPbYErrUpRatio = {0.278198,0.159,0.041,0.0654,0.0690334,0.104543,0.24575};
-	 vector<float> vect_BPXSecPbPbYErrDownRatio = {0.278198,0.145,0.0795,0.065,0.0690334,0.104543,0.24575};
-	 vector<float> vect_BPXSecPbPbYSystUpRatio = {0.3577,0.1404,0.1714,0.0775,0.0858,0.0715,0.1253};
-	 vector<float> vect_BPXSecPbPbYSystDownRatio = {0.3210,0.1359,0.1705,0.0761,0.0843,0.0699,0.1220};
 	for( int c=0; c <NBins; c++){ 
 	 BPXsecPbPbY[c]= vect_BPXsecPbPbY[c] ;
 	 BPXsecPbPbX[c]= vect_BPXsecPbPbX[c];
@@ -426,7 +418,7 @@ if(meson_n == 0){
 	BPPPCrossGraph2DScaledSyst->SetLineColor(kOrange+1);
 
     TFile * finFONLL ;
-	if(meson_n == 0){ finFONLL = new TFile("FONLLs/forTzuAn/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
+	if(meson_n == 0){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
 	else{ finFONLL = new TFile("FONLLs/BsFONLL.root");}
 	finFONLL->cd();
 	TGraphAsymmErrors *BPFONLL = (TGraphAsymmErrors*) finFONLL->Get("gaeSigmaBplus");
@@ -435,16 +427,7 @@ if(meson_n == 0){
 	BPFONLL->SetMarkerSize(1);
 	BPFONLL->SetMarkerColor(kRed+2);
 	BPFONLL->Draw("epSAME");
-	/*//TFile * finFONLL2 = new TFile("FONLLs/BPFONLLFid.root");
-	TFile * finFONLL2 = new TFile("FONLLs/forTzuAn/fonllOutput_pp_Bplus_5p03TeV_yFid.root");
-	finFONLL2->cd();
-	TGraphAsymmErrors *BPFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
-	BPFONLL2->SetLineColor(kRed+2);
-	BPFONLL2->SetMarkerStyle(20);
-	BPFONLL2->SetMarkerSize(1);
-	BPFONLL2->SetMarkerColor(kRed+2);
-	// BPFONLL2->Draw("epSAME"); */
-
+	
 	BPPPCrossGraph2015->Draw("epSAME");
 	BPPPCrossGraph2DScaledSyst->Draw("5SAME");
 	BPPPCrossGraph2015Syst->Draw("5same");	

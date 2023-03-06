@@ -232,7 +232,6 @@ void plotPt(bool bSavePlots       = 1,
 			cout<<"@@@@@@@@@@@ Finished meson "<<mesonName[ib]<<endl;
 			if(bDoDebug){
 				if(ib==0) cout<<"Element_low = "<< binLow[0] <<"\t bs_low[0]= " << bs_low[0] << "\t statUncertL = "<<bs_low_yStatL[0]<<endl;
-
 				if(ib==1)
 				{
 					for(int i=0; i<3; i++){
@@ -243,45 +242,21 @@ void plotPt(bool bSavePlots       = 1,
 			in.close();//close input file
 
 		}//for each meson,ib
-//		bs_low_xErrH[0] = 1.0;
-//		bs_low_xErrL[1] = 1.73;
-		
-//		bs_high_xErrH[4] = 5.0;
-
 
 		//----------------------------------------------------------------
 		// gr = new TGraphAsymmErrors(n,x,y,exl,exh,eyl,eyh);
 		// Bs
-		TGraphAsymmErrors *pgBs_low = new TGraphAsymmErrors(nBinsLow, binLow, bs_low,
-				bs_low_xErrL, bs_low_xErrH,
-				bs_low_yStatL,bs_low_yStatH);
-		TGraphAsymmErrors *pgBs_high= new TGraphAsymmErrors(nBinsHigh,binHigh,bs_high,
-				bs_high_xErrL, bs_high_xErrH,
-				bs_high_yStatL,bs_high_yStatH);
-		TGraphAsymmErrors *pgBs_lowWhite = new TGraphAsymmErrors(nBinsLow, binLow, bs_low,
-				bs_low_xErrL, bs_low_xErrH,
-				bs_low_yStatL,bs_low_yStatH);   //AddWhite//
-		
-
+		TGraphAsymmErrors *pgBs_low = new TGraphAsymmErrors(nBinsLow, binLow, bs_low, bs_low_xErrL, bs_low_xErrH, bs_low_yStatL,bs_low_yStatH);
+		TGraphAsymmErrors *pgBs_high= new TGraphAsymmErrors(nBinsHigh,binHigh,bs_high, bs_high_xErrL, bs_high_xErrH, bs_high_yStatL,bs_high_yStatH);
+		TGraphAsymmErrors *pgBs_lowWhite = new TGraphAsymmErrors(nBinsLow, binLow, bs_low, bs_low_xErrL, bs_low_xErrH, bs_low_yStatL,bs_low_yStatH);   //AddWhite//
 		// Bplus
-		TGraphAsymmErrors *pgBpl_low = new TGraphAsymmErrors(nBinsLowNew, binLowNew, bpl_low,
-				bpl_low_xErrL, bpl_low_xErrH,
-				bpl_low_yStatL,bpl_low_yStatH);
-		
-		TGraphAsymmErrors *pgBpl_lowWhite = new TGraphAsymmErrors(nBinsLowNew, binLowNew, bpl_low,
-				bpl_low_xErrL, bpl_low_xErrH,
-				bpl_low_yStatL,bpl_low_yStatH);
-		
-		TGraphAsymmErrors *pgBpl_high= new TGraphAsymmErrors(nBinsHighNew,binHighNew,bpl_high,
-				bpl_high_xErrL, bpl_high_xErrH,
-				bpl_high_yStatL,bpl_high_yStatH);
+		TGraphAsymmErrors *pgBpl_low = new TGraphAsymmErrors(nBinsLowNew, binLowNew, bpl_low, bpl_low_xErrL, bpl_low_xErrH, bpl_low_yStatL,bpl_low_yStatH);
+		TGraphAsymmErrors *pgBpl_lowWhite = new TGraphAsymmErrors(nBinsLowNew, binLowNew, bpl_low, bpl_low_xErrL, bpl_low_xErrH, bpl_low_yStatL,bpl_low_yStatH);
+		TGraphAsymmErrors *pgBpl_high= new TGraphAsymmErrors(nBinsHighNew,binHighNew,bpl_high, bpl_high_xErrL, bpl_high_xErrH, bpl_high_yStatL,bpl_high_yStatH);
 
 		for(int i = 0; i < 5; i++){
-
 			cout << "binLowHigh = " << binHighNew[i] << "   bs_high_xErrL = " << bs_high_xErrL[i] << "   bs_high_xErrH = " << bs_high_xErrH[i] << endl;
-		}
-
-
+		        }
 
 		//Systmeatic uncertainty
 		// Bs
@@ -291,8 +266,6 @@ void plotPt(bool bSavePlots       = 1,
 		TGraphAsymmErrors *pgBs_syst_high   = new TGraphAsymmErrors(nBinsHigh,binHigh,bs_high,
 				bs_high_xErrL, bs_high_xErrH,
 				bs_high_ySystL,bs_high_ySystH);
-
-
 		// Bp
 		TGraphAsymmErrors *pgBpl_syst_low    = new TGraphAsymmErrors(nBinsLowNew, binLowNew,  bpl_low,
 				bpl_low_xErrL, bpl_low_xErrH,
@@ -300,6 +273,7 @@ void plotPt(bool bSavePlots       = 1,
 		TGraphAsymmErrors *pgBpl_syst_high   = new TGraphAsymmErrors(nBinsHighNew,binHighNew, bpl_high,
 				bpl_high_xErrL,bpl_high_xErrH,
 				bpl_high_ySystL, bpl_high_ySystH);
+
 		// pgBs_syst_high->Draw("APL");
 		//==========================================
 		//------------------------------------------
@@ -350,39 +324,29 @@ void plotPt(bool bSavePlots       = 1,
 		pgBs_low->SetMarkerStyle(markerLow[0]);
 		pgBs_lowWhite->SetMarkerStyle(markerHigh[0]);
 		pgBs_high->SetMarkerStyle(markerHigh[0]);
-
 		pgBpl_lowWhite->SetMarkerStyle(markerHigh[1]);
 		pgBpl_low->SetMarkerStyle(markerLow[1]);
 		pgBpl_high->SetMarkerStyle(markerHigh[1]);
-			
-
 		pgRatio_low->SetMarkerStyle(markerRatio[0]);
 		pgRatio_lowWhite->SetMarkerStyle(markerRatio[1]);
-
-		pgRatio_high->SetMarkerStyle(markerRatio[1]);
+    pgRatio_high->SetMarkerStyle(markerRatio[1]);
 
 		// marker size
 		pgBs_low->SetMarkerSize(markerSizeLow[0]);
 		pgBs_lowWhite->SetMarkerSize(markerSizeLow[0]);
-		
 		pgBs_high->SetMarkerSize(markerSizeHigh[0]);
-
 		pgBpl_lowWhite->SetMarkerSize(markerSizeLow[1]*0.86);
 		pgBpl_low->SetMarkerSize(markerSizeLow[1]);
 		pgBpl_high->SetMarkerSize(markerSizeHigh[1]);
-
 		pgRatio_low->SetMarkerSize(markerSizeRatio[0]);
 		pgRatio_lowWhite->SetMarkerSize(markerSizeRatio[0]);
-		
 		pgRatio_high->SetMarkerSize(markerSizeRatio[1]);
 
 		// marker color
 		pgBs_low->SetMarkerColor(colorLow[0]);
 		pgBs_high->SetMarkerColor(colorHigh[0]);
-	
 		pgBs_lowWhite->SetMarkerColor(kWhite);
 		pgBpl_lowWhite->SetMarkerColor(kWhite);
-	
 		pgBs_low->SetMarkerColor(kBlue+2);
 		pgBs_high->SetMarkerColor(kBlue+2);
 
@@ -393,7 +357,6 @@ void plotPt(bool bSavePlots       = 1,
 		pgBpl_high->SetMarkerColor(colorHigh[1]);
 		pgBpl_low->SetMarkerColor(kGreen+3);	
 		pgBpl_high->SetMarkerColor(kGreen+3);
-
 		pgRatio_lowWhite->SetMarkerColor(kWhite);
 		pgRatio_low->SetMarkerColor(kRed + 2);
 		pgRatio_high->SetMarkerColor(kRed + 2);
@@ -403,27 +366,21 @@ void plotPt(bool bSavePlots       = 1,
 		pgBs_high->SetLineColor(colorHigh[0]);
 		pgBs_low->SetLineColor(kBlue+2);	
 		pgBs_high->SetLineColor(kBlue+2);
-
 		pgBpl_low->SetLineColor(colorLow[1]);
 		pgBpl_high->SetLineColor(colorHigh[1]);
 		pgBpl_low->SetLineColor(kGreen+3);
 		pgBpl_high->SetLineColor(kGreen+3);
-
-
 		pgRatio_lowWhite->SetLineColor(kRed + 2);
 		pgRatio_low->SetLineColor(kRed + 2);
 		pgRatio_high->SetLineColor(kRed + 2);
-
 
 		// systematic boxes
 		pgBs_syst_low->SetFillColorAlpha(kBlue-9,0.5);
 		pgBs_syst_high->SetFillColorAlpha(kBlue-9,0.5);
 		pgBpl_syst_low->SetFillColorAlpha(kGreen-9,0.5);
 		pgBpl_syst_high->SetFillColorAlpha(kGreen-9,0.5);
-
 		pgRatio_syst_low->SetFillColorAlpha(colorRatio[0],0.2);
 		pgRatio_lowWhite->SetFillColor(kWhite);
-
 		pgRatio_syst_high->SetFillColorAlpha(colorRatio[1],0.2);
 
 		//Reference 
@@ -431,7 +388,6 @@ void plotPt(bool bSavePlots       = 1,
 		LHCb7TeVRef->SetLineColor(kBlue);
 		LHCb7TeVRef->SetMarkerStyle(20);
 		LHCb7TeVRef->SetMarkerSize(markerSizeLow[1]);
-
 
 		//================
 		//=============================================
@@ -443,7 +399,7 @@ void plotPt(bool bSavePlots       = 1,
 		double TAMUBsBPRatio[NBinsTAMU];
 		double TAMUBsBPRatioErr[NBinsTAMU];
 		for(int i = 0; i < NBinsTAMU; i++){
-			TAMUBsBP >> TAMUBsBPPt[i] >> TAMUBsBPRatio[i];
+		  TAMUBsBP >> TAMUBsBPPt[i] >> TAMUBsBPRatio[i];
 		}
 		for(int i = 0; i < NBinsTAMU; i++){
 			TAMUBsBPPtErr[i] = 0.1;
@@ -490,21 +446,17 @@ void plotPt(bool bSavePlots       = 1,
 		CAOTheory->SetLineWidth(3);
 		CAOTheory->SetMarkerColor(kGreen+1);
 		CAOTheory->SetLineColor(kGreen+1);
-
-
 		pgBs_syst_high->SetLineColor(kBlue-9);
 		pgBs_syst_low->SetLineColor(kBlue-9);
 		pgBpl_syst_high->SetLineColor(kGreen-9);
 		pgBpl_syst_low->SetLineColor(kGreen-9);
 
 
-    //TString bpFonDir = "../../../BsBPFinalResults/Comparisons/Fiducial/FONLLs/forTzuAn/";
-        TString bpFonDir = "../../../BsBPFinalResults/Comparisons/Fiducial/FONLLs/";
-    TString bsFonDir = "../../../BsBPFinalResults/Comparisons/Fiducial/FONLLs/";
+    TString bFonDir = "../../../BsBPFinalResults/Comparisons/Fiducial/FONLLs/";
 
     makePlot(0,
-             bsFonDir + "BsFONLL.root",
-             bsFonDir + "BsFONLLFid.root",
+             bFonDir + "BsFONLL.root",
+             bFonDir + "BsFONLLFid.root",
              outputDir,
              pgBs_low, pgBs_syst_low, pgBs_lowWhite,
              pgBs_high, pgBs_syst_high,
@@ -517,8 +469,8 @@ void plotPt(bool bSavePlots       = 1,
              bs_high, bs_high_yStatL, bs_high_yStatH, bs_high_ySystL, bs_high_ySystH,
              glbSystUpBs);
 
-    makePlot(1, bpFonDir + "BPFONLL.root",
-             bpFonDir + "BPFONLLFid.root",
+    makePlot(1, bFonDir + "fonllOutput_pp_Bplus_5p03TeV_y2p4.root",
+             bFonDir + "fonllOutput_pp_Bplus_5p03TeV_yFid.root",
              outputDir,
              pgBpl_low, pgBpl_syst_low, pgBpl_lowWhite,
              pgBpl_high, pgBpl_syst_high,
@@ -530,9 +482,7 @@ void plotPt(bool bSavePlots       = 1,
              bpl_low, bpl_low_yStatL, bpl_low_yStatH, bpl_low_ySystL, bpl_low_ySystH,
              bpl_high, bpl_high_yStatL, bpl_high_yStatH, bpl_high_ySystL, bpl_high_ySystH,
              glbSystUpBp);
-
     }
-
 
 // compute ratio and plot them
 void makePlot(int mes,
@@ -579,8 +529,6 @@ void makePlot(int mes,
   finFONLLBs2->cd();
   TGraphAsymmErrors *BsFONLL2 = (TGraphAsymmErrors*) finFONLLBs2->Get("gaeSigmaBplus");
   BsFONLL2->SetLineColor(kRed+2);
-
-
   BsFONLL->SetFillColorAlpha(kRed+2, 0.5);
 
   double XTempChange;
@@ -620,7 +568,6 @@ void makePlot(int mes,
   double RatioBs[nBins];
   double RatioBsStat[nBins];
   double RatioBsSyst[nBins];
-
   double RatioBsFonErrHigh[nBins];
   double RatioBsFonErrLow[nBins];
   std::vector<double> Unity(nBins, 1);
@@ -630,14 +577,12 @@ void makePlot(int mes,
     FONLL.push_back(YTempFONLL);
     FONLLUp.push_back(BsFONLL->GetErrorYhigh(i));
     FONLLDown.push_back(BsFONLL->GetErrorYlow(i));
-
     cout << "bs xsex:" << BsXsec[i] << "\n";
     cout << "FONLL:" << FONLL[i] << "\n";
     RatioBs[i] = BsXsec[i] / FONLL[i];
     RatioBsStat[i] = BsXsecStat[i] / FONLL[i];
     RatioBsSyst[i] = BsXsecSyst[i] / FONLL[i];
     cout << "ratio:" << RatioBs[i] << "\n";
-
     RatioBsFonErrHigh[i] = FONLLUp[i] / FONLL[i];
     RatioBsFonErrLow[i] = FONLLDown[i] / FONLL[i];
   }
@@ -689,7 +634,6 @@ void makePlot(int mes,
   }
   gRatioBs_syst_low.SetFillColorAlpha(hcolor, halpha);
   gRatioBs_syst_high.SetFillColorAlpha(hcolor, halpha);
-
   gRatioBs_Fon_low.SetLineColor(kRed+2);
   gRatioBs_Fon_high.SetLineColor(kRed+2);
   gRatioBs_Fon_low.SetLineWidth(2);
@@ -725,16 +669,12 @@ void makePlot(int mes,
   ratioPad->SetBottomMargin(0.3);
   ratioPad->Draw();
 
-
   //supplemental info on plot:
   lat->SetTextFont(42);
   lat->SetTextSize(ltxSetTextSize2 * 1.3);
   lat->SetTextSize(ltxSetTextSize4); //Enlarge Labels
 
   cout << "ltxSetTextSize4 = " << ltxSetTextSize4 << endl;
-
-
-
 
   dataPad->cd();
   double xmin = 5;
@@ -755,7 +695,6 @@ void makePlot(int mes,
   if(whichPlot==1){
     f4->GetYaxis()->SetTitleSize(0.06*0.83);
     f4->GetXaxis()->SetTitleSize(0.06*0.83);
-
     f4->GetYaxis()->SetTitleOffset(1.40);
     f4->GetXaxis()->SetTitleOffset(1.20);
   }
@@ -765,15 +704,12 @@ void makePlot(int mes,
     f4->GetXaxis()->SetTitleOffset(1.05);
     f4->GetXaxis()->SetTitleSize(f4->GetXaxis()->GetTitleSize() * 0.77);
     f4->GetXaxis()->SetTitleOffset(1.18);
-
     f4->GetXaxis()->SetTitleSize(0.06*0.83);  //Unify Textsize
     f4->GetYaxis()->SetTitleSize(0.06*0.83);
     f4->GetYaxis()->SetTitleOffset(1.40);
     f4->GetXaxis()->SetTitleOffset(1.20);
 
     cout << "Offset = " << f4->GetYaxis()->GetTitleOffset() << endl;
-
-
   }
 
   f4->GetYaxis()->SetRangeUser(1e2,2e7);
@@ -802,18 +738,11 @@ void makePlot(int mes,
   gSystLow->Draw("5");
   gLow->Draw("P");
   gLowWhite->Draw("P");
-  if (mes == 0) {
-    // pgBs_lowWhite->Draw("Psame");
-    lat->DrawLatex(xsec_ltxText1_xStart + 0.02,xsec_ltxText1_yStart-0.65+0.037,Form("B_{s}^{0} global uncertainty: #pm %.1f%%",glbSystUpBs));
-  } else {
-    lat->DrawLatex(xsec_ltxText1_xStart + 0.02,xsec_ltxText1_yStart-0.70 + 0.037,Form("B^{+} global uncertainty: #pm %.1f%%",glbSystUpBp));
-
-  }
-
+  if (mes == 0) {lat->DrawLatex(xsec_ltxText1_xStart + 0.02,xsec_ltxText1_yStart-0.65+0.037,Form("B_{s}^{0} global uncertainty: #pm %.1f%%",glbSystUpBs));
+  } else { lat->DrawLatex(xsec_ltxText1_xStart + 0.02,xsec_ltxText1_yStart-0.70 + 0.037,Form("B^{+} global uncertainty: #pm %.1f%%",glbSystUpBp)); }
 
   double ShiftX = 0.05;
   double ShiftY = 0.13;
-
   lat->SetTextSize(0.05);
   lat->SetTextSize(0.05 * ltxSetTextSize4/ltxSetTextSize2);  //Enlarge Labels
       
@@ -827,20 +756,13 @@ void makePlot(int mes,
 
   cout << "Bs B+ Y Location = " << legXsec_y + 0.08 << endl;
 
-
   lat->SetTextSize(ltxSetTextSize2 * 1.3);
   lat->SetTextSize(ltxSetTextSize4); //Enlarge Labels
-
   lat->DrawLatex(legXsec_xLowStart-0.18-0.02,legXsec_y+0.062-ShiftY + 0.08,"1.5 < |y| < 2.4"); //Enlarge Label + Shift up
   lat->DrawLatex(legXsec_xLowStart-0.13-0.02,legXsec_y+0.017-ShiftY + 0.08,"|y| < 2.4 "); //Enlarge Label + Shift up
 
-
-
-
   TLegend *legXSec = new TLegend(legXsec_xLowStart + ShiftX + 0.04,legXsec_y-ShiftY + 0.08,legXsec_xLowEnd+ShiftX-0.10+0.06,legXsec_y+0.15-ShiftY + 0.08,"                    ","brNDC");
-    
   legXSec->SetBorderSize(0);
-
   cout << "legXsec_xLowStart + ShiftX + 0.04 = " << legXsec_xLowStart + ShiftX + 0.04 << endl;
   cout << "legXsec_y+0.15-ShiftY + 0.08 = " << legXsec_y+0.15-ShiftY + 0.08 << endl;
   cout << "legXsec_y-ShiftY + 0.08 = " << legXsec_y-ShiftY + 0.08 << endl;
@@ -863,11 +785,7 @@ void makePlot(int mes,
   legXSec->AddEntry(gHigh," ","p");
   legXSec->SetTextFont(42);
   legXSec->AddEntry(gHigh," ","");
-
-
-
   legXSec->Draw("same");
-
 
   ratioPad->cd();
   // TH2D * HisEmpty4 = new TH2D("HisEmpty4","",100, xmin, xmax, 100, 0.5, 1.5);
@@ -878,7 +796,6 @@ void makePlot(int mes,
   // HisEmpty4->GetYaxis()->SetTitleOffset(0);
   // HisEmpty4->GetYaxis()->SetTitleSize(0.1);
   // HisEmpty4->GetYaxis()->SetLabelSize(0.1);
-
   // HisEmpty4->GetXaxis()->SetTitleSize(0.1);
   // HisEmpty4->GetXaxis()->SetLabelSize(0.1);
 
@@ -893,17 +810,14 @@ void makePlot(int mes,
   fRatio.GetXaxis()->SetTitleOffset(1.2);
   fRatio.GetYaxis()->SetTitleSize(0.1);
   fRatio.GetYaxis()->SetTitleOffset(0.68);
-
   fRatio.GetYaxis()->SetLabelSize(0.10);
   fRatio.GetXaxis()->SetLabelSize(0.10);
-
 
   // HisEmpty4->Draw();
   fRatio.Draw();
 
   gRatioBs_Fon_low.Draw("5");
   gRatioBs_Fon_high.Draw("5");
-
   gRatioBs_syst_low.Draw("5");
   gRatioBs_syst_high.Draw("5");
   gRatioBs_low.Draw("ep");
@@ -920,7 +834,6 @@ void makePlot(int mes,
   UnityLine->SetLineStyle(2);
   UnityLine->SetLineColor(1);
   UnityLine->Draw("SAME");
-
 
   dataPad->Update();
   ratioPad->Update();
