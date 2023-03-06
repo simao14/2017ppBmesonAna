@@ -36,7 +36,7 @@ bpEff () {
     pushd BP/EffAna
     echo "Takes BPw.root as input"
     ls -l BDTWeights/BPw.root
-        # about 2hr
+
     root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
     wait
     root -b -l -q CrossSectionAna.C'(1)'
@@ -50,7 +50,7 @@ bsEff () {
     pushd Bs/EffAna
     echo "Takes Bsw.root as input"
     ls -l BDTWeights/Bsw.root
-        # about 1hr
+
     root -b -l -q MCEff.C'(1,0)' > eff.log
     wait
     root -b -l -q CrossSectionAna.C'(1)'
@@ -70,8 +70,8 @@ nominal () {
     cd ..
 
     cd Comparisons/Fiducial
-    root -b -l -q BPComparison.C
-    root -b -l -q BsComparison.C
+    root -b -l -q Bmeson_Comparisons.C'(0)'
+    root -b -l -q Bmeson_Comparisons.C'(1)'
     root -b -l -q BPNewFidNoScale.C
     root -b -l -q BsNewFidNoScale.C
     cd ../../..
@@ -113,8 +113,8 @@ comp () {
     # comparison plot again
     pushd BsBPFinalResults/Comparisons/Fiducial/
     # << BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
-    root -b -l -q BPComparison.C
-    root -b -l -q BsComparison.C
+    root -b -l -q Bmeson_Comparisons.C'(0)'
+    root -b -l -q Bmeson_Comparisons.C'(1)'
     python syst_table.py
     cd ../../RAA/
     root -b -l -q BPRAA.C
