@@ -105,7 +105,7 @@ float BPXSecPbPbYSystDownRatio[nptBinsPbPb] = {0.1359, 0.1705, 0.0761, 0.0698};
 		vector<float> vect_BsXSecPPXErrDown2015{4,2.5,15};
 		vector<float> vect_BsXSecPPXErrUp2015{4,2.5,15};
 		vector<float> vect_BsXsecPPY2015{316000,34100,3830};
-		vector<float> vect_BXsSecPPYErrDown2015{37000,6300,670};
+		vector<float> vect_BsXSecPPYErrDown2015{37000,6300,670};
 		vector<float> vect_BsXSecPPYErrUp2015{37000,6300,670};
 		vector<float> vect_BsXSecPPYSystDown2015{62000,3200,360};
 		vector<float> vect_BsXSecPPYSystUp2015{62000,3200,360};
