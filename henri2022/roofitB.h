@@ -525,7 +525,7 @@ if(tree == "ntphi"){
 	if(npfit != "1"){
 		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B #rightarrow J/#psi #pi^{#pm}","f");
 		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
-  	if (drawLegend) {leg -> Draw();}  
+  	leg -> Draw();
 
 	nsig.setVal(0.);
 	nsig.setConstant();
