@@ -1,34 +1,23 @@
-#include "TAxis.h"
-#include "uti.h"
-#include "TSystem.h"
+
 #include "RooCBShape.h"
 #include "RooWorkspace.h"
-#include "RooGlobalFunc.h"
 #include "RooRealVar.h"
 #include "RooDataSet.h"
 #include "RooDataHist.h"
 #include "RooGaussian.h"
-#include "RooFormulaVar.h"
 #include "RooGenericPdf.h"
-#include "RooChebychev.h"
 #include "RooPolynomial.h"
 #include "RooExponential.h"
 #include "RooAddPdf.h"
 #include "RooExtendPdf.h"
 #include "RooPlot.h"
 #include "RooFitResult.h"
-#include "RooChi2Var.h"
 #include "RooHist.h"
-#include "RooProdPdf.h"
-#include "RooAddition.h"
 #include "RooProduct.h"
-#include <RooBifurGauss.h>
 #include <RooCmdArg.h>
 #include <fstream>
 #include <string>
-#include <iomanip>
 #include "RooMCStudy.h"
-#include <RooMinuit.h>
 
 void plot_jpsifit(RooWorkspace& w, int nbin_hist, TString pdf, RooAbsPdf* model, RooDataSet* ds, TString plotName,  bool with_sig);
 void fix_parameters(RooWorkspace& w, TString pdfName, bool release=false);
@@ -434,9 +423,9 @@ if(tree == "ntphi"){
 	frame->GetYaxis()->SetLabelFont(42);
 	frame->GetYaxis()->SetLabelSize(0.035);
 	frame->SetStats(0);
-	double plot_min = 5.25;
-	if(tree=="ntKp") plot_min = 5.05;
-	frame->GetXaxis()->SetRangeUser(plot_min,5.5);
+	double plot_min = 5.2;  //B_s starts at 5.2 for a better zoom
+	if(tree=="ntKp") plot_min = minhisto;    
+	frame->GetXaxis()->SetRangeUser(plot_min,5.5);  
 	frame->GetXaxis()->SetNdivisions(-50205);	
 	frame->Draw();
 	
