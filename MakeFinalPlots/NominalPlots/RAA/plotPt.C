@@ -481,7 +481,7 @@ void plotPt(bool bSavePlots       = 1,
 		if(whichPlot==1) f4->GetYaxis()->SetRangeUser(0.0,4.0);
 		if(whichPlot==0) f4->GetYaxis()->SetRangeUser(100.0,2000000); //1.8 -> 0.9
 		
-		f4->GetYaxis()->SetRangeUser(0.0,4.5); 
+		f4->GetYaxis()->SetRangeUser(0.0,2); 
 		f4->SetLineColor(0);
 		//f4->GetXaxis()->SetNdivisions(-6);
 
