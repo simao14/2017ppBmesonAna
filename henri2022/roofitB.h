@@ -423,7 +423,7 @@ if(tree == "ntphi"){
 	frame->GetYaxis()->SetLabelFont(42);
 	frame->GetYaxis()->SetLabelSize(0.035);
 	frame->SetStats(0);
-	double plot_min = 5.2;  //B_s starts at 5.2 for a better zoom
+	double plot_min = 5;  //B_s could start at 5.2 for a better zoom
 	if(tree=="ntKp") plot_min = minhisto;    
 	frame->GetXaxis()->SetRangeUser(plot_min,5.5);  
 	frame->GetXaxis()->SetNdivisions(-50205);	
