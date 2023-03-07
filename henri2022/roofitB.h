@@ -421,7 +421,7 @@ if(tree == "ntphi"){
    model->plotOn(frame, Name(Form("bkg%d_%s",_count,pdf.Data())) ,  Components(bkg), Range(fitRange), Precision(1e-6),  DrawOption("L"), LineStyle(7), LineColor(4), LineWidth(1));
 
 	if(drawLegend){model->paramOn(frame,Layout(1, 1, 1), Format("NEU",AutoPrecision(3)));}
-	else{ if(tree == "nthpi"){model->paramOn(frame,Layout(0.2, 0.98, 0.65), Format("NEU",AutoPrecision(2)));}}
+	else{model->paramOn(frame,Layout(0.2, 0.98, 0.6), Format("NEU",AutoPrecision(2)));}
 	frame->getAttText()->SetTextSize(0.00);
 	frame->getAttFill()->SetFillStyle(0);
 	frame->getAttLine()->SetLineWidth(0);
@@ -525,7 +525,7 @@ if(tree == "ntphi"){
 	if(npfit != "1"){
 		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B #rightarrow J/#psi #pi^{#pm}","f");
 		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
-  	leg -> Draw(); 
+  	if (drawLegend) {leg -> Draw();}  
 
 	nsig.setVal(0.);
 	nsig.setConstant();
