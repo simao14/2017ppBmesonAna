@@ -1,8 +1,9 @@
-DOANALYSISPbPb_ROOFIT_BINNED_PT_BS=1
 DOANALYSISPbPb_ROOFIT_FULL_BS=2
-DOANALYSISPbPb_ROOFIT_BINNED_PT_BS_TRK=0
-DOANALYSISPbPb_ROOFIT_BINNED_MULT_BS=0
+DOANALYSISPbPb_ROOFIT_BINNED_PT_BS=1
 DOANALYSISPbPb_ROOFIT_BINNED_Y_BS=0
+DOANALYSISPbPb_ROOFIT_BINNED_MULT_BS=0
+DOANALYSISPbPb_ROOFIT_BINNED_PT_BS_TRK=0
+
 
 INPUTMCPbPbCANDWISE_BS="/data3/tasheng/presel/BsMC_nom.root"
 INPUTDATAPbPbCANDWISE_BS="/data3/tasheng/presel/BsData_nom.root"
@@ -40,26 +41,10 @@ OUTPUTFILEPbPbSAVEHIST_ROOFIT_BS_BINNED_MULT="ROOTfiles/yields_Bs_binned_Mult.ro
 
 NPROOFIT_PbPb="1"
 
-if [ $DOANALYSISPbPb_ROOFIT_BINNED_DOUBLE_BS_1ST  -eq 1  ]; then
-root -b  -q 'roofitB.C+('1','\"ntphi\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BS\"','\"$INPUTMCPbPbCANDWISE_BS\"','\"Bpt\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BS_DOUBLE_1ST\"','\"plotFits/doubly_roofit\"','\"$NPROOFIT_PbPb\"','0')'
 
-rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
-fi
 
-if [ $DOANALYSISPbPb_ROOFIT_BINNED_DOUBLE_BS_2ND  -eq 1  ]; then
-root -b  -q 'roofitB.C+('2','\"ntphi\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BS\"','\"$INPUTMCPbPbCANDWISE_BS\"','\"Bpt\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BS_DOUBLE_2ND\"','\"plotFits/doubly_roofit\"','\"$NPROOFIT_PbPb\"','0')'
-
-rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
-fi
-
-if [ $DOANALYSISPbPb_ROOFIT_BINNED_DOUBLE_BS_1ST_Y  -eq 1  ]; then
-root -b  -q 'roofitB.C+('1','\"ntphi\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BS\"','\"$INPUTMCPbPbCANDWISE_BS\"','\"abs\(By\)\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BS_DOUBLE_1ST_Y\"','\"plotFits/doubly_roofit\"','\"$NPROOFIT_PbPb\"','0')'
-
-rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
-fi
-
-if [ $DOANALYSISPbPb_ROOFIT_BINNED_DOUBLE_BS_2ND_Y  -eq 1  ]; then
-root -b  -q 'roofitB.C+('2','\"ntphi\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BS\"','\"$INPUTMCPbPbCANDWISE_BS\"','\"abs\(By\)\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BS_DOUBLE_2ND_Y\"','\"plotFits/doubly_roofit\"','\"$NPROOFIT_PbPb\"','0')'
+if [ $DOANALYSISPbPb_ROOFIT_FULL_BS  -eq 1  ]; then
+root -b  -q 'roofitB.C+('0','\"ntphi\"','1','1','0','\"$INPUTDATAPbPbCANDWISE_BS\"','\"$INPUTMCPbPbCANDWISE_BS\"','\"Bpt\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BS_FULL\"','\"results/Bs/Bpt\"','\"$NPROOFIT_PbPb\"','0')'
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
@@ -90,9 +75,4 @@ rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 
-if [ $DOANALYSISPbPb_ROOFIT_FULL_BS  -eq 1  ]; then
-root -b  -q 'roofitB.C+('0','\"ntphi\"','1','1','0','\"$INPUTDATAPbPbCANDWISE_BS\"','\"$INPUTMCPbPbCANDWISE_BS\"','\"Bpt\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BS_FULL\"','\"results/Bs/Bpt\"','\"$NPROOFIT_PbPb\"','0')'
-
-rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
-fi
 
