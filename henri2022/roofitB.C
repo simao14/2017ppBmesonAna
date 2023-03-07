@@ -5,11 +5,13 @@
 #include "parametersNew.h"
 #include "TSystem.h"
 #include <string>
+#include "TSystem.h"
 #include <sstream>
 #include <TGraph.h>
 #include "TMultiGraph.h"
 #include "TGraphErrors.h"
 #include<stdio.h>
+#include <RooBifurGauss.h>
 
 void read_samples(RooWorkspace& w, std::vector<TString>, TString fName, TString treeName, TString sample);
 

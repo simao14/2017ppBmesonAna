@@ -87,6 +87,7 @@
         "Bmeson_Comparisons.C": "cpp",
         "ReweightBpt.C": "cpp",
         "BsNewFidNoScale.C": "cpp",
-        "CalEffSystB.C": "cpp"
+        "CalEffSystB.C": "cpp",
+        "yield_cs.C": "cpp"
     }
 }
