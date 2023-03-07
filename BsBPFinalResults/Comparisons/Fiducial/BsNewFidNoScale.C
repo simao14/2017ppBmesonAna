@@ -584,7 +584,7 @@ void BsNewFidNoScale(){
 
 	//FONLL
 
-
+/*
 
   std::vector<int> ptbins = {7, 10, 15, 20, 50};
   std::vector<float> abscissae = {8.75, 12.5, 17.5, 35.0};
@@ -600,6 +600,6 @@ gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,
       BsTotalSystDown[i] << "\t" << BsTotalSystDown[i] << "\t" << globUncert[i] <<
       "\t" << globUncert[i] << "\t" << abscissae[i] << "\n";
   }
-  out.close();
+  out.close();*/
 
 }
