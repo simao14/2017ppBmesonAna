@@ -61,8 +61,8 @@ bsEff () {
 
 syst () {
     pushd 2DMapSyst
-    root -b -l -q CalEffSystB'(0)'           # >> outfiles/bpsyst2d.root
-    root -b -l -q CalEffSystB'(1)'                               
+    root -b -l -q CalEffSystB.C'(0)'           # >> outfiles/bpsyst2d.root
+    root -b -l -q CalEffSystB.C'(1)'                               
     root -b -l -q PlotEffSyst2D.C'(0)'
     root -b -l -q PlotEffSyst2D.C'(1)'
     popd
