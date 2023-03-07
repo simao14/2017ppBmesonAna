@@ -70,24 +70,15 @@ void BPNewFidNoScale(){
 	}
 
 
-
-
-
-
-
-
 	float BPXsecPPY2D[NBins];
 	float BPXsecPPY2DScaled[NBins];
 	float BPXSecPPY2DErrUp[NBins];
 	float BPXSecPPY2DErrDown[NBins];
-
 	TH1D * BPCross2D = (TH1D *) FileBP->Get("hPtSigma");
 	BPCross2D->SetMarkerStyle(20);
 	BPCross2D->SetMarkerSize(1);
 	BPCross2D->SetMarkerColor(1);
 	BPCross2D->SetLineColor(1);
-
-
 
 
 
