@@ -1,22 +1,34 @@
+#include "TAxis.h"
 #include "uti.h"
+#include "TSystem.h"
 #include "RooCBShape.h"
 #include "RooWorkspace.h"
+#include "RooGlobalFunc.h"
 #include "RooRealVar.h"
 #include "RooDataSet.h"
 #include "RooDataHist.h"
 #include "RooGaussian.h"
+#include "RooFormulaVar.h"
 #include "RooGenericPdf.h"
+#include "RooChebychev.h"
 #include "RooPolynomial.h"
 #include "RooExponential.h"
 #include "RooAddPdf.h"
 #include "RooExtendPdf.h"
 #include "RooPlot.h"
 #include "RooFitResult.h"
+#include "RooChi2Var.h"
 #include "RooHist.h"
+#include "RooProdPdf.h"
+#include "RooAddition.h"
 #include "RooProduct.h"
+#include <RooBifurGauss.h>
 #include <RooCmdArg.h>
+#include <fstream>
 #include <string>
+#include <iomanip>
 #include "RooMCStudy.h"
+#include <RooMinuit.h>
 
 void plot_jpsifit(RooWorkspace& w, int nbin_hist, TString pdf, RooAbsPdf* model, RooDataSet* ds, TString plotName,  bool with_sig);
 void fix_parameters(RooWorkspace& w, TString pdfName, bool release=false);
