@@ -39,13 +39,12 @@ bpEff () {
 
     root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
     wait
-    root -b -l -q CrossSectionAna.C'(1)'
+    root -b -l -q CrossSectionAna.C'(1)'                              #UNIFY
 
     # root -b -l -q CrossSectionAnaMult.C'(1)'
     # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
     popd
 }
-
 bsEff () {
     pushd Bs/EffAna
     echo "Takes Bsw.root as input"
@@ -53,7 +52,7 @@ bsEff () {
 
     root -b -l -q MCEff.C'(1,0)' > eff.log
     wait
-    root -b -l -q CrossSectionAna.C'(1)'
+    root -b -l -q CrossSectionAna.C'(1)'                               #UNIFY
 
     # root -b -l -q CrossSectionAnaMult.C'(1)'
     # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
@@ -62,13 +61,14 @@ bsEff () {
 
 syst () {
     pushd 2DMapSyst
-    root -b -l -q CalEffSystBP.C # >> outfiles/bpsyst2d.root
-    root -b -l -q CalEffSystBs.C
+    root -b -l -q CalEffSystB'(0)'           # >> outfiles/bpsyst2d.root
+    root -b -l -q CalEffSystB'(1)'                               
     root -b -l -q PlotEffSyst2D.C'(0)'
     root -b -l -q PlotEffSyst2D.C'(1)'
     popd
 }
 
+################# NOT SURE WHAT THIS IS FOR
 ## MC Stat Systematics
 # takes 2D map eff as input
 bpStat () {
@@ -78,7 +78,6 @@ bpStat () {
     root -b -l -q MCStatCal.C > mcstat.log
     popd
 }
-
 bsStat() {
     cd MCStatSyst/Bs
     root -b -l -q Generate2DMaps.C
@@ -86,12 +85,13 @@ bsStat() {
     root -b -l -q MCStatCal.C > mcstat.log
     cd ../..
 }
+################# NOT SURE WHAT THIS IS FOR
 
 comp () {
     # get pdf variation errors
     python master.py
     # Get pre-selection error
-    python comppre.py                     #NOT RUNNING
+    python comppre.py                     #<-----------------------NOT RUNNING (FILE FROM CODE MISSING)
 
     cd BsBPFinalResults/BsBPRatio/
     root -b -l -q PlotBsBPRatio.C'(1)'
@@ -102,7 +102,7 @@ comp () {
     root -b -l -q Bmeson_Comparisons.C'(1)'
     root -b -l -q BPNewFidNoScale.C                       #Unify w priotiy
     root -b -l -q BsNewFidNoScale.C                       #Unify w priotiy (Bs results are visualy ugly)
-    python syst_table.py                  #NOT RUNNING
+    python syst_table.py                  #<-----------------------NOT RUNNING
     cd ../..
 
     cd RAA/
@@ -114,9 +114,9 @@ comp () {
 paperPlots () {
     # input
     pushd MakeFinalPlots/NominalPlots/CrossSection
-    root -b -l -q plotPt.C'(1,1,0,1,1)'
+    root -b -l -q plotPt.C'(1,1,0,1,1)'                 ########## UNIFY THESE WITH A LOT OF CARE
     cd ../RAA
-    root -b -l -q plotPt.C'(1,1,0,1,1)'
+    root -b -l -q plotPt.C'(1,1,0,1,1)'                 ########## UNIFY THESE WITH A LOT OF CARE
     popd
 }
 

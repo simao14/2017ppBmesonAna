@@ -1,27 +1,14 @@
-#include "TROOT.h"
 #include "TH1.h"
 #include "TTree.h"
-#include "TH2.h"
-#include "TF1.h"
 #include "TFile.h"
-#include "TMath.h"
-#include "TSystem.h"
-#include "TVector2.h"
-#include "TLorentzVector.h"
-#include "TVector3.h"
-#include "TRandom.h"
-#include <iostream>
-#include <fstream>
-
 
 using namespace std;
-
 using std::cout;
 using std::endl;
 
 void PlotEffSyst2D(int Opt){
 
-	TCanvas * c = new TCanvas("c","c",600,600);
+	TCanvas * c = new TCanvas("c","c",700,700);
 	c->cd();
 
 	gStyle->SetOptStat(0);
@@ -53,10 +40,7 @@ void PlotEffSyst2D(int Opt){
 
   TFile fout(outFile, "recreate");
 
-
 	//Draw Systematic Uncertainties
-
-
 	TCanvas * cSyst  = new TCanvas("cSyst","cSyst",600,600);
 	cSyst->cd();
 	Eff1DHis->SetMarkerStyle(20);
@@ -75,12 +59,11 @@ void PlotEffSyst2D(int Opt){
 	Eff1DHis->Draw("epSAME");
 	Eff1DHisTnPDown->Draw("epSAME");
 
-	TLegend* leg = new TLegend(0.50,0.35,0.80,0.60,NULL,"brNDC");
+	TLegend* leg = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");
 	leg->SetBorderSize(0);
-	leg->SetTextSize(0.040);
+	leg->SetTextSize(0.025);
 	leg->SetTextFont(42);
 	leg->SetFillStyle(0);
-	leg->SetLineWidth(3);
 	leg->AddEntry(Eff1DHis,"Nominal","PL");
 	leg->AddEntry(Eff1DHisTnPUp,"T&P Variation Up","PL");
 	leg->AddEntry(Eff1DHisTnPDown,"T&P Variation Down","PL");
@@ -96,19 +79,16 @@ void PlotEffSyst2D(int Opt){
 	Eff1DHis->Draw("ep");
 	Eff1DHisBDT->Draw("epSAME");
 
-	TLegend* leg2 = new TLegend(0.50,0.35,0.80,0.60,NULL,"brNDC");
+	TLegend* leg2 = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");
 	leg2->SetBorderSize(0);
-	leg2->SetTextSize(0.040);
+	leg2->SetTextSize(0.025);
 	leg2->SetTextFont(42);
 	leg2->SetFillStyle(0);
-	leg2->SetLineWidth(3);
 	leg2->AddEntry(Eff1DHis,"Nominal","PL");
 	leg2->AddEntry(Eff1DHisBDT,"BDT Weighted","PL");
 	leg2->Draw("same");
 
-
 	cSyst->SaveAs(Form("SystPlots/%s/Pt/MCDataSystComp.png",BmesonName.Data()));
-
 
 	Eff1DHisBpt->SetMarkerStyle(20);
 	Eff1DHisBpt->SetMarkerSize(1);
@@ -117,12 +97,11 @@ void PlotEffSyst2D(int Opt){
 	Eff1DHis->Draw("ep");
 	Eff1DHisBpt->Draw("epSAME");
 
-	TLegend* leg3 = new TLegend(0.50,0.35,0.80,0.60,NULL,"brNDC");
+	TLegend* leg3 = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");
 	leg3->SetBorderSize(0);
-	leg3->SetTextSize(0.040);
+	leg3->SetTextSize(0.025);
 	leg3->SetTextFont(42);
 	leg3->SetFillStyle(0);
-	leg3->SetLineWidth(3);
 	leg3->AddEntry(Eff1DHis,"Nominal","PL");
 	leg3->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 	leg3->Draw("same");

@@ -14,9 +14,9 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-//MOST OF THE VARIABLES SAY BP BUT ARE WORKING FOR Bs AS WELL 
+// MOST OF THE VARIABLES SAY BP BUT ARE WORKING FOR Bs AS WELL 
 // THIS CODE CAN BE EASILY EXTENDED TO ACCOUNT FOR A FUTURE MESON... 
-//JUST FOLLOW THE LOGIC
+// JUST FOLLOW THE LOGIC
 
 void Bmeson_Comparisons(int meson_n ){
 
@@ -33,7 +33,7 @@ void Bmeson_Comparisons(int meson_n ){
 		NBins = nptBinsBP;
 		B_m = "BP";
 		b_m = "bp";
-		scaledPt = {5, 7, 10};
+		scaledPt = {5, 7, 10};   // can be authomatized
 		t_tree = "ntKp";
 		NBinsLow = 2 ;
 		NBinsHigh = 5;
@@ -42,7 +42,7 @@ void Bmeson_Comparisons(int meson_n ){
 		NBins = nptBins;
 		B_m = "Bs";
 		b_m = "bs";
-		scaledPt = {7, 10};
+		scaledPt = {7, 10};    // can be authomatized
 		t_tree = "ntphi";
 		NBinsLow = 1 ;
 		NBinsHigh = 3;
@@ -358,42 +358,26 @@ if(meson_n == 0){
 		float BXSecPPYSystDown2015[NBins2015] ;
 		float BXSecPPYSystUp2015[NBins2015] ;
 		if(meson_n == 0) { 
-			vector<float> vect_BXsecPPX2015{8.5,12.5,17.5,25,40};
-			vector<float> vect_BXSecPPXErrDown2015{1.5,2.5,2.5,5,10};
-			vector<float> vect_BXSecPPXErrUp2015{1.5,2.5,2.5,5,10};
-			vector<float> vect_BXsecPPY2015{2610000,744000,197000,46500,5300};
-			vector<float> vect_BXSecPPYErrDown2015{170000,29000,9000,2400,500};
-			vector<float> vect_BXSecPPYErrUp2015{170000,29000,9000,2400,500};
-			vector<float> vect_BXSecPPYSystDown2015{230000,59000,15000,3500,400};
-			vector<float> vect_BXSecPPYSystUp2015{230000,59000,15000,3500,400};
 			for( int c=0; c <NBins; c++){ 
-				BXsecPPX2015[c]= vect_BXsecPPX2015[c] ;
-				BXSecPPXErrDown2015[c]= vect_BXSecPPXErrDown2015[c];
-				BXSecPPXErrUp2015[c]= vect_BXSecPPXErrUp2015[c];
-				BXsecPPY2015[c]= vect_BXsecPPY2015[c];
-				BXSecPPYErrDown2015[c]= vect_BXSecPPYErrDown2015[c];
-				BXSecPPYErrUp2015[c]= vect_BXSecPPYErrUp2015[c];
-				BXSecPPYSystDown2015[c]= vect_BXSecPPYSystDown2015[c];
-				BXSecPPYSystUp2015[c] = vect_BXSecPPYSystUp2015[c];
+				BXsecPPX2015[c]= vect_BPXsecPPX2015[c] ;
+				BXSecPPXErrDown2015[c]= vect_BPXSecPPXErrDown2015[c];
+				BXSecPPXErrUp2015[c]= vect_BPXSecPPXErrUp2015[c];
+				BXsecPPY2015[c]= vect_BPXsecPPY2015[c];
+				BXSecPPYErrDown2015[c]= vect_BPXSecPPYErrDown2015[c];
+				BXSecPPYErrUp2015[c]= vect_BPXSecPPYErrUp2015[c];
+				BXSecPPYSystDown2015[c]= vect_BPXSecPPYSystDown2015[c];
+				BXSecPPYSystUp2015[c] = vect_BPXSecPPYSystUp2015[c];
 				}
 		} else {
-			vector<float> vect_BXsecPPX2015{11,17.5,35.0};
-			vector<float> vect_BXSecPPXErrDown2015{4,2.5,15};
-			vector<float> vect_BXSecPPXErrUp2015{4,2.5,15};
-			vector<float> vect_BXsecPPY2015{316000,34100,3830};
-			vector<float> vect_BXSecPPYErrDown2015{37000,6300,670};
-			vector<float> vect_BXSecPPYErrUp2015{37000,6300,670};
-			vector<float> vect_BXSecPPYSystDown2015{62000,3200,360};
-			vector<float> vect_BXSecPPYSystUp2015{62000,3200,360};
 			for( int c=0; c <NBins; c++){ 
-				BXsecPPX2015[c]= vect_BXsecPPX2015[c] ;
-				BXSecPPXErrDown2015[c]= vect_BXSecPPXErrDown2015[c];
-				BXSecPPXErrUp2015[c]= vect_BXSecPPXErrUp2015[c];
-				BXsecPPY2015[c]= vect_BXsecPPY2015[c];
-				BXSecPPYErrDown2015[c]= vect_BXSecPPYErrDown2015[c];
-				BXSecPPYErrUp2015[c]= vect_BXSecPPYErrUp2015[c];
-				BXSecPPYSystDown2015[c]= vect_BXSecPPYSystDown2015[c];
-				BXSecPPYSystUp2015[c] = vect_BXSecPPYSystUp2015[c];
+				BXsecPPX2015[c]= vect_BsXsecPPX2015[c] ;
+				BXSecPPXErrDown2015[c]= vect_BsXSecPPXErrDown2015[c];
+				BXSecPPXErrUp2015[c]= vect_BsXSecPPXErrUp2015[c];
+				BXsecPPY2015[c]= vect_BsXsecPPY2015[c];
+				BXSecPPYErrDown2015[c]= vect_BsXSecPPYErrDown2015[c];
+				BXSecPPYErrUp2015[c]= vect_BsXSecPPYErrUp2015[c];
+				BXSecPPYSystDown2015[c]= vect_BsXSecPPYSystDown2015[c];
+				BXSecPPYSystUp2015[c] = vect_BsXSecPPYSystUp2015[c];
 				}			
 			}
 
