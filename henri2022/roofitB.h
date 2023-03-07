@@ -421,7 +421,7 @@ if(tree == "ntphi"){
    model->plotOn(frame, Name(Form("bkg%d_%s",_count,pdf.Data())) ,  Components(bkg), Range(fitRange), Precision(1e-6),  DrawOption("L"), LineStyle(7), LineColor(4), LineWidth(1));
 
 	if(drawLegend){model->paramOn(frame,Layout(1, 1, 1), Format("NEU",AutoPrecision(3)));}
-	else{model->paramOn(frame,Layout(0.2, 0.98, 0.6), Format("NEU",AutoPrecision(2)));}
+	else{model->paramOn(frame,Layout(0.2, 0.45, 0.6), Format("NEU",AutoPrecision(2)));}
 	frame->getAttText()->SetTextSize(0.025);
 	frame->getAttFill()->SetFillStyle(0);
 	frame->getAttLine()->SetLineWidth(0);
