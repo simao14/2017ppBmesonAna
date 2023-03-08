@@ -20,20 +20,26 @@ using std::endl;
 
 void Bmeson_Comparisons(int meson_n ){
 
+
+	// scaled lower data pt bins to full rapidity
+    constexpr bool scaleMC = false;                               // not sure if we need this
+    // swap the lower fonll bins with full rapidity
+    constexpr bool fidFONLL = true;
+
 	TString B_m ;
-	int NBins = 7;
-    vector<double> scaledPt;
 	TString t_tree ;
 	TString b_m;
-
+	int NBins = 7;
+    vector<double> scaledPt;
 	int NBinsLow ;
   	int NBinsHigh ;
 	int NBins2015 ;
+	
+
 	if(meson_n == 0){
 		NBins = nptBinsBP;
 		B_m = "BP";
 		b_m = "bp";
-		scaledPt = {5, 7, 10};   // can be authomatized
 		t_tree = "ntKp";
 		NBinsLow = 2 ;
 		NBinsHigh = 5;
@@ -42,19 +48,50 @@ void Bmeson_Comparisons(int meson_n ){
 		NBins = nptBins;
 		B_m = "Bs";
 		b_m = "bs";
-		scaledPt = {7, 10};    // can be authomatized
 		t_tree = "ntphi";
 		NBinsLow = 1 ;
 		NBinsHigh = 3;
 		NBins2015 = 3;
 	}
 
+	float BXsecPPY[NBins];
+	float BXsecPPX[NBins];
+	float BXSecPPYErrUp[NBins];
+	float BXSecPPYErrDown[NBins];
+	float BXSecPPYErrUpPercent[NBins];
+	float BXSecPPYErrDownPercent[NBins];
+
+	if(meson_n == 0){
+		scaledPt = {5, 7, 10};   // can be authomatized
+		BXsecPPX={6,8.5,12.5,17.5,25,40,55};
+	} else {
+		scaledPt = {7, 10};    // can be authomatized
+		BXsecPPX={8.5,12.5,17.5,35};
+	}
+
+
 	gSystem->mkdir(Form("Plots/%s", B_m.Data()), true);
 	TString InfileB = Form("../../../%s/EffAna/FinalFiles/%sPPCorrYieldPT.root",B_m.Data(),B_m.Data());
 	TFile * FileB= new TFile(InfileB.Data());
+	TH1D * BCross = (TH1D *) FileB->Get("CorrDiffHisBin");
+	BCross->SetMarkerStyle(20);
+	BCross->SetMarkerSize(1);
+	BCross->SetMarkerColor(1);
+	BCross->SetLineColor(1);
+
+    for(int i = 0; i < NBins; i++){
+
+		BXsecPPY[i] = BCross->GetBinContent(i+1);
+		BXSecPPYErrUp[i] = BCross->GetBinError(i+1);
+		BXSecPPYErrDown[i] = BCross->GetBinError(i+1);
+		BXSecPPYErrUpPercent[i] = BXSecPPYErrUp[i]/BXsecPPY[i];
+		BXSecPPYErrDownPercent[i] = BXSecPPYErrDown[i]/BXsecPPY[i];
+		cout << "BXsecPPY[i] = " << BXsecPPY[i]  << "   Stat[i]  = " << BXSecPPYErrUpPercent[i] << endl;
+
+	}
+	
 	double ptBins[NBins+1];
-	float BPXSecPPYErrUp[NBins];
-	float BPXSecPPYErrDown[NBins];
+
 
 	if(meson_n==0) { for( int c=0; c <NBins+1; c++){ ptBins[c]=ptbinsvecBP[c];}}
 	else{            for( int c=0; c <NBins+1; c++){ ptBins[c]=ptbinsvec[c];}}
@@ -95,23 +132,76 @@ void Bmeson_Comparisons(int meson_n ){
 
 float BXSecPPXErrUp[NBins] ;
 float BXSecPPXErrDown[NBins] ;
+float BXSecPPYSystUp[NBins];
+float BXSecPPYSystDown[NBins];
+float BTrackingSyst[NBins] ;
+float BMDDataSyst[NBins] ;
+float BPDFSyst[NBins]  = {0};
+float BPtShapeSyst[NBins]  ;
+float BTnPSystDown[NBins]  ;
+float BTnPSystUp[NBins]  ;
+float BTotalSystDown[NBins];
+float BTotalSystUp[NBins];
 
 if (meson_n == 0){
 	vector<float> vect_BXSecPPXErrUp{1,1.5,2.5,2.5,5,10,5};
 	vector<float> vect_BXSecPPXErrDown{1,1.5,2.5,2.5,5,10,5};
+	vector<float> vect_BTrackingSyst{0.05,0.05,0.05,0.05,0.05,0.05,0.05};
+	vector<float> vect_BMDDataSyst{1.92761, 1.43481, 0.301207, 0.131291, 0, 0, 0};
+	vector<float> vect_BPtShapeSyst{0.00538802, 0.00302489, 0.00115669, 0.00031239, 0.00069791, 0.00274824, 0.00864261};
+	vector<float> vect_BTnPSystDown{ 0.46582, 0.44548, 0.37401, 0.36262, 0.4261, 0.62824, 0.60984};
+	vector<float> vect_BTnPSystUp{ 0.46582, 0.44548, 0.37401, 0.36262, 0.4261, 0.62824, 0.60984};
 	for( int c=0; c <NBins; c++){ 
 		BXSecPPXErrUp[c]=vect_BXSecPPXErrUp[c];
-		BXSecPPXErrDown[c]=vect_BXSecPPXErrDown[c];}
+		BXSecPPXErrDown[c]=vect_BXSecPPXErrDown[c];
+		BTrackingSyst[c]=vect_BTrackingSyst[c];
+		BMDDataSyst[c]=vect_BMDDataSyst[c];
+		BPtShapeSyst[c]=vect_BPtShapeSyst[c];
+		BTnPSystDown[c]=vect_BTnPSystDown[c];
+		BTnPSystUp[c]=vect_BTnPSystUp[c];
+		}
 } else {
 	vector<float> vect_BXSecPPXErrUp {1.5,2.5,2.5,15};
 	vector<float> vect_BXSecPPXErrDown {1.5,2.5,2.5,15};
+	vector<float> vect_BTrackingSyst{10,10,10,10};
+	vector<float> vect_BMDDataSyst{10.1341, 1.18875, 2.78036, 0};
+	vector<float> vect_BPtShapeSyst{0.000905551, 0.00151094, 0.000342212, 7.16243e-05};
+	vector<float> vect_BTnPSystDown{ 0.45465, 0.38017, 0.35426, 0.43775 };
+	vector<float> vect_BTnPSystUp{ 0.45465, 0.38017, 0.35426, 0.43775 };
 	for( int c=0; c <NBins; c++){ 
 		BXSecPPXErrUp[c]=vect_BXSecPPXErrUp[c];
-		BXSecPPXErrDown[c]=vect_BXSecPPXErrDown[c];}
+		BXSecPPXErrDown[c]=vect_BXSecPPXErrDown[c];
+		BTrackingSyst[c]=vect_BTrackingSyst[c];
+		BMDDataSyst[c]=vect_BMDDataSyst[c];
+		BPtShapeSyst[c]=vect_BPtShapeSyst[c];
+		BTnPSystDown[c]=vect_BTnPSystDown[c];
+		BTnPSystUp[c]=vect_BTnPSystUp[c];
+		}
 }
 
+
+for(int i = 0; i < NBins; i++){
+
+		BTotalSystDown[i] = TMath::Sqrt(BTrackingSyst[i] * BTrackingSyst[i] + BMDDataSyst[i] * BMDDataSyst[i] + BPDFSyst[i] * BPDFSyst[i] + BPtShapeSyst[i] * BPtShapeSyst[i] + BTnPSystDown[i] * BTnPSystDown[i]) / 100;
+		BTotalSystUp[i] = TMath::Sqrt(BTrackingSyst[i] * BTrackingSyst[i] +BMDDataSyst[i] * BMDDataSyst[i] + BPDFSyst[i] * BPDFSyst[i] + BPtShapeSyst[i] * BPtShapeSyst[i] + BTnPSystUp[i] * BTnPSystUp[i]) / 100;
+
+	}
+
+
+std::vector<float> globUncert2(NBins);
+	for(int i = 0; i < NBins; i++){
+
+		BXSecPPYSystUp[i] = BXsecPPY[i] * ( BTotalSystUp[i]);
+		BXSecPPYSystDown[i] = BXsecPPY[i] * (BTotalSystDown[i] );
+        globUncert2[i] = sqrt(std::pow(BXSecPPYErrUpPercent[i], 2) + std::pow(BTotalSystDown[i], 2));
+
+		//cout << "i = " << i << "     BP syst[i] = " << BPTotalSystDown[i] << "    glob: " << globUncert[i] << "\n";
+
+	}
 // FOR BP ONLY FOR BP ONLY (for now)
 // Values of PbPb yields
+
+
 	float BPXsecPbPbY[NBins] ;
 	float BPXsecPbPbX[NBins] ;
 	float BPXSecPbPbXErrUp[NBins] ;
@@ -142,6 +232,28 @@ if(meson_n == 0){
 		BPXSecPbPbYSystDown[i] = (BPXSecPbPbYSystDownRatio[i]) * BPXsecPbPbY[i];
 		}
 }
+
+
+
+
+	float BXSecPbPbYSystUpPercent[NBins] ;
+	float BXSecPbPbYSystDownPercent[NBins] ;
+	float BXSecPbPbYSystUp[NBins];
+	float BXSecPbPbYSystDown[NBins];
+
+    if (meson_n==0){
+
+             BXSecPbPbYSystUpPercent = {0.3577,0.1404,0.1714,0.0775,0.0858,0.0715,0.1253};
+	         BXSecPbPbYSystDownPercent = {0.3210,0.1359,0.1705,0.0761,0.0843,0.0699,0.1220};
+
+             for(int i = 0; i < NBins; i++){                       //put it outside the if when we get values for Bs
+
+                BXSecPbPbYSystDown[i] = (BXSecPbPbYSystDownPercent[i]) * BXsecPbPbY[i];
+                BXSecPbPbYSystUp[i] = (BXSecPbPbYSystUpPercent[i]) * BXsecPbPbY[i];
+
+            }
+
+        }
 
 // Values of PbPb yields
 // FOR BP ONLY FOR BP ONLY (for now)
@@ -283,6 +395,46 @@ if(meson_n == 0){
 	c->SetLogy();
 	c->SaveAs(Form("Plots/%s/%sCrossONLYLog.pdf", B_m.Data(), B_m.Data()));
 	// CrossSection (log scale) 
+
+
+
+	//FIDNOSCALE
+
+	gStyle->SetOptStat(0);
+	TCanvas * c_ns = new TC_canvas("c_ns","c_ns",700,700);
+	c_ns->cd();    
+	c_ns->SetLeftMargin(0.15);
+ 
+	//Setup the Syst
+	TH2D * HisEmpty_ns;
+	if(meson_n == 0) { 
+		HisEmpty_ns = new TH2D("HisEmpty_ns","",100,5,60,100,100.0,2000000);
+		HisEmpty_ns->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	} else {
+		HisEmpty_ns = new TH2D("HisEmpty_ns","",100,7,50,100,100.0,2000000);
+		HisEmpty_ns->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+		}
+	HisEmpty_ns->GetYaxis()->SetTitle("d#sigma/dp_{T} (pb c/GeV)");
+	HisEmpty_ns->GetXaxis()->CenterTitle();
+	HisEmpty_ns->GetYaxis()->CenterTitle();
+	HisEmpty_ns->GetYaxis()->SetTitleOffset(1.8);
+	HisEmpty_ns->GetXaxis()->SetTitleOffset(1.3);		
+	HisEmpty_ns->Draw();
+
+	TGraphAsymmErrors *BPPCrossGraph = new TGraphAsymmErrors(NBins, BXsecPPX, BXsecPPY,BXSecPPXErrDown, BXSecPPXErrUp,BXSecPPYErrDown,BXSecPPYErrUp);
+	TGraphAsymmErrors *BPPCrossGraphSyst  = new TGraphAsymmErrors(NBins, BXsecPPX, BXsecPPY, BXSecPPXErrDown, BXSecPPXErrUp, BXSecPPYSystDown,BXSecPPYSystUp);
+	TGraphAsymmErrors *BPPCrossGraph2D = new TGraphAsymmErrors(NBins, BXsecPPX, BXsecPPY2D, BXSecPPXErrDown, BXSecPPXErrUp,BXSecPPY2DErrDown,BXSecPPY2DErrUp);
+
+    BPPCrossGraph->SetLineColor(kBlue+2);
+	BPPCrossGraph->SetMarkerStyle(21);
+	BPPCrossGraph->SetMarkerSize(1);
+	BPPCrossGraph->SetMarkerColor(kBlue+2);
+	BPPCrossGraphSyst->SetFillColorAlpha(kBlue-9,0.5);
+	BPPCrossGraphSyst->SetLineColor(kBlue-9);
+    BPPCrossGraph->Draw("ep");	
+	BPPCrossGraphSyst->Draw("5same");
+
+
 
 // FOR BP ONLY (for now), PbPb plots for comparison
  	if (meson_n == 0){
@@ -569,6 +721,108 @@ if (meson_n == 0){
 	cRatio->SaveAs(Form("Plots/%s/%sCrossCompLog.pdf", B_m.Data(), B_m.Data()));
 	//FONLL
 
+
+
+	//FIDNOSCALE
+
+	TCanvas * cRatio_ns = new TCanvas("cRatio_ns","cRatio_ns",800,1200);
+    TPad * MyPad1_ns;
+	MyPad1_ns = new TPad("MyPad1_ns","",0.,0.215,1.,1);
+    MyPad1_ns->SetBorderMode(1);
+    MyPad1_ns->SetFrameBorderMode(0);
+    MyPad1_ns->SetBorderSize(2);
+    MyPad1_ns->SetBottomMargin(0.10);
+	MyPad1_ns->Draw();
+
+    TPad * MyPad2_ns;
+	MyPad2_ns = new TPad("MyPad2_ns","",0.,0.02,1.,0.24);
+    MyPad2_ns->SetTopMargin(0.);
+    MyPad2_ns->SetBorderMode(0);
+    MyPad2_ns->SetBorderSize(2);
+    MyPad2_ns->SetFrameBorderMode(0);
+    MyPad2_ns->SetTicks(1,1);
+    MyPad2_ns->Draw();
+
+    MyPad1_ns->cd();
+
+	HisEmpty2->Draw();
+
+    BPPCrossGraph2D->SetLineColor(kOrange+1);
+	BPPCrossGraph2D->SetMarkerStyle(34);
+	BPPCrossGraph2D->SetMarkerSize(1);
+	BPPCrossGraph2D->SetMarkerColor(kOrange+1);
+    BPPCrossGraph2D->Draw("epSAME");
+
+	BFONLL->Draw("epSAME");
+
+    TFile * finFONLL2 ;
+	if(b_meson == 0){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
+	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
+    finFONLL2->cd();
+	TGraphAsymmErrors *BFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
+	BFONLL2->SetLineColor(kRed+2);
+	BFONLL2->SetMarkerStyle(20);
+	BFONLL2->SetMarkerSize(1);
+	BFONLL2->SetMarkerColor(kRed+2);
+	BFONLL2->Draw("epSAME");
+
+    double XTempChange;
+	double YTempChange;
+	double YErrLowTemp;
+	double YErrHighTemp;
+
+    if (fidFONLL && b_meson==0) {
+    for(int i = 0; i < 2; i ++){
+      BFONLL2->GetPoint(i,XTempChange,YTempChange);
+      YErrLowTemp = BPFONLL2->GetErrorYlow(i);
+      YErrHighTemp = BPFONLL2->GetErrorYhigh(i);
+      BFONLL->SetPoint(i,XTempChange,YTempChange);
+      BFONLL->SetPointEYhigh(i,YErrHighTemp);
+      BFONLL->SetPointEYlow(i,YErrLowTemp);
+    }
+  }
+
+    TLegend* leg3_ns = new TLegend(0.37,0.50,0.70,0.80,NULL,"brNDC");
+	leg3_ns->SetBorderSize(0);
+	leg3_ns->SetTextSize(0.040);
+	leg3_ns->SetTextFont(42);
+	leg3_ns->SetFillStyle(0);
+	leg3_ns->SetLineWidth(3);
+	leg3_ns->AddEntry(BPPCrossGraph2D,"2017 pp 5.02 TeV (2D Map)","PL");	
+	leg3_ns->AddEntry(BFONLL,"FONLL Calculations","PL");
+	leg3_ns->Draw("same");
+
+	MyPad1_ns->Update();
+
+    
+	float Ratio4Y_ns[NBins];
+	float Ratio4YErr_ns[NBins];
+
+	for(int i = 0; i < NBins; i++){
+
+		Ratio4Y_ns[i] = BXsecPPY2D[i]/FONLLY[i];
+		Ratio4YErr_ns[i] = Ratio4Y_ns[i] *TMath::Sqrt(BXSecPPY2DErrDown[i]/BXsecPPY2D[i] * BXSecPPY2DErrDown[i]/BXsecPPY2D[i] + FONLLYErr[i]/FONLLY[i] * FONLLYErr[i]/FONLLY[i] );
+    }
+
+    cRatio_ns->cd();
+    MyPad2_ns->cd();
+
+	HisEmpty4->Draw();
+
+	TGraphAsymmErrors *Ratio4 = new TGraphAsymmErrors(NBins, BXsecPPX, Ratio4Y_ns,BXSecPPXErrDown, BXSecPPXErrUp,Ratio4YErr_ns,Ratio4YErr_ns);
+
+    Ratio4->SetLineColor(kOrange+1);
+	Ratio4->SetMarkerStyle(34);
+	Ratio4->SetMarkerSize(1);
+	Ratio4->SetMarkerColor(kOrange+1);
+	Ratio4->Draw("epSAME");
+    //MyPad2_ns->Update();
+    MyPad1_ns->SetLogy();
+	MyPad1_ns->Update();
+
+   // cRatio_ns->SaveAs(Form("Plots/%s/%sCrossCompLogNoScale.png",B_m.Data()));
+
+	cRatio_ns->SaveAs(Form("Plots/%s/%sCrossCompLogNoScale.pdf",B_m.Data()));
 
   // summary of errors (in ratio, not percent)
   string outFile;
