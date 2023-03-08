@@ -44,6 +44,7 @@ void Bmeson_Comparisons(int meson_n ){
 		NBinsLow = 2 ;
 		NBinsHigh = 5;
 		NBins2015 = 5;
+		scaledPt = {5, 7, 10};
 	} else {
 		NBins = nptBins;
 		B_m = "Bs";
@@ -52,30 +53,10 @@ void Bmeson_Comparisons(int meson_n ){
 		NBinsLow = 1 ;
 		NBinsHigh = 3;
 		NBins2015 = 3;
+		scaledPt = {7, 10};
 	}
 
-	float BXsecPPY[NBins];
-	float BXsecPPX[NBins];
-	float BXSecPPYErrUp[NBins];
-	float BXSecPPYErrDown[NBins];
-	float BXSecPPYErrUpPercent[NBins];
-	float BXSecPPYErrDownPercent[NBins];
-
-	if(meson_n == 0){
-		vector<float> vect_BXsecPPX{6,8.5,12.5,17.5,25,40,55};
-		scaledPt = {5, 7, 10};   // can be authomatized
-		for(int i=0 ; i<NBins ; i++){
-			BXsecPPX[i]= vect_BXsecPPX[i];
-			}
-	} else {
-		vector<float> vect_BXsecPPX{8.5,12.5,17.5,35};
-		scaledPt = {7, 10};    // can be authomatized
-		for(int i=0 ; i<NBins ; i++){
-			BXsecPPX[i]= vect_BXsecPPX[i];
-			}
-	}
-
-
+	
 
 	gSystem->mkdir(Form("Plots/%s", B_m.Data()), true);
 	TString InfileB = Form("../../../%s/EffAna/FinalFiles/%sPPCorrYieldPT.root",B_m.Data(),B_m.Data());
@@ -85,17 +66,6 @@ void Bmeson_Comparisons(int meson_n ){
 	BCross->SetMarkerSize(1);
 	BCross->SetMarkerColor(1);
 	BCross->SetLineColor(1);
-
-    for(int i = 0; i < NBins; i++){
-
-		BXsecPPY[i] = BCross->GetBinContent(i+1);
-		BXSecPPYErrUp[i] = BCross->GetBinError(i+1);
-		BXSecPPYErrDown[i] = BCross->GetBinError(i+1);
-		BXSecPPYErrUpPercent[i] = BXSecPPYErrUp[i]/BXsecPPY[i];
-		BXSecPPYErrDownPercent[i] = BXSecPPYErrDown[i]/BXsecPPY[i];
-		cout << "BXsecPPY[i] = " << BXsecPPY[i]  << "   Stat[i]  = " << BXSecPPYErrUpPercent[i] << endl;
-
-	}
 	
 	double ptBins[NBins+1];
 
@@ -139,76 +109,29 @@ void Bmeson_Comparisons(int meson_n ){
 
 float BXSecPPXErrUp[NBins] ;
 float BXSecPPXErrDown[NBins] ;
-float BXSecPPYSystUp[NBins];
-float BXSecPPYSystDown[NBins];
-float BTrackingSyst[NBins] ;
-float BMDDataSyst[NBins] ;
-//float BPDFSyst[NBins]  = {0};
-float BPDFSyst[NBins];
-float BPtShapeSyst[NBins]  ;
-float BTnPSystDown[NBins]  ;
-float BTnPSystUp[NBins]  ;
-float BTotalSystDown[NBins];
-float BTotalSystUp[NBins];
+
 
 
 if (meson_n == 0){
 	vector<float> vect_BXSecPPXErrUp{1,1.5,2.5,2.5,5,10,5};
 	vector<float> vect_BXSecPPXErrDown{1,1.5,2.5,2.5,5,10,5};
-	vector<float> vect_BTrackingSyst{0.05,0.05,0.05,0.05,0.05,0.05,0.05};
-	vector<float> vect_BMDDataSyst{1.92761, 1.43481, 0.301207, 0.131291, 0, 0, 0};
-	vector<float> vect_BPtShapeSyst{0.00538802, 0.00302489, 0.00115669, 0.00031239, 0.00069791, 0.00274824, 0.00864261};
-	vector<float> vect_BTnPSystDown{ 0.46582, 0.44548, 0.37401, 0.36262, 0.4261, 0.62824, 0.60984};
-	vector<float> vect_BTnPSystUp{ 0.46582, 0.44548, 0.37401, 0.36262, 0.4261, 0.62824, 0.60984};
+	
 	for( int c=0; c <NBins; c++){ 
-		BPDFSyst[c]=0;
 		BXSecPPXErrUp[c]=vect_BXSecPPXErrUp[c];
 		BXSecPPXErrDown[c]=vect_BXSecPPXErrDown[c];
-		BTrackingSyst[c]=vect_BTrackingSyst[c];
-		BMDDataSyst[c]=vect_BMDDataSyst[c];
-		BPtShapeSyst[c]=vect_BPtShapeSyst[c];
-		BTnPSystDown[c]=vect_BTnPSystDown[c];
-		BTnPSystUp[c]=vect_BTnPSystUp[c];
 		}
 } else {
 	vector<float> vect_BXSecPPXErrUp {1.5,2.5,2.5,15};
 	vector<float> vect_BXSecPPXErrDown {1.5,2.5,2.5,15};
-	vector<float> vect_BTrackingSyst{10,10,10,10};
-	vector<float> vect_BMDDataSyst{10.1341, 1.18875, 2.78036, 0};
-	vector<float> vect_BPtShapeSyst{0.000905551, 0.00151094, 0.000342212, 7.16243e-05};
-	vector<float> vect_BTnPSystDown{ 0.45465, 0.38017, 0.35426, 0.43775 };
-	vector<float> vect_BTnPSystUp{ 0.45465, 0.38017, 0.35426, 0.43775 };
 	for( int c=0; c <NBins; c++){ 
-		BPDFSyst[c]=0;
 		BXSecPPXErrUp[c]=vect_BXSecPPXErrUp[c];
 		BXSecPPXErrDown[c]=vect_BXSecPPXErrDown[c];
-		BTrackingSyst[c]=vect_BTrackingSyst[c];
-		BMDDataSyst[c]=vect_BMDDataSyst[c];
-		BPtShapeSyst[c]=vect_BPtShapeSyst[c];
-		BTnPSystDown[c]=vect_BTnPSystDown[c];
-		BTnPSystUp[c]=vect_BTnPSystUp[c];
 		}
 }
 
 
-for(int i = 0; i < NBins; i++){
-
-		BTotalSystDown[i] = TMath::Sqrt(BTrackingSyst[i] * BTrackingSyst[i] + BMDDataSyst[i] * BMDDataSyst[i] + BPDFSyst[i] * BPDFSyst[i] + BPtShapeSyst[i] * BPtShapeSyst[i] + BTnPSystDown[i] * BTnPSystDown[i]) / 100;
-		BTotalSystUp[i] = TMath::Sqrt(BTrackingSyst[i] * BTrackingSyst[i] +BMDDataSyst[i] * BMDDataSyst[i] + BPDFSyst[i] * BPDFSyst[i] + BPtShapeSyst[i] * BPtShapeSyst[i] + BTnPSystUp[i] * BTnPSystUp[i]) / 100;
-
-	}
 
 
-std::vector<float> globUncert2(NBins);
-	for(int i = 0; i < NBins; i++){
-
-		BXSecPPYSystUp[i] = BXsecPPY[i] * ( BTotalSystUp[i]);
-		BXSecPPYSystDown[i] = BXsecPPY[i] * (BTotalSystDown[i] );
-        globUncert2[i] = sqrt(std::pow(BXSecPPYErrUpPercent[i], 2) + std::pow(BTotalSystDown[i], 2));
-
-		//cout << "i = " << i << "     BP syst[i] = " << BPTotalSystDown[i] << "    glob: " << globUncert[i] << "\n";
-
-	}
 // FOR BP ONLY FOR BP ONLY (for now)
 // Values of PbPb yields
 
@@ -245,25 +168,6 @@ if(meson_n == 0){
 }
 
 
-
-
-	float BXSecPbPbYSystUpPercent[NBins] ;
-	float BXSecPbPbYSystDownPercent[NBins] ;
-	float BXSecPbPbYSystUp[NBins];
-	float BXSecPbPbYSystDown[NBins];
-
-    if (meson_n==0){
-			 vector<float> vect_BXSecPbPbYSystUpPercent {0.3577,0.1404,0.1714,0.0775,0.0858,0.0715,0.1253};
-			 vector<float> vect_BXSecPbPbYSystDownPercent {0.3210,0.1359,0.1705,0.0761,0.0843,0.0699,0.1220};
-             for(int i = 0; i < NBins; i++){                       
-				BXSecPbPbYSystUpPercent[i]=vect_BXSecPbPbYSystUpPercent[i];
-				BXSecPbPbYSystDownPercent[i]=vect_BXSecPbPbYSystDownPercent[i];
-                BXSecPbPbYSystDown[i] = (BXSecPbPbYSystDownPercent[i]) * BPXsecPbPbY[i];
-                BXSecPbPbYSystUp[i] = (BXSecPbPbYSystUpPercent[i]) * BPXsecPbPbY[i];
-
-            }
-
-        }
 
 // Values of PbPb yields
 // FOR BP ONLY FOR BP ONLY (for now)
@@ -390,8 +294,7 @@ if(meson_n == 0){
 	BPPPCrossGraph2D->SetMarkerColor(kBlue+2);
 	BPPPCrossGraph2DSyst->SetFillColorAlpha(kBlue-9,0.5);
 	BPPPCrossGraph2DSyst->SetLineColor(kBlue-9);
-	BPPPCrossGraph2DSyst->SetLineWidth(1);
-	BPPPCrossGraph2DSyst->SetFillStyle(0);
+
 	
 
 	TLegend* leged = new TLegend(0.75,0.70,0.95,0.95,NULL,"brNDC");
@@ -403,52 +306,11 @@ if(meson_n == 0){
 	else {leged->AddEntry(BPPPCrossGraph2D,"B^{0}_{s}","PL");}
 	leged->Draw();
 	BPPPCrossGraph2D->Draw("ep");	
-	BPPPCrossGraph2DSyst->Draw("5");	
+	BPPPCrossGraph2DSyst->Draw("5same");	
 	//c->SaveAs(Form("Plots/%s/%sCrossONLY.png",B_m.Data(), B_m.Data()));
 	c->SetLogy();
 	c->SaveAs(Form("Plots/%s/%sCrossONLYLog.pdf", B_m.Data(), B_m.Data()));
 	// CrossSection (log scale) 
-
-
-
-	//FIDNOSCALE
-
-	gStyle->SetOptStat(0);
-	TCanvas * c_ns = new TCanvas("c_ns","c_ns",700,700);
-	c_ns->cd();    
-	c_ns->SetLeftMargin(0.15);
- 
-	//Setup the Syst
-	TH2D * HisEmpty_ns;
-	if(meson_n == 0) { 
-		HisEmpty_ns = new TH2D("HisEmpty_ns","",100,5,60,100,100.0,2000000);
-		HisEmpty_ns->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	} else {
-		HisEmpty_ns = new TH2D("HisEmpty_ns","",100,7,50,100,100.0,2000000);
-		HisEmpty_ns->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-		}
-	HisEmpty_ns->GetYaxis()->SetTitle("d#sigma/dp_{T} (pb c/GeV)");
-	HisEmpty_ns->GetXaxis()->CenterTitle();
-	HisEmpty_ns->GetYaxis()->CenterTitle();
-	HisEmpty_ns->GetYaxis()->SetTitleOffset(1.8);
-	HisEmpty_ns->GetXaxis()->SetTitleOffset(1.3);		
-	HisEmpty_ns->Draw();
-
-	TGraphAsymmErrors *BPPCrossGraph = new TGraphAsymmErrors(NBins, BXsecPPX, BXsecPPY,BXSecPPXErrDown, BXSecPPXErrUp,BXSecPPYErrDown,BXSecPPYErrUp);
-	TGraphAsymmErrors *BPPCrossGraphSyst  = new TGraphAsymmErrors(NBins, BXsecPPX, BXsecPPY, BXSecPPXErrDown, BXSecPPXErrUp, BXSecPPYSystDown,BXSecPPYSystUp);
-	TGraphAsymmErrors *BPPCrossGraph2D = new TGraphAsymmErrors(NBins, BXsecPPX, BPXsecPPY2D, BXSecPPXErrDown, BXSecPPXErrUp,BPXSecPPY2DErrDown,BPXSecPPY2DErrUp);
-
-    BPPCrossGraph->SetLineColor(kBlue+2);
-	BPPCrossGraph->SetMarkerStyle(21);
-	BPPCrossGraph->SetMarkerSize(1);
-	BPPCrossGraph->SetMarkerColor(kBlue+2);
-	BPPCrossGraphSyst->SetFillColorAlpha(kBlue-9,0.5);
-	BPPCrossGraphSyst->SetLineColor(kBlue-9);
-	BPPCrossGraphSyst->SetLineWidth(1);
-	BPPCrossGraphSyst->SetFillStyle(0);
-	
-    BPPCrossGraph->Draw("ep");	
-	BPPCrossGraphSyst->Draw("5");
 
 
 
@@ -464,9 +326,7 @@ if(meson_n == 0){
 	BPPbPbCrossGraph->SetMarkerColor(kGreen+2);
 	BPPbPbCrossGraphSyst->SetFillColorAlpha(kGreen-9,0.5);
 	BPPbPbCrossGraphSyst->SetLineColor(kGreen-9);
-	BPPbPbCrossGraphSyst->SetLineWidth(1);
-	BPPbPbCrossGraphSyst->SetFillStyle(0);
-	
+
 	TCanvas * c2New = new TCanvas("c2New","c2New",700,700);
 	c2New->cd();
 	c2New->SetLeftMargin(0.15);
@@ -482,8 +342,8 @@ if(meson_n == 0){
 	leg->Draw();
 	BPPbPbCrossGraph->Draw("ep");	
 	BPPPCrossGraph2D->Draw("ep");	
-	BPPbPbCrossGraphSyst->Draw("5");	
-	BPPPCrossGraph2DSyst->Draw("5");
+	BPPbPbCrossGraphSyst->Draw("5same");	
+	BPPPCrossGraph2DSyst->Draw("5same");
 
 	//c2New->SaveAs("Plots/BP/BPPbPbPPCross.png");
 	c2New->SetLogy();
@@ -556,8 +416,7 @@ if(meson_n == 0){
 
 	BPPPCrossGraph2015Syst->SetFillColorAlpha(kGreen-9+2,0.5);
 	BPPPCrossGraph2015Syst->SetLineColor(kGreen-9+2);
-	BPPPCrossGraph2015Syst->SetLineWidth(1);
-	BPPPCrossGraph2015Syst->SetFillStyle(0);
+
 	BPPPCrossGraph2015->SetLineColor(kGreen+2);
 	BPPPCrossGraph2015->SetMarkerStyle(33);
 	BPPPCrossGraph2015->SetMarkerSize(1);
@@ -570,27 +429,29 @@ if(meson_n == 0){
 	BPPPCrossGraph2DHigh->SetMarkerStyle(34);
 	BPPPCrossGraph2DHigh->SetMarkerSize(1);
 	BPPPCrossGraph2DHigh->SetMarkerColor(kOrange+1);
-	BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kOrange+1, 0.3);
+	BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kOrange+1, 0.5);
 	BPPPCrossGraph2DScaledSyst->SetLineColor(kOrange+1);
-	BPPPCrossGraph2DScaledSyst->SetLineWidth(1);
-	BPPPCrossGraph2DScaledSyst->SetFillStyle(0);
+
 
     TFile * finFONLL ;
 	if(meson_n == 0){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
 	else{ finFONLL = new TFile("FONLLs/BsFONLL.root");}
 	finFONLL->cd();
 	TGraphAsymmErrors *BPFONLL = (TGraphAsymmErrors*) finFONLL->Get("gaeSigmaBplus");
+	BPFONLL->SetLineWidth(1);
+	BPFONLL->SetFillColorAlpha(kRed+2, 0.5);
 	BPFONLL->SetLineColor(kRed+2);
+	BPFONLL->SetFillStyle(0);
 	BPFONLL->SetMarkerStyle(20);
 	BPFONLL->SetMarkerSize(1);
 	BPFONLL->SetMarkerColor(kRed+2);
-	BPFONLL->Draw("epSAME");
 	
 	BPPPCrossGraph2015->Draw("epSAME");
-	BPPPCrossGraph2DScaledSyst->Draw("5");
-	BPPPCrossGraph2015Syst->Draw("5");	
+	BPPPCrossGraph2DScaledSyst->Draw("5same");
+	BPPPCrossGraph2015Syst->Draw("5same");	
 	BPPPCrossGraph2DLow->Draw("epSAME");
 	BPPPCrossGraph2DHigh->Draw("epSAME");
+	BPFONLL->Draw("5");
 
 	TLegend* leg3 = new TLegend(0.55,0.64,0.8,0.85,NULL,"brNDC");
 	leg3->SetBorderSize(0);
@@ -600,7 +461,7 @@ if(meson_n == 0){
 	leg3->AddEntry(BPPPCrossGraph2DLow,"2017 pp 5.02 TeV (scaled to |y| < 2.4)","PL");	
 	leg3->AddEntry(BPPPCrossGraph2DHigh,"2017 pp 5.02 TeV","PL");	
 	leg3->AddEntry(BPPPCrossGraph2015,"2015 pp 5.02 TeV","PL");
-	leg3->AddEntry(BPFONLL,"FONLL Calculations","PL");
+	leg3->AddEntry(BPFONLL,"FONLL Calculations","f");
 	leg3->Draw("same");
 	MyPad1->Update();
 
@@ -679,7 +540,6 @@ if (meson_n == 0){
 	MyPad2->Update();
 
 	//FONLL
-	float Ratio3YErr[NBins];	
 	float Ratio4Y[NBins];
 	float Ratio4YErr[NBins];
 	float FONLLY[NBins];
@@ -743,127 +603,6 @@ if (meson_n == 0){
 	cRatio->SaveAs(Form("Plots/%s/%sCrossCompLog.pdf", B_m.Data(), B_m.Data()));
 	//FONLL
 
-
-
-	//FIDNOSCALE
-
-	TCanvas * cRatio_ns = new TCanvas("cRatio_ns","cRatio_ns",700,800);
-    TPad * MyPad1_ns;
-	MyPad1_ns = new TPad("MyPad1_ns","",0.,0.215,1.,1);
-    MyPad1_ns->SetBorderMode(1);
-    MyPad1_ns->SetFrameBorderMode(0);
-    MyPad1_ns->SetBorderSize(2);
-    MyPad1_ns->SetBottomMargin(0.10);
-	MyPad1_ns->Draw();
-
-    TPad * MyPad2_ns;
-	MyPad2_ns = new TPad("MyPad2_ns","",0.,0.02,1.,0.24);
-    MyPad2_ns->SetTopMargin(0.);
-    MyPad2_ns->SetBorderMode(0);
-    MyPad2_ns->SetBorderSize(2);
-    MyPad2_ns->SetFrameBorderMode(0);
-    MyPad2_ns->SetTicks(1,1);
-    MyPad2_ns->Draw();
-
-    MyPad1_ns->cd();
-
-	HisEmpty2->Draw();
-
-    BPPCrossGraph2D->SetLineColor(kOrange+1);
-	BPPCrossGraph2D->SetMarkerStyle(34);
-	BPPCrossGraph2D->SetMarkerSize(1);
-	BPPCrossGraph2D->SetMarkerColor(kOrange+1);
-    
-	TFile * finFONLL_ns ;
-	if(meson_n == 0){ finFONLL_ns = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
-	else{ finFONLL_ns = new TFile("FONLLs/BsFONLL.root");}
-	finFONLL_ns->cd();
-	TGraphAsymmErrors *BFONLL = (TGraphAsymmErrors*) finFONLL_ns->Get("gaeSigmaBplus");
-	BFONLL->SetLineColor(kRed+2);
-	BFONLL->SetLineWidth(1);
-	BFONLL->SetFillStyle(0);
-	BFONLL->SetFillColorAlpha(kRed+2, 0.5);
-	
-	
-    TFile * finFONLL2 ;
-	if(meson_n == 0){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
-	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
-    finFONLL2->cd();
-	TGraphAsymmErrors *BFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
-	BFONLL2->SetLineColor(kRed+2);
-	BFONLL2->SetMarkerStyle(20);
-	BFONLL2->SetMarkerSize(1);
-	BFONLL2->SetMarkerColor(kRed+2);
-
-
-	BFONLL->Draw("5");
-	//BFONLL2->Draw("epSAME"); //uncomment to check if unscaling is done correctly
-	BPPCrossGraph2D->Draw("epSAME");
-
-    double XTempChange;
-	double YTempChange;
-	double YErrLowTemp;
-	double YErrHighTemp;
-
-    if (fidFONLL) {
-    for(int i = 0; i < scaledPt.size()-1; i ++){
-      BFONLL2->GetPoint(i,XTempChange,YTempChange);
-      YErrLowTemp = BFONLL2->GetErrorYlow(i);
-      YErrHighTemp = BFONLL2->GetErrorYhigh(i);
-      BFONLL->SetPoint(i,XTempChange,YTempChange);
-      BFONLL->SetPointEYhigh(i,YErrHighTemp);
-      BFONLL->SetPointEYlow(i,YErrLowTemp);
-    }
-  }
-
-    TLegend* leg3_ns = new TLegend(0.55,0.64,0.8,0.85,NULL,"brNDC");
-	leg3_ns->SetBorderSize(0);
-	leg3_ns->SetTextSize(0.025);
-	leg3_ns->SetTextFont(42);
-	leg3_ns->SetFillStyle(0);
-	leg3_ns->SetLineWidth(3);
-	leg3_ns->AddEntry(BPPCrossGraph2D,"2017 pp 5.02 TeV (2D Map)","PL");	
-	leg3_ns->AddEntry(BFONLL,"FONLL Calculations","PL");
-	leg3_ns->Draw("same");
-
-	MyPad1_ns->Update();
-
-    
-	float Ratio4Y_ns[NBins];
-	float Ratio4YErr_ns[NBins];
-	double XTempFONLL_ns;
-	double YTempFONLL_ns;
-	float FONLLY_ns[NBins];
-	float FONLLYErr_ns[NBins];
-	for(int i = 0; i < NBins; i++){
-
-		BFONLL->GetPoint(i,XTempFONLL_ns,YTempFONLL_ns);
-		FONLLY_ns[i] = YTempFONLL_ns;
-		FONLLYErr_ns[i] = BFONLL->GetErrorYhigh (i);
-		Ratio4Y_ns[i] = BPXsecPPY2D[i]/FONLLY_ns[i];
-		Ratio4YErr_ns[i] = Ratio4Y_ns[i] *TMath::Sqrt(BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i] * BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i] + FONLLYErr_ns[i]/FONLLY_ns[i] * FONLLYErr_ns[i]/FONLLY_ns[i] );
-    }
-
-    cRatio_ns->cd();
-    MyPad2_ns->cd();
-
-	HisEmpty4->Draw();
-
-	TGraphAsymmErrors *Ratio4 = new TGraphAsymmErrors(NBins, BXsecPPX, Ratio4Y_ns,BXSecPPXErrDown, BXSecPPXErrUp,Ratio4YErr_ns,Ratio4YErr_ns);
-
-    Ratio4->SetLineColor(kOrange+1);
-	Ratio4->SetMarkerStyle(34);
-	Ratio4->SetMarkerSize(1);
-	Ratio4->SetMarkerColor(kOrange+1);
-	Ratio4->Draw("epSAME");
-	Unity2->Draw("SAME");
-    //MyPad2_ns->Update();
-    MyPad1_ns->SetLogy();
-	MyPad1_ns->Update();
-
-   // cRatio_ns->SaveAs(Form("Plots/%s/%sCrossCompLogNoScale.png",B_m.Data(),B_m.Data()));
-
-	cRatio_ns->SaveAs(Form("Plots/%s/%sCrossCompLogNoScale.pdf",B_m.Data(),B_m.Data()));
 
   // summary of errors (in ratio, not percent)
   gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,true );
