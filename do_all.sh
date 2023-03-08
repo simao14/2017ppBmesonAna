@@ -100,8 +100,8 @@ comp () {
     cd Comparisons/Fiducial/
     root -b -l -q Bmeson_Comparisons.C'(0)'
     root -b -l -q Bmeson_Comparisons.C'(1)'
-    root -b -l -q BPNewFidNoScale.C                       #Unify w priotiy
-    root -b -l -q BsNewFidNoScale.C                       #Unify w priotiy (Bs results are visualy ugly)
+    #root -b -l -q BPNewFidNoScale.C                       #Unify w priotiy
+    #root -b -l -q BsNewFidNoScale.C                       #Unify w priotiy (Bs results are visualy ugly)
     python syst_table.py                  #<-----------------------NOT RUNNING
     cd ../..
 
