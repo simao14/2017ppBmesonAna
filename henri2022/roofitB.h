@@ -47,14 +47,10 @@ using namespace std;
 float bkgd;
 double Significance;
 double real_significance;
-
 double minhisto=5.;
 double maxhisto=6.;
 int nbinsmasshisto=100;
-
 Int_t _count=0;
-RooWorkspace* outputw = new RooWorkspace("w");
-
 
 RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, RooPlot* &outframe, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
 {
@@ -95,8 +91,6 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	pMC2->SetFrameBorderMode(0); 
 	pMC2->SetTicks(1,1); 
 	//pMC2->Draw();
-
-	
 
 	// give better initial values to the Bmesons mass
 	double init_mean = BS_MASS;
@@ -434,7 +428,7 @@ if(tree == "ntphi"){
 	frame->GetYaxis()->SetLabelFont(42);
 	frame->GetYaxis()->SetLabelSize(0.035);
 	frame->SetStats(0);
-	double plot_min = 5;  //B_s could start at 5.2 for a better zoom
+	double plot_min = 5.2;  //B_s could start at 5.2 for a better zoom
 	if(tree=="ntKp") plot_min = minhisto;    
 	frame->GetXaxis()->SetRangeUser(plot_min,5.5);  
 	frame->GetXaxis()->SetNdivisions(-50205);	
@@ -559,26 +553,19 @@ if(tree == "ntphi"){
 	texSig->SetLineWidth(2);
 
 	outframe = frame;
-	outputw->import(*model);
-
-	cout << "------------------------------------------------------------------------------------------------" << endl;
 
 	Double_t yieldPrintErr = nsig.getError();
 	Double_t yieldPrintErrUp = nsig.getAsymErrorHi();
 	Double_t yieldPrintErrDown = -1 * nsig.getAsymErrorLo();
 
+	cout << "------------------------------------------------------------------------------------------------" << endl;
 	cout << "yield Error = " << yieldPrintErr << "     yield Error Up = " << yieldPrintErrUp << "    yieldPrintErrDown = " << yieldPrintErrDown << endl;
-
 	cout << "------------------------------------------------------------------------------------------------" << endl;
 
-	RooAbsReal* RangeBakground = bkg.createIntegral(*mass,NormSet(*mass),Range("signal")); 
-
-	//cout << "RangeBakground = " << RangeBakground << endl;
-
+	/*RooAbsReal* RangeBakground = bkg.createIntegral(*mass,NormSet(*mass),Range("signal")); 
 	double Calback = RangeBakground->getVal() * nbkg.getVal();
 	double StatSig = yield/sqrt(yield + Calback);
-	
-	/*TLatex *lat = new TLatex();
+	TLatex *lat = new TLatex();
 	lat->SetNDC();
 	lat->SetTextSize(0.045);
 	lat->DrawLatex(0.63,0.55,Form("S = %.1f",yield));	
@@ -922,20 +909,12 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 
 	double n_signal_init = params[0].getVal();
 	double n_signal_error_init = params[0].getError();
-
-	cout << "N_signal initial value: " << n_signal_init << endl;
-	cout << "N_signal initial Error value: " << n_signal_error_init << endl;
-
 	int params_size = params.size();
 
-	cout << "params_size " << params_size << endl;
-
 	RooMCStudy* mcstudy = new RooMCStudy(*model, Bmass,  Extended(), FitOptions(Save(kTRUE), PrintEvalErrors(0)));
-	
 	mcstudy->generateAndFit(5000);
 
 	cout << "DONE Generate and Fit " << endl;
-
 
 	TString XName[2] = {"P(Y)","mean"};
 	vector<RooPlot*> framesPull, framesParam, framesError;
@@ -1017,37 +996,11 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h2[i]->GetYaxis()->SetTitle("");
 		h2[i]->Draw("APsame");
 
-
-
-
-		/*if(tree=="ntKp"){
-			//c_pull->SaveAs("./mcstudy/pulls_poisson_Bu.pdf");
-			c_pull->SaveAs(Form("new/pull_signal_full%d_%s_%d_%s.png",full,variable.Data(),_count,tree.Data()));
-			c_params->SaveAs(Form("new/params_signal_full%d_%s_%d_%s.png",full,variable.Data(),_count,tree.Data()));
-			c_errors->SaveAs(Form("new/error_signal_full%d_%s_%d_%s.png",full,variable.Data(),_count,tree.Data()));
-			//c_errors->SaveAs("./results/BP/pulls/pulls_error.gif");
-		}
-		else if(tree=="ntphi"){
-			c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%d_%d_Bs.png",Path,variable.Data(),ptMin,ptMax,i));
-			//c_pull->SaveAs("./mcstudy/pulls_poisson_Bs.pdf");
-			c_params->SaveAs(Form("%s/param_signal_%s_%d_%d_%d_Bs.png",Path,variable.Data(),ptMin,ptMax,i));
-			c_errors->SaveAs(Form("%s/error_signal_%s_%d_%d_%d_Bs.png",Path,variable.Data(),ptMin,ptMax,i));
-			//c_errors->SaveAs("./results/Bs/pulls/pulls_error.gif");
-		}*/
-		c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%d_%d_%s.png",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
-		c_params->SaveAs(Form("%s/param_signal_%s_%d_%d_%d_%s.png",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
-		c_errors->SaveAs(Form("%s/error_signal_%s_%d_%d_%d_%s.png",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
+		c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
+		c_params->SaveAs(Form("%s/param_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
+		c_errors->SaveAs(Form("%s/error_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
 		
 	}
-	/*
-	   else if(tree=="ntphi"){
-	   c_pull->SaveAs(Form("new/StepScan/pull/pull_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
-//c_pull->SaveAs("./mcstudy/pulls_poisson_Bs.pdf");
-c_params->SaveAs(Form("new/StepScan/param/param_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
-c_errors->SaveAs(Form("new/StepScan/error/error_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
-//c_errors->SaveAs("./results/Bs/pulls/pulls_error.gif");
-}
-*/
 }
 
 
