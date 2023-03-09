@@ -258,13 +258,23 @@ if(npfit != "1" && variation=="" && pdf==""){
 	RooRealVar* alpha_np; 
 	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6 , -10.0 , -0.1);
 	RooExponential COMB_jpsi(Form("COMB_jpsi%d_%s",_count,""), "COMB_jpsi", *mass, *alpha_np);
+		if (ptmin == 50 & ptmax == 60){//not enough data for this bin
+		alpha_np->setVal(w.var(Form("alpha_np%d_%s", _count-1,""))->getVal());
+		alpha_np->setConstant();
+		m_nonprompt_scale->setVal(w.var(Form("m_nonprompt_scale%d_%s",_count-1,""))->getVal());
+		m_nonprompt_scale->setConstant();
+		m_nonprompt_shift->setVal(w.var(Form("m_nonprompt_shift%d_%s",_count-1,""))->getVal());
+		m_nonprompt_shift->setConstant();
+		} //not enough data for this bin
 	// MC Combinatorial Background Model
 
 	RooRealVar jpsinp_fraction(Form("jpsinp_fraction%d_%s",_count,""), "fraction", 0.35, 0.05, 1);
 	RooAddPdf* m_jpsinp_cont = new RooAddPdf(Form("m_jpsinp_cont%d_%s",_count,""), "model for jpsi nonprompt bg", RooArgList(COMB_jpsi, *erfc), RooArgList(jpsinp_fraction));
 	w.import(*m_jpsinp_cont);
 	// DEFINE MODEL to fit the non prompt background
-	
+
+
+
 	fit_jpsinp(w,  nbinsmasshisto, pdf, ptmin, ptmax);}
 // FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
 
@@ -569,17 +579,16 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int pti, int ptf, b
 	RooDataSet* ds_sig = (RooDataSet*) d_s->reduce("Bgen == 23333");
 
 	// Crteate the necessary folders and define paths
-  	gSystem->mkdir("./results/BP/PAR_R_bkg");
+  	gSystem->mkdir("./results/BP/PAR_R_bkg", true);
 	TString jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_pt%i-%i%s.pdf", pti, ptf, "");
 	TString incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i%s.pdf", pti, ptf, "");
   	TString jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_pt%i-%i%s.pdf", pti, ptf, "");
 
 	//[START] FIX SHAPE (NP background)
 	RooRealVar Bmass = *(w.var("Bmass"));
-	Bmass.setRange("part_fit_r", 5, 6);
 	RooAbsPdf* m_jpsinp_cont = w.pdf(Form("m_jpsinp_cont%d_%s",_count, pdf.Data()));
 	// FIT
-	auto cont_result = m_jpsinp_cont->fitTo(*ds_cont, Save(), Range("part_fit_r"));
+	auto cont_result = m_jpsinp_cont->fitTo(*ds_cont, Save());
 	// FIT
 	plot_jpsifit(w, nbin_hist, pdf, m_jpsinp_cont, ds_cont, jpsi_fit_plot, false);
 	fix_parameters(w, Form("m_jpsinp_cont%d_%s",_count,pdf.Data()));
