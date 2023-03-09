@@ -256,7 +256,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 	// MC Combinatorial Background Model
 	//RooRealVar* alpha_np; 
 	RooRealVar* alpha_np; 
-	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6, -15., 1.);
+	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6, -15., 0);
 	RooExponential COMB_jpsi(Form("COMB_jpsi%d_%s",_count,""), "COMB_jpsi", *mass, *alpha_np);
 	// MC Combinatorial Background Model
 
@@ -577,7 +577,7 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int pti, int ptf, b
 
 	//[START] FIX SHAPE (NP background)
 	RooRealVar Bmass = *(w.var("Bmass"));
-	Bmass.setRange("part_fit_r", 5., 5.35);
+	Bmass.setRange("part_fit_r", 5, 5.6);
 	RooAbsPdf* m_jpsinp_cont = w.pdf(Form("m_jpsinp_cont%d_%s",_count, pdf.Data()));
 	// FIT
 	auto cont_result = m_jpsinp_cont->fitTo(*ds_cont, Save(), Range("part_fit_r"));
