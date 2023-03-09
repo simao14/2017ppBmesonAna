@@ -14,7 +14,7 @@
 void read_samples(RooWorkspace& w, std::vector<TString>, TString fName, TString treeName, TString sample);
 
 // PDF VARIATION FOR SYST STUDIES
-int syst_study=1;
+int syst_study=2;
 
 // VALIDATION STUDIES
 int val=0;
@@ -270,12 +270,12 @@ cout << endl << endl;
 		RooRealVar* m_jpsipi_mean1 = 0;
 		RooRealVar* m_jpsipi_sigma1l = 0;
 		RooRealVar* m_jpsipi_sigma1r = 0;
-		m_jpsipi_fraction2 = new RooRealVar("m_jpsipi_fraction2","m_jpsipi_fraction2",0.234646,0.0,0.8);
+		m_jpsipi_fraction2 = new RooRealVar("m_jpsipi_fraction2","m_jpsipi_fraction2",0.4,0.0,0.8);
 		m_jpsipi_mean1 = new RooRealVar("m_jpsipi_mean1","m_jpsipi_mean1",5.35, 5.3, 5.5);
-		RooRealVar m_jpsipi_sigma2l("m_jpsipi_sigma2l","m_jpsipi_sigma2l",0.0994712,0.020,0.500);
-		RooRealVar m_jpsipi_sigma2r("m_jpsipi_sigma2r","m_jpsipi_sigma2r",0.0994712,0.020,0.500);
-		m_jpsipi_sigma1l = new RooRealVar("m_jpsipi_sigma1l","m_jpsipi_sigma1l",0.0290762,0.010,0.150);
-		m_jpsipi_sigma1r = new RooRealVar("m_jpsipi_sigma1r","m_jpsipi_sigma1r",0.0652519,0.010,0.350);
+		RooRealVar m_jpsipi_sigma2l("m_jpsipi_sigma2l","m_jpsipi_sigma2l",0.05,0.020,0.500);
+		RooRealVar m_jpsipi_sigma2r("m_jpsipi_sigma2r","m_jpsipi_sigma2r",0.02,0.0050,0.500);
+		m_jpsipi_sigma1l = new RooRealVar("m_jpsipi_sigma1l","m_jpsipi_sigma1l",0.05,0.010,0.150);
+		m_jpsipi_sigma1r = new RooRealVar("m_jpsipi_sigma1r","m_jpsipi_sigma1r",0.17,0.010,0.350);
 		RooBifurGauss m_jpsipi_gaussian2("m_jpsipi_gaussian2", "m_jpsipi_gaussian2", *mass, *m_jpsipi_mean1, m_jpsipi_sigma2l, m_jpsipi_sigma2r);
 		RooBifurGauss m_jpsipi_gaussian1("m_jpsipi_gaussian1", "m_jpsipi_gaussian1", *mass, *m_jpsipi_mean1, *m_jpsipi_sigma1l, *m_jpsipi_sigma1r);
 		RooAddPdf* jpsipi = new RooAddPdf("jpsipi", "jpsipi", RooArgList(m_jpsipi_gaussian2, m_jpsipi_gaussian1), RooArgList(*m_jpsipi_fraction2));
@@ -370,10 +370,6 @@ cout << endl << endl;
 		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
 		dhMC = new RooDataHist(Form("dhMC%d",_count),"",*mass,Import(*hMC));
 		h->SetAxisRange(0,h->GetMaximum()*1.4,"Y");
-		outputw->import(*ds);
-		outputw->import(*dsMC);
-		outputw->import(*dh);
-		outputw->import(*dhMC);
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 
@@ -381,20 +377,16 @@ cout << endl << endl;
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function" << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
 		
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 		
-		
-		
 		//scan_significance(w_val, tree, varExp, full,centmin, centmax, _ptBins[i], _ptBins[i+1]);
-		
 		/*for(int q= 0; q < 100; q++){
 			validate_fit(w_val, tree, varExp, full,q);} ?? */
 		//datahist = frame->getHist("ds");
 		//TGraphAsymmErrors* datagraph = static_cast<TGraphAsymmErrors*>(datahist);
-
 
 		RooRealVar* fitYield = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("nsig%d_%s",_count,""))));
 		modelcurve = frame->getCurve(Form("model%d_%s",_count,""));   
@@ -439,7 +431,6 @@ cout << endl << endl;
 		resol_vec_err_low[i] = resol_err;
 		resol_vec_err_high[i] = resol_err;
 //Resolution 
-
 		
 		//chi2
 
@@ -457,7 +448,6 @@ cout << endl << endl;
 		chi2_vec[i] = Mychi2;
 		chi2MC_vec[i] = frameMC_chi2->chiSquare();
 	
-
 		//chi2
 
 		std::vector<double> aa;
@@ -634,7 +624,7 @@ if(varExp=="nMult"){
 		if(syst_study==1){
 
 				for(int j=0; j<background.size(); j++){
-					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
+					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
 					RooAbsPdf* model_back = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,background[j].c_str()));
 					TString chi2_fitRange = (background[j] == "mass_range") ? "m_range" : "all";
 					cout << "chi2_fitRange " << chi2_fitRange << endl;
@@ -683,7 +673,7 @@ if(varExp=="nMult"){
 			general_err.push_back(max_back);
 
 			for(int j=0; j<signal.size(); j++){
-				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
+				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
 				RooAbsPdf* model_sig = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,signal[j].c_str()));
 				RooAbsPdf* modelMC_sig = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,signal[j].c_str()));
 				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);
@@ -853,7 +843,7 @@ if(varExp=="nMult"){
 		legback->SetFillStyle(0);
     	legback->SetTextSize(0);
 		legback->Draw();
-		c_back->SaveAs(Form("./results/tables/background_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+		c_back->SaveAs(Form("./results/tables/background_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
 		TCanvas* c_sig= new TCanvas();
 		TLegend* legsig=new TLegend(0.7,0.8,0.9,0.9);
@@ -880,7 +870,7 @@ if(varExp=="nMult"){
 	legsig->SetFillStyle(0);
   	legsig->SetTextSize(0);
 	legsig->Draw();
-	c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+	c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
 	TCanvas* c_gen= new TCanvas();
 	TLegend* legen=new TLegend(0.7,0.8,0.9,0.9);
@@ -920,7 +910,7 @@ if(varExp=="nMult"){
 	legen->SetFillStyle(0);
   	legen->SetTextSize(0);
 	legen->Draw();
-	c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.png",tree.Data(),varExp.Data())); 
+	c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 	
 	
 	}
@@ -970,7 +960,7 @@ if(varExp=="nMult"){
 	 leg_d->SetTextSize(0);
 	 leg_d->Draw();
 
-	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.png",tree.Data(),varExp.Data());
+	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.pdf",tree.Data(),varExp.Data());
 	 c_diff.SaveAs(pathc);
 	 ratio_f->Close();
 // Differential plot part ends
@@ -1006,7 +996,7 @@ if(varExp=="nMult"){
 	 mg_par->GetYaxis()->SetRangeUser(0,scale_max*1.4);
 	 mg_par->Draw("ap");
 
-	 const char* pathc_par =Form("./results/Graphs/parameters_variation_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc_par =Form("./results/Graphs/parameters_variation_%s_%s.pdf",tree.Data(),varExp.Data()); 
 	 c_par.SaveAs(pathc_par);
 //Parameters vs variables part ends
 
@@ -1045,7 +1035,7 @@ if(varExp=="nMult"){
 	 mg_resol->Add(gr_resol);
 	 mg_resol->Draw("ap");
 
-	 const char* pathc_resol =Form("./results/Graphs/resolution_%s_%s.png",tree.Data(),varExp.Data()); 
+	 const char* pathc_resol =Form("./results/Graphs/resolution_%s_%s.pdf",tree.Data(),varExp.Data()); 
 	 c_resol.SaveAs(pathc_resol);
 
 //Resolution plot part ends
@@ -1109,7 +1099,7 @@ leg_chi2->SetTextSize(0);
 leg_chi2->Draw();
 
 
-const char* pathc_chi2 =Form("./results/Graphs/chi2_%s_%s.png",tree.Data(),varExp.Data()); 
+const char* pathc_chi2 =Form("./results/Graphs/chi2_%s_%s.pdf",tree.Data(),varExp.Data()); 
 c_chi2.SaveAs(pathc_chi2);
 
 if(syst_study==1){
@@ -1170,7 +1160,7 @@ leg_chi2_back->SetFillStyle(0);
 leg_chi2_back->SetTextSize(0);
 leg_chi2_back->Draw();
 
-const char* pathc_chi2_back =Form("./results/Graphs/chi2_%s_%s_%s.png",tree.Data(),varExp.Data(),background[j].c_str()); 
+const char* pathc_chi2_back =Form("./results/Graphs/chi2_%s_%s_%s.pdf",tree.Data(),varExp.Data(),background[j].c_str()); 
 c_chi2_back.SaveAs(pathc_chi2_back);
 	}
 
@@ -1233,7 +1223,7 @@ leg_chi2_sig->SetTextSize(0);
 leg_chi2_sig->Draw();
 
 
-const char* pathc_chi2_sig =Form("./results/Graphs/chi2_%s_%s_%s.png",tree.Data(),varExp.Data(),signal[j].c_str()); 
+const char* pathc_chi2_sig =Form("./results/Graphs/chi2_%s_%s_%s.pdf",tree.Data(),varExp.Data(),signal[j].c_str()); 
 c_chi2_sig.SaveAs(pathc_chi2_sig);
 
 	}
@@ -1296,7 +1286,7 @@ leg_chi2_sigsum->SetTextSize(0);
 leg_chi2_sigsum->Draw();
 
 
-const char* pathc_chi2_sigsum =Form("./results/Graphs/chi2_%s_%s_signal_summary.png",tree.Data(),varExp.Data()); 
+const char* pathc_chi2_sigsum =Form("./results/Graphs/chi2_%s_%s_signal_summary.pdf",tree.Data(),varExp.Data()); 
 c_chi2_sigsum.SaveAs(pathc_chi2_sigsum);
 
 //chi2 plot part (sigsum) ends
@@ -1356,7 +1346,7 @@ leg_chi2_backsum->SetTextSize(0);
 leg_chi2_backsum->Draw();
 
 
-const char* pathc_chi2_backsum =Form("./results/Graphs/chi2_%s_%s_background_summary.png",tree.Data(),varExp.Data()); 
+const char* pathc_chi2_backsum =Form("./results/Graphs/chi2_%s_%s_background_summary.pdf",tree.Data(),varExp.Data()); 
 c_chi2_backsum.SaveAs(pathc_chi2_backsum);
 //chi2 plot part (backsum) ends
 }	

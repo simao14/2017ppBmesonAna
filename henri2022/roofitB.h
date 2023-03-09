@@ -44,22 +44,17 @@ using namespace std;
 #define BS_MASS 5.36682
 #define BP_MASS 5.27915
 
-float bkgd;
-double Significance;
-double real_significance;
-
 double minhisto=5.;
 double maxhisto=6.;
 int nbinsmasshisto=100;
-
 Int_t _count=0;
-RooWorkspace* outputw = new RooWorkspace("w");
 
-
-RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, RooPlot* &outframe, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
+RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
 {
 	
 	if (tree == "ntphi"){nbinsmasshisto = 50;} //to much fine binned for bs case
+	else if (ptmin == 50 & ptmax == 60){nbinsmasshisto = 50;} //to fine binned for bp 50-60 mass bin case
+
 	cout<<"total data: "<<ds->numEntries()<<endl;
 	TH1* h = dh->createHistogram("Bmass");
 	h->Sumw2(kFALSE);
@@ -96,8 +91,6 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	pMC2->SetTicks(1,1); 
 	//pMC2->Draw();
 
-	
-
 	// give better initial values to the Bmesons mass
 	double init_mean = BS_MASS;
 	double m1 = 5.35;
@@ -109,9 +102,9 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	// give better initial values to the Bmesons mass
 
 	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,m1,m2) ;
-	RooRealVar sigma1MC(Form("sigma1MC%d_%s",_count,pdf.Data()),"",0.05,0.005,0.11) ;
+	RooRealVar sigma1MC(Form("sigma1MC%d_%s",_count,pdf.Data()),"",0.015,0.005,0.1) ;
 	RooRealVar sigma2MC(Form("sigma2MC%d_%s",_count, pdf.Data()),"",0.03,0.01,0.06) ;
-	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.005,0.2) ;
+	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.0005,0.5) ;
 	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.5) ;
 	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,15);
 	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",10,-100,200);
@@ -125,8 +118,8 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	RooGaussian sig2MC(Form("sig2MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma2MC);  
 	RooGaussian sig3MC(Form("sig3MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma3MC);  
 	RooCBShape  CBMC(Form("CBMC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma4cbMC, alphaMC, nMC);
-	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"", 0.2, 0.001, 1);
-	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"", 0.7, 0.001, 1);
+	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"", 0.6, 0.01, 1);
+	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"", 0.7, 0.01, 1);
 	RooRealVar nsigMC(Form("nsigMC%d_%s",_count, pdf.Data()),"",dsMC->sumEntries(), 0.9*dsMC->sumEntries(), 1.2 * dsMC->sumEntries());
 	RooAddPdf* sigMC;
 	if((variation=="" && pdf=="") || variation== "background" || (variation=="signal" && pdf=="fixed" )) sigMC = new RooAddPdf(Form("sigMC%d_%s",_count,pdf.Data()),"",RooArgList(sig1MC,sig2MC),sig1fracMC);
@@ -255,23 +248,33 @@ if(npfit != "1" && variation=="" && pdf==""){
 	// MC Part. Reconstructed Background Model
 	RooRealVar* m_nonprompt_scale=0;
 	RooRealVar* m_nonprompt_shift=0;
-	m_nonprompt_scale = new RooRealVar(Form("m_nonprompt_scale%d_%s",_count,""), "m_nonprompt_scale",0.04, 0.01, 1);
-    m_nonprompt_shift = new RooRealVar(Form("m_nonprompt_shift%d_%s",_count,""), "m_nonprompt_shift", 5.13425, 5., 5.4);
+	m_nonprompt_scale = new RooRealVar(Form("m_nonprompt_scale%d_%s",_count,""), "m_nonprompt_scale",0.01, 0.005, 1);
+    m_nonprompt_shift = new RooRealVar(Form("m_nonprompt_shift%d_%s",_count,""), "m_nonprompt_shift", 5.15, 5.1, 5.2);
 	RooGenericPdf* erfc = new RooGenericPdf(Form("erfc%d_%s",_count,""), "erfc", Form("TMath::Erfc((Bmass-m_nonprompt_shift%d_%s)/m_nonprompt_scale%d_%s)",_count,"",_count,""), RooArgList(*mass, *m_nonprompt_scale, *m_nonprompt_shift));
 	// MC Part. Reconstructed Background Model
 
 	// MC Combinatorial Background Model
 	//RooRealVar* alpha_np; 
 	RooRealVar* alpha_np; 
-	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6, -15., 1.);
+	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6 , -10.0 , -0.1);
 	RooExponential COMB_jpsi(Form("COMB_jpsi%d_%s",_count,""), "COMB_jpsi", *mass, *alpha_np);
+		if (ptmin == 50 & ptmax == 60){//not enough data for this bin
+		alpha_np->setVal(w.var(Form("alpha_np%d_%s", _count-1,""))->getVal());
+		alpha_np->setConstant();
+		m_nonprompt_scale->setVal(w.var(Form("m_nonprompt_scale%d_%s",_count-1,""))->getVal());
+		m_nonprompt_scale->setConstant();
+		m_nonprompt_shift->setVal(w.var(Form("m_nonprompt_shift%d_%s",_count-1,""))->getVal());
+		m_nonprompt_shift->setConstant();
+		} //not enough data for this bin
 	// MC Combinatorial Background Model
 
 	RooRealVar jpsinp_fraction(Form("jpsinp_fraction%d_%s",_count,""), "fraction", 0.35, 0.05, 1);
 	RooAddPdf* m_jpsinp_cont = new RooAddPdf(Form("m_jpsinp_cont%d_%s",_count,""), "model for jpsi nonprompt bg", RooArgList(COMB_jpsi, *erfc), RooArgList(jpsinp_fraction));
 	w.import(*m_jpsinp_cont);
 	// DEFINE MODEL to fit the non prompt background
-	
+
+
+
 	fit_jpsinp(w,  nbinsmasshisto, pdf, ptmin, ptmax);}
 // FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
 
@@ -298,6 +301,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 
 	double n_signal_initial = ds->sumEntries(TString::Format("abs(Bmass-%g)<0.05",init_mean)) - ds->sumEntries(TString::Format("abs(Bmass-%g)<0.10&&abs(Bmass-%g)>0.05",init_mean,init_mean));
 	if(n_signal_initial<0){n_signal_initial=1;}
+	cout << "n_signal_initial " << n_signal_initial << endl; 
 
 ///////////////// SIGNAL FUNCTIONS
 
@@ -336,9 +340,9 @@ if(npfit != "1" && variation=="" && pdf==""){
 	RooPolynomial bkg_1st(Form("bkg%d_%s",_count,pdf.Data()),"",*mass,RooArgSet(a0));
 	RooPolynomial bkg_2nd(Form("bkg%d_%s",_count,pdf.Data()),"",*mass,RooArgSet(a0,a1));
 	RooPolynomial bkg_3rd(Form("bkg%d_%s",_count,pdf.Data()),"",*mass,RooArgSet(a0,a1,a2));
-	RooRealVar lambda(Form("lambda%d_%s", _count,pdf.Data()), "lambda",-1.5, -3., 1.);
+	RooRealVar lambda(Form("lambda%d_%s", _count,pdf.Data()), "lambda",-1.5, -5., 1.);
 	RooExponential bkg(Form("bkg%d_%s",_count,pdf.Data()),"",*mass,lambda);
-	RooRealVar nbkg_part_r(Form("nbkg_part_r%d_%s",_count,pdf.Data()),"",1,0,1e5);
+	RooRealVar nbkg_part_r(Form("nbkg_part_r%d_%s",_count,pdf.Data()),"",100,0,1e5);
 
 	// B+ PEAKING AND PART. RECONSTRUCTED BACKGROUNDS
 	RooProduct *nbkg_peaking;
@@ -402,9 +406,8 @@ if(tree == "ntphi"){
 
   	TString fitRange = (pdf == "mass_range") ? "m_range" : "all";
 	RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(),Extended(kTRUE), Range(fitRange));
+	fitResult->Print("v"); 
 	w.import(*model);
-	w.import(nsig);
-
 
 ////// ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT
 
@@ -434,14 +437,29 @@ if(tree == "ntphi"){
 	frame->GetYaxis()->SetLabelFont(42);
 	frame->GetYaxis()->SetLabelSize(0.035);
 	frame->SetStats(0);
-	double plot_min = 5;  //B_s could start at 5.2 for a better zoom
+	double plot_min = 5.2;  //B_s could start at 5.2 for a better zoom
 	if(tree=="ntKp") plot_min = minhisto;    
 	frame->GetXaxis()->SetRangeUser(plot_min,5.5);  
 	frame->GetXaxis()->SetNdivisions(-50205);	
 	frame->Draw();
+
+	TLegend *leg = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
+	if (tree == "ntphi"){leg = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");}
+	else{leg = new TLegend(0.8,0.7,0.89,0.89,NULL,"brNDC");}
+	leg->SetBorderSize(0);
+	leg->SetTextSize(0.025);
+	leg->SetTextFont(42);
+	leg->SetFillStyle(0);
+	leg->AddEntry(frame->findObject(Form("ds_cut%d", _count)), " Data","LEP");
+	leg->AddEntry(frame->findObject(Form("model%d_%s",_count,pdf.Data()))," Model","l");
+	leg->AddEntry(frame->findObject(Form("sig%d_%s",_count,pdf.Data()))," Signal","f");
+	leg->AddEntry(frame->findObject(Form("bkg%d_%s",_count,pdf.Data()))," Comb. Bkg.","l");
+	if(npfit != "1"){
+		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B #rightarrow J/#psi #pi^{#pm}","f");
+		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
+	if(drawLegend){leg -> Draw();}
 	
 	p2->cd();
-
 	RooHist* pull_hist = frame->pullHist(Form("ds_cut%d",_count),Form("model%d_%s",_count,pdf.Data()));
 	pull_hist->SetMarkerSize(0.5);
 	RooPlot* pull_plot = mass->frame();
@@ -469,37 +487,13 @@ if(tree == "ntphi"){
 	pull_plot->GetXaxis()->SetNdivisions(-50205);
 	pull_plot->Draw();
 
-	/*
-	   mass->setRange("signal",5.2,5.6);
-	   RooAbsReal* sigIntegral = sig->createIntegral(*mass,NormSet(*mass),Range("signal"));
-	   double sigIntegralErr = sigIntegral->getPropagatedError(*fitResult);
-	   RooAbsReal* bkgIntegral = bkg.createIntegral(*mass,NormSet(*mass),Range("signal"));
-	   double bkgIntegralErr = bkgIntegral->getPropagatedError(*fitResult);
-	   cout<<"nsig: "<<nsig.getVal()<<endl;
-	//cout<<"nsig: "<<model->getParameters(*mass)->getRealValue("nsig")<<endl;
-	cout<<"nsig error: "<<nsig.getError()<<endl;
-	cout<<"sig integral: "<<sigIntegral->getVal()<<endl;
-	cout<<"sig integral error: "<<sigIntegralErr<<endl;
-	cout<<"nbkg: "<<nbkg.getVal()<<endl;
-	//cout<<"nbkg: "<<model->getParameters(*mass)->getRealValue("nbkg")<<endl;
-	cout<<"nbkg error: "<<nbkg.getError()<<endl;
-	cout<<"bkg integral: "<<bkgIntegral->getVal()<<endl;
-	cout<<"bkg integral error: "<<bkgIntegralErr<<endl;*/
-	//cout<<"#expected events: "<<model->expectedEvents(RooArgSet(*mass))<<endl;
-	//cout<<"model integral: "<<model->getNormIntegral(RooArgSet(*mass))->getVal()<<endl;
-	//fitResult->Print("v");
-
-	//RooHist* datahist = new RooHist();
-	//datahist = frame->getHist("ds");
-	//TGraphAsymmErrors* datagraph = static_cast<TGraphAsymmErrors*>(datahist);
-	//RooCurve* modelcurve = new RooCurve();
-	//modelcurve = frame->getCurve("model");
-
-	Double_t yield = nsig.getVal();
+/*	Double_t yield = nsig.getVal();
 	Double_t yieldErr = nsig.getError();
 	TH1D* fh = (TH1D*)h->Clone("fh");
 	double nexpected = model->expectedEvents(RooArgSet(*mass));
-	double dataArr[nbinsmasshisto]; double dataErrArr[nbinsmasshisto]; double fitArr[nbinsmasshisto];
+	double dataArr[nbinsmasshisto]; 
+	double dataErrArr[nbinsmasshisto]; 
+	double fitArr[nbinsmasshisto];
 	double val = 0;
 	for(int i = 0; i < nbinsmasshisto; i++){
 		dataArr[i] = h->GetBinContent(i+1);
@@ -508,44 +502,28 @@ if(tree == "ntphi"){
 		val = model->getVal(RooArgSet(*mass))*1./nbinsmasshisto*nexpected;
 		fitArr[i] = val;
 		fh->SetBinContent(i+1, fitArr[i]);
-		fh->SetBinError(i+1, sqrt(fitArr[i]));
-	}
-	p1->cd();
-	TLegend *leg = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
-	if (tree == "ntphi"){leg = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");}
-	else{leg = new TLegend(0.8,0.7,0.89,0.89,NULL,"brNDC");}
-	leg->SetBorderSize(0);
-	leg->SetTextSize(0.025);
-	leg->SetTextFont(42);
-	leg->SetFillStyle(0);
-	leg->AddEntry(frame->findObject(Form("ds_cut%d", _count)), " Data","LEP");
-	leg->AddEntry(frame->findObject(Form("model%d_%s",_count,pdf.Data()))," Model","l");
-	leg->AddEntry(frame->findObject(Form("sig%d_%s",_count,pdf.Data()))," Signal","f");
-	leg->AddEntry(frame->findObject(Form("bkg%d_%s",_count,pdf.Data()))," Comb. Bkg.","l");
-	if(npfit != "1"){
-		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B #rightarrow J/#psi #pi^{#pm}","f");
-		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
-	if(drawLegend){leg -> Draw();}
-
+		fh->SetBinError(i+1, sqrt(fitArr[i])); 
+	} */
+	
+	////////////////////////////////// SIGNIFICANCE
+	/*float bkgd;
+	double Significance;
+	double real_significance;
 	nsig.setVal(0.);
 	nsig.setConstant();
 	RooFitResult* fitResult_nosig = model->fitTo(*ds,Save());
 	RooAbsReal* nll_nosig = model->createNLL(*ds);
 	double log_likelihood_nosig= nll_nosig->getVal();
-
 	RooAbsReal* nll = model->createNLL(*ds);
 	double log_likelihood= nll->getVal();
     real_significance = sqrt(2*(-log_likelihood+log_likelihood_nosig));
 	std::cout<<"REAL SIGNIFICANCE= "<<real_significance<<std::endl;
 	std::cout<<"***********************************************************************"<<std::endl;
-
 	RooAbsReal *bkgIntegral = bkg.createIntegral(*mass,NormSet(*mass),Range("signal"));
 	// bkgIntegralErr = bkgIntegral->getPropagatedError(*fitResult);	
 	cout<<"bkg integral: "<<bkgIntegral->getVal()<<endl;
-
 	bkgd = nbkg.getVal()*bkgIntegral->getVal();
 	Significance = yield/sqrt(bkgd+yield);
-
 	Double_t Significance =  real_significance;
 	//	Double_t Significance =  yield/TMath::Sqrt(bkgd+yield);
 	int nDigit_Significance = 3;
@@ -557,35 +535,27 @@ if(tree == "ntphi"){
 	texSig->SetTextFont(42);
 	texSig->SetTextSize(0.03);
 	texSig->SetLineWidth(2);
-
-	outframe = frame;
-	outputw->import(*model);
-
-	cout << "------------------------------------------------------------------------------------------------" << endl;
-
-	Double_t yieldPrintErr = nsig.getError();
-	Double_t yieldPrintErrUp = nsig.getAsymErrorHi();
-	Double_t yieldPrintErrDown = -1 * nsig.getAsymErrorLo();
-
-	cout << "yield Error = " << yieldPrintErr << "     yield Error Up = " << yieldPrintErrUp << "    yieldPrintErrDown = " << yieldPrintErrDown << endl;
-
-	cout << "------------------------------------------------------------------------------------------------" << endl;
-
 	RooAbsReal* RangeBakground = bkg.createIntegral(*mass,NormSet(*mass),Range("signal")); 
-
-	//cout << "RangeBakground = " << RangeBakground << endl;
-
 	double Calback = RangeBakground->getVal() * nbkg.getVal();
 	double StatSig = yield/sqrt(yield + Calback);
-	
-	/*TLatex *lat = new TLatex();
+	TLatex *lat = new TLatex();
 	lat->SetNDC();
 	lat->SetTextSize(0.045);
 	lat->DrawLatex(0.63,0.55,Form("S = %.1f",yield));	
 	lat->DrawLatex(0.63,0.50,Form("B = %.1f",Calback));	
 	lat->DrawLatex(0.63,0.45,Form("S/#sqrt{S+B} = %.1f",StatSig));	
-	lat->Draw("SAME");*/
+	lat->Draw("SAME"); */
+	////////////////////////////////// SIGNIFICANCE
 
+	Double_t yieldPrintErr = nsig.getError();
+	Double_t yieldPrintErrUp = nsig.getAsymErrorHi();
+	Double_t yieldPrintErrDown = -1 * nsig.getAsymErrorLo();
+
+	cout << "-------------------------------------------------------------------------------------------------------" << endl;
+	cout << "Signal Yield = " << nsig.getVal() << "     yield Error = " << yieldPrintErr << "     yield Error Up = " << yieldPrintErrUp << "     yieldPrintErrDown = " << yieldPrintErrDown << endl;
+	cout << "-------------------------------------------------------------------------------------------------------" << endl;
+
+	p1->cd();
 	return fitResult;
 
 } // END OF MAIN FITTING FUNCTION
@@ -609,12 +579,13 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int pti, int ptf, b
 	RooDataSet* ds_sig = (RooDataSet*) d_s->reduce("Bgen == 23333");
 
 	// Crteate the necessary folders and define paths
-  	gSystem->mkdir(Form("./results/BP/%i_%i", pti, ptf),true);
-	TString jpsi_fit_plot = "./results/BP/" + TString::Format("%i_%i/np_fit_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
-	TString incSIG_fit_plot = "./results/BP/" + TString::Format("%i_%i/InclusiveMC_Signal_fit_%i-%i%s.pdf", pti, ptf, pti, ptf, "");
-  	TString jpsi_plot_with_sig = "./results/BP/" + TString::Format("%i_%i/np_fit_signal_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
+  	gSystem->mkdir("./results/BP/PAR_R_bkg", true);
+	TString jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_pt%i-%i%s.pdf", pti, ptf, "");
+	TString incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i%s.pdf", pti, ptf, "");
+  	TString jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_pt%i-%i%s.pdf", pti, ptf, "");
 
 	//[START] FIX SHAPE (NP background)
+	RooRealVar Bmass = *(w.var("Bmass"));
 	RooAbsPdf* m_jpsinp_cont = w.pdf(Form("m_jpsinp_cont%d_%s",_count, pdf.Data()));
 	// FIT
 	auto cont_result = m_jpsinp_cont->fitTo(*ds_cont, Save());
@@ -624,12 +595,11 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int pti, int ptf, b
 	//[END] FIX SHAPE (NP background) 
 
 	//[START] FIT inclusiveMC SIGNAL 
-	RooRealVar Bmass = *(w.var("Bmass"));
 	RooAbsPdf* signalnp = w.pdf(Form("signalnp%d_%s",_count,pdf.Data()));  
   	RooRealVar n_signal_np(Form("n_signal_np%d_%s",_count,pdf.Data()), "n_signal_np", 1000, 0., 150000); 
 	RooExtendPdf signal_ext(Form("signal_ext%d_%s",_count,pdf.Data()), "extended signal pdf", *signalnp, n_signal_np);
-	// FIT
 	Bmass.setRange("bmc", 5.15, 5.4);
+	// FIT
 	auto signal_result = signal_ext.fitTo(*ds_sig, Range("bmc"), Save(), Extended());
 	// FIT
 	plot_mcfit(w, &signal_ext, ds_sig, incSIG_fit_plot,  Range("bmc"), LineColor(kRed),LineStyle(1), LineWidth(2));		
@@ -922,20 +892,12 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 
 	double n_signal_init = params[0].getVal();
 	double n_signal_error_init = params[0].getError();
-
-	cout << "N_signal initial value: " << n_signal_init << endl;
-	cout << "N_signal initial Error value: " << n_signal_error_init << endl;
-
 	int params_size = params.size();
 
-	cout << "params_size " << params_size << endl;
-
 	RooMCStudy* mcstudy = new RooMCStudy(*model, Bmass,  Extended(), FitOptions(Save(kTRUE), PrintEvalErrors(0)));
-	
 	mcstudy->generateAndFit(5000);
 
 	cout << "DONE Generate and Fit " << endl;
-
 
 	TString XName[2] = {"P(Y)","mean"};
 	vector<RooPlot*> framesPull, framesParam, framesError;
@@ -986,10 +948,10 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h1[i]->Fit("gaus","","",-5,5);
 		
 		c_pull->Update();
-		h1[i]->GetFunction("gaus")->SetLineColor(kCyan+2);
+		h1[i]->GetFunction("gaus")->SetLineColor(kRed+3);
 		h1[i]->GetFunction("gaus")->SetLineWidth(1);
 		h1[i]->GetFunction("gaus")->SetFillStyle(3019);
-		h1[i]->GetFunction("gaus")->SetFillColor(kCyan+2);
+		h1[i]->GetFunction("gaus")->SetFillColor(kRed+3);
 		h1[i]->GetXaxis()->SetTitle(Form("%s",XName[i].Data()));
 		h1[i]->GetYaxis()->SetTitle("Toy MCs");
 		h1[i]->GetXaxis()->SetRangeUser(-5, 5);
@@ -1017,37 +979,11 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h2[i]->GetYaxis()->SetTitle("");
 		h2[i]->Draw("APsame");
 
-
-
-
-		/*if(tree=="ntKp"){
-			//c_pull->SaveAs("./mcstudy/pulls_poisson_Bu.pdf");
-			c_pull->SaveAs(Form("new/pull_signal_full%d_%s_%d_%s.png",full,variable.Data(),_count,tree.Data()));
-			c_params->SaveAs(Form("new/params_signal_full%d_%s_%d_%s.png",full,variable.Data(),_count,tree.Data()));
-			c_errors->SaveAs(Form("new/error_signal_full%d_%s_%d_%s.png",full,variable.Data(),_count,tree.Data()));
-			//c_errors->SaveAs("./results/BP/pulls/pulls_error.gif");
-		}
-		else if(tree=="ntphi"){
-			c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%d_%d_Bs.png",Path,variable.Data(),ptMin,ptMax,i));
-			//c_pull->SaveAs("./mcstudy/pulls_poisson_Bs.pdf");
-			c_params->SaveAs(Form("%s/param_signal_%s_%d_%d_%d_Bs.png",Path,variable.Data(),ptMin,ptMax,i));
-			c_errors->SaveAs(Form("%s/error_signal_%s_%d_%d_%d_Bs.png",Path,variable.Data(),ptMin,ptMax,i));
-			//c_errors->SaveAs("./results/Bs/pulls/pulls_error.gif");
-		}*/
-		c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%d_%d_%s.png",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
-		c_params->SaveAs(Form("%s/param_signal_%s_%d_%d_%d_%s.png",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
-		c_errors->SaveAs(Form("%s/error_signal_%s_%d_%d_%d_%s.png",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
+		c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
+		c_params->SaveAs(Form("%s/param_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
+		c_errors->SaveAs(Form("%s/error_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),ptMin,ptMax,i,tree.Data()));
 		
 	}
-	/*
-	   else if(tree=="ntphi"){
-	   c_pull->SaveAs(Form("new/StepScan/pull/pull_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
-//c_pull->SaveAs("./mcstudy/pulls_poisson_Bs.pdf");
-c_params->SaveAs(Form("new/StepScan/param/param_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
-c_errors->SaveAs(Form("new/StepScan/error/error_signal_full%d_%s_%d_%d_Bs.png",full,variable.Data(),_count,NTrial));
-//c_errors->SaveAs("./results/Bs/pulls/pulls_error.gif");
-}
-*/
 }
 
 
