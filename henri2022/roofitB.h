@@ -248,7 +248,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 	// MC Part. Reconstructed Background Model
 	RooRealVar* m_nonprompt_scale=0;
 	RooRealVar* m_nonprompt_shift=0;
-	m_nonprompt_scale = new RooRealVar(Form("m_nonprompt_scale%d_%s",_count,""), "m_nonprompt_scale",0.04, 0.01, 1);
+	m_nonprompt_scale = new RooRealVar(Form("m_nonprompt_scale%d_%s",_count,""), "m_nonprompt_scale",0.01, 0.005, 1);
     m_nonprompt_shift = new RooRealVar(Form("m_nonprompt_shift%d_%s",_count,""), "m_nonprompt_shift", 5.15, 5.1, 5.2);
 	RooGenericPdf* erfc = new RooGenericPdf(Form("erfc%d_%s",_count,""), "erfc", Form("TMath::Erfc((Bmass-m_nonprompt_shift%d_%s)/m_nonprompt_scale%d_%s)",_count,"",_count,""), RooArgList(*mass, *m_nonprompt_scale, *m_nonprompt_shift));
 	// MC Part. Reconstructed Background Model
@@ -256,7 +256,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 	// MC Combinatorial Background Model
 	//RooRealVar* alpha_np; 
 	RooRealVar* alpha_np; 
-	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6 , -15.0 , 0.0);
+	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6 , -10.0 , -0.1);
 	RooExponential COMB_jpsi(Form("COMB_jpsi%d_%s",_count,""), "COMB_jpsi", *mass, *alpha_np);
 	// MC Combinatorial Background Model
 
@@ -569,14 +569,14 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int pti, int ptf, b
 	RooDataSet* ds_sig = (RooDataSet*) d_s->reduce("Bgen == 23333");
 
 	// Crteate the necessary folders and define paths
-  	gSystem->mkdir(Form("./results/BP/%i_%i", pti, ptf),true);
-	TString jpsi_fit_plot = "./results/BP/" + TString::Format("%i_%i/np_fit_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
-	TString incSIG_fit_plot = "./results/BP/" + TString::Format("%i_%i/InclusiveMC_Signal_fit_%i-%i%s.pdf", pti, ptf, pti, ptf, "");
-  	TString jpsi_plot_with_sig = "./results/BP/" + TString::Format("%i_%i/np_fit_signal_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
+  	gSystem->mkdir("./results/BP/PAR_R_bkg");
+	TString jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
+	TString incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i%s.pdf", pti, ptf, pti, ptf, "");
+  	TString jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
 
 	//[START] FIX SHAPE (NP background)
 	RooRealVar Bmass = *(w.var("Bmass"));
-	Bmass.setRange("part_fit_r", 5, 5.6);
+	Bmass.setRange("part_fit_r", 5, 6);
 	RooAbsPdf* m_jpsinp_cont = w.pdf(Form("m_jpsinp_cont%d_%s",_count, pdf.Data()));
 	// FIT
 	auto cont_result = m_jpsinp_cont->fitTo(*ds_cont, Save(), Range("part_fit_r"));
