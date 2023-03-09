@@ -570,9 +570,9 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int pti, int ptf, b
 
 	// Crteate the necessary folders and define paths
   	gSystem->mkdir("./results/BP/PAR_R_bkg");
-	TString jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
-	TString incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i%s.pdf", pti, ptf, pti, ptf, "");
-  	TString jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
+	TString jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_pt%i-%i%s.pdf", pti, ptf, "");
+	TString incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i%s.pdf", pti, ptf, "");
+  	TString jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_pt%i-%i%s.pdf", pti, ptf, "");
 
 	//[START] FIX SHAPE (NP background)
 	RooRealVar Bmass = *(w.var("Bmass"));
