@@ -948,10 +948,10 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h1[i]->Fit("gaus","","",-5,5);
 		
 		c_pull->Update();
-		h1[i]->GetFunction("gaus")->SetLineColor(kCyan+2);
+		h1[i]->GetFunction("gaus")->SetLineColor(kRed+3);
 		h1[i]->GetFunction("gaus")->SetLineWidth(1);
 		h1[i]->GetFunction("gaus")->SetFillStyle(3019);
-		h1[i]->GetFunction("gaus")->SetFillColor(kCyan+2);
+		h1[i]->GetFunction("gaus")->SetFillColor(kRed+3);
 		h1[i]->GetXaxis()->SetTitle(Form("%s",XName[i].Data()));
 		h1[i]->GetYaxis()->SetTitle("Toy MCs");
 		h1[i]->GetXaxis()->SetRangeUser(-5, 5);
