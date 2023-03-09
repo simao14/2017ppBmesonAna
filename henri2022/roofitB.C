@@ -377,7 +377,7 @@ cout << endl << endl;
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function" << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
 		
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
@@ -624,7 +624,7 @@ if(varExp=="nMult"){
 		if(syst_study==1){
 
 				for(int j=0; j<background.size(); j++){
-					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
+					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
 					RooAbsPdf* model_back = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,background[j].c_str()));
 					TString chi2_fitRange = (background[j] == "mass_range") ? "m_range" : "all";
 					cout << "chi2_fitRange " << chi2_fitRange << endl;
@@ -673,7 +673,7 @@ if(varExp=="nMult"){
 			general_err.push_back(max_back);
 
 			for(int j=0; j<signal.size(); j++){
-				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, frame, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
+				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
 				RooAbsPdf* model_sig = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,signal[j].c_str()));
 				RooAbsPdf* modelMC_sig = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,signal[j].c_str()));
 				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);

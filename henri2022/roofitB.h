@@ -49,7 +49,7 @@ double maxhisto=6.;
 int nbinsmasshisto=100;
 Int_t _count=0;
 
-RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, RooPlot* &outframe, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
+RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
 {
 	
 	if (tree == "ntphi"){nbinsmasshisto = 50;} //to much fine binned for bs case
@@ -256,7 +256,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 	// MC Combinatorial Background Model
 	//RooRealVar* alpha_np; 
 	RooRealVar* alpha_np; 
-	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6, -15., 0);
+	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6 , -15.0 , 0.0);
 	RooExponential COMB_jpsi(Form("COMB_jpsi%d_%s",_count,""), "COMB_jpsi", *mass, *alpha_np);
 	// MC Combinatorial Background Model
 
@@ -450,7 +450,6 @@ if(tree == "ntphi"){
 	if(drawLegend){leg -> Draw();}
 	
 	p2->cd();
-
 	RooHist* pull_hist = frame->pullHist(Form("ds_cut%d",_count),Form("model%d_%s",_count,pdf.Data()));
 	pull_hist->SetMarkerSize(0.5);
 	RooPlot* pull_plot = mass->frame();
@@ -538,7 +537,6 @@ if(tree == "ntphi"){
 	lat->Draw("SAME"); */
 	////////////////////////////////// SIGNIFICANCE
 
-	outframe = frame;
 	Double_t yieldPrintErr = nsig.getError();
 	Double_t yieldPrintErrUp = nsig.getAsymErrorHi();
 	Double_t yieldPrintErrDown = -1 * nsig.getAsymErrorLo();
@@ -547,6 +545,7 @@ if(tree == "ntphi"){
 	cout << "Signal Yield = " << nsig.getVal() << "     yield Error = " << yieldPrintErr << "     yield Error Up = " << yieldPrintErrUp << "     yieldPrintErrDown = " << yieldPrintErrDown << endl;
 	cout << "-------------------------------------------------------------------------------------------------------" << endl;
 
+	p1->cd();
 	return fitResult;
 
 } // END OF MAIN FITTING FUNCTION
