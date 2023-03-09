@@ -49,7 +49,7 @@ double maxhisto=6.;
 int nbinsmasshisto=100;
 Int_t _count=0;
 
-RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
+RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, RooPlot* &outframe, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
 {
 	
 	if (tree == "ntphi"){nbinsmasshisto = 50;} //to much fine binned for bs case
@@ -249,7 +249,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 	RooRealVar* m_nonprompt_scale=0;
 	RooRealVar* m_nonprompt_shift=0;
 	m_nonprompt_scale = new RooRealVar(Form("m_nonprompt_scale%d_%s",_count,""), "m_nonprompt_scale",0.04, 0.01, 1);
-    m_nonprompt_shift = new RooRealVar(Form("m_nonprompt_shift%d_%s",_count,""), "m_nonprompt_shift", 5.13425, 5., 5.4);
+    m_nonprompt_shift = new RooRealVar(Form("m_nonprompt_shift%d_%s",_count,""), "m_nonprompt_shift", 5.15, 5.1, 5.2);
 	RooGenericPdf* erfc = new RooGenericPdf(Form("erfc%d_%s",_count,""), "erfc", Form("TMath::Erfc((Bmass-m_nonprompt_shift%d_%s)/m_nonprompt_scale%d_%s)",_count,"",_count,""), RooArgList(*mass, *m_nonprompt_scale, *m_nonprompt_shift));
 	// MC Part. Reconstructed Background Model
 
@@ -538,7 +538,7 @@ if(tree == "ntphi"){
 	lat->Draw("SAME"); */
 	////////////////////////////////// SIGNIFICANCE
 
-
+	outframe = frame;
 	Double_t yieldPrintErr = nsig.getError();
 	Double_t yieldPrintErrUp = nsig.getAsymErrorHi();
 	Double_t yieldPrintErrDown = -1 * nsig.getAsymErrorLo();
@@ -576,21 +576,22 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int pti, int ptf, b
   	TString jpsi_plot_with_sig = "./results/BP/" + TString::Format("%i_%i/np_fit_signal_pt%i-%i%s.pdf", pti, ptf, pti, ptf, "");
 
 	//[START] FIX SHAPE (NP background)
+	RooRealVar Bmass = *(w.var("Bmass"));
+	Bmass.setRange("part_fit_r", 5., 5.35);
 	RooAbsPdf* m_jpsinp_cont = w.pdf(Form("m_jpsinp_cont%d_%s",_count, pdf.Data()));
 	// FIT
-	auto cont_result = m_jpsinp_cont->fitTo(*ds_cont, Save());
+	auto cont_result = m_jpsinp_cont->fitTo(*ds_cont, Save(), Range("part_fit_r"));
 	// FIT
 	plot_jpsifit(w, nbin_hist, pdf, m_jpsinp_cont, ds_cont, jpsi_fit_plot, false);
 	fix_parameters(w, Form("m_jpsinp_cont%d_%s",_count,pdf.Data()));
 	//[END] FIX SHAPE (NP background) 
 
 	//[START] FIT inclusiveMC SIGNAL 
-	RooRealVar Bmass = *(w.var("Bmass"));
 	RooAbsPdf* signalnp = w.pdf(Form("signalnp%d_%s",_count,pdf.Data()));  
   	RooRealVar n_signal_np(Form("n_signal_np%d_%s",_count,pdf.Data()), "n_signal_np", 1000, 0., 150000); 
 	RooExtendPdf signal_ext(Form("signal_ext%d_%s",_count,pdf.Data()), "extended signal pdf", *signalnp, n_signal_np);
-	// FIT
 	Bmass.setRange("bmc", 5.15, 5.4);
+	// FIT
 	auto signal_result = signal_ext.fitTo(*ds_sig, Range("bmc"), Save(), Extended());
 	// FIT
 	plot_mcfit(w, &signal_ext, ds_sig, incSIG_fit_plot,  Range("bmc"), LineColor(kRed),LineStyle(1), LineWidth(2));		
