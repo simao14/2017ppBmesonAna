@@ -56,6 +56,8 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 {
 	
 	if (tree == "ntphi"){nbinsmasshisto = 50;} //to much fine binned for bs case
+	else if (ptmin == 50 & ptmax == 60){nbinsmasshisto = 50;} //to fine binned for bp 50-60 mass bin case
+
 	cout<<"total data: "<<ds->numEntries()<<endl;
 	TH1* h = dh->createHistogram("Bmass");
 	h->Sumw2(kFALSE);
@@ -103,7 +105,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	// give better initial values to the Bmesons mass
 
 	RooRealVar meanMC(Form("meanMC%d_%s",_count,pdf.Data()),"",init_mean,m1,m2) ;
-	RooRealVar sigma1MC(Form("sigma1MC%d_%s",_count,pdf.Data()),"",0.05,0.005,0.11) ;
+	RooRealVar sigma1MC(Form("sigma1MC%d_%s",_count,pdf.Data()),"",0.015,0.005,0.11) ;
 	RooRealVar sigma2MC(Form("sigma2MC%d_%s",_count, pdf.Data()),"",0.03,0.01,0.06) ;
 	RooRealVar sigma3MC(Form("sigma3MC%d_%s",_count, pdf.Data()),"",0.01,0.005,0.2) ;
 	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.5) ;
@@ -119,8 +121,8 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	RooGaussian sig2MC(Form("sig2MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma2MC);  
 	RooGaussian sig3MC(Form("sig3MC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma3MC);  
 	RooCBShape  CBMC(Form("CBMC%d_%s",_count, pdf.Data()),"",*mass,meanMC,scaled_sigma4cbMC, alphaMC, nMC);
-	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"", 0.2, 0.001, 1);
-	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"", 0.7, 0.001, 1);
+	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"", 0.6, 0.01, 1);
+	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"", 0.7, 0.01, 1);
 	RooRealVar nsigMC(Form("nsigMC%d_%s",_count, pdf.Data()),"",dsMC->sumEntries(), 0.9*dsMC->sumEntries(), 1.2 * dsMC->sumEntries());
 	RooAddPdf* sigMC;
 	if((variation=="" && pdf=="") || variation== "background" || (variation=="signal" && pdf=="fixed" )) sigMC = new RooAddPdf(Form("sigMC%d_%s",_count,pdf.Data()),"",RooArgList(sig1MC,sig2MC),sig1fracMC);
