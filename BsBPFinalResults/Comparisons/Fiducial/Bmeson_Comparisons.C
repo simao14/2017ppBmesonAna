@@ -34,6 +34,7 @@ void Bmeson_Comparisons(int meson_n ){
 	int NBinsLow ;
   	int NBinsHigh ;
 	int NBins2015 ;
+	double hist3max;
 	
 
 	if(meson_n == 0){
@@ -44,6 +45,7 @@ void Bmeson_Comparisons(int meson_n ){
 		NBinsLow = 2 ;
 		NBinsHigh = 5;
 		NBins2015 = 5;
+		hist3max = 1.2;
 		scaledPt = {5, 7, 10};
 	} else {
 		NBins = nptBins;
@@ -53,6 +55,7 @@ void Bmeson_Comparisons(int meson_n ){
 		NBinsLow = 1 ;
 		NBinsHigh = 3;
 		NBins2015 = 3;
+		hist3max = 1.5;
 		scaledPt = {7, 10};
 	}
 
@@ -100,7 +103,10 @@ void Bmeson_Comparisons(int meson_n ){
 	}
 
   vector<double> factor = scaleFactor(Form("/data3/tasheng/presel/%sMC_nom.root", B_m.Data()), t_tree.Data(), scaledPt);
-  for (auto i = 0; i < factor.size(); ++i) {
+  int factor_start;
+  if (meson_n==0){factor_start=1;}      //henrique stuff
+  else{factor_start=0;}
+  for (auto i = factor_start; i < factor.size(); ++i) {
     cout << "applying scaling factor: " << factor[i] << "\n";
     BPXsecPPY2DScaled[i] *= factor[i];
 	BPXSecPPY2DErrUpScaled[i] *= factor[i];
@@ -287,14 +293,29 @@ if(meson_n == 0){
 	TGraphAsymmErrors *BPPPCrossGraph2DScaledSyst  = new TGraphAsymmErrors(NBins, BPXsecPPX, BPXsecPPY2DScaled, BXSecPPXErrDown, BXSecPPXErrUp, BPXSecPPYSystDownScaled, BPXSecPPYSystUpScaled);
   // separate plots for different fiducial regions
 
-	// CrossSection 
-	BPPPCrossGraph2D->SetLineColor(kBlue+2);
-	BPPPCrossGraph2D->SetMarkerStyle(21);
-	BPPPCrossGraph2D->SetMarkerSize(1);
-	BPPPCrossGraph2D->SetMarkerColor(kBlue+2);
-	BPPPCrossGraph2DSyst->SetFillColorAlpha(kBlue-9,0.5);
-	BPPPCrossGraph2DSyst->SetLineColor(kBlue-9);
+  double Xchange;
+  double Ychange;
+  if (meson_n==0){            //henrique stuff
+	BPPPCrossGraph2DLow->GetPoint(0,Xchange,Ychange);
+	BPPPCrossGraph2DHigh->AddPoint(Xchange,Ychange);
+	BPPPCrossGraph2DLow->RemovePoint(0);
+    }
 
+	// CrossSection 
+	BPPPCrossGraph2D->SetMarkerStyle(20);
+	BPPPCrossGraph2D->SetMarkerSize(1);
+	if (meson_n==0){
+		BPPPCrossGraph2D->SetLineColor(kGreen-9);
+		BPPPCrossGraph2D->SetMarkerColor(kGreen-9);
+		BPPPCrossGraph2DSyst->SetFillColorAlpha(kGreen-9,0.5);
+		BPPPCrossGraph2DSyst->SetLineColor(kGreen-9);
+	} else {
+		BPPPCrossGraph2D->SetLineColor(kBlue-9);
+		BPPPCrossGraph2D->SetMarkerColor(kBlue-9);
+		BPPPCrossGraph2DSyst->SetFillColorAlpha(kBlue-9,0.5);
+		BPPPCrossGraph2DSyst->SetLineColor(kBlue-9);
+
+	}
 	
 
 	TLegend* leged = new TLegend(0.75,0.70,0.95,0.95,NULL,"brNDC");
@@ -320,12 +341,12 @@ if(meson_n == 0){
   	TGraphAsymmErrors *BPPbPbCrossGraphSyst;
 	BPPbPbCrossGraph = new TGraphAsymmErrors(NBins, BPXsecPbPbX, BPXsecPbPbY,BPXSecPbPbXErrDown, BPXSecPbPbXErrUp,BPXSecPbPbYErrDown,BPXSecPbPbYErrUp);
   	BPPbPbCrossGraphSyst  = new TGraphAsymmErrors(NBins, BPXsecPbPbX, BPXsecPbPbY, BPXSecPbPbXErrDown, BPXSecPbPbXErrUp, BPXSecPbPbYSystDown,BPXSecPbPbYSystUp);
-	BPPbPbCrossGraph->SetLineColor(kGreen+2);
+	BPPbPbCrossGraph->SetLineColor(kOrange-2);
 	BPPbPbCrossGraph->SetMarkerStyle(21);
 	BPPbPbCrossGraph->SetMarkerSize(1);
-	BPPbPbCrossGraph->SetMarkerColor(kGreen+2);
-	BPPbPbCrossGraphSyst->SetFillColorAlpha(kGreen-9,0.5);
-	BPPbPbCrossGraphSyst->SetLineColor(kGreen-9);
+	BPPbPbCrossGraph->SetMarkerColor(kOrange-2);
+	BPPbPbCrossGraphSyst->SetFillColorAlpha(kOrange-2,0.5);
+	BPPbPbCrossGraphSyst->SetLineColor(kOrange-2);
 
 	TCanvas * c2New = new TCanvas("c2New","c2New",700,700);
 	c2New->cd();
@@ -353,15 +374,38 @@ if(meson_n == 0){
 
 	//2015 Reference (	Big plots  )
 	TCanvas * cRatio = new TCanvas("cRatio","cRatio",700,800);
+	gStyle->SetPadTopMargin(0.08); 
+	gStyle->SetPadBottomMargin(0.12); 
+	gStyle->SetPadLeftMargin(0.16); 
+ 	gStyle->SetPadRightMargin(0.04);
+	gStyle->SetPadTickX(1);
+	gStyle->SetPadTickY(1);
+	gStyle->SetTitleColor(1, "XYZ");
+	gStyle->SetTitleFont(42, "XYZ");
+	gStyle->SetTitleSize(0.06, "XYZ");
+	gStyle->SetTitleXOffset(0.9); 
+	gStyle->SetTitleYOffset(1.25);
+ 	gStyle->SetTickLength(0.03, "XYZ");
+  	gStyle->SetNdivisions(510, "XYZ");
+	gStyle->SetHatchesLineWidth(5);
+ 	gStyle->SetHatchesSpacing(0.05);
 	TPad * MyPad1;
-	MyPad1 = new TPad("MyPad1","",0,0.4,1,1.0);
+	MyPad1 = new TPad("MyPad1","",0,0.45,1,1.0);
+	MyPad1->SetBottomMargin(0);
 	MyPad1->Draw();
 	TPad * MyPad2;
-	MyPad2 = new TPad("MyPad2","",0,0.2,1,0.4);
+	MyPad2 = new TPad("MyPad2","",0,0.25,1,0.45);
+	MyPad2->SetBottomMargin(0);
+	MyPad2->SetTopMargin(0);
 	MyPad2->Draw();
 	TPad * MyPad3;
-	MyPad3 = new TPad("MyPad3","",0,0.00,1,0.2);
+	MyPad3 = new TPad("MyPad3","",0,0.00,1,0.25);
+	MyPad3->SetBottomMargin(0.2);
+	MyPad3->SetTopMargin(0);
 	MyPad3->Draw();
+
+
+	
 
 	MyPad1->cd();
 	TH2D * HisEmpty2;
@@ -413,25 +457,32 @@ if(meson_n == 0){
 
 	TGraphAsymmErrors *BPPPCrossGraph2015 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, BXsecPPY2015,BXSecPPXErrDown2015, BXSecPPXErrUp2015,BXSecPPYErrDown2015,BXSecPPYErrUp2015);
 	TGraphAsymmErrors *BPPPCrossGraph2015Syst = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, BXsecPPY2015,BXSecPPXErrDown2015, BXSecPPXErrUp2015,BXSecPPYSystDown2015,BXSecPPYSystUp2015);
-
-	BPPPCrossGraph2015Syst->SetFillColorAlpha(kGreen-9+2,0.5);
-	BPPPCrossGraph2015Syst->SetLineColor(kGreen-9+2);
-
-	BPPPCrossGraph2015->SetLineColor(kGreen+2);
-	BPPPCrossGraph2015->SetMarkerStyle(33);
+	BPPPCrossGraph2015->SetMarkerStyle(20);
 	BPPPCrossGraph2015->SetMarkerSize(1);
-	BPPPCrossGraph2015->SetMarkerColor(kGreen+2);
-	BPPPCrossGraph2DLow->SetLineColor(kOrange+1);
 	BPPPCrossGraph2DLow->SetMarkerStyle(25);
 	BPPPCrossGraph2DLow->SetMarkerSize(1);
-	BPPPCrossGraph2DLow->SetMarkerColor(kOrange+1);
-	BPPPCrossGraph2DHigh->SetLineColor(kOrange+1);
-	BPPPCrossGraph2DHigh->SetMarkerStyle(34);
+	BPPPCrossGraph2DHigh->SetMarkerStyle(21);
 	BPPPCrossGraph2DHigh->SetMarkerSize(1);
-	BPPPCrossGraph2DHigh->SetMarkerColor(kOrange+1);
-	BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kOrange+1, 0.5);
-	BPPPCrossGraph2DScaledSyst->SetLineColor(kOrange+1);
-
+	
+	BPPPCrossGraph2015Syst->SetLineColor(kOrange+1);
+	BPPPCrossGraph2015Syst->SetFillColorAlpha(kOrange+1, 0.5);
+	BPPPCrossGraph2015->SetLineColor(kOrange+1);
+	BPPPCrossGraph2015->SetMarkerColor(kOrange+1);
+	if (meson_n==0){
+		BPPPCrossGraph2DLow->SetLineColor(kGreen-9);
+		BPPPCrossGraph2DLow->SetMarkerColor(kGreen-9);
+		BPPPCrossGraph2DHigh->SetLineColor(kGreen-9);
+		BPPPCrossGraph2DHigh->SetMarkerColor(kGreen-9);
+		BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kGreen-9, 0.5);
+		BPPPCrossGraph2DScaledSyst->SetLineColor(kGreen-9);
+	} else{
+		BPPPCrossGraph2DLow->SetLineColor(kBlue-9);
+		BPPPCrossGraph2DLow->SetMarkerColor(kBlue-9);
+		BPPPCrossGraph2DHigh->SetLineColor(kBlue-9);
+		BPPPCrossGraph2DHigh->SetMarkerColor(kBlue-9);
+		BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kBlue-9, 0.5);
+		BPPPCrossGraph2DScaledSyst->SetLineColor(kBlue-9);
+	}
 
     TFile * finFONLL ;
 	if(meson_n == 0){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
@@ -445,6 +496,33 @@ if(meson_n == 0){
 	BPFONLL->SetMarkerStyle(20);
 	BPFONLL->SetMarkerSize(1);
 	BPFONLL->SetMarkerColor(kRed+2);
+
+	TFile * finFONLL2 ;
+	if(meson_n == 0){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
+	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
+    finFONLL2->cd();
+	TGraphAsymmErrors *BFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
+	BFONLL2->SetLineColor(kRed+2);
+	BFONLL2->SetMarkerStyle(20);
+	BFONLL2->SetMarkerSize(1);
+	BFONLL2->SetMarkerColor(kRed+2);
+
+double XTempChange;
+double YTempChange;
+double YErrLowTemp;
+double YErrHighTemp;
+if(meson_n==0){          //HENRIQUE STUFF
+	int i=0;
+    BFONLL2->GetPoint(i,XTempChange,YTempChange);
+    YErrLowTemp = BFONLL2->GetErrorYlow(i);
+    YErrHighTemp = BFONLL2->GetErrorYhigh(i);
+    BPFONLL->SetPoint(i,XTempChange,YTempChange);
+    BPFONLL->SetPointEYhigh(i,YErrHighTemp);
+    BPFONLL->SetPointEYlow(i,YErrLowTemp);
+    BPFONLL->SetPointEXhigh(i,BPFONLL->GetErrorXhigh(i));
+    BPFONLL->SetPointEXlow(i,BPFONLL->GetErrorXlow(i));
+}
+
 	
 	BPPPCrossGraph2015->Draw("epSAME");
 	BPPPCrossGraph2DScaledSyst->Draw("5same");
@@ -510,6 +588,7 @@ if (meson_n == 0){
 	HisEmpty3->GetXaxis()->CenterTitle();
 	HisEmpty3->GetYaxis()->CenterTitle();
 	HisEmpty3->GetYaxis()->SetTitleOffset(1.2);
+	HisEmpty3->GetYaxis()->SetRangeUser(0.8, hist3max);
 	HisEmpty3->Draw();
 
 	TGraphAsymmErrors *Ratio2 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, Ratio2Y,BXSecPPXErrDown2015, BXSecPPXErrUp2015,Ratio2YErr,Ratio2YErr);
@@ -569,6 +648,7 @@ if (meson_n == 0){
 	HisEmpty4->GetXaxis()->CenterTitle();
 	HisEmpty4->GetYaxis()->CenterTitle();
 	HisEmpty4->GetYaxis()->SetTitleOffset(1.2);
+	HisEmpty4->GetYaxis()->SetRangeUser(0.2, 1.7);
 	HisEmpty4->Draw();
 
   // low pT graph
@@ -584,16 +664,17 @@ if (meson_n == 0){
                                                           Ratio4YErr + NBinsLow);
 
 
-	RatioFonHigh->SetLineColor(kOrange+1);
+	RatioFonHigh->SetLineColor(kRed+2);
 	RatioFonHigh->SetMarkerStyle(34);
 	RatioFonHigh->SetMarkerSize(1);
-	RatioFonHigh->SetMarkerColor(kOrange+1);
+	RatioFonHigh->SetMarkerColor(kRed+2);
 	RatioFonHigh->Draw("epSAME");
-	RatioFonLow->SetLineColor(kOrange+1);
+	RatioFonLow->SetLineColor(kRed+2);
 	RatioFonLow->SetMarkerStyle(25);
 	RatioFonLow->SetMarkerSize(1);
-	RatioFonLow->SetMarkerColor(kOrange+1);
+	RatioFonLow->SetMarkerColor(kRed+2);
 	RatioFonLow->Draw("epSAME");
+	Ratio2->Draw("epSAME");
 	Unity2->Draw("SAME");
 	MyPad2->Update();
 
