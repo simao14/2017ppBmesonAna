@@ -104,7 +104,7 @@ void plotPt(bool bSavePlots       = 1,
 			ifstream in;
 			string inputFileName = Form("%s/%s_%s_New.txt",inputDir,inputFileType[whichPlot],mesonName[ib]);
 			//if(whichPlot==1) inputFileName = Form("%s/%s.txt",inputDir,inputFileType[whichPlot]);
-		//	string inputFileName = Form("%s/%s_%s_New.txt",inputDir,inputFileType[whichPlot],mesonName[ib]);		
+	  	//	string inputFileName = Form("%s/%s_%s_New.txt",inputDir,inputFileType[whichPlot],mesonName[ib]);		
 			cout << "########## Input file name: " << inputFileName << endl;
 
 			in.open(inputFileName.c_str());
@@ -604,7 +604,8 @@ for (auto i = 0; i < nBins; ++i) {
     RatioBsFonErrHigh[i] = FONLLUp[i] / FONLL[i];
     RatioBsFonErrLow[i] = FONLLDown[i] / FONLL[i];
   }
-for (int i=0; i<nBinsLow; ++i){BsFONLL->RemovePoint(0);}
+
+for (int i=0; i<nBinsLow; ++i){BsFONLL->RemovePoint(0);} 
 
   TGraphAsymmErrors gRatioBs_low(nBinsLow,
                                  xLow,

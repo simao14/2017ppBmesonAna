@@ -106,13 +106,15 @@ void Bmeson_Comparisons(int meson_n ){
   int factor_start;
   if (meson_n==0){factor_start=1;}      //henrique stuff
   else{factor_start=0;}
+  if(meson_n==1){
   for (auto i = factor_start; i < factor.size(); ++i) {
     cout << "applying scaling factor: " << factor[i] << "\n";
     BPXsecPPY2DScaled[i] *= factor[i];
 	BPXSecPPY2DErrUpScaled[i] *= factor[i];
     BPXSecPPY2DErrDownScaled[i] *= factor[i];
   		}
-
+  }
+  
 float BXSecPPXErrUp[NBins] ;
 float BXSecPPXErrDown[NBins] ;
 
@@ -187,12 +189,12 @@ if(meson_n == 0){
 	TH1D * MCDataSyst = (TH1D *) fError.Get("MCDataSyst");
   	if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
 
-  TString pdfErrorFile = Form("../../../%s_pdf.root",b_m.Data());
-  TFile fPdfError(pdfErrorFile);
-  TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",b_m.Data()));
-  TString trackSelErrorFile = "../../../syst_track_sel.root";
-  TFile fTrackSelError(trackSelErrorFile);
-  TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", b_m.Data()));
+	TString pdfErrorFile = Form("../../../%s_pdf.root",b_m.Data());
+	TFile fPdfError(pdfErrorFile);
+	TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",b_m.Data()));
+	TString trackSelErrorFile = "../../../syst_track_sel.root";
+	TFile fTrackSelError(trackSelErrorFile);
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", b_m.Data()));
 
 	float BPXSecPPYSystUp[NBins];
 	float BPXSecPPYSystDown[NBins];
@@ -292,7 +294,8 @@ if(meson_n == 0){
 	TGraphAsymmErrors *BPPPCrossGraph2DSyst  = new TGraphAsymmErrors(NBins, BPXsecPPX, BPXsecPPY2D, BXSecPPXErrDown, BXSecPPXErrUp, BPXSecPPYSystDown,BPXSecPPYSystUp);                 											
 	TGraphAsymmErrors *BPPPCrossGraph2DScaledSyst  = new TGraphAsymmErrors(NBins, BPXsecPPX, BPXsecPPY2DScaled, BXSecPPXErrDown, BXSecPPXErrUp, BPXSecPPYSystDownScaled, BPXSecPPYSystUpScaled);
   // separate plots for different fiducial regions
-
+ 
+ /*
   double Xchange;
   double Ychange;
   if (meson_n==0){            //henrique stuff
@@ -300,6 +303,7 @@ if(meson_n == 0){
 	BPPPCrossGraph2DHigh->AddPoint(Xchange,Ychange);
 	BPPPCrossGraph2DLow->RemovePoint(0);
     }
+	*/
 
 	// CrossSection 
 	BPPPCrossGraph2D->SetMarkerStyle(20);
@@ -383,26 +387,29 @@ if(meson_n == 0){
 	gStyle->SetTitleColor(1, "XYZ");
 	gStyle->SetTitleFont(42, "XYZ");
 	gStyle->SetTitleSize(0.06, "XYZ");
-	gStyle->SetTitleXOffset(0.9); 
-	gStyle->SetTitleYOffset(1.25);
  	gStyle->SetTickLength(0.03, "XYZ");
   	gStyle->SetNdivisions(510, "XYZ");
 	gStyle->SetHatchesLineWidth(5);
  	gStyle->SetHatchesSpacing(0.05);
+
 	TPad * MyPad1;
 	MyPad1 = new TPad("MyPad1","",0,0.45,1,1.0);
 	MyPad1->SetBottomMargin(0);
 	MyPad1->Draw();
+
 	TPad * MyPad2;
 	MyPad2 = new TPad("MyPad2","",0,0.25,1,0.45);
-	MyPad2->SetBottomMargin(0);
+	MyPad2->SetBottomMargin(0.3);
 	MyPad2->SetTopMargin(0);
+
 	MyPad2->Draw();
-	TPad * MyPad3;
+
+
+	/*TPad * MyPad3;
 	MyPad3 = new TPad("MyPad3","",0,0.00,1,0.25);
 	MyPad3->SetBottomMargin(0.2);
 	MyPad3->SetTopMargin(0);
-	MyPad3->Draw();
+	MyPad3->Draw();*/
 
 
 	
@@ -432,7 +439,7 @@ if(meson_n == 0){
 		float BXSecPPYSystDown2015[NBins2015] ;
 		float BXSecPPYSystUp2015[NBins2015] ;
 		if(meson_n == 0) { 
-			for( int c=0; c <NBins; c++){ 
+			for( int c=0; c <NBins2015; c++){ 
 				BXsecPPX2015[c]= vect_BPXsecPPX2015[c] ;
 				BXSecPPXErrDown2015[c]= vect_BPXSecPPXErrDown2015[c];
 				BXSecPPXErrUp2015[c]= vect_BPXSecPPXErrUp2015[c];
@@ -443,7 +450,7 @@ if(meson_n == 0){
 				BXSecPPYSystUp2015[c] = vect_BPXSecPPYSystUp2015[c];
 				}
 		} else {
-			for( int c=0; c <NBins; c++){ 
+			for( int c=0; c <NBins2015; c++){ 
 				BXsecPPX2015[c]= vect_BsXsecPPX2015[c] ;
 				BXSecPPXErrDown2015[c]= vect_BsXSecPPXErrDown2015[c];
 				BXSecPPXErrUp2015[c]= vect_BsXSecPPXErrUp2015[c];
@@ -453,6 +460,14 @@ if(meson_n == 0){
 				BXSecPPYSystDown2015[c]= vect_BsXSecPPYSystDown2015[c];
 				BXSecPPYSystUp2015[c] = vect_BsXSecPPYSystUp2015[c];
 				}			
+			}
+
+		if(meson_n==0){  
+			int i=0;
+			//cout << "applying scaling factor: " << factor[i] << "\n";
+			BXsecPPY2015[i] *= (1/factor[1+i]);
+			BXSecPPYErrDown2015[i] *= (1/factor[1+i]);
+			BXSecPPYErrUp2015[i] *= (1/factor[1+i]);
 			}
 
 	TGraphAsymmErrors *BPPPCrossGraph2015 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, BXsecPPY2015,BXSecPPXErrDown2015, BXSecPPXErrUp2015,BXSecPPYErrDown2015,BXSecPPYErrUp2015);
@@ -484,6 +499,7 @@ if(meson_n == 0){
 		BPPPCrossGraph2DScaledSyst->SetLineColor(kBlue-9);
 	}
 
+
     TFile * finFONLL ;
 	if(meson_n == 0){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
 	else{ finFONLL = new TFile("FONLLs/BsFONLL.root");}
@@ -502,25 +518,23 @@ if(meson_n == 0){
 	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
     finFONLL2->cd();
 	TGraphAsymmErrors *BFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
-	BFONLL2->SetLineColor(kRed+2);
-	BFONLL2->SetMarkerStyle(20);
-	BFONLL2->SetMarkerSize(1);
-	BFONLL2->SetMarkerColor(kRed+2);
+
 
 double XTempChange;
 double YTempChange;
 double YErrLowTemp;
 double YErrHighTemp;
 if(meson_n==0){          //HENRIQUE STUFF
-	int i=0;
-    BFONLL2->GetPoint(i,XTempChange,YTempChange);
-    YErrLowTemp = BFONLL2->GetErrorYlow(i);
-    YErrHighTemp = BFONLL2->GetErrorYhigh(i);
-    BPFONLL->SetPoint(i,XTempChange,YTempChange);
-    BPFONLL->SetPointEYhigh(i,YErrHighTemp);
-    BPFONLL->SetPointEYlow(i,YErrLowTemp);
-    BPFONLL->SetPointEXhigh(i,BPFONLL->GetErrorXhigh(i));
-    BPFONLL->SetPointEXlow(i,BPFONLL->GetErrorXlow(i));
+	for(int i = 0; i < scaledPt.size()-1; i ++){
+		BFONLL2->GetPoint(i,XTempChange,YTempChange);
+		YErrLowTemp = BFONLL2->GetErrorYlow(i);
+		YErrHighTemp = BFONLL2->GetErrorYhigh(i);
+		BPFONLL->SetPoint(i,XTempChange,YTempChange);
+		BPFONLL->SetPointEYhigh(i,YErrHighTemp);
+		BPFONLL->SetPointEYlow(i,YErrLowTemp);
+		BPFONLL->SetPointEXhigh(i,BPFONLL->GetErrorXhigh(i));
+		BPFONLL->SetPointEXlow(i,BPFONLL->GetErrorXlow(i));
+}
 }
 
 	
@@ -575,6 +589,12 @@ if (meson_n == 0){
 }
 	cRatio->cd();
 	MyPad2->cd();
+	
+	TLegend* leg4 = new TLegend(0.8,0.3,0.95,0.66,NULL,"brNDC");
+	leg4->SetBorderSize(0);
+	leg4->SetTextSize(0.025);     
+	leg4->SetTextFont(42);
+	leg4->SetFillStyle(0);
 
 TH2D * HisEmpty3;
 if (meson_n == 0){
@@ -584,18 +604,22 @@ if (meson_n == 0){
 	HisEmpty3 = new TH2D("HisEmpty3","",100,7,50,100,0,2);
 	HisEmpty3->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
 }
-	HisEmpty3->GetYaxis()->SetTitle("2017/2015 Data");
+	HisEmpty3->GetYaxis()->SetTitle("Comparisons");
 	HisEmpty3->GetXaxis()->CenterTitle();
 	HisEmpty3->GetYaxis()->CenterTitle();
 	HisEmpty3->GetYaxis()->SetTitleOffset(1.2);
-	HisEmpty3->GetYaxis()->SetRangeUser(0.8, hist3max);
+	HisEmpty3->GetYaxis()->SetLabelSize(0.1);
+	HisEmpty3->GetXaxis()->SetLabelSize(0.1);
+	HisEmpty3->GetXaxis()->SetTitleSize(0.15);
+	HisEmpty3->GetYaxis()->SetRangeUser(0.2, 1.7);
 	HisEmpty3->Draw();
 
 	TGraphAsymmErrors *Ratio2 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, Ratio2Y,BXSecPPXErrDown2015, BXSecPPXErrUp2015,Ratio2YErr,Ratio2YErr);
 		Ratio2->SetLineColor(kOrange+1);
-		Ratio2->SetMarkerStyle(34);
+		Ratio2->SetMarkerStyle(21);
 		Ratio2->SetMarkerSize(1);
 		Ratio2->SetMarkerColor(kOrange+1);
+		leg4->AddEntry(Ratio2,"2017/2015","PL");	
 		Ratio2->Draw("epSAME");
 
   	TGraphAsymmErrors *RatioDataLow;
@@ -606,6 +630,7 @@ if (meson_n == 0){
 		RatioDataLow->SetMarkerSize(1);
 		RatioDataLow->SetMarkerColor(kOrange+1);
 		RatioDataLow->Draw("epSAME");
+		leg4->AddEntry(RatioDataLow,"2017/2015 (scaled to |y| < 2.4)","PL");	
 		}
 
 	TLine * Unity2 = new TLine(0,0,0,0);
@@ -633,8 +658,8 @@ if (meson_n == 0){
 		Ratio4YErr[i] = Ratio4Y[i] *TMath::Sqrt(BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i] * BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i] + FONLLYErr[i]/FONLLY[i] * FONLLYErr[i]/FONLLY[i] );
 		}
 
-	cRatio->cd();
-	MyPad3->cd();
+	//cRatio->cd();
+	//MyPad3->cd();
 
 TH2D * HisEmpty4;
 if (meson_n == 0){
@@ -649,7 +674,7 @@ if (meson_n == 0){
 	HisEmpty4->GetYaxis()->CenterTitle();
 	HisEmpty4->GetYaxis()->SetTitleOffset(1.2);
 	HisEmpty4->GetYaxis()->SetRangeUser(0.2, 1.7);
-	HisEmpty4->Draw();
+	//HisEmpty4->Draw();
 
   // low pT graph
   TGraphAsymmErrors *RatioFonLow = new TGraphAsymmErrors(NBinsLow, BPXsecPPX, Ratio4Y,
@@ -665,7 +690,7 @@ if (meson_n == 0){
 
 
 	RatioFonHigh->SetLineColor(kRed+2);
-	RatioFonHigh->SetMarkerStyle(34);
+	RatioFonHigh->SetMarkerStyle(21);
 	RatioFonHigh->SetMarkerSize(1);
 	RatioFonHigh->SetMarkerColor(kRed+2);
 	RatioFonHigh->Draw("epSAME");
@@ -674,8 +699,10 @@ if (meson_n == 0){
 	RatioFonLow->SetMarkerSize(1);
 	RatioFonLow->SetMarkerColor(kRed+2);
 	RatioFonLow->Draw("epSAME");
-	Ratio2->Draw("epSAME");
-	Unity2->Draw("SAME");
+	//Unity2->Draw("SAME");
+	leg4->AddEntry(RatioFonLow,"2017/FONLL (scaled to |y| < 2.4)","PL");
+	leg4->AddEntry(RatioFonHigh,"2017/FONLL","PL");
+	leg4->Draw("same");
 	MyPad2->Update();
 
 	//cRatio->SaveAs(Form("Plots/%s/%sCrossComp.png", B_m.Data(), B_m.Data()));
@@ -717,3 +744,5 @@ if (meson_n == 0){
 
 }
 
+
+						
