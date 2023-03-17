@@ -121,4 +121,6 @@ float BPXSecPbPbYSystDownRatio[nptBinsPbPb] = {0.1359, 0.1705, 0.0761, 0.0698};
 	vector<float> vect_BPXSecPPYSystDown2015{230000,59000,15000,3500,400};
 	vector<float> vect_BPXSecPPYSystUp2015{230000,59000,15000,3500,400};
 	//(THESE ARE 2015 BP INFO)
+	vector<float> vect_ptBins2015bp{7, 10, 15, 20, 30, 50};
+	vector<float> vect_ptBins2015bs{7, 15, 20, 50};
 	//TO BE USED IN Bmesons_Comparison.C 

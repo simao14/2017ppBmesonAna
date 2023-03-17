@@ -386,7 +386,7 @@ if(meson_n == 0){
 	gStyle->SetPadTickY(1);
 	gStyle->SetTitleColor(1, "XYZ");
 	gStyle->SetTitleFont(42, "XYZ");
-	gStyle->SetTitleSize(0.06, "XYZ");
+	//gStyle->SetTitleSize(0.06, "XYZ");
  	gStyle->SetTickLength(0.03, "XYZ");
   	gStyle->SetNdivisions(510, "XYZ");
 	gStyle->SetHatchesLineWidth(5);
@@ -418,16 +418,17 @@ if(meson_n == 0){
 	TH2D * HisEmpty2;
 	if (meson_n == 0){
 		HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,100.0,30000000);
-		HisEmpty2->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");}
+		HisEmpty2->GetXaxis()->SetTitle("p_{T} (GeV/c)");}
 	else {	
 		HisEmpty2 = new TH2D("HisEmpty2","",100,7,50,100,100.0,30000000);
-		HisEmpty2->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");}
+		HisEmpty2->GetXaxis()->SetTitle("p_{T} (GeV/c)");}
 	HisEmpty2->GetYaxis()->SetTitle("d#sigma/d p_{T} (pb c/GeV)");
 	HisEmpty2->GetXaxis()->CenterTitle();
 	HisEmpty2->GetYaxis()->CenterTitle();
 	//HisEmpty2->SetTitle("B^{+} Cross Section With Fiducial Region");
-	HisEmpty2->GetYaxis()->SetTitleOffset(1.2);
+	HisEmpty2->GetYaxis()->SetTitleOffset(1.0);
 	HisEmpty2->GetXaxis()->SetTitleOffset(1.2);
+	HisEmpty2->GetYaxis()->SetTitleSize(0.06);
 	HisEmpty2->Draw();
 
 		float BXsecPPX2015[NBins2015] ;
@@ -462,13 +463,12 @@ if(meson_n == 0){
 				}			
 			}
 
-		if(meson_n==0){  
+		/*if(meson_n==0){  
 			int i=0;
-			//cout << "applying scaling factor: " << factor[i] << "\n";
 			BXsecPPY2015[i] *= (1/factor[1+i]);
 			BXSecPPYErrDown2015[i] *= (1/factor[1+i]);
 			BXSecPPYErrUp2015[i] *= (1/factor[1+i]);
-			}
+			}*/
 
 	TGraphAsymmErrors *BPPPCrossGraph2015 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, BXsecPPY2015,BXSecPPXErrDown2015, BXSecPPXErrUp2015,BXSecPPYErrDown2015,BXSecPPYErrUp2015);
 	TGraphAsymmErrors *BPPPCrossGraph2015Syst = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, BXsecPPY2015,BXSecPPXErrDown2015, BXSecPPXErrUp2015,BXSecPPYSystDown2015,BXSecPPYSystUp2015);
@@ -513,6 +513,7 @@ if(meson_n == 0){
 	BPFONLL->SetMarkerSize(1);
 	BPFONLL->SetMarkerColor(kRed+2);
 
+
 	TFile * finFONLL2 ;
 	if(meson_n == 0){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
 	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
@@ -520,30 +521,78 @@ if(meson_n == 0){
 	TGraphAsymmErrors *BFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
 
 
+TGraphAsymmErrors *BFONLLLow= new TGraphAsymmErrors();
+BFONLLLow->SetLineWidth(1);
+BFONLLLow->SetFillColorAlpha(kRed-7, 0.5);
+BFONLLLow->SetLineColor(kRed-7);
+BFONLLLow->SetFillStyle(0);
+BFONLLLow->SetMarkerStyle(20);
+BFONLLLow->SetMarkerSize(1);
+BFONLLLow->SetMarkerColor(kRed-7);
 double XTempChange;
 double YTempChange;
 double YErrLowTemp;
 double YErrHighTemp;
 if(meson_n==0){          //HENRIQUE STUFF
-	for(int i = 0; i < scaledPt.size()-1; i ++){
+	for(int i = 0; i < NBinsLow; i ++){
 		BFONLL2->GetPoint(i,XTempChange,YTempChange);
 		YErrLowTemp = BFONLL2->GetErrorYlow(i);
 		YErrHighTemp = BFONLL2->GetErrorYhigh(i);
+
 		BPFONLL->SetPoint(i,XTempChange,YTempChange);
 		BPFONLL->SetPointEYhigh(i,YErrHighTemp);
 		BPFONLL->SetPointEYlow(i,YErrLowTemp);
-		BPFONLL->SetPointEXhigh(i,BPFONLL->GetErrorXhigh(i));
-		BPFONLL->SetPointEXlow(i,BPFONLL->GetErrorXlow(i));
+		
+
+		BFONLLLow->AddPoint(XTempChange,YTempChange);
+		BFONLLLow->SetPointEYhigh(i,YErrHighTemp);
+		BFONLLLow->SetPointEYlow(i,YErrLowTemp);
+		BFONLLLow->SetPointEXhigh(i,BPFONLL->GetErrorXhigh(i));
+		BFONLLLow->SetPointEXlow(i,BPFONLL->GetErrorXlow(i));
 }
 }
 
+	/*double XTempChange2;
+	double YTempChange2;
+	double YErrLowTemp2;
+	double YErrHighTemp2;
+	TGraphAsymmErrors *BPPPCrossGraph2015Low= new TGraphAsymmErrors();
+	TGraphAsymmErrors *BPPPCrossGraph2015SystLow= new TGraphAsymmErrors();
+	BPPPCrossGraph2015SystLow->SetLineColor(kViolet+1);
+	BPPPCrossGraph2015SystLow->SetFillColorAlpha(kViolet+1, 0.5);
+	BPPPCrossGraph2015Low->SetLineColor(kViolet+1);
+	BPPPCrossGraph2015Low->SetMarkerColor(kViolet+1);
+	BPPPCrossGraph2015Low->SetMarkerStyle(20);
+	BPPPCrossGraph2015Low->SetMarkerSize(1);
+	if(meson_n==0){
+		int i=0;
+		BPPPCrossGraph2015->GetPoint(i,XTempChange2,YTempChange2);
+		BPPPCrossGraph2015Low->AddPoint(XTempChange2,YTempChange2);
+		BPPPCrossGraph2015Low->SetPointEYhigh(i,BPPPCrossGraph2015->GetErrorYhigh(i));
+		BPPPCrossGraph2015Low->SetPointEYlow(i,BPPPCrossGraph2015->GetErrorYlow(i));
+		BPPPCrossGraph2015Low->SetPointEXhigh(i,BPPPCrossGraph2015->GetErrorXhigh(i));
+		BPPPCrossGraph2015Low->SetPointEXlow(i,BPPPCrossGraph2015->GetErrorXlow(i));
+		BPPPCrossGraph2015->RemovePoint(0);
+
+		BPPPCrossGraph2015Syst->GetPoint(i,XTempChange2,YTempChange2);
+		BPPPCrossGraph2015SystLow->AddPoint(XTempChange2,YTempChange2);
+		BPPPCrossGraph2015SystLow->SetPointEYhigh(i,BPPPCrossGraph2015Syst->GetErrorYhigh(i));
+		BPPPCrossGraph2015SystLow->SetPointEYlow(i,BPPPCrossGraph2015Syst->GetErrorYlow(i));
+		BPPPCrossGraph2015SystLow->SetPointEXhigh(i,BPPPCrossGraph2015Syst->GetErrorXhigh(i));
+		BPPPCrossGraph2015SystLow->SetPointEXlow(i,BPPPCrossGraph2015Syst->GetErrorXlow(i));
+		BPPPCrossGraph2015Syst->RemovePoint(0);
+
+	}
 	
+	BPPPCrossGraph2015Low->Draw("epSAME");
+	BPPPCrossGraph2015SystLow->Draw("epSAME");*/
 	BPPPCrossGraph2015->Draw("epSAME");
 	BPPPCrossGraph2DScaledSyst->Draw("5same");
 	BPPPCrossGraph2015Syst->Draw("5same");	
 	BPPPCrossGraph2DLow->Draw("epSAME");
 	BPPPCrossGraph2DHigh->Draw("epSAME");
 	BPFONLL->Draw("5");
+	BFONLLLow->Draw("5");
 
 	TLegend* leg3 = new TLegend(0.55,0.64,0.8,0.85,NULL,"brNDC");
 	leg3->SetBorderSize(0);
@@ -553,7 +602,9 @@ if(meson_n==0){          //HENRIQUE STUFF
 	leg3->AddEntry(BPPPCrossGraph2DLow,"2017 pp 5.02 TeV (scaled to |y| < 2.4)","PL");	
 	leg3->AddEntry(BPPPCrossGraph2DHigh,"2017 pp 5.02 TeV","PL");	
 	leg3->AddEntry(BPPPCrossGraph2015,"2015 pp 5.02 TeV","PL");
+	//leg3->AddEntry(BPPPCrossGraph2015Low,"2015 pp 5.02 TeV(scaled)","PL");
 	leg3->AddEntry(BPFONLL,"FONLL Calculations","f");
+	if(meson_n==0){leg3->AddEntry(BFONLLLow,"FONLL Calculations(|y| < 2.4)","f");}
 	leg3->Draw("same");
 	MyPad1->Update();
 
@@ -599,19 +650,20 @@ if (meson_n == 0){
 TH2D * HisEmpty3;
 if (meson_n == 0){
 	HisEmpty3 = new TH2D("HisEmpty3","",100,5,60,100,0,2);
-	HisEmpty3->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	HisEmpty3->GetXaxis()->SetTitle("p_{T} (GeV/c)");
 } else {
 	HisEmpty3 = new TH2D("HisEmpty3","",100,7,50,100,0,2);
-	HisEmpty3->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	HisEmpty3->GetXaxis()->SetTitle("p_{T} (GeV/c)");
 }
 	HisEmpty3->GetYaxis()->SetTitle("Comparisons");
 	HisEmpty3->GetXaxis()->CenterTitle();
 	HisEmpty3->GetYaxis()->CenterTitle();
-	HisEmpty3->GetYaxis()->SetTitleOffset(1.2);
+	HisEmpty3->GetYaxis()->SetTitleOffset(0.5);
 	HisEmpty3->GetYaxis()->SetLabelSize(0.1);
 	HisEmpty3->GetXaxis()->SetLabelSize(0.1);
-	HisEmpty3->GetXaxis()->SetTitleSize(0.15);
-	HisEmpty3->GetYaxis()->SetRangeUser(0.2, 1.7);
+	HisEmpty3->GetXaxis()->SetTitleSize(0.12);
+	HisEmpty3->GetYaxis()->SetTitleSize(0.12);
+	HisEmpty3->GetYaxis()->SetRangeUser(0.4, 1.5);
 	HisEmpty3->Draw();
 
 	TGraphAsymmErrors *Ratio2 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, Ratio2Y,BXSecPPXErrDown2015, BXSecPPXErrUp2015,Ratio2YErr,Ratio2YErr);
@@ -619,8 +671,8 @@ if (meson_n == 0){
 		Ratio2->SetMarkerStyle(21);
 		Ratio2->SetMarkerSize(1);
 		Ratio2->SetMarkerColor(kOrange+1);
-		leg4->AddEntry(Ratio2,"2017/2015","PL");	
-		Ratio2->Draw("epSAME");
+		//leg4->AddEntry(Ratio2,"2017/2015","PL");	
+		//Ratio2->Draw("epSAME");
 
   	TGraphAsymmErrors *RatioDataLow;
   	if (meson_n ==0){
@@ -629,8 +681,8 @@ if (meson_n == 0){
 		RatioDataLow->SetMarkerStyle(25);
 		RatioDataLow->SetMarkerSize(1);
 		RatioDataLow->SetMarkerColor(kOrange+1);
-		RatioDataLow->Draw("epSAME");
-		leg4->AddEntry(RatioDataLow,"2017/2015 (scaled to |y| < 2.4)","PL");	
+		//RatioDataLow->Draw("epSAME");
+		//leg4->AddEntry(RatioDataLow,"2017/2015 (scaled to |y| < 2.4)","PL");	
 		}
 
 	TLine * Unity2 = new TLine(0,0,0,0);
@@ -644,12 +696,12 @@ if (meson_n == 0){
 	MyPad2->Update();
 
 	//FONLL
+	double XTempFONLL;
+	double YTempFONLL;
 	float Ratio4Y[NBins];
 	float Ratio4YErr[NBins];
 	float FONLLY[NBins];
 	float FONLLYErr[NBins];
-	double XTempFONLL;
-	double YTempFONLL;
 	for(int i = 0; i < NBins; i++){
 		BPFONLL->GetPoint(i,XTempFONLL,YTempFONLL);
 		FONLLY[i] = YTempFONLL;
@@ -672,10 +724,177 @@ if (meson_n == 0){
 	HisEmpty4->GetYaxis()->SetTitle("2017 Data/FONLL");
 	HisEmpty4->GetXaxis()->CenterTitle();
 	HisEmpty4->GetYaxis()->CenterTitle();
-	HisEmpty4->GetYaxis()->SetTitleOffset(1.2);
-	HisEmpty4->GetYaxis()->SetRangeUser(0.2, 1.7);
+	HisEmpty4->GetYaxis()->SetTitleOffset(1.0);
+	HisEmpty4->GetYaxis()->SetTitleSize(40);
+	HisEmpty4->GetYaxis()->SetRangeUser(0.4, 1.5);
 	//HisEmpty4->Draw();
 
+ // Get ratio plots
+
+double binlow[NBinsLow];
+double glbSystUp;
+double glbSystDown;
+double bl_low[NBinsLow];
+double bl_low_yStatL[NBinsLow];
+double bl_low_yStatH[NBinsLow];
+double bl_low_xErrL[NBinsLow];
+double bl_low_xErrH[NBinsLow];
+double bl_low_ySystL[NBinsLow];
+double bl_low_ySystH[NBinsLow];
+double binhigh[NBins-NBinsLow];
+double bl_high[NBins-NBinsLow];
+double bl_high_yStatL[NBins-NBinsLow];
+double bl_high_yStatH[NBins-NBinsLow];
+double bl_high_xErrL[NBins-NBinsLow];
+double bl_high_xErrH[NBins-NBinsLow];
+double bl_high_ySystL[NBins-NBinsLow];
+double bl_high_ySystH[NBins-NBinsLow];
+int NBinsLow2015;
+if (meson_n==0){NBinsLow2015=1;} else {NBinsLow2015=0;}
+double binlow_2015[NBinsLow2015];
+double bl_low_2015[NBinsLow2015];
+double bl_low_2015_yStatL[NBinsLow2015];
+double bl_low_2015_yStatH[NBinsLow2015];
+double bl_low_2015_xErrL[NBinsLow2015];
+double bl_low_2015_xErrH[NBinsLow2015];
+double bl_low_2015_ySystL[NBinsLow2015];
+double bl_low_2015_ySystH[NBinsLow2015];
+double binhigh_2015[NBins2015-NBinsLow2015];
+double bl_high_2015[NBins2015-NBinsLow2015];
+double bl_high_2015_yStatL[NBins2015-NBinsLow2015];
+double bl_high_2015_yStatH[NBins2015-NBinsLow2015];
+double bl_high_2015_xErrL[NBins2015-NBinsLow2015];
+double bl_high_2015_xErrH[NBins2015-NBinsLow2015];
+double bl_high_2015_ySystL[NBins2015-NBinsLow2015];
+double bl_high_2015_ySystH[NBins2015-NBinsLow2015];
+
+
+for (int i=0;i<NBins;++i){
+	
+	if( i<NBinsLow){
+		binlow[i]=BPXsecPPX[i];
+		glbSystUp=globUncert[i]*100;
+		glbSystDown=globUncert[i]*100;
+		bl_low[i]=BPXsecPPY2DScaled[i];
+		bl_low_yStatL[i]=BPXSecPPY2DErrDownScaled[i];
+		bl_low_yStatH[i]=BPXSecPPY2DErrUpScaled[i];
+		bl_low_xErrL[i]=BPXsecPPX[i]-ptBins[i];
+		bl_low_xErrH[i]=ptBins[i + 1]-BPXsecPPX[i];
+		bl_low_ySystL[i]=BPTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
+		bl_low_ySystH[i]=BPTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
+		
+	} 
+	else {
+		binhigh[i-NBinsLow]=BPXsecPPX[i];
+		bl_high[i-NBinsLow]=BPXsecPPY2DScaled[i];
+		bl_high_yStatL[i-NBinsLow]=BPXSecPPY2DErrDownScaled[i];
+		bl_high_yStatH[i-NBinsLow]=BPXSecPPY2DErrUpScaled[i];
+		bl_high_xErrL[i-NBinsLow]=BPXsecPPX[i]-ptBins[i];
+		bl_high_xErrH[i-NBinsLow]=ptBins[i + 1]-BPXsecPPX[i];
+		bl_high_ySystL[i-NBinsLow]=BPTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
+		bl_high_ySystH[i-NBinsLow]=BPTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
+	}
+}
+double ptBins2015[NBins2015+1];
+if (meson_n==0){
+	for(auto i=0;i<NBins2015+1;++i){
+		ptBins2015[i]=vect_ptBins2015bp[i];
+	}
+}
+else {for(auto i=0;i<NBins2015+1;++i){
+		ptBins2015[i]=vect_ptBins2015bs[i];
+	}}
+for (int i=0;i<NBins2015;++i){
+	
+	if( i<NBinsLow2015){
+		binlow_2015[i]=BXsecPPX2015[i];
+		bl_low_2015[i]=BXsecPPY2015[i];
+		bl_low_2015_yStatL[i]=BXSecPPYErrDown2015[i];
+		bl_low_2015_yStatH[i]=BXSecPPYErrUp2015[i];
+		bl_low_2015_xErrL[i]=BXsecPPX2015[i]-ptBins2015[i];
+		bl_low_2015_xErrH[i]=ptBins2015[i + 1]-BXsecPPX2015[i];
+		bl_low_2015_ySystL[i]=BXSecPPYSystDown2015[i];
+		bl_low_2015_ySystH[i]=BXSecPPYSystDown2015[i];
+		
+	} 
+	else {
+		binhigh_2015[i-NBinsLow2015]=BXsecPPX2015[i];
+		bl_high_2015[i-NBinsLow2015]=BXsecPPY2015[i];
+		bl_high_2015_yStatL[i-NBinsLow2015]=BXSecPPYErrDown2015[i];
+		bl_high_2015_yStatH[i-NBinsLow2015]=BXSecPPYErrUp2015[i];
+		bl_high_2015_xErrL[i-NBinsLow2015]=BXsecPPX2015[i]-ptBins2015[i];
+		bl_high_2015_xErrH[i-NBinsLow2015]=ptBins2015[i + 1]-BXsecPPX2015[i];
+		bl_high_2015_ySystL[i-NBinsLow2015]=BXSecPPYSystDown2015[i];
+		bl_high_2015_ySystH[i-NBinsLow2015]=BXSecPPYSystUp2015[i];
+	}
+}
+  vector<double> BXsec;
+  vector<double> BXsecStat;
+  vector<double> BXsecSyst;
+  vector<double> BXsec2015;
+  vector<double> BXsecStat2015;
+  vector<double> BXsecSyst2015;
+  vector<double> FONLL;
+  vector<double> FONLLUp;
+  vector<double> FONLLDown;
+
+ 
+  for (auto i = 0; i < NBinsLow; ++i) {
+    BXsec.push_back(bl_low[i]);
+    BXsecStat.push_back(bl_low_yStatL[i]);
+    BXsecSyst.push_back(bl_low_ySystL[i]);
+  }
+  for (auto i = 0; i < NBinsHigh; ++i) {
+    BXsec.push_back(bl_high[i]);
+    BXsecStat.push_back(bl_high_yStatL[i]);
+    BXsecSyst.push_back(bl_high_ySystL[i]);
+  }
+  for (auto i = 0; i < NBinsLow2015; ++i) {
+    BXsec2015.push_back(bl_low_2015[i]);
+    BXsecStat2015.push_back(bl_low_2015_yStatL[i]);
+    BXsecSyst2015.push_back(bl_low_2015_ySystL[i]);
+  }
+  for (auto i = 0; i < NBins2015-NBinsLow2015; ++i) {
+    BXsec2015.push_back(bl_high_2015[i]);
+    BXsecStat2015.push_back(bl_high_2015_yStatL[i]);
+    BXsecSyst2015.push_back(bl_high_2015_ySystL[i]);
+  }
+
+  double RatioBs[NBins];
+  double RatioBsStat[NBins];
+  double RatioBsSyst[NBins];
+  double RatioBsFonErrHigh[NBins];
+  double RatioBsFonErrLow[NBins];
+  double RatioBs2015[NBins2015];
+  double RatioBsStat2015[NBins2015];
+  double RatioBsSyst2015[NBins2015];
+
+std::vector<double> Unity(NBins, 1);
+
+for (auto i = 0; i < NBins; ++i) {
+  
+    BPFONLL->GetPoint(i, XTempFONLL, YTempFONLL);
+    FONLL.push_back(YTempFONLL);
+    FONLLUp.push_back(BPFONLL->GetErrorYhigh(i));
+    FONLLDown.push_back(BPFONLL->GetErrorYlow(i));
+
+    RatioBs[i] = BXsec[i] / FONLL[i];
+    RatioBsStat[i] = BXsecStat[i] / FONLL[i];
+    RatioBsSyst[i] = BXsecSyst[i] / FONLL[i];
+    RatioBsFonErrHigh[i] = FONLLUp[i] / FONLL[i];
+    RatioBsFonErrLow[i] = FONLLDown[i] / FONLL[i];
+  }
+
+int start2015;
+if(meson_n==0){start2015=0;} else {start2015=1;}
+
+for (auto i=start2015;i<NBins2015;i++){
+  	
+	RatioBs2015[i] = BXsec2015[i] / BXsec[i+1];
+    RatioBsStat2015[i] = BXsecStat2015[i] / BXsec[i+1];
+    RatioBsSyst2015[i] = BXsecSyst2015[i] / BXsec[i+1];
+}
+  if(meson_n==0){for (int i=0; i<NBinsLow; ++i){BPFONLL->RemovePoint(0);}}
   // low pT graph
   TGraphAsymmErrors *RatioFonLow = new TGraphAsymmErrors(NBinsLow, BPXsecPPX, Ratio4Y,
                                                          BXSecPPXErrDown, BXSecPPXErrUp,
@@ -688,21 +907,84 @@ if (meson_n == 0){
                                                           Ratio4YErr + NBinsLow,
                                                           Ratio4YErr + NBinsLow);
 
+	
+
+  TGraphAsymmErrors gRatioBs_low(NBinsLow, binlow,RatioBs,bl_low_xErrL, bl_low_xErrH,RatioBsStat, RatioBsStat);
+
+  TGraphAsymmErrors gRatioBs_high(NBinsHigh,binhigh,RatioBs + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsStat + NBinsLow, RatioBsStat + NBinsLow);
+
+  TGraphAsymmErrors gRatioBs_syst_low(NBinsLow,binlow,RatioBs,bl_low_xErrL, bl_low_xErrH,RatioBsSyst, RatioBsSyst);
+
+  TGraphAsymmErrors gRatioBs_syst_high(NBinsHigh,binhigh,RatioBs + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsSyst + NBinsLow, RatioBsSyst + NBinsLow);
+
+  TGraphAsymmErrors gRatioBs_Fon_low(NBinsLow,binlow,Unity.data(),bl_low_xErrL, bl_low_xErrH,RatioBsFonErrLow, RatioBsFonErrHigh);
+
+  TGraphAsymmErrors gRatioBs_Fon_high(NBinsHigh,binhigh,Unity.data(),bl_high_xErrL, bl_high_xErrH,RatioBsFonErrLow + NBinsLow,RatioBsFonErrHigh + NBinsLow);
+
+if(meson_n==0){								  
+  TGraphAsymmErrors gRatioBs2015_low(NBinsLow2015,binlow_2015,RatioBs2015,bl_low_2015_xErrL, bl_low_2015_xErrH,RatioBsStat2015, RatioBsStat2015);
+
+  TGraphAsymmErrors gRatioBs2015_syst_low(NBinsLow2015,binlow_2015,RatioBs2015,bl_low_2015_xErrL, bl_low_2015_xErrH,RatioBsSyst2015, RatioBsSyst2015);
+
+  gRatioBs2015_low.SetMarkerStyle(20);
+  gRatioBs2015_low.SetMarkerColor(kViolet+1);
+  gRatioBs2015_syst_low.SetFillColorAlpha(kViolet+1, 0.5);
+  //gRatioBs2015_syst_low.Draw("5");
+  //gRatioBs2015_low.Draw("ep");
+
+}
+
+  TGraphAsymmErrors gRatioBs2015_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsStat2015 + NBinsLow2015, RatioBsStat2015 + NBinsLow2015);
+
+  TGraphAsymmErrors gRatioBs2015_syst_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsSyst2015 + NBinsLow2015, RatioBsSyst2015 + NBinsLow2015);
+	
+	
+	
+	
+
+
+  gRatioBs_low.SetMarkerStyle(25);
+  gRatioBs_high.SetMarkerStyle(21);
+
+  int hcolor = kBlue - 9;
+  double halpha = 0.5;
+  if (meson_n == 0) {
+    hcolor = kGreen - 9;
+  }
+  gRatioBs2015_high.SetMarkerColor(kRed-7);
+  gRatioBs2015_high.SetMarkerStyle(20);
+
+  gRatioBs2015_syst_high.SetFillColorAlpha(kRed-7, 0.5);
+  gRatioBs_syst_low.SetFillColorAlpha(hcolor, halpha);
+  gRatioBs_syst_high.SetFillColorAlpha(hcolor, halpha);
+  if(meson_n==0){gRatioBs_Fon_low.SetLineColor(kRed-7);} else {gRatioBs_Fon_low.SetLineColor(kRed+2);}
+  gRatioBs_Fon_low.SetLineStyle(7);
+  gRatioBs_Fon_high.SetLineColor(kRed+2);
+  gRatioBs_Fon_low.SetLineWidth(2);
+  gRatioBs_Fon_high.SetLineWidth(2);
+  gRatioBs_Fon_low.Draw("5");
+  gRatioBs_Fon_high.Draw("5");
+  gRatioBs_syst_low.Draw("5");
+  gRatioBs_syst_high.Draw("5");
+  gRatioBs2015_syst_high.Draw("5");
+  gRatioBs_low.Draw("ep");
+  gRatioBs_high.Draw("ep");
+  gRatioBs2015_high.Draw("ep");
 
 	RatioFonHigh->SetLineColor(kRed+2);
 	RatioFonHigh->SetMarkerStyle(21);
 	RatioFonHigh->SetMarkerSize(1);
 	RatioFonHigh->SetMarkerColor(kRed+2);
-	RatioFonHigh->Draw("epSAME");
+	//RatioFonHigh->Draw("epSAME");
 	RatioFonLow->SetLineColor(kRed+2);
 	RatioFonLow->SetMarkerStyle(25);
 	RatioFonLow->SetMarkerSize(1);
 	RatioFonLow->SetMarkerColor(kRed+2);
-	RatioFonLow->Draw("epSAME");
-	//Unity2->Draw("SAME");
+	//RatioFonLow->Draw("epSAME");
+	Unity2->Draw("SAME");
 	leg4->AddEntry(RatioFonLow,"2017/FONLL (scaled to |y| < 2.4)","PL");
 	leg4->AddEntry(RatioFonHigh,"2017/FONLL","PL");
-	leg4->Draw("same");
+	//leg4->Draw("same");
 	MyPad2->Update();
 
 	//cRatio->SaveAs(Form("Plots/%s/%sCrossComp.png", B_m.Data(), B_m.Data()));
