@@ -41,7 +41,7 @@ bpEff () {
     wait
     root -b -l -q CrossSectionAna.C'(1)'                              #UNIFY
 
-    # root -b -l -q CrossSectionAnaMult.C'(1)'
+    root -b -l -q CrossSectionAnaMult.C'(1,0)'
     # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
     popd
 }
@@ -54,7 +54,7 @@ bsEff () {
     wait
     root -b -l -q CrossSectionAna.C'(1)'                               #UNIFY
 
-    # root -b -l -q CrossSectionAnaMult.C'(1)'
+    root -b -l -q CrossSectionAnaMult.C'(1,0)'
     # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
     popd
 }

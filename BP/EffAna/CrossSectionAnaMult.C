@@ -22,7 +22,7 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-void CrossSectionAnaMult(int DoTnP){
+void CrossSectionAnaMult(int DoTnP,int whichvar){
 
 	const int NBins = 10;
 	//const int NBins = 6;
@@ -38,7 +38,7 @@ void CrossSectionAnaMult(int DoTnP){
 
 	TString FileName;
 
-	FileName = "../../CutSkim/BPData.root";
+	FileName = "/data3/tasheng/presel/BPData_nom.root";
 	TFile * fin = new TFile(FileName.Data());
 	fin->cd();
 
@@ -85,9 +85,13 @@ void CrossSectionAnaMult(int DoTnP){
 
 	EffInfoTree->SetBranchAddress("nMult",&nMult);
 
+	Float_t var[NCand];
+	if (whichvar==0){for (int i=0;i<NCand;++i){var[i]=ByNew[i];}}
+	else{for (int i=0;i<NCand;++i){var[i]=nMult;}}
 
-
-
+	TString var_m;
+	
+	if (whichvar==0){var_m="y";} else {var_m="Mult";}
 
 	double ptBins[NBins + 1];
 
@@ -345,7 +349,7 @@ void CrossSectionAnaMult(int DoTnP){
 
 
 
-	TFile * RawYield = new TFile("../RawYieldFits/ROOTfiles/yields_Bp_binned_Mult.root");
+	TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_m.Data()));
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 
@@ -413,7 +417,7 @@ void CrossSectionAnaMult(int DoTnP){
 			for(int k = 0; k < NBins; k++){
 
 				//	if((BptNew[j] > ptBins[k] && BptNew[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08  && ((BptNew[j] > 7 && BptNew[j] < 10 && ByNew[j] > 1.5 )||(BptNew[j] > 10)) && (Bmu1Type > -0.1 && Bmu2Type > -0.1)))
-				if(nMult > ptBins[k] && nMult < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
+				if(var[j] > ptBins[k] && var[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
 				{
 
 
@@ -460,7 +464,7 @@ void CrossSectionAnaMult(int DoTnP){
 	TH1D * hInvEff = new TH1D("hInvEff","",NBins,ptBins);
 
 
-	hInvEff->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	hInvEff->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
 	hInvEff->GetYaxis()->SetTitle("<1/(Eff * Acc)>");
 	hInvEff->GetYaxis()->SetTitleOffset(1.4);
 	hInvEff->GetXaxis()->CenterTitle();
@@ -474,7 +478,7 @@ void CrossSectionAnaMult(int DoTnP){
 
 	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,ptBins);
 
-	hInvEffSyst->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	hInvEffSyst->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
 	hInvEffSyst->GetYaxis()->SetTitle("<1/(Eff * Acc)> - BDT Data-MC Weighted");
 	hInvEffSyst->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffSyst->GetXaxis()->CenterTitle();
@@ -488,7 +492,7 @@ void CrossSectionAnaMult(int DoTnP){
 	TH1D * hEff = new TH1D("hEff","",NBins,ptBins);
 
 
-	hEff->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	hEff->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
 	hEff->GetYaxis()->SetTitle("<(Eff * Acc)>");
 	hEff->GetYaxis()->SetTitleOffset(1.4);
 	hEff->GetXaxis()->CenterTitle();
@@ -503,7 +507,7 @@ void CrossSectionAnaMult(int DoTnP){
 	TH1D * hInvEffUp = new TH1D("hInvEffUp","",NBins,ptBins);
 
 
-	hInvEffUp->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	hInvEffUp->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
 	hInvEffUp->GetYaxis()->SetTitle("<1./(Eff * Acc)>");
 	hInvEffUp->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffUp->GetXaxis()->CenterTitle();
@@ -518,7 +522,7 @@ void CrossSectionAnaMult(int DoTnP){
 	TH1D * hInvEffDown = new TH1D("hInvEffDown","",NBins,ptBins);
 
 
-	hInvEffDown->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	hInvEffDown->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
 	hInvEffDown->GetYaxis()->SetTitle("<1/(Eff * Acc)>");
 	hInvEffDown->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffDown->GetXaxis()->CenterTitle();
@@ -592,7 +596,7 @@ void CrossSectionAnaMult(int DoTnP){
 
 
 	TH1D * CorrDiffHis = new TH1D("hPtSigma","",NBins,ptBins);
-	CorrDiffHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	CorrDiffHis->GetXaxis()->SetTitle(Form("%s (GeV/c)",var_m.Data()));
 	CorrDiffHis->GetYaxis()->SetTitle("d #sigma/d p_{T} (pb GeV^{-1} c)");
 
 	CorrDiffHis->GetYaxis()->SetTitleOffset(1.3);
@@ -658,8 +662,8 @@ void CrossSectionAnaMult(int DoTnP){
 
 
 	TFile * foutCorr;
-	if(DoTnP == 0)	foutCorr = new TFile("FinalFiles/BPPPCorrYieldMultNoTnP.root","RECREATE");
-	if(DoTnP == 1)	foutCorr = new TFile("FinalFiles/BPPPCorrYieldMult.root","RECREATE");
+	if(DoTnP == 0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
+	if(DoTnP == 1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_m.Data()),"RECREATE");
 
 	foutCorr->cd();
 	CorrDiffHis->Write();

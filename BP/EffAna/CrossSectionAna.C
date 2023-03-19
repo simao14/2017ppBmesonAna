@@ -408,8 +408,8 @@ void CrossSectionAna(int DoTnP){
 					XBin = invAcc2D->GetXaxis()->FindBin( BptNew[j]);
 					YBin = invAcc2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 					BEffInv[j] = invAcc2D->GetBinContent(XBin,YBin);
-          EffInvTrkTight = invEffTrkTight->GetBinContent(XBin,YBin);
-          EffInvTrkLoose = invEffTrkLoose->GetBinContent(XBin,YBin);
+					EffInvTrkTight = invEffTrkTight->GetBinContent(XBin,YBin);
+					EffInvTrkLoose = invEffTrkLoose->GetBinContent(XBin,YBin);
 
 					BEffInvErr[j] = invAcc2D->GetBinError(XBin,YBin);
 					BEff[j] = 1.0/invAcc2D->GetBinContent(XBin,YBin);
@@ -419,8 +419,8 @@ void CrossSectionAna(int DoTnP){
           if (EffInvTrkLoose > 0) {
             SumCountsLoose[k] += EffInvTrkLoose;
             CountsLoose[k]++;
-          }
-
+          }	
+			
 					if(trackSelection > 0 && BEffInv[j] > 0) {
 						SumCounts[k] = SumCounts[k] + BEffInv[j];
 						SumCountsErr[k] = SumCountsErr[k] + BEffInvErr[j] * BEffInvErr[j];
@@ -655,7 +655,7 @@ void CrossSectionAna(int DoTnP){
 
 		//TnP Syst DONE//
 
-  TString fYield = "../../henri2022/ROOTfiles/yields_Bp_binned_pt.root";
+  	TString fYield = "../../henri2022/ROOTfiles/yields_Bp_binned_pt.root";
 	TFile * RawYield = new TFile(fYield);
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");

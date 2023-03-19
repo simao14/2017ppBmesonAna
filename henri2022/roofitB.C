@@ -14,7 +14,7 @@
 void read_samples(RooWorkspace& w, std::vector<TString>, TString fName, TString treeName, TString sample);
 
 // PDF VARIATION FOR SYST STUDIES
-int syst_study=2;
+int syst_study=1;
 
 // VALIDATION STUDIES
 int val=0;
@@ -217,8 +217,10 @@ cout << endl << endl;
 	if(isMC) _isMC = "mcAsData";
 	TString _isPbPb = "pp";
 
+	
 	dsMC = new RooDataSet(Form("dsMC%d",_count),"",skimtreeMC_new,RooArgSet(*mass, *pt, *y, *nMult, *trackSelection));
 	ds = new RooDataSet(Form("ds%d",_count),"",skimtree_new,RooArgSet(*mass, *pt, *y, *nMult, *trackSelection));
+	
 
 	//MODELS for syst studies
 	std::vector<std::string> background;
@@ -326,28 +328,26 @@ cout << endl << endl;
 				var_mean_av[i] = ds_cut->mean(*pt);}
 
 			else if(varExp == "nMult"){
-				ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("nMult>%f && nMult< %f", _ptBins[i], _ptBins[i+1]));
+				ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection, *nMult), Form("nMult>%f && nMult< %f", _ptBins[i], _ptBins[i+1]));
 				var_mean_av[i] = ds_cut->mean(*pt);}
   						}
 		
 		if(doubly==1)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto)); 
 		if(doubly==2)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto)); 
-
+		cout<<"problema aqui"<<endl;
 		RooDataSet* dsMC_cut;
 		if(doubly==0) 	{		
 			if(varExp == "Bpt"){dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count), "", dsMC,
             RooArgSet(*mass, *pt, *y, *trackSelection), Form("(%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f)&&((Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10))",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}
         	
 			else if(varExp=="By" || varExp=="nMult"){
-        	dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *trackSelection), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}
-        
-		/*	else if(varExp=="nMult"){
-        	dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *trackSelection), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}	*/       
+        	dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}
    					}
+		
 		
 		if(doubly==1) dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count),"",dsMC, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto), "1"); 
 		if(doubly==2) dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count),"",dsMC, RooArgSet(*mass, *pt,  *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto), "1"); 
-
+		cout<<"problema aqui"<<endl;
 		// Apply track selection cut
 		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
 		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
