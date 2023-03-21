@@ -104,7 +104,7 @@ void plotPt(bool bSavePlots       = 1,
 			ifstream in;
 			string inputFileName = Form("%s/%s_%s_New.txt",inputDir,inputFileType[whichPlot],mesonName[ib]);
 			//if(whichPlot==1) inputFileName = Form("%s/%s.txt",inputDir,inputFileType[whichPlot]);
-		//	string inputFileName = Form("%s/%s_%s_New.txt",inputDir,inputFileType[whichPlot],mesonName[ib]);		
+	  	//	string inputFileName = Form("%s/%s_%s_New.txt",inputDir,inputFileType[whichPlot],mesonName[ib]);		
 			cout << "########## Input file name: " << inputFileName << endl;
 
 			in.open(inputFileName.c_str());
@@ -529,6 +529,14 @@ void makePlot(int mes,
   BsFONLL2->SetLineColor(kRed+2);
   BsFONLL->SetFillColorAlpha(kRed+2, 0.5);
 
+  TGraphAsymmErrors *BsFONLLscaled =  new TGraphAsymmErrors();
+
+  BsFONLLscaled->SetLineColor(kRed-7);
+  BsFONLLscaled->SetLineStyle(7);
+  BsFONLLscaled->SetLineWidth(2);
+  BsFONLLscaled->SetFillStyle(0);
+  BsFONLLscaled->SetFillColorAlpha(kRed-7, 0.5);
+
   double XTempChange;
   double YTempChange;
   double YErrLowTemp;
@@ -538,9 +546,11 @@ void makePlot(int mes,
     BsFONLL2->GetPoint(i,XTempChange,YTempChange);
     YErrLowTemp = BsFONLL2->GetErrorYlow(i);
     YErrHighTemp = BsFONLL2->GetErrorYhigh(i);
-    BsFONLL->SetPoint(i,XTempChange,YTempChange);
-    BsFONLL->SetPointEYhigh(i,YErrHighTemp);
-    BsFONLL->SetPointEYlow(i,YErrLowTemp);
+    BsFONLLscaled->AddPoint(XTempChange,YTempChange);
+    BsFONLLscaled->SetPointEYhigh(i,YErrHighTemp);
+    BsFONLLscaled->SetPointEYlow(i,YErrLowTemp);
+    BsFONLLscaled->SetPointEXhigh(i,BsFONLL->GetErrorXhigh(i));
+    BsFONLLscaled->SetPointEXlow(i,BsFONLL->GetErrorXlow(i));
   }
 
   // Get ratio plots
@@ -550,6 +560,7 @@ void makePlot(int mes,
   vector<double> FONLL;
   vector<double> FONLLUp;
   vector<double> FONLLDown;
+
   double XTempFONLL;
   double YTempFONLL;
   for (auto i = 0; i < nBinsLow; ++i) {
@@ -568,13 +579,22 @@ void makePlot(int mes,
   double RatioBsSyst[nBins];
   double RatioBsFonErrHigh[nBins];
   double RatioBsFonErrLow[nBins];
+
+
   std::vector<double> Unity(nBins, 1);
 
-  for (auto i = 0; i < nBins; ++i) {
+for (auto i = 0; i < nBins; ++i) {
+  if(i>=nBinsLow){
     BsFONLL->GetPoint(i, XTempFONLL, YTempFONLL);
     FONLL.push_back(YTempFONLL);
     FONLLUp.push_back(BsFONLL->GetErrorYhigh(i));
     FONLLDown.push_back(BsFONLL->GetErrorYlow(i));
+  } else {
+    BsFONLLscaled->GetPoint(i, XTempFONLL, YTempFONLL);
+    FONLL.push_back(YTempFONLL);
+    FONLLUp.push_back(BsFONLLscaled->GetErrorYhigh(i));
+    FONLLDown.push_back(BsFONLLscaled->GetErrorYlow(i));
+  }
     cout << "bs xsex:" << BsXsec[i] << "\n";
     cout << "FONLL:" << FONLL[i] << "\n";
     RatioBs[i] = BsXsec[i] / FONLL[i];
@@ -584,6 +604,8 @@ void makePlot(int mes,
     RatioBsFonErrHigh[i] = FONLLUp[i] / FONLL[i];
     RatioBsFonErrLow[i] = FONLLDown[i] / FONLL[i];
   }
+
+for (int i=0; i<nBinsLow; ++i){BsFONLL->RemovePoint(0);} 
 
   TGraphAsymmErrors gRatioBs_low(nBinsLow,
                                  xLow,
@@ -632,10 +654,12 @@ void makePlot(int mes,
   }
   gRatioBs_syst_low.SetFillColorAlpha(hcolor, halpha);
   gRatioBs_syst_high.SetFillColorAlpha(hcolor, halpha);
-  gRatioBs_Fon_low.SetLineColor(kRed+2);
+  gRatioBs_Fon_low.SetLineColor(kRed-7);
+  gRatioBs_Fon_low.SetLineStyle(7);
   gRatioBs_Fon_high.SetLineColor(kRed+2);
   gRatioBs_Fon_low.SetLineWidth(2);
   gRatioBs_Fon_high.SetLineWidth(2);
+
   // gRatioBs_Fon_low.SetFillColorAlpha(kRed+2, 0.5);
   // gRatioBs_Fon_high.SetFillColorAlpha(kRed+2, 0.5);
 
@@ -731,6 +755,7 @@ void makePlot(int mes,
   // test0.Fill(2);
   // test0.Draw();
   BsFONLL->Draw("5");
+  BsFONLLscaled->Draw("5");
   gSystHigh->Draw("5");
   gHigh->Draw("P");
   gSystLow->Draw("5");
@@ -782,7 +807,8 @@ void makePlot(int mes,
   //legXSec->AddEntry(pgBs_high,"|y| < 2.4","p");
   legXSec->AddEntry(gHigh," ","p");
   legXSec->SetTextFont(42);
-  legXSec->AddEntry(gHigh," ","");
+  //legXSec->AddEntry(gHigh," ","");
+  legXSec->AddEntry(BsFONLLscaled,"FONLL(|y|<1.5)","f");
   legXSec->Draw("same");
 
   ratioPad->cd();
@@ -820,6 +846,7 @@ void makePlot(int mes,
   gRatioBs_syst_high.Draw("5");
   gRatioBs_low.Draw("ep");
   gRatioBs_high.Draw("ep");
+  
 
   auto gRatio_white = (TGraphAsymmErrors*) gRatioBs_low.Clone();
   gRatio_white->SetMarkerSize(markerSizeRatio[0]);

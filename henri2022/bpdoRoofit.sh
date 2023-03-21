@@ -1,7 +1,7 @@
 DOANALYSISPbPb_ROOFIT_FULL_BP=0
-DOANALYSISPbPb_ROOFIT_BINNED_PT_BP=1
+DOANALYSISPbPb_ROOFIT_BINNED_PT_BP=0
 DOANALYSISPbPb_ROOFIT_BINNED_Y_BP=0
-DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP=0
+DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP=1
 DOANALYSISPbPb_ROOFIT_BINNED_PT_BP_TRK=0
 
 INPUTMCPbPbCANDWISE_BP="/data3/tasheng/presel/BPMC_nom.root"
@@ -60,14 +60,14 @@ fi
 
 
 if [ $DOANALYSISPbPb_ROOFIT_BINNED_Y_BP  -eq 1  ]; then
-root -b  -q 'roofitB.C+('1','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"By\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y\"','\"results/BP/By\"','\"$NPROOFIT_PbPb\"','0')'
+root -b  -q 'roofitB.C+('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"By\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y\"','\"results/BP/By\"','\"$NPROOFIT_PbPb\"','0','\"\"','\"$INPUTJPSI\"')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 
 if [ $DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP  -eq 1  ]; then
-root -b  -q 'roofitB.C+('1','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"nMult\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y\"','\"results/BP/nMult\"','\"$NPROOFIT_PbPb\"','0')'
+root -b  -q 'roofitB.C+('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"nMult\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y\"','\"results/BP/nMult\"','\"$NPROOFIT_PbPb\"','0','\"\"','\"$INPUTJPSI\"')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
