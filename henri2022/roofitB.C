@@ -587,7 +587,7 @@ if(varExp=="nMult"){
 	} 
 	else{tex_y->Draw();}
 
-	//CMS_lumi(c,19011,0);
+	//CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
 	//c->Update();
 	TLatex* texB = new TLatex(0.5,0.5,"");
 	if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
