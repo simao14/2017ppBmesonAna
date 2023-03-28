@@ -17,7 +17,6 @@ bptshape () {
     wait
     root -q -b -l ReweightBpt.C'(0)' &
     root -q -b -l ReweightBpt.C'(1)' &
-    wait
     popd
 }
 
@@ -37,26 +36,27 @@ bpEff () {
     echo "Takes BPw.root as input"
     ls -l BDTWeights/BPw.root
 
-    root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
+    #root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
     wait
-    root -b -l -q CrossSectionAna.C'(1)'                              #UNIFY
-
-    root -b -l -q CrossSectionAnaMult.C'(1,0)'
-    # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
     popd
+    root -b -l -q CrossSectionAna.C'(1,0)'                              #UNIFY
+
+    #root -b -l -q CrossSectionAnaMult.C'(1,0)'
+    # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
 }
 bsEff () {
     pushd Bs/EffAna
     echo "Takes Bsw.root as input"
     ls -l BDTWeights/Bsw.root
 
-    root -b -l -q MCEff.C'(1,0)' > eff.log
+    #root -b -l -q MCEff.C'(1,0)' > eff.log
     wait
-    root -b -l -q CrossSectionAna.C'(1)'                               #UNIFY
-
-    root -b -l -q CrossSectionAnaMult.C'(1,0)'
-    # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
     popd
+    root -b -l -q CrossSectionAna.C'(1,1)'                               #UNIFY
+
+    #root -b -l -q CrossSectionAnaMult.C'(1,0)'
+    # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
+    
 }
 
 syst () {
@@ -124,10 +124,10 @@ paperPlots () {
 #(Run by THIS ORDER!)
 
 #makeTnP
-bptshape
+#bptshape
 
-yield
-wait
+#yield
+#wait
 
 bpEff &
 bsEff &

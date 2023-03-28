@@ -29,7 +29,7 @@ using std::endl;
 
 void CrossSectionAna(int DoTnP){
 
-		gSystem->mkdir("EffFinal" ,true);
+	gSystem->mkdir("EffFinal" ,true);
 
 	const int NBins = 7;
 	//const int NBins = 6;
@@ -286,8 +286,6 @@ void CrossSectionAna(int DoTnP){
 		ptbinsvec.push_back(50);
 		ptbinsvec.push_back(100);
 
-
-
 	}
 
 
@@ -313,9 +311,6 @@ void CrossSectionAna(int DoTnP){
 		SumCountsErrDown[i] = 0;
 		SumCountsTight[i] = 0;
 		SumCountsLoose[i] = 0;
-
-
-
 
 	}
 
@@ -393,10 +388,9 @@ void CrossSectionAna(int DoTnP){
 		//MuonInfoTree->GetEntry(i);
 
 
-    // We expect a flat tree, no array
+    	// We expect a flat tree, no array
 		// for(int j = 0; j < BsizeNew; j++){
-    int j = 0;
-
+    		int j = 0;
 
 			for(int k = 0; k < NBins; k++){
 
@@ -544,51 +538,40 @@ void CrossSectionAna(int DoTnP){
 
 	for(int i = 0; i < NBins; i++){
 
-
 		NewEff[i] = SumCounts[i]/Counts[i];
 		NewEffErr[i] = TMath::Sqrt(SumCountsErr[i])/Counts[i];
 		NewEffTight[i] = SumCountsTight[i]/CountsTight[i];
 		NewEffLoose[i] = SumCountsLoose[i]/CountsLoose[i];
 
-
 		NewEffUp[i] = SumCountsUp[i]/Counts[i];
 		NewEffErrUp[i] = TMath::Sqrt(SumCountsErrUp[i])/Counts[i];
-
-
 
 		NewEffDown[i] = SumCountsDown[i]/Counts[i];
 		NewEffErrDown[i] = TMath::Sqrt(SumCountsErrDown[i])/Counts[i];
 
-
 		NewEffReal[i] = SumCountsEff[i]/Counts[i];
 		NewEffRealErr[i] = TMath::Sqrt(SumCountsEffErr[i])/Counts[i];
-
 
 		hInvEff->SetBinContent(i+1,NewEff[i]);
 		hInvEff->SetBinError(i+1,NewEffErr[i]);
 
 		hInvEffTight->SetBinContent(i+1, NewEffTight[i]);
 		hInvEffTight->SetBinError(i+1, epsilon);
-    // TODO: currently loose is the same as nominal
+    	// TODO: currently loose is the same as nominal
 		hInvEffLoose->SetBinContent(i+1, NewEff[i]);
 		hInvEffLoose->SetBinError(i+1, epsilon);
 
 		hEff->SetBinContent(i+1,1/NewEff[i]);
 		hEff->SetBinError(i+1,NewEffErr[i]/(NewEff[i] * NewEff[i]));
 
-
 		NewEffSyst[i] = SumCountsSyst[i]/Counts[i];
 		NewEffSystErr[i] = TMath::Sqrt(SumCountsSystErr[i])/Counts[i];
-
 
 		hInvEffSyst->SetBinContent(i+1,	NewEffSyst[i]);
 		hInvEffSyst->SetBinError(i+1, NewEffSystErr[i]);
 
-
-
 		hInvEffUp->SetBinContent(i+1,NewEffUp[i]);
 		hInvEffUp->SetBinError(i+1,NewEffErrUp[i]);
-
 
 		hInvEffDown->SetBinContent(i+1,NewEffDown[i]);
 		hInvEffDown->SetBinError(i+1,NewEffErrDown[i]);
@@ -734,7 +717,7 @@ void CrossSectionAna(int DoTnP){
 	TH1D * Eff1DHis = (TH1D * ) fin1DEff->Get("Eff1DHis");
 	
 	TH1D * CorrDiffHisBin = (TH1D * ) CorrDiffHis ->Clone("CorrDiffHisBin");
-
+    
 	CorrDiffHisBin->SetMarkerColor(kRed);
 	CorrDiffHisBin->SetLineColor(kRed);	
 	CorrDiffHisBin->SetMarkerSize(1);
@@ -751,7 +734,6 @@ void CrossSectionAna(int DoTnP){
 
 		//cout << "Eff1D[i] = " << Eff1D[i] << "    NewEff[i] = " <<  NewEff[i]  << endl; 
 		cout << " Eff1D[i] =   " << 1.0/Eff1D[i] << "  NewEff[i] =  " << NewEff[i] << endl; 
-
 
 //		CorrYieldDiff[i] = (RawCount *  Eff1D[i])/(BRchain*2* lumi);
 //		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr *  Eff1D[i]) *(RawCountErr  *  Eff1D[i]) + (RawCount *  Eff1DErr[i]) * (RawCount  *  Eff1DErr[i]))/(BRchain*2* lumi);
@@ -819,16 +801,16 @@ void CrossSectionAna(int DoTnP){
 	c->SaveAs("FinalPlots/CorrectedYield9BinsBDT.png");
 */
 
-	foutCorr->cd();
-	CorrDiffHis->Write();
-	CorrDiffHisBin->Write();
-	CorrDiffHisTight->Write();
-  hInvEff->Write();
-  hInvEffTight->Write();
-  hInvEffLoose->Write();
-  hPt->Write();
-  hPtTight->SetName("hPtTight");
-  hPtTight->Write();
-	foutCorr->Close();
+foutCorr->cd();
+CorrDiffHis->Write();
+CorrDiffHisBin->Write();
+CorrDiffHisTight->Write();
+hInvEff->Write();
+hInvEffTight->Write();
+hInvEffLoose->Write();
+hPt->Write();
+hPtTight->SetName("hPtTight");
+hPtTight->Write();
+foutCorr->Close();
 
 }

@@ -325,11 +325,11 @@ cout << endl << endl;
 			
 			else if(varExp == "By"){
 				ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("By>%f && By< %f", _ptBins[i], _ptBins[i+1]));
-				var_mean_av[i] = ds_cut->mean(*pt);}
+				var_mean_av[i] = ds_cut->mean(*y);}
 
 			else if(varExp == "nMult"){
 				ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection, *nMult), Form("nMult>%f && nMult< %f", _ptBins[i], _ptBins[i+1]));
-				var_mean_av[i] = ds_cut->mean(*pt);}
+				var_mean_av[i] = ds_cut->mean(*nMult);}
   						}
 		
 		if(doubly==1)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto)); 
@@ -950,6 +950,7 @@ if(varExp=="nMult"){
 		 mg->GetXaxis()->SetLimits(0, 110);
 	 }
 
+	 mg->Write("TG");
 	 mg->Draw("ap");
 	 //mg->SetTitle("Differential Signal Yield");  
 	 

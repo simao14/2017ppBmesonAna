@@ -12,6 +12,7 @@
 #include "TRandom.h"
 #include <iostream>
 #include <fstream>
+#include "../../henri2022/parameter.h" 
 //#include "tnp_weight_lowptPbPb.h"
 
 
@@ -24,7 +25,7 @@ using std::endl;
 
 void CrossSectionAnaMult(int DoTnP,int whichvar){
 
-	const int NBins = 10;
+	int NBins;
 	//const int NBins = 6;
 
 	int TnP = 1;
@@ -86,13 +87,15 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	EffInfoTree->SetBranchAddress("Bpt",BptNew);
 	EffInfoTree->SetBranchAddress("nMult",&nMult);
 
-	Float_t var[NCand];
-	if (whichvar==0){for (int i=0;i<NCand;++i){var[i]=ByNew[i];}}
-	else{for (int i=0;i<NCand;++i){var[i]=nMult;}}
-
+	Float_t var;
 	TString var_m;
 	
-	if (whichvar==0){var_m="y";} else {var_m="Mult";}
+	if (whichvar==0){
+		var_m="y"; 
+		NBins=8;} 
+	else {
+		var_m="Mult";
+		NBins=7;}
 
 /*
 	EffInfoTree->SetBranchAddress("BEffInv",BEffInv);
@@ -189,124 +192,16 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 
 
 	double lumi = 302.3;
-	std::vector<double> ptbinsvec;
-	std::vector<double> corrfactvec;
 
-
-	if(NBins == 1){
-
-
-		ptbinsvec.push_back(10.0);
-		ptbinsvec.push_back(50);
-	}
-
-
-	if(NBins == 3){
-
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(50);
-
-	}
-
-
-	if(NBins == 4){
-
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(50);
-
-		/*
-		   corrfactvec.push_back(1.24759);
-		   corrfactvec.push_back(1.05256);
-		   corrfactvec.push_back(1.02614);
-		   corrfactvec.push_back(1.01174);
-		   */
-
-
-	}
-
-	if(NBins == 6){
-
-
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(7);		
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(50);
-		ptbinsvec.push_back(100);
-
-
-
-	}
-
-
-
-	if(NBins == 7){
-
-
-		//ptbinsvec.push_back(3);
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(7);		
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(30);		
-		ptbinsvec.push_back(50);
-		ptbinsvec.push_back(100);
-
-
-
-	}
-
-
-
-	if(NBins == 9){
-
-		ptbinsvec.push_back(2);
-		ptbinsvec.push_back(3);
-		ptbinsvec.push_back(5);
-		ptbinsvec.push_back(7);		
-		ptbinsvec.push_back(10);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(20);
-		ptbinsvec.push_back(30);
-		ptbinsvec.push_back(50);
-		ptbinsvec.push_back(100);
-
-
-
-	}
-
-	if(NBins == 10){
-
-		ptbinsvec.push_back(0);
-		ptbinsvec.push_back(15);
-		ptbinsvec.push_back(25);
-		ptbinsvec.push_back(30);
-		ptbinsvec.push_back(35);		
-		ptbinsvec.push_back(40);
-		ptbinsvec.push_back(50);
-		ptbinsvec.push_back(65);
-		ptbinsvec.push_back(80);
-		ptbinsvec.push_back(100);
-		ptbinsvec.push_back(130);
-
-
-	}
-
-
-
-
-
+	if (whichvar==0){
 	for(int i = 0; i < NBins + 1; i++){
-		ptBins[i] =  ptbinsvec[i];
+		ptBins[i] =  ybinsvec[i];             //taken from parameter.h
+		}
+	} else {
+		for(int i = 0; i < NBins + 1; i++){
+		ptBins[i] =  nmbinsvec[i];             //taken from parameter.h
+		}
 	}
-
 	for(int i = 0; i < NBins; i++){
 		Counts[i] = 0;
 		SumCounts[i] = 0;
@@ -315,14 +210,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 		SumCountsEffErr[i] = 0;
 		SumCountsSyst[i] = 0;
 		SumCountsSystErr[i] = 0;
-		//	CorrectionFactor[i] = corrfactvec[i];
 		SumCountsUp[i] = 0;
 		SumCountsErrUp[i] = 0;
 		SumCountsDown[i] = 0;
 		SumCountsErrDown[i] = 0;
-
-
-
 
 	}
 
@@ -423,53 +314,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	double tnpabssystup;
 	double tnpabssystdown;
 
-
-		//TnP Syst DONE//
-
-	TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bs_binned_%s.root",var_m.Data()));
-	RawYield->cd();
-	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
-
-
-
-
-
-	double RawCount;
-	double RawCountErr;
-
-	double CorrYield= 0;
-	double CorrYieldErr= 0;
-
-	double CorrYieldDiff[NBins];
-	double CorrYieldDiffErr[NBins];
-
-	for(int i = 0; i < NBins;i++){
-
-		RawCount = hPt->GetBinContent(i+1);
-		RawCountErr = hPt->GetBinError(i+1);
-
-		cout << "RawCount = " << RawCount << "  RawCountErr = " << RawCountErr << " NewEff[i] =   " << NewEff[i] << "  NewEffErr[i] =  " << NewEffErr[i] << endl; 
-
-		cout << "CORR YIELD PT:  " <<  RawCount *   NewEff[i]/(BRchain*2 * lumi) << endl;
-		CorrYield = RawCount * (ptBins[i+1] - ptBins[i]) *  NewEff[i]  + CorrYield;
-		CorrYieldErr = ((RawCountErr * (ptBins[i+1] - ptBins[i]) *  NewEff[i]) *(RawCountErr * (ptBins[i+1] - ptBins[i]) *  NewEff[i]) + (RawCount * (ptBins[i+1] - ptBins[i]) *  NewEffErr[i]) * (RawCount * (ptBins[i+1] - ptBins[i]) *  NewEffErr[i]))  + CorrYieldErr;
-
-		cout << "PrintYield = " << RawCount* (ptBins[i+1] - ptBins[i]) *  NewEff[i] << endl;
-
-	}
-
-
-
-
-	TFile * foutCorr;
-	if(DoTnP == 0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
-	if(DoTnP == 1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_m.Data()),"RECREATE");
-
-	foutCorr->cd();
-
 	TFile * fin1DEff;
-
-
 
 	if(DoTnP == 0) fin1DEff = new TFile("NewEff2DMaps/EffFineNoTnP.root");
 	if(DoTnP == 1) fin1DEff = new TFile("NewEff2DMaps/EffFineBDT.root");	
@@ -484,23 +329,18 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	int YBin;
 
 
-
 	for( int i = 0; i < NEvents; i++){
 
 		EffInfoTree->GetEntry(i);
 		//MuonInfoTree->GetEntry(i);
-
-
-		for(int j = 0; j < BsizeNew; j++){
-
-
+		if (whichvar==0){var=ByNew[0];}
+		else{var=nMult;}
+		int j=0;
 			for(int k = 0; k < NBins; k++){
 
 				//	if((BptNew[j] > ptBins[k] && BptNew[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08  && ((BptNew[j] > 7 && BptNew[j] < 10 && ByNew[j] > 1.5 )||(BptNew[j] > 10)) && (Bmu1Type > -0.1 && Bmu2Type > -0.1)))
-				if(var[j] > ptBins[k] && var[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
+				if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.3663) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
 				{
-
-
 					XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 					YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 					BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
@@ -532,13 +372,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 						//cout << "Candidate: " << "   Bpt = " << BptNew[j] << "   Efficiency =  " << BEffInv[j] << "   Efficiency Error  = " << BEffInvErr[j] << endl;
 					}
 				}
-
 			}
-
-
 		}
-
-	}
+	
 
 
 	TH1D * hInvEff = new TH1D("hInvEff","",NBins,ptBins);
@@ -620,39 +456,30 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 		NewEff[i] = SumCounts[i]/Counts[i];
 		NewEffErr[i] = TMath::Sqrt(SumCountsErr[i])/Counts[i];
 
-
 		NewEffUp[i] = SumCountsUp[i]/Counts[i];
 		NewEffErrUp[i] = TMath::Sqrt(SumCountsErrUp[i])/Counts[i];
-
-
 
 		NewEffDown[i] = SumCountsDown[i]/Counts[i];
 		NewEffErrDown[i] = TMath::Sqrt(SumCountsErrDown[i])/Counts[i];
 
-
 		NewEffReal[i] = SumCountsEff[i]/Counts[i];
 		NewEffRealErr[i] = TMath::Sqrt(SumCountsEffErr[i])/Counts[i];
-
 
 		hInvEff->SetBinContent(i+1,NewEff[i]);
 		hInvEff->SetBinError(i+1,NewEffErr[i]);
 
-		hEff->SetBinContent(i+1,1/NewEff[i]);
-		hEff->SetBinError(i+1,NewEffErr[i]/(NewEff[i] * NewEff[i]));
-
+		hEff->SetBinContent(i+1,NewEffReal[i]);
+		hEff->SetBinError(i+1,NewEffRealErr[i]);
 
 		NewEffSyst[i] = SumCountsSyst[i]/Counts[i];
 		NewEffSystErr[i] = TMath::Sqrt(SumCountsSystErr[i])/Counts[i];
 
-
 		hInvEffSyst->SetBinContent(i+1,	NewEffSyst[i]);
 		hInvEffSyst->SetBinError(i+1, NewEffSystErr[i]);
 
-
-
 		hInvEffUp->SetBinContent(i+1,NewEffUp[i]);
 		hInvEffUp->SetBinError(i+1,NewEffErrUp[i]);
-
+		
 
 		hInvEffDown->SetBinContent(i+1,NewEffDown[i]);
 		hInvEffDown->SetBinError(i+1,NewEffErrDown[i]);
@@ -675,8 +502,37 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	}
 
 
+	TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bs_binned_%s.root",var_m.Data()));
+	RawYield->cd();
+	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
+	
+	double RawCount;
+	double RawCountErr;
+
+	double CorrYield= 0;
+	double CorrYieldErr= 0;
+
+	double CorrYieldDiff[NBins];
+	double CorrYieldDiffErr[NBins];
+
+	for(int i = 0; i < NBins;i++){
+
+		RawCount = hPt->GetBinContent(i+1);
+		RawCountErr = hPt->GetBinError(i+1);
+
+		cout << "RawCount = " << RawCount << "  RawCountErr = " << RawCountErr << " NewEff[i] =   " << NewEff[i] << "  NewEffErr[i] =  " << NewEffErr[i] << endl; 
+
+		cout << "CORR YIELD PT:  " <<  RawCount *   NewEff[i]/(BRchain*2 * lumi) << endl;
+		CorrYield = RawCount * (ptBins[i+1] - ptBins[i]) *  NewEff[i]  + CorrYield;
+		CorrYieldErr = ((RawCountErr * (ptBins[i+1] - ptBins[i]) *  NewEff[i]) *(RawCountErr * (ptBins[i+1] - ptBins[i]) *  NewEff[i]) + (RawCount * (ptBins[i+1] - ptBins[i]) *  NewEffErr[i]) * (RawCount * (ptBins[i+1] - ptBins[i]) *  NewEffErr[i]))  + CorrYieldErr;
+
+		cout << "PrintYield = " << RawCount* (ptBins[i+1] - ptBins[i]) *  NewEff[i] << endl;
+
+	}
+
+
 	TH1D * CorrDiffHis = new TH1D("hPtSigma","",NBins,ptBins);
-	CorrDiffHis->GetXaxis()->SetTitle("nMult");
+	CorrDiffHis->GetXaxis()->SetTitle(Form("%s (GeV/c)",var_m.Data()));
 	CorrDiffHis->GetYaxis()->SetTitle("#sigma (pb)");
 
 	CorrDiffHis->GetYaxis()->SetTitleOffset(1.3);
@@ -693,35 +549,66 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr *  NewEff[i]) *(RawCountErr  *  NewEff[i]) + (RawCount *  NewEffErr[i]) * (RawCount  *  NewEffErr[i]))/(BRchain*2* lumi);
 		CorrDiffHis->SetBinContent(i+1,CorrYieldDiff[i]);
 		CorrDiffHis->SetBinError(i+1,CorrYieldDiffErr[i]);
-
 	}
 
 	
-	CorrDiffHis->SetTitle("(Preliminary) B^{+} #rightarrow J/#psi K^{+} p_{T} Differential Cross Section in pp");
-
 	CorrDiffHis->SetMarkerColor(kBlack);
 	CorrDiffHis->SetMarkerSize(1);
 	CorrDiffHis->SetMarkerStyle(20);
 
+	TH1D * CorrDiffHisReal = new TH1D("hPtSigmaReal","",NBins,ptBins);
+	CorrDiffHisReal->GetXaxis()->SetTitle(Form("%s (GeV/c)",var_m.Data()));
+	CorrDiffHisReal->GetYaxis()->SetTitle("#sigma (pb)");
+
+	CorrDiffHisReal->GetYaxis()->SetTitleOffset(1.3);
+	CorrDiffHisReal->GetXaxis()->CenterTitle();
+	CorrDiffHisReal->GetYaxis()->CenterTitle();
+
+
+
+
+	for(int i = 0; i < NBins;i++){
+		RawCount = hPt->GetBinContent(i+1);
+		RawCountErr = hPt->GetBinError(i+1);
+		CorrYieldDiff[i] = (RawCount *  NewEffReal[i])/(BRchain*2* lumi);
+		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr *  NewEffReal[i]) *(RawCountErr  *  NewEffReal[i]) + (RawCount *  NewEffRealErr[i]) * (RawCount  *  NewEffRealErr[i]))/(BRchain*2* lumi);
+		CorrDiffHisReal->SetBinContent(i+1,CorrYieldDiff[i]);
+		CorrDiffHisReal->SetBinError(i+1,CorrYieldDiffErr[i]);
+
+	}
+
+	
+	//CorrDiffHisReal->SetTitle("(Preliminary) B^{+} #rightarrow J/#psi K^{+} p_{T} Differential Cross Section in pp");
+
+	CorrDiffHisReal->SetMarkerColor(kBlack);
+	CorrDiffHisReal->SetMarkerSize(1);
+	CorrDiffHisReal->SetMarkerStyle(20);
 
 
 
 
 
 	//pt Binned Correction//
+	TFile * foutCorr;
+	if(DoTnP == 0)	foutCorr = new TFile(Form("FinalFiles/BsPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
+	if(DoTnP == 1)	foutCorr = new  TFile(Form("FinalFiles/BsPPCorrYield%s.root",var_m.Data()),"RECREATE");
 
+/*
+	TH1D * Eff1DHisvar;
+	if (whichvar==0){
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
+	    }
+	else{
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
+		}
 
-	TH1D * Eff1DHisMult = (TH1D * ) fin1DEff->Get("Eff1DHisMult");
-	
 	TH1D * CorrDiffHisBin = new TH1D("CorrDiffHisBin","",NBins,ptBins);
-	CorrDiffHisBin->GetXaxis()->SetTitle("nMult");
+	CorrDiffHisBin->GetXaxis()->SetTitle(Form("%s",var_m.Data()));
 	CorrDiffHisBin->GetYaxis()->SetTitle("#sigma (pb)");
 
 	CorrDiffHisBin->GetYaxis()->SetTitleOffset(1.3);
 	CorrDiffHisBin->GetXaxis()->CenterTitle();
 	CorrDiffHisBin->GetYaxis()->CenterTitle();
-
-
 
 	CorrDiffHisBin->SetMarkerColor(kRed);
 	CorrDiffHisBin->SetLineColor(kRed);	
@@ -734,8 +621,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	for(int i = 0; i < NBins;i++){
 		RawCount = hPt->GetBinContent(i+1);
 		RawCountErr = hPt->GetBinError(i+1);
-		Eff1D[i] = Eff1DHisMult->GetBinContent(i+1);
-		Eff1DErr[i] = Eff1DHisMult->GetBinError(i+1);
+		Eff1D[i] = Eff1DHisvar->GetBinContent(i+1);
+		Eff1DErr[i] = Eff1DHisvar->GetBinError(i+1);
 
 //		CorrYieldDiff[i] = (RawCount *  Eff1D[i])/(BRchain*2* lumi);
 //		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr *  Eff1D[i]) *(RawCountErr  *  Eff1D[i]) + (RawCount *  Eff1DErr[i]) * (RawCount  *  Eff1DErr[i]))/(BRchain*2* lumi);
@@ -747,10 +634,39 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 
 	}
 //	CorrDiffHisBinBin->Draw("epSAME");
+*/
+	hInvEff->SetMaximum(NewEff[0]*1.5);
+	TCanvas *c = new TCanvas("c","c",600,600);
+	c->cd();
+
+	hInvEff->SetTitle("Inv. eff");
+	
+	hInvEff->Draw("ep");
+	
+  	c->BuildLegend(0.6, 0.6, 0.9, 0.8);
+  	
+	//gSystem->mkdir("EffFinal/pdf/",true);
+	//c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.png",NBins));
+	c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s.pdf",NBins,var_m.Data()));
+
+	hEff->Draw("ep");
+
+	//c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
+	c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s.pdf",NBins,var_m.Data()));
+
+	//Eff1DHisvar->Draw("ep");
+
+	//c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));
+	
 
 	foutCorr->cd();
 	CorrDiffHis->Write();
-	CorrDiffHisBin->Write();
+	//CorrDiffHisBin->Write();
+	CorrDiffHisReal->Write();
+	hInvEff->Write();
+	hEff->Write();
+	//Eff1DHisvar->Write();
+	hPt->Write();
 	foutCorr->Close();
 
 	
