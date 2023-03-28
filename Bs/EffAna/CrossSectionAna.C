@@ -374,7 +374,7 @@ void CrossSectionAna(int DoTnP){
 		EffInfoTree->GetEntry(i);
 		//MuonInfoTree->GetEntry(i);
 
-
+	
     // We expect a flat tree, no array
 		// for(int j = 0; j < BsizeNew; j++){
     int j = 0;
@@ -386,13 +386,11 @@ void CrossSectionAna(int DoTnP){
 				if(BptNew[j] > ptBins[k] && BptNew[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.3663) < 0.08 && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > 5 && BptNew[j] < 10 && ByNew[j] > 1.5 )||(BptNew[j] > 10)) )
 				{
 
-
-
 					XBin = invAcc2D->GetXaxis()->FindBin( BptNew[j]);
 					YBin = invAcc2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 					BEffInv[j] = invAcc2D->GetBinContent(XBin,YBin);
-          EffInvTrkTight = invEffTrkTight->GetBinContent(XBin,YBin);
-          EffInvTrkLoose = invEffTrkLoose->GetBinContent(XBin,YBin);
+          			EffInvTrkTight = invEffTrkTight->GetBinContent(XBin,YBin);
+          			EffInvTrkLoose = invEffTrkLoose->GetBinContent(XBin,YBin);
 
 					BEffInvErr[j] = invAcc2D->GetBinError(XBin,YBin);
 					BEff[j] = 1.0/invAcc2D->GetBinContent(XBin,YBin);
@@ -459,9 +457,7 @@ void CrossSectionAna(int DoTnP){
 	hInvEff->SetMarkerColor(1);
 	hInvEff->SetLineColor(1);
 	hInvEff->SetMarkerStyle(20);
-
 	hInvEff->SetMinimum(0);
-
 
 	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,ptBins);
 
@@ -473,7 +469,6 @@ void CrossSectionAna(int DoTnP){
 	hInvEffSyst->SetMarkerColor(1);
 	hInvEffSyst->SetLineColor(2);
 	hInvEffSyst->SetMarkerStyle(20);
-
 	hInvEffSyst->SetMinimum(0);
 
 	TH1D * hEff = new TH1D("hEff","",NBins,ptBins);
@@ -487,7 +482,6 @@ void CrossSectionAna(int DoTnP){
 	hEff->SetMarkerColor(1);
 	hEff->SetLineColor(1);
 	hEff->SetMarkerStyle(20);
-
 	hEff->SetMinimum(0);
 
 
@@ -594,25 +588,25 @@ void CrossSectionAna(int DoTnP){
 
 	hInvEffTight->SetMarkerColor(kRed);
 	hInvEffLoose->SetMarkerColor(kBlue);
-  hInvEff->SetTitle("Nominal");
-  hInvEffTight->SetTitle("Tight track sel.");
-  hInvEffLoose->SetTitle("Loose track sel.");
+	hInvEff->SetTitle("Nominal");
+	hInvEffTight->SetTitle("Tight track sel.");
+	hInvEffLoose->SetTitle("Loose track sel.");
 	hInvEff->Draw("ep");
 	hInvEffLoose->Draw("EP same");
 	hInvEffTight->Draw("EP same");
-  c->BuildLegend(0.6, 0.6, 0.9, 0.8);
+  	c->BuildLegend(0.6, 0.6, 0.9, 0.8);
 
-  hInvEff->SetTitle("");
+  	hInvEff->SetTitle("");
 	cout << "OK" << endl;
 
-  gSystem->MakeDirectory("EffFinal/pdf/");
-	c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.png",NBins));
-	c->SaveAs(Form("EffFinal/pdf/ReAnaEff_%dBins.pdf",NBins));
+  	//gSystem->mkdir("EffFinal/pdf/",true);
+	//c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.png",NBins));
+	c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.pdf",NBins));
 
 	hEff->Draw("ep");
 
-	c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
-	c->SaveAs(Form("EffFinal/pdf/ReAnaEffReal_%dBins.pdf",NBins));
+	//c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
+	c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.pdf",NBins));
 
 
 	/*
@@ -763,14 +757,13 @@ CorrDiffHisBin
 
 		//TnP Syst DONE//
 
-  TString fYield = "../../henri2022/ROOTfiles/yields_Bs_binned_pt.root";
+  	TString fYield = "../../henri2022/ROOTfiles/yields_Bs_binned_pt.root";
 	TFile * RawYield = new TFile(fYield);
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 
 	TFile * RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");
 	TH1D * hPtTight = (TH1D *) RawYieldTight->Get("hPt");
-
 
 	double RawCount;
 	double RawCountErr;
@@ -870,71 +863,16 @@ CorrDiffHisBin
 	}
 	CorrDiffHisBin->Draw("epSAME");
 
-/*
-	//2015 B+ pp//
-
-	const int NPt = 5;
-	double Pt[NPt+1] = {7,10,15,20,30,50};
-	double BPXSec[NPt] = {2610000,744000,197000,46500,5300};
-	double StatErr[NPt] = {170000,29000,9000,2400,500};
-	double SystErr[NPt] = {230000,59000,15000.3500,400};
-	double TotalErr[NPt];
-
-
-	TH1D * BPXSecHis = new TH1D("BPXSecHis","",NPt,Pt);
-	BPXSecHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	BPXSecHis->GetYaxis()->SetTitle("d #sigma/d p_{T} (pb GeV^{-1} c)");
-	BPXSecHis->GetYaxis()->SetTitleOffset(1.3);
-	BPXSecHis->GetXaxis()->CenterTitle();
-	BPXSecHis->GetYaxis()->CenterTitle();
-
-	//BPXSecHis->SetTitle("2015 B^{0}_{s} pp Cross Section");
-	BPXSecHis->SetMarkerColor(kGreen);
-	BPXSecHis->SetLineColor(kGreen);
-	
-	BPXSecHis->SetMarkerSize(1);
-	BPXSecHis->SetMarkerStyle(20);
-
-	for(int i = 0; i < NPt; i++){
-
-		TotalErr[i] = sqrt(StatErr[i] * StatErr[i] + SystErr[i] * SystErr[i]);
-
-		BPXSecHis->SetBinContent(i+1,BPXSec[i]);
-		BPXSecHis->SetBinError(i+1,TotalErr[i]);
-
-	}
-
-//	BPXSecHis->Draw("epSAME");
-
-	TLegend *leg = new TLegend(0.30,0.65,0.75,0.85,NULL,"brNDC");
-	leg->SetBorderSize(0);
-	leg->SetTextSize(0.040);
-	leg->SetTextFont(42);
-	leg->SetFillStyle(0);
-	leg->SetLineWidth(3);
-
-	leg->AddEntry(CorrDiffHis,"2017 pp","pl");
-	leg->AddEntry(CorrDiffHisBin,"2017 pp Eff Binned Corr","pl");
-	
-//	leg->AddEntry(BPXSecHis,"2015 pp","pl");
-
-	//DONE 2015 B+ pp//
-
-	leg->Draw("SAME");
-
-	c->SaveAs("FinalPlots/CorrectedYield9BinsBDT.png");
-
-*/
 	foutCorr->cd();
 	CorrDiffHis->Write();
 	CorrDiffHisBin->Write();
 	CorrDiffHisTight->Write();
-  hInvEff->Write();
-  hInvEffTight->Write();
-  hInvEffLoose->Write();
-  hPt->Write();
-  hPtTight->SetName("hPtTight");
-  hPtTight->Write();
+	hInvEff->Write();
+	hInvEffTight->Write();
+	hInvEffLoose->Write();
+	hPt->Write();
+	hPtTight->SetName("hPtTight");
+	hPtTight->Write();
 	foutCorr->Close();
 
 }

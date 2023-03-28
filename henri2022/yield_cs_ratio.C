@@ -10,13 +10,12 @@ void yield_cs_ratio(int syst,TString varExp){
 	double B_bs_err = 0.00007;
 	
 	TString* var;
-	if(varExp == "By"){var = new TString("Y");}
+	if(varExp == "By"){var = new TString("y");}
 	if(varExp == "nMult"){var = new TString("Mult");}
 	if(varExp == "Bpt"){var = new TString("PT");}
 
-
-	TFile *eff_bs = new TFile(Form("./FinalFiles/BsPPCorrYield%s.root",var->Data()),"read");
-	TFile *eff_bp = new TFile(Form("./FinalFiles/BPPPCorrYield%s.root",var->Data()),"read");
+	TFile *eff_bs = new TFile(Form("../Bs/EffAna/FinalFiles/BsPPCorrYield%s.root",var->Data()),"read");
+	TFile *eff_bp = new TFile(Form("../BP/EffAna/FinalFiles/BPPPCorrYield%s.root",var->Data()),"read");
 
 	TH1D *TH_eff_bs = (TH1D*) eff_bs->Get("hInvEff");
 
@@ -35,7 +34,7 @@ void yield_cs_ratio(int syst,TString varExp){
 	auto TG1 = (TGraphAsymmErrors *) tl1->At(0);
   	auto TG2 = (TGraphAsymmErrors *) tl2->At(0);
 	
-	const int _nBins = (TG1->GetN())-1;
+	const int _nBins = (TG1->GetN());
 	TCanvas* c=new TCanvas();
 	TLegend* leg_ratio=new TLegend(0.7,0.7,0.9,0.9);
 	TMultiGraph* m_ratio=new TMultiGraph();

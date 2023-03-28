@@ -1037,8 +1037,6 @@ void  MCEff(int DoTnP, int Rescale){
 				muidWeight = EventWeight * muid1[j] * muid2[j];
 				trkWeight = EventWeight * trk1[j] * trk2[j];
 
-			
-
 				muidtrkWeight = EventWeight * muid1[j] * muid2[j] * trk1[j] * trk2[j];
 				TotalWeight = EventWeight * TnPWeight;
 
@@ -1331,16 +1329,8 @@ void  MCEff(int DoTnP, int Rescale){
 					Eff1DGENAccMultHis->Fill(nMult,EventWeight);
 
 				}
-
-
-
 			}
-
 		}
-
-
-
-	
 
 		cout << "START MAKING HIS BRO" << endl;
 
@@ -1357,6 +1347,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHis->Divide(Eff1DGENAccHis);
 		
 		//ACEPTANCE
+
 		TH1D * Acc1DHis = (TH1D * ) Eff1DGENAccHis->Clone("Acc1DHis");
 		Acc1DHis->Sumw2();
 		Eff1DGENHis->Sumw2();
@@ -1853,9 +1844,9 @@ void  MCEff(int DoTnP, int Rescale){
 		invEffTrkTight->Write();
 		invEffTrkLoose->Write();
 
-    // debugging purpose
-    BDTWeightHisSyst->Write();
-    BptWeightHisSyst->Write();
+    	// debugging purpose
+    	BDTWeightHisSyst->Write();
+    	BptWeightHisSyst->Write();
 
 		invEff2DTnPSystUp->Write();
 		invEff2DTnPSystDown->Write();

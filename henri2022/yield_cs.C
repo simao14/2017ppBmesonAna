@@ -26,7 +26,7 @@ void yield_cs(int syst,TString varExp,TString tree){
 	
 	TString* var;
 	TString* par;
-	if(varExp == "By"){var = new TString("Y");}
+	if(varExp == "By"){var = new TString("y");}
 	if(varExp == "nMult"){var = new TString("Mult");}
 	if(varExp == "Bpt"){var = new TString("PT");}
 
@@ -34,7 +34,7 @@ void yield_cs(int syst,TString varExp,TString tree){
 	if(tree == "ntKp"){par = new TString("BP");}
 
 	TFile *diff_f = new TFile(Form("./results/%s_%s_ratio.root",tree.Data(),varExp.Data()),"read");
-	TFile *eff_f = new TFile(Form("./FinalFiles/%sPPCorrYield%s.root",par->Data(),var->Data()),"read");
+	TFile *eff_f = new TFile(Form("../%s/EffAna/FinalFiles/%sPPCorrYield%s.root",par->Data(),par->Data(),var->Data()),"read");
 
 	TMultiGraph *TMG_diff = (TMultiGraph*) diff_f->Get("TG");
 	TH1D *TH_eff = (TH1D*) eff_f->Get("hInvEff");
@@ -81,7 +81,7 @@ void yield_cs(int syst,TString varExp,TString tree){
 		
 		TGraphAsymmErrors *g_diff_syst= new TGraphAsymmErrors (_nBins,x_syst,y_syst,ex_syst_l,ex_syst_h,ey_syst,ey_syst);
 		g_diff_syst->SetLineColor(2);
-		m_diff->Add(g_diff_syst);
+		m_diff->Add(g_diff_syst);1,
 		leg_diff->AddEntry(g_diff_syst,"Systematic Uncertainty", "e");
 	}
 

@@ -18,13 +18,13 @@ using std::endl;
 // THIS CODE CAN BE EASILY EXTENDED TO ACCOUNT FOR A FUTURE MESON... 
 // JUST FOLLOW THE LOGIC
 
-void Bmeson_Comparisons(int meson_n ){
+void Bmeson_Comparisons(int meson_n){
 
 
 	// scaled lower data pt bins to full rapidity
    	 	//constexpr bool scaleMC = false;                              
     // swap the lower fonll bins with full rapidity
-    	constexpr bool fidFONLL = true;
+    constexpr bool fidFONLL = true;
 
 	TString B_m ;
 	TString t_tree ;
@@ -36,7 +36,6 @@ void Bmeson_Comparisons(int meson_n ){
 	int NBins2015 ;
 	double hist3max;
 	
-
 	if(meson_n == 0){
 		NBins = nptBinsBP;
 		B_m = "BP";
@@ -513,7 +512,6 @@ if(meson_n == 0){
 	BPFONLL->SetMarkerSize(1);
 	BPFONLL->SetMarkerColor(kRed+2);
 
-
 	TFile * finFONLL2 ;
 	if(meson_n == 0){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
 	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
@@ -782,7 +780,6 @@ for (int i=0;i<NBins;++i){
 		bl_low_xErrH[i]=ptBins[i + 1]-BPXsecPPX[i];
 		bl_low_ySystL[i]=BPTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
 		bl_low_ySystH[i]=BPTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
-		
 	} 
 	else {
 		binhigh[i-NBinsLow]=BPXsecPPX[i];
@@ -814,8 +811,7 @@ for (int i=0;i<NBins2015;++i){
 		bl_low_2015_xErrL[i]=BXsecPPX2015[i]-ptBins2015[i];
 		bl_low_2015_xErrH[i]=ptBins2015[i + 1]-BXsecPPX2015[i];
 		bl_low_2015_ySystL[i]=BXSecPPYSystDown2015[i];
-		bl_low_2015_ySystH[i]=BXSecPPYSystDown2015[i];
-		
+		bl_low_2015_ySystH[i]=BXSecPPYSystDown2015[i];	
 	} 
 	else {
 		binhigh_2015[i-NBinsLow2015]=BXsecPPX2015[i];

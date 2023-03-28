@@ -237,7 +237,6 @@ void  MCEff(int DoTnP, int Rescale){
 	   BDT->SetBranchAddress("lumi",&lumi);
 
 */
-Bpt
 	ntHi->SetBranchAddress("hiBin",&hiBin);
 	ntHi->SetBranchAddress("pthat",&pthat);
 	ntHi->SetBranchAddress("weight",&weight);
@@ -577,7 +576,7 @@ Bpt
 	int NEvents = ntphi->GetEntries();
 	
 	const int yBinN = 5;
-  std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
+  	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
 	double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.4};
 
   // create a vector of pT binning with specified regional widths
@@ -707,7 +706,8 @@ Bpt
 	const int NMultiBin = 10;
 	double  MultiBin1D[NMultiBin + 1] = {0,15,25,30,35,40,50,65,80,100,130};
 
-
+	const int YBin = 8;
+	double  YBin1D[YBin + 1] = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4};
 
 	TH1D * Eff1DRECOMultHis = new TH1D("Eff1DRECOMultHis","",NMultiBin,MultiBin1D);
 
@@ -718,7 +718,14 @@ Bpt
 	Eff1DRECOMultHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOMultHis->GetYaxis()->SetTitleOffset(1.5);
 
+	TH1D * Eff1DRECOYHis = new TH1D("Eff1DRECOYHis","",YBin,YBin1D);
 
+	Eff1DRECOYHis->GetXaxis()->SetTitle("Rapidity");
+	Eff1DRECOYHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DRECOYHis->GetXaxis()->CenterTitle();	
+	Eff1DRECOYHis->GetYaxis()->CenterTitle();
+	Eff1DRECOYHis->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DRECOYHis->GetYaxis()->SetTitleOffset(1.5);
 
 //	TH1D * Eff1DGENHis = new TH1D("Eff1DGENHis","",NPtBins,PtBin);
 	TH1D * Eff1DGENHis = new TH1D("Eff1DGENHis","",NPtBins1D,PtBin1D);
@@ -807,7 +814,14 @@ Bpt
 	Eff1DGENMultHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENMultHis->GetYaxis()->SetTitleOffset(1.5);
 
+	TH1D * Eff1DGENYHis = new TH1D("Eff1DGENYHis","",YBin,YBin1D);
 
+	Eff1DGENYHis->GetXaxis()->SetTitle("Rapidity");
+	Eff1DGENYHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DGENYHis->GetXaxis()->CenterTitle();	
+	Eff1DGENYHis->GetYaxis()->CenterTitle();
+	Eff1DGENYHis->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DGENYHis->GetYaxis()->SetTitleOffset(1.5);
 
 
 
@@ -845,7 +859,26 @@ Bpt
 	Eff1DGENAccMultHis->GetYaxis()->SetTitleOffset(1.5);
 
 
+	// Bt Stuffs
 
+	TH1D * Eff1DRECOHisTnPUpY = new TH1D("Eff1DRECOHisTnPUpY","",YBin,YBin1D);
+
+	Eff1DRECOHisTnPUpY->GetXaxis()->SetTitle("rapidity");
+	Eff1DRECOHisTnPUpY->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DRECOHisTnPUpY->GetXaxis()->CenterTitle();	
+	Eff1DRECOHisTnPUpY->GetYaxis()->CenterTitle();
+	Eff1DRECOHisTnPUpY->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DRECOHisTnPUpY->GetYaxis()->SetTitleOffset(1.5);
+
+
+	TH1D * Eff1DRECOHisTnPDownY = new TH1D("Eff1DRECOHisTnPDownY","",YBin,YBin1D);
+
+	Eff1DRECOHisTnPDownY->GetXaxis()->SetTitle("rapidity");
+	Eff1DRECOHisTnPDownY->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DRECOHisTnPDownY->GetXaxis()->CenterTitle();	
+	Eff1DRECOHisTnPDownY->GetYaxis()->CenterTitle();
+	Eff1DRECOHisTnPDownY->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DRECOHisTnPDownY->GetYaxis()->SetTitleOffset(1.5);
 
 
 	//Mult Stuffs
@@ -1172,6 +1205,7 @@ Bpt
           muidtrkWeightHis->Fill(Bpt[j],abs(By[j]),muidtrkWeight);
           Eff1DRECOHis->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHis->Fill(nMult,TotalWeight);
+		  Eff1DRECOYHis->Fill(By[j],TotalWeight);
         }
         TrkLooseHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
 
@@ -1253,6 +1287,8 @@ Bpt
 				Eff1DRECOHisTnPUpMult->Fill(nMult,TotalWeightSystUp);
 				Eff1DRECOHisTnPDownMult->Fill(nMult,TotalWeightSystDown);
 
+				Eff1DRECOHisTnPUpY->Fill(By[j],TotalWeightSystUp);
+				Eff1DRECOHisTnPDownY->Fill(By[j],TotalWeightSystDown);
 
 				muid1total =  sqrt(muid1syst/muid1[j] * muid1syst/muid1[j] + muid1stat/muid1[j] * muid1stat/muid1[j]);
 				muid2total =  sqrt(muid2syst/muid2[j] * muid2syst/muid2[j] + muid2stat/muid2[j] * muid2stat/muid2[j]);
@@ -1434,6 +1470,7 @@ Bpt
 					BptWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight * BptWeight);
 					Eff1DGENHis->Fill(Gpt[j],EventWeight);
 					Eff1DGENMultHis->Fill(nMult,EventWeight);
+					Eff1DGENYHis->Fill(By[j],EventWeight);
 					Eff1DGENHisGpt->Fill(Gpt[j],EventWeight * BptWeight);
 					Eff1DGENMultHisGpt->Fill(nMult,EventWeight * BptWeight);
 
@@ -1662,7 +1699,10 @@ Bpt
 		Eff1DGENMultHis->Sumw2();
 		Eff1DHisMult->Divide(Eff1DGENMultHis);
 
-
+		TH1D * Eff1DHisY = (TH1D * ) Eff1DRECOYHis->Clone("Eff1DHisY");
+		Eff1DHisY->Sumw2();
+		Eff1DGENYHis->Sumw2();
+		Eff1DHisY->Divide(Eff1DGENYHis);
 
 
 		TH1D * Sel1DHisMult = (TH1D * ) Eff1DRECOMultHis->Clone("Sel1DHisMult");
@@ -1682,7 +1722,7 @@ Bpt
 
 		//Save 1D Eff Plots/
 
-		Eff1DHisMult->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+		Eff1DHisMult->GetXaxis()->SetTitle("B^{0}_{s} nmult (GeV/c)");
 		Eff1DHisMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
 		Eff1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisMult->GetXaxis()->CenterTitle();
@@ -1693,6 +1733,18 @@ Bpt
 		Eff1DHisMult->SetMarkerSize(1);
 		Eff1DHisMult->SetMarkerColor(kBlack);
 		Eff1DHisMult->SetLineColor(kBlack);
+
+		Eff1DHisY->GetXaxis()->SetTitle("B^{0}_{s} y (GeV/c)");
+		Eff1DHisY->GetYaxis()->SetTitle("#alpha #times #epsilon");
+		Eff1DHisY->GetYaxis()->SetTitleOffset(1.4);
+		Eff1DHisY->GetXaxis()->CenterTitle();
+		Eff1DHisY->GetYaxis()->CenterTitle();
+	
+
+		Eff1DHisY->SetMarkerStyle(20);
+		Eff1DHisY->SetMarkerSize(1);
+		Eff1DHisY->SetMarkerColor(kBlack);
+		Eff1DHisY->SetLineColor(kBlack);
 
 
 		Sel1DHisMult->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
@@ -1742,6 +1794,16 @@ Bpt
 		Eff1DGENMultHis->Sumw2();
 		Eff1DHisTnPDownMult->Divide(Eff1DGENMultHis);
 
+		TH1D * Eff1DHisTnPUpY = (TH1D * ) Eff1DRECOHisTnPUpY->Clone("Eff1DHisTnPUpY");
+		Eff1DHisTnPUpY->Sumw2();
+		Eff1DGENYHis->Sumw2();
+		Eff1DHisTnPUpY->Divide(Eff1DGENYHis);
+
+		TH1D * Eff1DHisTnPDownY = (TH1D * ) Eff1DRECOHisTnPDownY->Clone("Eff1DHisTnPDownY");
+		Eff1DHisTnPDownY->Sumw2();
+		Eff1DGENYHis->Sumw2();
+		Eff1DHisTnPDownY->Divide(Eff1DGENYHis);
+
 
 
 		TH1D * Eff1DHisBDTMult = (TH1D * ) Eff1DRECOHisBDTMult->Clone("Eff1DHisBDTMult");
@@ -1777,6 +1839,18 @@ Bpt
 		Eff1DHisTnPDownMult->SetMarkerSize(1);
 		Eff1DHisTnPDownMult->SetMarkerColor(kBlue);
 		Eff1DHisTnPDownMult->SetLineColor(kBlue);
+
+
+		Eff1DHisTnPUpY->SetMarkerStyle(20);
+		Eff1DHisTnPUpY->SetMarkerSize(1);
+		Eff1DHisTnPUpY->SetMarkerColor(kRed);
+		Eff1DHisTnPUpY->SetLineColor(kRed);
+
+
+		Eff1DHisTnPDownY->SetMarkerStyle(20);
+		Eff1DHisTnPDownY->SetMarkerSize(1);
+		Eff1DHisTnPDownY->SetMarkerColor(kBlue);
+		Eff1DHisTnPDownY->SetLineColor(kBlue);
 
 
 
@@ -1821,10 +1895,6 @@ Bpt
 		cSyst->SaveAs("Syst/BDTWeightedMult.png");
 
 
-
-
-
-
 		Eff1DHisBptMult->SetMarkerStyle(20);
 		Eff1DHisBptMult->SetMarkerSize(1);
 		Eff1DHisBptMult->SetMarkerColor(kRed);
@@ -1845,6 +1915,38 @@ Bpt
 
 		cSyst->SaveAs("Syst/BptWeightedMult.png");
 
+
+
+
+		TCanvas * cSyst_y  = new TCanvas("cSyst_y","cSyst_y",600,600);
+		cSyst_y->cd();
+
+		Eff1DHisTnPUpY->SetMarkerStyle(20);
+		Eff1DHisTnPUpY->SetMarkerSize(1);
+		Eff1DHisTnPUpY->SetMarkerColor(kRed);
+		Eff1DHisTnPUpY->SetLineColor(kRed);
+
+		Eff1DHisTnPDownY->SetMarkerStyle(20);
+		Eff1DHisTnPDownY->SetMarkerSize(1);
+		Eff1DHisTnPDownY->SetMarkerColor(kBlue);
+		Eff1DHisTnPDownY->SetLineColor(kBlue);
+
+		Eff1DHisTnPUpMult->Draw("ep");
+		Eff1DHisMult->Draw("epSAME");
+		Eff1DHisTnPDownMult->Draw("epSAME");
+
+		TLegend* legY = new TLegend(0.50,0.35,0.80,0.60,NULL,"brNDC");
+		legY->SetBorderSize(0);
+		legY->SetTextSize(0.040);
+		legY->SetTextFont(42);
+		legY->SetFillStyle(0);
+		legY->SetLineWidth(3);
+		legY->AddEntry(Eff1DHisY,"Nominal","PL");
+		legY->AddEntry(Eff1DHisTnPUpY,"T&P Variation Up","PL");
+		legY->AddEntry(Eff1DHisTnPDownY,"T&P Variation Down","PL");
+		legY->Draw("same");
+
+		cSyst_y->SaveAs("Syst/TnPSystY.png");
 
 		//2D Maps
 		TH2D * invAcc2D = (TH2D * ) EvtWeightGenHis->Clone("invAcc2D");
@@ -1966,7 +2068,9 @@ Bpt
 		Eff1DGENMultHis->Write();
 		Eff1DHisMult->Write();
 
-	
+		Eff1DRECOYHis->Write();
+		Eff1DGENYHis->Write();
+		Eff1DHisY->Write();
 
 
 
@@ -2060,7 +2164,6 @@ Bpt
 		TCanvas * c1DSave = new TCanvas("c1DSave","c1DSave",600,600);
 		c1DSave->cd();
 		
-
 		Acc1DHis->Draw("ep");
 		c1DSave->SaveAs("Plot1DEfficiency/Pt/Acc1DHis.png");
 	
@@ -2089,7 +2192,7 @@ Bpt
 		Eff1DHisBpt->Write();
 		Eff1DHisBDT->Write();
 
-
+		Eff1DHisY->Write();
 		Eff1DHisMult->Write();
 		Eff1DHisTnPUpMult->Write();
 		Eff1DHisTnPDownMult->Write();
