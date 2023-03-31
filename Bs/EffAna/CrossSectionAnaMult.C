@@ -346,7 +346,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 					BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
 
 					BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
-					BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
+					BEff[j] = 1.0/(invEff2D->GetBinContent(XBin,YBin));
 
 					BEffErr[j] = BEffInvErr[j]/(BEffInv[j] * BEffInv[j]);
 
@@ -570,8 +570,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	for(int i = 0; i < NBins;i++){
 		RawCount = hPt->GetBinContent(i+1);
 		RawCountErr = hPt->GetBinError(i+1);
-		CorrYieldDiff[i] = (RawCount *  NewEffReal[i])/(BRchain*2* lumi);
-		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr *  NewEffReal[i]) *(RawCountErr  *  NewEffReal[i]) + (RawCount *  NewEffRealErr[i]) * (RawCount  *  NewEffRealErr[i]))/(BRchain*2* lumi);
+		CorrYieldDiff[i] = (RawCount /  NewEffReal[i])/(BRchain*2* lumi);
+		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr /  NewEffReal[i]) *(RawCountErr  /  NewEffReal[i]) + (RawCount /NewEffReal[i] *  NewEffRealErr[i]) * (RawCount/NewEffReal[i]  *  NewEffRealErr[i]))/(BRchain*2* lumi);
 		CorrDiffHisReal->SetBinContent(i+1,CorrYieldDiff[i]);
 		CorrDiffHisReal->SetBinError(i+1,CorrYieldDiffErr[i]);
 
@@ -593,7 +593,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	if(DoTnP == 0)	foutCorr = new TFile(Form("FinalFiles/BsPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
 	if(DoTnP == 1)	foutCorr = new  TFile(Form("FinalFiles/BsPPCorrYield%s.root",var_m.Data()),"RECREATE");
 
-/*
+
 	TH1D * Eff1DHisvar;
 	if (whichvar==0){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
@@ -634,7 +634,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 
 	}
 //	CorrDiffHisBinBin->Draw("epSAME");
-*/
+
 	hInvEff->SetMaximum(NewEff[0]*1.5);
 	TCanvas *c = new TCanvas("c","c",600,600);
 	c->cd();
@@ -661,11 +661,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 
 	foutCorr->cd();
 	CorrDiffHis->Write();
-	//CorrDiffHisBin->Write();
+	CorrDiffHisBin->Write();
 	CorrDiffHisReal->Write();
 	hInvEff->Write();
 	hEff->Write();
-	//Eff1DHisvar->Write();
+	Eff1DHisvar->Write();
 	hPt->Write();
 	foutCorr->Close();
 

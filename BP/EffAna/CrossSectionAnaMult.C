@@ -21,7 +21,9 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-void CrossSectionAnaMult(int DoTnP,int whichvar){
+void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
+
+	gSystem->mkdir("EffFinal" ,true);
 
 	int NBins;
 	//const int NBins = 6;
@@ -36,17 +38,31 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 
 
 	TString FileName;
+	TFile * fin;
+	TTree * EffInfoTree;
+	TTree * root;
+	int NCand;
 
+
+	if (usemc==0){
 	FileName = "/data3/tasheng/presel/BPData_nom.root";
-	TFile * fin = new TFile(FileName.Data());
+	fin = new TFile(FileName.Data());
+	EffInfoTree = (TTree * ) fin->Get("ntKp");
+	NCand=10;
+	}
+	else {
+	FileName = "/data3/tasheng/presel/output/BP_MC_BDTs_nom_tnp.root";
+	fin = new TFile(FileName.Data());
+	EffInfoTree = (TTree * ) fin->Get("Bfinder/ntKp");
+	root = (TTree * ) fin->Get("Bfinder/root");
+	NCand=13000;
+	}
+	
 	fin->cd();
 
-	TTree * EffInfoTree = (TTree * ) fin->Get("ntKp");
-
 	int NEvents = EffInfoTree->GetEntries();
-
-	const int NCand = 10;
-
+	if (usemc==1){NEvents=NEvents/100;}
+	
 	Int_t BsizeNew;
 	Int_t runNew;
 	Int_t lumiNew;
@@ -58,6 +74,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	Float_t BEffErr[NCand];
 
 	Int_t nMult;
+	Int_t trackSelection;
 
 	Float_t BEffInv[NCand];
 	Float_t BEffInvErr[NCand];
@@ -81,7 +98,12 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	EffInfoTree->SetBranchAddress("Bmass",BmassNew);
 	EffInfoTree->SetBranchAddress("By",ByNew);
 	EffInfoTree->SetBranchAddress("Bpt",BptNew);
-	EffInfoTree->SetBranchAddress("nMult",&nMult);
+	if (usemc==0){
+			EffInfoTree->SetBranchAddress("nMult",&nMult); 
+			EffInfoTree->SetBranchAddress("track", &trackSelection);
+			}
+	else {root->SetBranchAddress("EvtInfo.nMult",&nMult);}
+	
 
 	Float_t var;
 	TString var_m;
@@ -89,8 +111,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	if (whichvar==0){
 		var_m="y"; 
 		NBins=8;} 
-	else {
+	if (whichvar==1){
 		var_m="Mult";
+		NBins=7;}
+	if (whichvar==2){
+		var_m="pt";
 		NBins=7;}
 
 	double ptBins[NBins + 1];
@@ -137,12 +162,17 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  ybinsvec[i];             //taken from parameter.h
 		}
-	} else {
+	} 
+	if (whichvar==1){
 		for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  nmbinsvec[i];             //taken from parameter.h
 		}
 	}
-
+	if (whichvar==2){
+		for(int i = 0; i < NBins + 1; i++){
+		ptBins[i] =  ptbinsvecBP[i];             //taken from parameter.h
+		}
+	}
 	for(int i = 0; i < NBins; i++){
 		Counts[i] = 0;
 		SumCounts[i] = 0;
@@ -239,54 +269,97 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	//Add 2D eff calculations
 	
 	TH2D * invEff2D = (TH2D *) fin1DEff->Get("invEff2D");
+	TH2D * invEffTrkTight = (TH2D *) fin1DEff->Get("invEffTrkTight");
+	TH2D * invEffTrkLoose = (TH2D *) fin1DEff->Get("invEffTrkLoose");
 
+	Float_t EffInvTrkTight;
+  	Float_t EffInvTrkLoose;
 	int XBin;
 	int YBin;
+	if (usemc==0){
+		for( int i = 0; i < NEvents; i++){
 
-	for( int i = 0; i < NEvents; i++){
+			EffInfoTree->GetEntry(i);
+			if (whichvar==0){var=ByNew[0]; trackSelection=1;}
+			if (whichvar==1){var=nMult; trackSelection=1;}
+			if (whichvar==2){var=BptNew[0];}
+			int j=0;
+				for(int k = 0; k < NBins; k++){
 
-		EffInfoTree->GetEntry(i);
-		//MuonInfoTree->GetEntry(i);
-
-		if (whichvar==0){var=ByNew[0];}
-		else{var=nMult;}
-		int j=0;
-			for(int k = 0; k < NBins; k++){
-
-				if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
-				{
+					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
+					{
 
 
-					XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
-					YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
-					BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
+						XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
+						YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
+						BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
 
-					BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
-					BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
+						BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
+						BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
 
-					BEffErr[j] = BEffInvErr[j]/(BEffInv[j] * BEffInv[j]);
+						BEffErr[j] = BEffInvErr[j]/(BEffInv[j] * BEffInv[j]);
 
-					if(BEffInv[j] > 0){
-						SumCounts[k] = SumCounts[k] + BEffInv[j];
-						SumCountsErr[k] = SumCountsErr[k] + BEffInvErr[j] * BEffInvErr[j];
-						SumCountsEff[k] = SumCountsEff[k] + BEff[j];
-						SumCountsEffErr[k] = SumCountsEffErr[k] + BEffErr[j] * BEffErr[j];
-						SumCountsSyst[k] = 	SumCountsSyst[k]  + BEffInvBDTWeighted[j];
-						SumCountsSystErr[k] = 	SumCountsSystErr[k]  + BEffInvErrBDTWeighted[j] * BEffInvErrBDTWeighted[j];
+						if(trackSelection>0 && BEffInv[j] > 0){
+							SumCounts[k] = SumCounts[k] + BEffInv[j];
+							SumCountsErr[k] = SumCountsErr[k] + BEffInvErr[j] * BEffInvErr[j];
+							SumCountsEff[k] = SumCountsEff[k] + BEff[j];
+							SumCountsEffErr[k] = SumCountsEffErr[k] + BEffErr[j] * BEffErr[j];
+							SumCountsSyst[k] = 	SumCountsSyst[k]  + BEffInvBDTWeighted[j];
+							SumCountsSystErr[k] = 	SumCountsSystErr[k]  + BEffInvErrBDTWeighted[j] * BEffInvErrBDTWeighted[j];
 
-						SumCountsUp[k] = SumCountsUp[k] + BEffInvUp[j];
-						SumCountsErrUp[k] = SumCountsErrUp[k] + BEffInvErrUp[j] * BEffInvErrUp[j];
+							SumCountsUp[k] = SumCountsUp[k] + BEffInvUp[j];
+							SumCountsErrUp[k] = SumCountsErrUp[k] + BEffInvErrUp[j] * BEffInvErrUp[j];
 
-						SumCountsDown[k] = SumCountsDown[k] + BEffInvDown[j];
-						SumCountsErrDown[k] = SumCountsErrUp[k] + BEffInvErrDown[j] * BEffInvErrDown[j];
+							SumCountsDown[k] = SumCountsDown[k] + BEffInvDown[j];
+							SumCountsErrDown[k] = SumCountsErrUp[k] + BEffInvErrDown[j] * BEffInvErrDown[j];
 
-						Counts[k] = Counts[k] + 1;
+							Counts[k] = Counts[k] + 1;
+						}
 					}
 				}
 			}
-		}
+	}
+	else {
+		for( int i = 0; i < NEvents; i++){
+			EffInfoTree->GetEntry(i);
+			root->GetEntry(i);
+			for (int j = 0 ; j< BsizeNew ;j++){
+				if (whichvar==0){var=ByNew[j];}
+				if (whichvar==1){var=nMult;}
+				if (whichvar==2){var=BptNew[j];}
+				for(int k = 0; k < NBins; k++){
+					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
+					{
+						XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
+						YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
+						BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
 
-	
+						BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
+						BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
+
+						BEffErr[j] = BEffInvErr[j]/(BEffInv[j] * BEffInv[j]);
+
+						if(BEffInv[j] > 0){
+							SumCounts[k] = SumCounts[k] + BEffInv[j];
+							SumCountsErr[k] = SumCountsErr[k] + BEffInvErr[j] * BEffInvErr[j];
+							SumCountsEff[k] = SumCountsEff[k] + BEff[j];
+							SumCountsEffErr[k] = SumCountsEffErr[k] + BEffErr[j] * BEffErr[j];
+							SumCountsSyst[k] = 	SumCountsSyst[k]  + BEffInvBDTWeighted[j];
+							SumCountsSystErr[k] = 	SumCountsSystErr[k]  + BEffInvErrBDTWeighted[j] * BEffInvErrBDTWeighted[j];
+
+							SumCountsUp[k] = SumCountsUp[k] + BEffInvUp[j];
+							SumCountsErrUp[k] = SumCountsErrUp[k] + BEffInvErrUp[j] * BEffInvErrUp[j];
+
+							SumCountsDown[k] = SumCountsDown[k] + BEffInvDown[j];
+							SumCountsErrDown[k] = SumCountsErrUp[k] + BEffInvErrDown[j] * BEffInvErrDown[j];
+
+							Counts[k] = Counts[k] + 1;
+						}
+					}
+				}
+			}
+		  }
+		}
 
 
 	TH1D * hInvEff = new TH1D("hInvEff","",NBins,ptBins);
@@ -330,6 +403,20 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	hEff->SetMarkerStyle(20);
 
 	hEff->SetMinimum(0);
+
+	TH1D * hEffInv = new TH1D("hEffInv","",NBins,ptBins);
+
+
+	hEffInv->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
+	hEffInv->GetYaxis()->SetTitle("<(Eff * Acc)>");
+	hEffInv->GetYaxis()->SetTitleOffset(1.4);
+	hEffInv->GetXaxis()->CenterTitle();
+	hEffInv->GetYaxis()->CenterTitle();
+	hEffInv->SetMarkerColor(1);
+	hEffInv->SetLineColor(1);
+	hEffInv->SetMarkerStyle(20);
+
+	hEffInv->SetMinimum(0);
 
 
 	TH1D * hInvEffUp = new TH1D("hInvEffUp","",NBins,ptBins);
@@ -388,6 +475,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 		hEff->SetBinContent(i+1,NewEffReal[i]);
 		hEff->SetBinError(i+1,NewEffRealErr[i]);
 
+		hEffInv->SetBinContent(i+1,1/NewEff[i]);
+		hEffInv->SetBinError(i+1,NewEffErr[i]/(NewEff[i] * NewEff[i]));
 
 		NewEffSyst[i] = SumCountsSyst[i]/Counts[i];
 		NewEffSystErr[i] = TMath::Sqrt(SumCountsSystErr[i])/Counts[i];
@@ -481,17 +570,49 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	CorrDiffHis->SetMarkerSize(1);
 	CorrDiffHis->SetMarkerStyle(20);
 
+	TH1D * CorrDiffHisReal = new TH1D("hPtSigmaReal","",NBins,ptBins);
+	CorrDiffHisReal->GetXaxis()->SetTitle(Form("%s (GeV/c)",var_m.Data()));
+	CorrDiffHisReal->GetYaxis()->SetTitle("#sigma (pb)");
+
+	CorrDiffHisReal->GetYaxis()->SetTitleOffset(1.3);
+	CorrDiffHisReal->GetXaxis()->CenterTitle();
+	CorrDiffHisReal->GetYaxis()->CenterTitle();
+
+
+
+
+	for(int i = 0; i < NBins;i++){
+		RawCount = hPt->GetBinContent(i+1);
+		RawCountErr = hPt->GetBinError(i+1);
+		CorrYieldDiff[i] = (RawCount /  NewEffReal[i])/(BRchain*2* lumi);
+		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr /  NewEffReal[i]) *(RawCountErr  /  NewEffReal[i]) + (RawCount /NewEffReal[i] *  NewEffRealErr[i]) * (RawCount/NewEffReal[i]  *  NewEffRealErr[i]))/(BRchain*2* lumi);
+		CorrDiffHisReal->SetBinContent(i+1,CorrYieldDiff[i]);
+		CorrDiffHisReal->SetBinError(i+1,CorrYieldDiffErr[i]);
+
+	}
+
+	
+	//CorrDiffHisReal->SetTitle("(Preliminary) B^{+} #rightarrow J/#psi K^{+} p_{T} Differential Cross Section in pp");
+
+	CorrDiffHisReal->SetMarkerColor(kBlack);
+	CorrDiffHisReal->SetMarkerSize(1);
+	CorrDiffHisReal->SetMarkerStyle(20);
+
 	TFile * foutCorr;
-	if(DoTnP == 0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
-	if(DoTnP == 1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_m.Data()),"RECREATE");
-/*
+	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_m.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%sMC.root",var_m.Data()),"RECREATE");
+
 	TH1D * Eff1DHisvar;
 	if (whichvar==0){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
 	    }
-	else{
+	if (whichvar==1){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
 		}
+	if (whichvar==2){
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
+	}
 	TH1D * CorrDiffHisBin = new TH1D("CorrDiffHisBin","",NBins,ptBins);
 	CorrDiffHisBin->GetXaxis()->SetTitle("nMult");
 	CorrDiffHisBin->GetYaxis()->SetTitle("#sigma (pb)");
@@ -499,7 +620,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 	CorrDiffHisBin->GetYaxis()->SetTitleOffset(1.3);
 	CorrDiffHisBin->GetXaxis()->CenterTitle();
 	CorrDiffHisBin->GetYaxis()->CenterTitle();
-
 
 	CorrDiffHisBin->SetMarkerColor(kRed);
 	CorrDiffHisBin->SetLineColor(kRed);	
@@ -524,41 +644,38 @@ void CrossSectionAnaMult(int DoTnP,int whichvar){
 		CorrDiffHisBin->SetBinError(i+1,CorrYieldDiffErr[i]);
 
 	}
-	*/
+	
 	hInvEff->SetMaximum(NewEff[0]*1.5);
 	TCanvas *c = new TCanvas("c","c",600,600);
 	c->cd();
 
-	hInvEff->SetTitle("Inv. eff");
+	hEffInv->Draw("ep");
 	
-	hInvEff->Draw("ep");
-	
-  	c->BuildLegend(0.6, 0.6, 0.9, 0.8);
+  	//c->BuildLegend(0.6, 0.6, 0.9, 0.8);
   	
-	//gSystem->mkdir("EffFinal/pdf/",true);
+	gSystem->mkdir("EffFinal",true);
 	//c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.png",NBins));
-	c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s.pdf",NBins,var_m.Data()));
-
+	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s.pdf",NBins,var_m.Data()));}
+	else {c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 	hEff->Draw("ep");
 
 	//c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
-	c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s.pdf",NBins,var_m.Data()));
+	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s.pdf",NBins,var_m.Data()));}
+	else {c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+	Eff1DHisvar->Draw("ep");
 
-	//Eff1DHisvar->Draw("ep");
-
-	//c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));
-
+	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));}
+	else {c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 
 	foutCorr->cd();
 	CorrDiffHis->Write();
-	//CorrDiffHisBin->Write();
+	CorrDiffHisBin->Write();
+	CorrDiffHisReal->Write();
 	hInvEff->Write();
+	hEff->Write();
+	hEffInv->Write();
+	Eff1DHisvar->Write();
 	hPt->Write();
 	foutCorr->Close();
-
-
-
-
-
 
 }
