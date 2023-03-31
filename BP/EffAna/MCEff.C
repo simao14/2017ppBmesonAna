@@ -1372,17 +1372,19 @@ void  MCEff(int DoTnP, int Rescale){
 
 		cout << "START MAKING HIS BRO" << endl;
 
+		//TOTAL EFF
 		TH1D * Eff1DHis = (TH1D * ) Eff1DRECOHis->Clone("Eff1DHis");
 		Eff1DHis->Sumw2();
 		Eff1DGENHis->Sumw2();
 		Eff1DHis->Divide(Eff1DGENHis);
 
-
+		//SEL EFF
 		TH1D * Sel1DHis = (TH1D * ) Eff1DRECOHis->Clone("Sel1DHis");
 		Sel1DHis->Sumw2();
 		Eff1DGENAccHis->Sumw2();
 		Sel1DHis->Divide(Eff1DGENAccHis);
 		
+		//ACEPTANCE
 
 		TH1D * Acc1DHis = (TH1D * ) Eff1DGENAccHis->Clone("Acc1DHis");
 		Acc1DHis->Sumw2();
