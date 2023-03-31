@@ -103,7 +103,7 @@ void  MCEff(int DoTnP, int Rescale){
 	TTree * TnPInfo = (TTree *) fin->Get("TnPInfo");
 
 	Int_t nMult;
-
+	
 	root->SetBranchAddress("EvtInfo.nMult",&nMult);
 
 	const int NCand = 8000;
@@ -1204,7 +1204,7 @@ void  MCEff(int DoTnP, int Rescale){
           trkWeightHis->Fill(Bpt[j],abs(By[j]),trkWeight);
           muidtrkWeightHis->Fill(Bpt[j],abs(By[j]),muidtrkWeight);
           Eff1DRECOHis->Fill(Bpt[j],TotalWeight);
-          Eff1DRECOMultHis->Fill(nMult,TotalWeight);
+          Eff1DRECOMultHis->Fill(nMult,TotalWeight);  
 		  Eff1DRECOYHis->Fill(By[j],TotalWeight);
         }
         TrkLooseHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
@@ -1470,7 +1470,7 @@ void  MCEff(int DoTnP, int Rescale){
 					BptWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight * BptWeight);
 					Eff1DGENHis->Fill(Gpt[j],EventWeight);
 					Eff1DGENMultHis->Fill(nMult,EventWeight);
-					Eff1DGENYHis->Fill(By[j],EventWeight);
+					Eff1DGENYHis->Fill(Gy[j],EventWeight);
 					Eff1DGENHisGpt->Fill(Gpt[j],EventWeight * BptWeight);
 					Eff1DGENMultHisGpt->Fill(nMult,EventWeight * BptWeight);
 

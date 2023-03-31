@@ -311,7 +311,6 @@ void CrossSectionAna(int DoTnP){
 		SumCountsErrDown[i] = 0;
 		SumCountsTight[i] = 0;
 		SumCountsLoose[i] = 0;
-
 	}
 
 	int EtaBin;

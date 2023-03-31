@@ -1,6 +1,6 @@
 #include <cmath> 
 
-void yield_cs(int syst,TString varExp,TString tree){
+void yield_cs(int syst,TString varExp,TString tree,int eff){
 
 	
 	double brafrac_ntKp = 0.00102;
@@ -37,7 +37,16 @@ void yield_cs(int syst,TString varExp,TString tree){
 	TFile *eff_f = new TFile(Form("../%s/EffAna/FinalFiles/%sPPCorrYield%s.root",par->Data(),par->Data(),var->Data()),"read");
 
 	TMultiGraph *TMG_diff = (TMultiGraph*) diff_f->Get("TG");
-	TH1D *TH_eff = (TH1D*) eff_f->Get("hInvEff");
+	TH1D *TH_eff;
+	if (eff==0){TH_eff = (TH1D*) eff_f->Get("hInvEff");}
+	if (eff==1){TH_eff = (TH1D*) eff_f->Get("hEff");}
+	if (eff==2){
+		if (varExp=="Bpt") {TH_eff = (TH1D*) eff_f->Get("Eff1DHis");}
+		if (varExp=="By") {TH_eff = (TH1D*) eff_f->Get("Eff1DHisY");}
+		if (varExp=="nMult") {TH_eff = (TH1D*) eff_f->Get("Eff1DHisMult");}
+		}
+
+	
 
 	auto tl_diff = TMG_diff->GetListOfGraphs();
 
@@ -55,9 +64,11 @@ void yield_cs(int syst,TString varExp,TString tree){
 	double ex_h[_nBins];
 	
 	for (int i=0;i<_nBins;i++){
-		y[i]=TG_diff->GetY()[i] * (TH_eff->GetBinContent(i+1) / (B*lumi));
+		if (eff==0){y[i]=TG_diff->GetY()[i] * (TH_eff->GetBinContent(i+1) / (B*lumi));
+					ey[i]=abs(y[i]) * (TG_diff->GetErrorY(i)/TG_diff->GetY()[i]);}
+		else {y[i]=TG_diff->GetY()[i] / TH_eff->GetBinContent(i+1) / (B*lumi);
+			  ey[i]=abs(y[i]) * (TG_diff->GetErrorY(i)/TG_diff->GetY()[i]);}
 		x[i]=TG_diff->GetX()[i];
-		ey[i]=abs(y[i]) * (TG_diff->GetErrorY(i)/TG_diff->GetY()[i]);
 		ex_l[i]=TG_diff->GetErrorXlow(i);
 		ex_h[i]=TG_diff->GetErrorXhigh(i);
 	}
@@ -71,11 +82,12 @@ void yield_cs(int syst,TString varExp,TString tree){
 		double ey_syst[_nBins];
 	
 		for (int i=0;i<_nBins;i++){
+			
 			y_syst[i]=TG_syst->GetY()[i] * (TH_eff->GetBinContent(i+1) / (B*lumi));
 			x_syst[i]=TG_syst->GetX()[i];
 			ey_syst[i]=abs(y_syst[i])*sqrt(pow(TG_syst->GetErrorY(i)/TG_syst->GetY()[i],2)+pow(TH_eff->GetBinError(i+1)/TH_eff->GetBinContent(i+1),2) + pow(B_err/B,2) + pow(0.019,2));
-		ex_syst_l[i]=TG_syst->GetErrorXlow(i);
-		ex_syst_h[i]=TG_syst->GetErrorXhigh(i);
+			ex_syst_l[i]=TG_syst->GetErrorXlow(i);
+			ex_syst_h[i]=TG_syst->GetErrorXhigh(i);
 
 		}
 		
@@ -125,6 +137,8 @@ void yield_cs(int syst,TString varExp,TString tree){
 	leg_diff->SetFillStyle(0);
 	leg_diff->SetTextSize(0);
 	leg_diff->Draw();
-	c->SaveAs(Form("./results/%s_%s_diffcrosssectionplot.png",tree.Data(),varExp.Data())); 
+	if (eff==0){c->SaveAs(Form("./results/%s_%s_diffcrosssectionplot.png",tree.Data(),varExp.Data())); }
+	if (eff==1){c->SaveAs(Form("./results/%s_%s_diffcrosssectionplot_real.png",tree.Data(),varExp.Data())); }
+	if (eff==2){c->SaveAs(Form("./results/%s_%s_diffcrosssectionplot_1d.png",tree.Data(),varExp.Data())); }
 	return;
 }
