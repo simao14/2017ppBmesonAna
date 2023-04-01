@@ -1072,8 +1072,8 @@ void  MCEff(int DoTnP, int Rescale){
 				trkWeight = EventWeight * trk1[j] * trk2[j];
 
 				muidtrkWeight = EventWeight * muid1[j] * muid2[j] * trk1[j] * trk2[j];
-				TotalWeight = EventWeight * TnPWeight;
-				//TotalWeight=1;
+				//TotalWeight = EventWeight * TnPWeight;
+				TotalWeight=1;
 
 
         if (passTracking(Tracking::tight)) {
@@ -1328,8 +1328,8 @@ void  MCEff(int DoTnP, int Rescale){
       PVzWeight = (0.013245 * TMath::Exp(-(PVz-0.753876)*(PVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(PVz-0.608178)*(PVz-0.608178)/(2 * 5.785230 * 5.785230)));
 			//	EventWeight = PVzWeight * CentWeight * pthat * weight;
 			
-			EventWeight = PVzWeight * CentWeight * weight;
-			//EventWeight = 1;	
+			//EventWeight = PVzWeight * CentWeight * weight;
+			EventWeight = 1;	
 
 
 			for(int j = 0; j < Gsize; j++){

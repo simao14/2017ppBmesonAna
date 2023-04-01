@@ -289,7 +289,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
 					{
 
-
+						
 						XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 						YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 						BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
@@ -408,7 +408,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	hEffInv->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hEffInv->GetYaxis()->SetTitle("<(Eff * Acc)>");
+	hEffInv->GetYaxis()->SetTitle("<(Eff * Acc)> 2D Inv");
 	hEffInv->GetYaxis()->SetTitleOffset(1.4);
 	hEffInv->GetXaxis()->CenterTitle();
 	hEffInv->GetYaxis()->CenterTitle();
@@ -666,6 +666,31 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
+	hEffInv->SetMarkerColor(kRed+1);
+	hEffInv->SetLineColor(kRed+1);
+	hEff->SetMarkerColor(kBlue+1);
+	hEff->SetLineColor(kBlue+1);
+	hEffInv->Draw("ep");
+	hEff->Draw("ep");
+	Eff1DHisvar->Draw("ep");
+
+	TLegend *leg = new TLegend(0.30,0.65,0.75,0.85,NULL,"brNDC");
+	leg->SetBorderSize(0);
+	leg->SetTextSize(0.040);
+	leg->SetTextFont(42);
+	leg->SetFillStyle(0);
+	leg->SetLineWidth(3);
+
+	leg->AddEntry(hEffInv,"2D Inv.","pl");
+	leg->AddEntry(hEff,"2D","pl");
+	leg->AddEntry(Eff1DHisvar,"1D","pl");
+
+	leg->Draw("SAME");
+
+	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s.pdf",NBins,var_m.Data()));}
+	else {c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
 
 	foutCorr->cd();
 	CorrDiffHis->Write();
