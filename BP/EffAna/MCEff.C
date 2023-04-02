@@ -1602,8 +1602,6 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DGENAccMultHis->Sumw2();
 		Sel1DHisMult->Divide(Eff1DGENAccMultHis);
 	
-
-
 		TH1D * Acc1DHisMult = (TH1D * ) Eff1DGENAccMultHis->Clone("Acc1DHisMult");
 		Acc1DHisMult->Sumw2();
 		Eff1DGENMultHis->Sumw2();
@@ -1619,7 +1617,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 		//Save 1D Eff Plots/
 
-		Eff1DHisMult->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Eff1DHisMult->GetXaxis()->SetTitle("B^{+} nMult");
 		Eff1DHisMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
 		Eff1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisMult->GetXaxis()->CenterTitle();
@@ -1644,7 +1642,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisY->SetLineColor(kBlack);
 
 
-		Sel1DHisMult->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Sel1DHisMult->GetXaxis()->SetTitle("B^{+} nMult ");
 		Sel1DHisMult->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisMult->GetXaxis()->CenterTitle();
@@ -1659,7 +1657,7 @@ void  MCEff(int DoTnP, int Rescale){
 	
 
 
-		Acc1DHisMult->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Acc1DHisMult->GetXaxis()->SetTitle("B^{+} nMult ");
 		Acc1DHisMult->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisMult->GetXaxis()->CenterTitle();

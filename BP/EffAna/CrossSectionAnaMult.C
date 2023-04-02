@@ -24,6 +24,7 @@ using std::endl;
 void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	gSystem->mkdir("EffFinal" ,true);
+	gSystem->mkdir("FinalFiles" ,true);
 
 	int NBins;
 	//const int NBins = 6;
@@ -601,6 +602,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	TFile * foutCorr;
 	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
 	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_m.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnPMC.root",var_m.Data()),"RECREATE");
 	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%sMC.root",var_m.Data()),"RECREATE");
 
 	TH1D * Eff1DHisvar;
@@ -613,6 +615,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (whichvar==2){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
 	}
+
+
+
 	TH1D * CorrDiffHisBin = new TH1D("CorrDiffHisBin","",NBins,ptBins);
 	CorrDiffHisBin->GetXaxis()->SetTitle("nMult");
 	CorrDiffHisBin->GetYaxis()->SetTitle("#sigma (pb)");
@@ -667,6 +672,23 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 
+	TH2D * invAcc2D=(TH2D *) fin1DEff->Get("invAcc2D");
+	invAcc2D->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	invAcc2D->GetYaxis()->SetTitle("rapidity");
+
+	invAcc2D->Draw("pcol");
+
+	if (usemc==0){c->SaveAs("EffFinal/acc_2Dmap.pdf");}
+	else {c->SaveAs("EffFinal/acc_2Dmap.pdf");}
+
+	invEff2D->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	invEff2D->GetYaxis()->SetTitle("rapidity");
+
+	invEff2D->Draw("pcol");
+
+	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap.pdf");}
+	else {c->SaveAs("EffFinal/totaleff_2Dmap.pdf");}
+
 	hEffInv->SetMarkerColor(kRed+1);
 	hEffInv->SetLineColor(kRed+1);
 	hEff->SetMarkerColor(kBlue+1);
@@ -688,8 +710,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	leg->Draw("SAME");
 
-	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s.pdf",NBins,var_m.Data()));}
-	else {c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+	//if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s.pdf",NBins,var_m.Data()));}
+	//else {c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
+
 
 
 	foutCorr->cd();
