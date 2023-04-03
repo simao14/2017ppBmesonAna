@@ -800,7 +800,14 @@ void  MCEff(int DoTnP, int Rescale){
 	Eff1DGENAccHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccHis->GetYaxis()->SetTitleOffset(1.5);
 
-
+	TH1D * Eff1DGENAccYHis = new TH1D("Eff1DGENAccYHis","",YBin,YBin1D);
+	
+	Eff1DGENAccYHis->GetXaxis()->SetTitle("rapidity");
+	Eff1DGENAccYHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DGENAccYHis->GetXaxis()->CenterTitle();	
+	Eff1DGENAccYHis->GetYaxis()->CenterTitle();
+	Eff1DGENAccYHis->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DGENAccYHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff1DGENMultHis = new TH1D("Eff1DGENMultHis","",NMultiBin,MultiBin1D);
 
@@ -1301,9 +1308,9 @@ void  MCEff(int DoTnP, int Rescale){
 
 
 		cout << "Now Loop Gen" << endl;
+		
 
-
-
+		
 		for(int i = 0; i < NEvents; i++){
 
 
@@ -1364,6 +1371,7 @@ void  MCEff(int DoTnP, int Rescale){
 					NoWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					EvtWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					Eff1DGENAccHis->Fill(Gpt[j],EventWeight);
+					Eff1DGENAccYHis->Fill(Gy[j],EventWeight);
 					Eff1DGENAccMultHis->Fill(nMult,EventWeight);
 
 				}

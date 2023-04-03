@@ -21,6 +21,79 @@ using namespace std;
 using std::cout;
 using std::endl;
 
+void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::string> col_name, std::vector<std::string> labels, 
+		std::vector<std::vector<double> > numbers, std::string caption){
+	
+	std::ofstream file_check;
+	std::ofstream file;
+
+	//Begin Document
+                                                                                    
+	file.open(filename + ".tex");
+	file_check.open(filename + "_check.tex");
+
+
+	file_check << "\\documentclass{article}" << std::endl;
+	//file << "\\usepackage[utf8]{inputenc}" << std::endl;     
+	file_check << "\\usepackage{rotating}" << std::endl;                                                                                   
+	// file_check << "\\usepackage{cancel}" << std::endl;
+	file_check << "\\usepackage{geometry}" << std::endl;
+	file_check << "\\usepackage{booktabs}" << std::endl;
+	file_check << "\\geometry{a4paper, total={170mm,257mm}, left=20mm, top=20mm,}" << std::endl;
+
+	file_check << "\\begin{document}" << std::endl;
+	// Create table                                                                                                                                                                                                                                                
+	std::string col="c";
+	for(int i=1; i<n_col; i++)
+		col+="|c";
+
+		file_check << "\\begin{sidewaystable}"<< std::endl;
+		file_check << "\\begin{tabular}{"+col+"}" << std::endl;
+		file_check << "\\toprule" << std::endl;
+		file << "\\begin{tabular}{"+col+"}" << std::endl;
+		file << "\\toprule" << std::endl;
+	
+	for(int c=0; c<n_col-1; c++){
+		file << col_name[c] << " & ";
+		file_check << col_name[c] << " & ";
+	}
+	
+	file << col_name[n_col-1] << " \\\\ \\midrule" << std::endl;
+	file_check << col_name[n_col-1] << " \\\\ \\midrule" << std::endl;
+	
+	for(int i=1; i<n_lin; i++)
+	{	
+		file << labels[i-1] << " & ";
+		file_check << labels[i-1] << " & ";
+		for(int c=1; c<n_col-1; c++){
+			file << /*std::setprecision(3)<<*/  numbers[i-1][c-1]<< " \\% & ";
+			file_check << /*std::setprecision(3)<<*/  numbers[i-1][c-1]<< " \\% & ";
+									}
+			file << /*std::setprecision(3)<<*/  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl;
+			file_check << /*std::setprecision(3)<<*/  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl; 
+	}
+	
+	file << "\\bottomrule" << std::endl;
+	file_check << "\\bottomrule" << std::endl;
+
+	//End Table                                                                                                                                    
+	file << "\\end{tabular}" << std::endl;
+	file_check << "\\end{tabular}" << std::endl;
+	file_check << "\\caption{"+caption+"}" << std::endl;
+	file_check << "\\end{sidewaystable}"<< std::endl;
+
+	//file_check << "\\end{table}" << std::endl;
+	//End document                                                                                                                                 
+
+	file_check << "\\end{document}" << std::endl;
+
+	file.close();
+	file_check.close();
+	
+	system(("pdflatex " + filename+ "_check.tex").c_str());
+	system(("open " + filename + "_check.pdf").c_str());
+}
+
 void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	gSystem->mkdir("EffFinal" ,true);
@@ -294,7 +367,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 						XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 						YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 						BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
-
+						
 						BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
 						BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
 
@@ -713,6 +786,37 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	//if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s.pdf",NBins,var_m.Data()));}
 	//else {c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 
+	double tusk;
+	double d4c;
+	std::vector<double> cv;
+	std::vector<double> cvreal;
+	std::vector<std::vector<double>> comparison_values;
+	std::vector<std::string> labels = {"2D", "2D Inv."};
+	std::vector<std::string> col_name;
+	string name;
+	TString whichvarname;
+	col_name.push_back("Relative error 1D vs:");
+	if(whichvar==2){name="$<p_T<$"; whichvarname="pt";} else if(whichvar==0){name="$<y<$";whichvarname="y";} else if(whichvar==1){name="$<nTrks<$";whichvarname="nMult";}
+	for(int i=0;i<NBins;i++){
+		std::ostringstream clabel;
+		clabel<<ptBins[i]<<name<<ptBins[i+1];
+		std::string label1 = clabel.str();
+		col_name.push_back(label1);
+		tusk=abs(1/NewEff[i]-Eff1D[i])/Eff1D[i]*100;
+		d4c=abs(NewEffReal[i]-Eff1D[i])/Eff1D[i]*100;
+		cout<<"2D:"<<d4c<<endl;
+		cout<<"2D Inv:"<<tusk<<endl;
+		cv.push_back(tusk);
+		cvreal.push_back(d4c);
+	}
+	comparison_values.push_back(cvreal);
+	comparison_values.push_back(cv);
+
+	latex_table(Form("1D2Dcomparisons_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_values, "1D vs 2D efficiency comparisons");
+	std::vector<std::string> filetype ={"_check.aux", "_check.log", "_check.pdf",".tex","_check.tex"};
+	for (int j=0;j<(int)(filetype.size());j++){
+				rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("EffFinal/1D2Dcomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+			}
 
 
 
