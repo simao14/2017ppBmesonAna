@@ -143,40 +143,40 @@ void CalEffSystB(int meson_n ){
 	}
 
 	TH1D * Eff2DHis = new TH1D("Eff2DHis","",NBins,ptBins);
-	Eff2DHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	Eff2DHis->GetYaxis()->SetTitle("<1/#alpha #times #epsilon>");
+	Eff2DHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	Eff2DHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
 	Eff2DHis->GetXaxis()->CenterTitle();	
 	Eff2DHis->GetYaxis()->CenterTitle();
 	Eff2DHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DTnPUpSystHis = new TH1D("Eff2DTnPUpSystHis","",NBins,ptBins);
-	Eff2DTnPUpSystHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	Eff2DTnPUpSystHis->GetYaxis()->SetTitle("<1/alpha #times #epsilon>");
+	Eff2DTnPUpSystHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	Eff2DTnPUpSystHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
 	Eff2DTnPUpSystHis->GetXaxis()->CenterTitle();	
 	Eff2DTnPUpSystHis->GetYaxis()->CenterTitle();
 	Eff2DTnPUpSystHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DTnPUpSystHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DTnPDownSystHis = new TH1D("Eff2DTnPDownSystHis","",NBins,ptBins);
-	Eff2DTnPDownSystHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	Eff2DTnPDownSystHis->GetYaxis()->SetTitle("<1/alpha #times #epsilon>");
+	Eff2DTnPDownSystHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	Eff2DTnPDownSystHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
 	Eff2DTnPDownSystHis->GetXaxis()->CenterTitle();	
 	Eff2DTnPDownSystHis->GetYaxis()->CenterTitle();
 	Eff2DTnPDownSystHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DTnPDownSystHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DBDTHis = new TH1D("Eff2DBDTHis","",NBins,ptBins);
-	Eff2DBDTHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	Eff2DBDTHis->GetYaxis()->SetTitle("<1/alpha #times #epsilon>");
+	Eff2DBDTHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	Eff2DBDTHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
 	Eff2DBDTHis->GetXaxis()->CenterTitle();	
 	Eff2DBDTHis->GetYaxis()->CenterTitle();
 	Eff2DBDTHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DBDTHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DBptHis = new TH1D("Eff2DBptHis","",NBins,ptBins);
-	Eff2DBptHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	Eff2DBptHis->GetYaxis()->SetTitle("<1/alpha #times #epsilon>");
+	Eff2DBptHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	Eff2DBptHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
 	Eff2DBptHis->GetXaxis()->CenterTitle();	
 	Eff2DBptHis->GetYaxis()->CenterTitle();
 	Eff2DBptHis->GetXaxis()->SetTitleOffset(1.2);	
