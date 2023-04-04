@@ -491,13 +491,15 @@ cout << endl << endl;
       //for the paper run these
       if (drawLegend) {
         tex_pt = new TLatex(0.21,0.75,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_y = new TLatex(0.21,0.6,"p_{T} > 10 GeV/c : |y| < 2.4");
-        tex_y2 = new TLatex(0.21,0.55,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
-        tex_y1 = new TLatex(0.21,0.6,"1.5 < |y| < 2.4");
-        tex_y11 =new TLatex(0.21,0.6,"|y| < 2.4");
+		tex_y2 = new TLatex(0.21,0.7,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+	    tex_y1 = new TLatex(0.21,0.7,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");     //should be optimized...... but works
+        tex_y11 =new TLatex(0.21,0.7,"p_{T} > 10 GeV/c : |y| < 2.4");
+        tex_y = new TLatex(0.21,0.65,"p_{T} > 10 GeV/c : |y| < 2.4");
+		double t_sub = 0;
+		if( (_ptBins[i]==7 && _ptBins[i+1]==50) || (_ptBins[i]==5 && _ptBins[i+1]==60)){t_sub = 0.05 ;}
+		yield_val = new TLatex(0.21,0.65-t_sub,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
+		chi_square = new TLatex(0.21,0.60-t_sub,Form("#chi^{2}/ndf = %.2f",Mychi2));
         tex_nMult = new TLatex(0.21,0.67,"0 < nTrks < 100");
-		yield_val = new TLatex(0.21,0.7,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square = new TLatex(0.21,0.65,Form("#chi^{2}/ndf = %.2f",Mychi2));
       } else {
         //for the AN run these
         tex_pt = new TLatex(0.65,0.8,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
@@ -591,7 +593,7 @@ if(varExp=="nMult"){
 	//c->Update();
 	TLatex* texB = new TLatex(0.5,0.5,"");
 	if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
-	if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{#pm}");}
+	if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{+}");}
 	texB->SetNDC();
 	texB->SetTextFont(62);
 	texB->SetTextSize(0.04);
@@ -640,13 +642,13 @@ if(varExp=="nMult"){
 					texB->Draw();
 					tex_pt->Draw();
 					RooRealVar* fitYield_b_sys = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count, background[j].c_str()))));
-					yield_val  = new TLatex(0.21,0.7,Form("Y_{S} = %d #pm %d",int(round(fitYield_b_sys->getVal())), int(round(fitYield_b_sys->getError()))));
+					yield_val  = new TLatex(0.21,0.65,Form("Y_{S} = %d #pm %d",int(round(fitYield_b_sys->getVal())), int(round(fitYield_b_sys->getError()))));
 					yield_val->SetNDC();
 					yield_val->SetTextFont(42);
 					yield_val->SetTextSize(0.025);
 					yield_val->SetLineWidth(2);
 					yield_val->Draw();
-					chi_back = new TLatex(0.21,0.65,Form("#chi^{2}/ndf = %.2f ",Mychi2_back));
+					chi_back = new TLatex(0.21,0.60,Form("#chi^{2}/ndf = %.2f ",Mychi2_back));
 					chi_back->SetNDC();
 					chi_back->SetTextFont(42);
 					chi_back->SetTextSize(0.025);
@@ -654,9 +656,6 @@ if(varExp=="nMult"){
 					chi_back->Draw();
 					if (varExp=="Bpt"){
 						if(_ptBins[i] >= 10){tex_y11->Draw();}
-						else if(_ptBins[i+1]==50){
-							tex_y->Draw();
-							tex_y2->Draw();}
 						else{tex_y1->Draw();}
 					}else{tex_y->Draw();}
 					//CMS_lumi(c,19011,0);
@@ -686,13 +685,13 @@ if(varExp=="nMult"){
 				texB->Draw();
 				tex_pt->Draw();
 				RooRealVar* fitYield_b_sig = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count, signal[j].c_str()))));
-				yield_val  = new TLatex(0.21,0.7,Form("Y_{S} = %d #pm %d", int(round(fitYield_b_sig->getVal())), int(round(fitYield_b_sig->getError()))));
+				yield_val  = new TLatex(0.21,0.65,Form("Y_{S} = %d #pm %d", int(round(fitYield_b_sig->getVal())), int(round(fitYield_b_sig->getError()))));
 				yield_val->SetNDC();
 				yield_val->SetTextFont(42);
 				yield_val->SetTextSize(0.025);
 				yield_val->SetLineWidth(2);
 				yield_val->Draw();
-				chi_sig=new TLatex(0.21, 0.65, Form("#chi^{2}/ndf = %.2f ", Mychi2_sig));
+				chi_sig=new TLatex(0.21, 0.60, Form("#chi^{2}/ndf = %.2f ", Mychi2_sig));
 				chi_sig->SetNDC();
 				chi_sig->SetTextFont(42);
 				chi_sig->SetTextSize(0.025);
@@ -700,9 +699,6 @@ if(varExp=="nMult"){
 				chi_sig->Draw();
 				if (varExp=="Bpt"){
 					if(_ptBins[i] >= 10){tex_y11->Draw();}
-					else if(_ptBins[i+1]==50){
-							tex_y->Draw();
-							tex_y2->Draw();}
 					else{tex_y1->Draw();}
 				} else{tex_y->Draw();}
 				//CMS_lumi(c,19011,0);
@@ -768,11 +764,11 @@ if(varExp=="nMult"){
 
 	myfile.close();
 
-	TCanvas* cPt =  new TCanvas("cPt","",600,600);
-	cPt->SetLogy();
-	hPt->SetXTitle("B_{s} p_{T} (GeV/c)");
-	hPt->SetYTitle("Uncorrected dN(B_{s})/dp_{T}");
-	hPt->Draw();
+	//TCanvas* cPt =  new TCanvas("cPt","",600,600);
+	//cPt->SetLogy();
+	//hPt->SetXTitle("B_{s} p_{T} [GeV/c]");
+	//hPt->SetYTitle("Uncorrected dN(B_{s})/dp_{T}");
+	//hPt->Draw();
 
 	std::vector<std::string> labels_back = {"1st Poly", "2nd Poly", "mass range", "jpsipi/JpsiK" };
 	std::vector<std::string> col_name_back;
@@ -817,102 +813,118 @@ if(varExp=="nMult"){
 
 		double zero[_nBins];
 		for (int i=0;i<_nBins;i++){zero[i]=0.;}
+		double low_high_b[_nBins];
 
-		TCanvas* c_back= new TCanvas();
-		TLegend* legback=new TLegend(0.7,0.8,0.9,0.9);
+		Double_t x[_nBins];
+		for (int i=0;i<_nBins;i++){ 
+			x[i]=(_ptBins[i]+_ptBins[i+1])/2 ;
+			low_high_b[i] = _ptBins[i+1] - x[i] ;
+		}
+		
+		TGraph *binning= new TGraphAsymmErrors (_nBins,x,zero,low_high_b,low_high_b,zero,zero);
+		binning->SetMarkerColorAlpha(kBlack, 0); //transparent
+		binning->SetLineWidth(2);
+
+		TCanvas* c_back= new TCanvas("c_back","",700,700);
+		TLegend *legback = new TLegend(0.62,0.77,0.89,0.89,NULL,"brNDC"); 
+		if (tree == "ntphi"){legback = new TLegend(0.80,0.8,0.89,0.89,NULL,"brNDC");}
+		else{legback = new TLegend(0.8,0.75,0.89,0.89,NULL,"brNDC");}
+		legback->SetBorderSize(0);
+		legback->SetTextSize(0.025);
+		legback->SetTextFont(42);
+		legback->SetFillStyle(0);
 		TMultiGraph* m_back= new TMultiGraph();
 		const char* backlabel[4]={"Linear", "2nd Poly", "mass range", "jpsipi/JpsiK"};
 		double y_max_back=0;
 		for (int j=0;j<(int)(background.size());j++){
-			Double_t x[_nBins],y[_nBins];
+			Double_t y[_nBins];
 			for (int i=0;i<_nBins;i++){
-				x[i]=(_ptBins[i]+_ptBins[i+1])/2;
 				y[i]=	back_syst_rel_values[i][j];
 				if (y[i]>y_max_back){y_max_back=y[i];}
-		}
+			}
 			TGraph *g_back= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 			g_back->SetMarkerColor(j+1);
 			g_back->SetMarkerStyle(21);
 			m_back->Add(g_back);
 			legback->AddEntry(g_back,backlabel[j],"p");
 	}
-		m_back->GetXaxis()->SetTitle(varExp.Data());
+		m_back->Add(binning);
+		m_back->GetXaxis()->SetTitle("p_{T}");
 		m_back->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 		m_back->GetYaxis()->SetRangeUser(0, y_max_back*1.5);
-		m_back->Draw("A*");
-		legback->SetFillStyle(0);
-    	legback->SetTextSize(0);
+		m_back->Draw("AE1*");
 		legback->Draw();
 		c_back->SaveAs(Form("./results/tables/background_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
-		TCanvas* c_sig= new TCanvas();
-		TLegend* legsig=new TLegend(0.7,0.8,0.9,0.9);
+
+		TCanvas* c_sig= new TCanvas("c_back","",700,700);
+		TLegend *legsig = new TLegend(0.62,0.8,0.89,0.75,NULL,"brNDC"); 
+		if (tree == "ntphi"){legsig = new TLegend(0.75,0.8,0.89,0.89,NULL,"brNDC");}
+		else{legsig = new TLegend(0.75,0.8,0.89,0.89,NULL,"brNDC");}
+		legsig->SetBorderSize(0);
+		legsig->SetTextSize(0.025);
+		legsig->SetTextFont(42);
+		legsig->SetFillStyle(0);
 		TMultiGraph* m_sig= new TMultiGraph();
 		const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian","2 CB"};
 		double y_max_sig=0;
 		for (int j=0;j<(int)(signal.size());j++){
-			Double_t x[_nBins],y[_nBins];
+			Double_t y[_nBins];
 			for (int i=0;i<_nBins;i++){
-				x[i]=(_ptBins[i]+_ptBins[i+1])/2;
 				y[i]=	sig_syst_rel_values[i][j];
 				if (y[i]>y_max_sig){y_max_sig=y[i];}
-	}
+			}
 		TGraph *g_sig= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 		g_sig->SetMarkerColor(j+1);
 		g_sig->SetMarkerStyle(21);
 		m_sig->Add(g_sig);
 		legsig->AddEntry(g_sig,siglabel[j],"p");
 }
-	m_sig->GetXaxis()->SetTitle(varExp.Data());
+	m_sig->Add(binning);
+	m_sig->GetXaxis()->SetTitle("p_{T}");
 	m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 	m_sig->GetYaxis()->SetRangeUser(0, y_max_sig*1.5);
-	m_sig->Draw("A*");
-	legsig->SetFillStyle(0);
-  	legsig->SetTextSize(0);
+	m_sig->Draw("AE1*");
 	legsig->Draw();
 	c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
-	TCanvas* c_gen= new TCanvas();
-	TLegend* legen=new TLegend(0.7,0.8,0.9,0.9);
+	TCanvas* c_gen= new TCanvas("c_gen","",700,700);
+	TLegend *legen = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
+	if (tree == "ntphi"){legen = new TLegend(0.80,0.77,0.89,0.89,NULL,"brNDC");}
+	else{legen = new TLegend(0.8,0.77,0.89,0.89,NULL,"brNDC");}
+	legen->SetBorderSize(0);
+	legen->SetTextSize(0.025);
+	legen->SetTextFont(42);
+	legen->SetFillStyle(0);	
 	TMultiGraph* m_gen= new TMultiGraph();
 	const char* genlabel[3]={"Background", "Signal", "Total"};
 	double y_max_gen=0;
 	for (int j=0;j<(int)(labels_general.size());j++){
-		Double_t x[_nBins],y[_nBins];
+		Double_t y[_nBins];
 		for (int i=0;i<_nBins;i++){
-			x[i]=(_ptBins[i]+_ptBins[i+1])/2;
 			y[i]=	general_syst[i][j];
 			if (y[i]>y_max_gen){y_max_gen=y[i];}
-	}
+		}
 		TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 		g_gen->SetMarkerColor(j+1);
 		g_gen->SetMarkerStyle(21);
 		m_gen->Add(g_gen);
 		legen->AddEntry(g_gen,genlabel[j],"p");
 }
-	Double_t x[_nBins],y[_nBins];
-	for (int i=0;i<_nBins;i++){
-			x[i]=(_ptBins[i]+_ptBins[i+1])/2;
-			y[i]=	stat_error[i][0];
-	}
-		TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
-		g_gen->SetMarkerColor(9);
-		g_gen->SetMarkerStyle(21);
-		m_gen->Add(g_gen);
-		legen->AddEntry(g_gen,"Statistical","p");
-
-
-
-	m_gen->GetXaxis()->SetTitle(varExp.Data());
+	Double_t y[_nBins];
+	for (int i=0;i<_nBins;i++){y[i]=	stat_error[i][0];}
+	TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
+	m_gen->Add(binning);
+	g_gen->SetMarkerColor(9);
+	g_gen->SetMarkerStyle(21);
+	m_gen->Add(g_gen);
+	legen->AddEntry(g_gen,"Statistical","p");
+	m_gen->GetXaxis()->SetTitle("p_{T}");  //varExp.Data()
 	m_gen->GetYaxis()->SetTitle("Total Uncertainty(%)");
 	m_gen->GetYaxis()->SetRangeUser(0, y_max_gen*1.5);
-	m_gen->Draw("A*");
-	legen->SetFillStyle(0);
-  	legen->SetTextSize(0);
+	m_gen->Draw("AE1*");
 	legen->Draw();
 	c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
-	
-	
 	}
 
 // Differential plot part starts

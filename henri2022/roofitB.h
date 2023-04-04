@@ -37,7 +37,7 @@ template<typename... Targs>
 void plot_mcfit(RooWorkspace& w, RooAbsPdf* model, RooDataSet* ds, TString plotName,  Targs... options);
 
 // draw legend and suppress parameters
-const bool drawLegend = false;
+const bool drawLegend = true;
 using namespace RooFit;
 using namespace std;
 
@@ -52,8 +52,8 @@ Int_t _count=0;
 RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, int ptmin, int ptmax, int isMC, TString npfit, RooWorkspace& w)
 {
 	
-	if (tree == "ntphi"){nbinsmasshisto = 50;} //to much fine binned for bs case
-	else if (ptmin == 50 & ptmax == 60){nbinsmasshisto = 50;} //to fine binned for bp 50-60 mass bin case
+	//if (tree == "ntphi"){nbinsmasshisto = 50;} //100 bins is to much for bs case
+	if (ptmin == 50 & ptmax == 60){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case
 
 	cout<<"total data: "<<ds->numEntries()<<endl;
 	TH1* h = dh->createHistogram("Bmass");
@@ -148,12 +148,12 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	pMC1->cd();
 	dsMC->plotOn(frameMC,Name(Form("dsMC_cut%d",_count)),Binning(nbinsmasshisto),MarkerSize(0.5),MarkerStyle(8),LineColor(1),LineWidth(1));
 	modelMC->plotOn(frameMC,Name(Form("modelMC%d_%s",_count, pdf.Data())),Precision(1e-6),DrawOption("LF"), FillStyle(3002), FillColor(kOrange-3), LineStyle(7),LineColor(kOrange-3),LineWidth(1));
-	modelMC->paramOn(frameMC,Layout(0.2, 0.5, 0.75), Format("NEU",AutoPrecision(2)));
+	modelMC->paramOn(frameMC,Layout(0.2, 0.5, 0.70), Format("NEU",AutoPrecision(2)));
 	frameMC->getAttText()->SetTextSize(0.025);
 	frameMC->getAttFill()->SetFillStyle(0);
 	frameMC->getAttLine()->SetLineWidth(0);
-    if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
-	if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psiK^{+}K^{-}} (GeV/c^{2})");
+    if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{+}} [GeV/c^{2}]");
+	if(tree=="ntphi")frameMC->SetXTitle("m_{J/#psiK^{+}K^{-}} [GeV/c^{2}]");
 	frameMC->GetXaxis()->SetTitleOffset(1.2);
 	frameMC->GetXaxis()->SetTitleSize(0.035);
 	frameMC->GetXaxis()->SetTitleFont(42);
@@ -162,8 +162,16 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	frameMC->GetXaxis()->SetRangeUser(init_mean-subt, init_mean+subt);
 	frameMC->Draw();
 	cMC->RedrawAxis();
-	TLatex* texB_pt= new TLatex(0.22,0.85, Form("%d < p_{T} <%d GeV",ptmin, ptmax));
-	TLatex* texB_N_vs_count = new TLatex(0.22,0.8, Form("Bin Events: %i", int (w.var(Form("Events_in_MC_%d",_count))->getVal()) ));
+	TLatex* texB_pt= new TLatex(0.22,0.8, Form("%d < p_{T} <%d GeV",ptmin, ptmax));
+	TLatex* texB_N_vs_count = new TLatex(0.22,0.75, Form("Bin Events: %i", int (w.var(Form("Events_in_MC_%d",_count))->getVal()) ));
+	TLatex* texB = new TLatex(0.5,0.5,"");
+	if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
+	if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{+}");}
+	texB->SetNDC();
+	texB->SetTextFont(62);
+	texB->SetTextSize(0.04);
+	texB->SetLineWidth(2);
+	texB->Draw();
 	texB_pt->SetNDC();
 	texB_pt->SetTextFont(42);
 	texB_pt->SetTextSize(0.03);
@@ -201,8 +209,8 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	pull_plotMC->addPlotable(static_cast<RooPlotable*>(pull_histMC),"XP");
 	pull_plotMC->SetTitle("");
 	pull_plotMC->SetMarkerStyle(6);
-	if(tree=="ntKp")pull_plotMC->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
-	if(tree=="ntphi")pull_plotMC->SetXTitle("m_{J/#psiK^{+}K^{-}} (GeV/c^{2})");
+	if(tree=="ntKp")pull_plotMC->SetXTitle("m_{J/#psiK^{+}} [GeV/c^{2}]");
+	if(tree=="ntphi")pull_plotMC->SetXTitle("m_{J/#psiK^{+}K^{-}} [GeV/c^{2}]");
 	pull_plotMC->SetYTitle("Pull");
 	pull_plotMC->GetYaxis()->SetTitleFont(42);  
 	pull_plotMC->GetYaxis()->SetTitleSize(0.15);
@@ -437,8 +445,8 @@ if(tree == "ntphi"){
 	frame->GetYaxis()->SetLabelFont(42);
 	frame->GetYaxis()->SetLabelSize(0.035);
 	frame->SetStats(0);
-	double plot_min = 5.2;  //B_s could start at 5.2 for a better zoom
-	if(tree=="ntKp") plot_min = minhisto;    
+	double plot_min = 5.25;  
+	if(tree=="ntKp") plot_min = 5.05;    
 	frame->GetXaxis()->SetRangeUser(plot_min,5.5);  
 	frame->GetXaxis()->SetNdivisions(-50205);	
 	frame->Draw();
@@ -455,7 +463,7 @@ if(tree == "ntphi"){
 	leg->AddEntry(frame->findObject(Form("sig%d_%s",_count,pdf.Data()))," Signal","f");
 	leg->AddEntry(frame->findObject(Form("bkg%d_%s",_count,pdf.Data()))," Comb. Bkg.","l");
 	if(npfit != "1"){
-		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B #rightarrow J/#psi #pi^{#pm}","f");
+		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B^{+} #rightarrow J/#psi #pi^{+}","f");
 		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
 	if(drawLegend){leg -> Draw();}
 	
@@ -463,13 +471,13 @@ if(tree == "ntphi"){
 	RooHist* pull_hist = frame->pullHist(Form("ds_cut%d",_count),Form("model%d_%s",_count,pdf.Data()));
 	pull_hist->SetMarkerSize(0.5);
 	RooPlot* pull_plot = mass->frame();
-	(pull_plot->GetXaxis())->SetRangeUser(minhisto,maxhisto); //maxhisto
+	(pull_plot->GetXaxis())->SetRangeUser(minhisto, maxhisto); //maxhisto
 	//(pull_plot->GetXaxis())->SetRangeUser(plot_min,5.5); //maxhisto
 	line_ref->plotOn(pull_plot, LineStyle(1), LineColor(2), LineWidth(1));  
 	pull_plot->addPlotable(static_cast<RooPlotable*>(pull_hist),"XP");
 	pull_plot->SetTitle("");
-	if(tree=="ntKp")pull_plot->SetXTitle("m_{J/#psiK^{#pm}} (GeV/c^{2})");
-	if(tree=="ntphi")pull_plot->SetXTitle("m_{J/#psiK^{+}K^{-}} (GeV/c^{2})");
+	if(tree=="ntKp")pull_plot->SetXTitle("m_{J/#psiK^{+}} [GeV/c^{2}]");
+	if(tree=="ntphi")pull_plot->SetXTitle("m_{J/#psiK^{+}K^{-}} [GeV/c^{2}]");
 	pull_plot->SetYTitle("Pull");
 	pull_plot->GetYaxis()->SetTitleFont(42);  
 	pull_plot->GetYaxis()->SetTitleSize(0.15);
@@ -655,7 +663,7 @@ void plot_jpsifit(RooWorkspace& w, int nbin_hist, TString pdf, RooAbsPdf* model,
   Bmass.setRange("bmass", 5.0, 6.0);
   RooPlot* massframe = Bmass.frame(Title(" "));
   massframe->GetYaxis()->SetTitle(TString::Format("Events / (%g MeV/c^{2})",(Bmass.getMax()-Bmass.getMin())/100*1000));
-  massframe->GetXaxis()->SetTitle("m_{J/#psi #pi^{#pm}} (GeV/c^{2})");
+  massframe->GetXaxis()->SetTitle("m_{J/#psi #pi^{+}} [GeV/c^{2}]");
   massframe->GetXaxis()->CenterTitle();
   massframe->GetYaxis()->SetTitleOffset(1.5);
   massframe->GetXaxis()->SetTitleOffset(1.2);
@@ -665,7 +673,7 @@ void plot_jpsifit(RooWorkspace& w, int nbin_hist, TString pdf, RooAbsPdf* model,
   massframe->GetYaxis()->SetLabelFont(42);
   massframe->GetXaxis()->SetLabelSize(0.035);
   massframe->GetYaxis()->SetLabelSize(0.035);	
-  massframe->GetXaxis()->SetRangeUser(5.,5.6);
+  massframe->GetXaxis()->SetRangeUser(5.0,5.6);
   ds->plotOn(massframe, RooFit::Name("NP"),Binning(nbin_hist), MarkerSize(0.5),MarkerStyle(8),LineColor(1),LineWidth(1));
   model->plotOn(massframe, RooFit::Name("NP Fit"), NormRange("bmass"),LineColor(kRed), LineStyle(1), LineWidth(1));
   model->plotOn(massframe, RooFit::Name("par"),Components(Form("erfc%d_%s",_count,pdf.Data())), NormRange("bmass"), LineColor(kGreen+3), LineStyle(9), LineWidth(2), DrawOption("L"));
@@ -717,7 +725,7 @@ void plot_mcfit(RooWorkspace& w, RooAbsPdf* model, RooDataSet* ds, TString plotN
   RooRealVar Bmass = *(w.var("Bmass"));
   RooPlot* massframe = Bmass.frame(Title(" "));
   massframe->GetYaxis()->SetTitle(TString::Format("Events / (%g MeV/c^{2})",(Bmass.getMax()-Bmass.getMin())/100*1000));
-  massframe->GetXaxis()->SetTitle("m_{J/#psi #pi^{#pm}} (GeV/c^{2})");
+  massframe->GetXaxis()->SetTitle("m_{J/#psi #pi^{+}} [GeV/c^{2}]");
   massframe->GetXaxis()->CenterTitle();
   massframe->GetYaxis()->SetTitleOffset(1.5);
   massframe->GetXaxis()->SetTitleOffset(1.2);
@@ -949,7 +957,7 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h1[i]->Fit("gaus","","",-5,5);
 		
 		c_pull->Update();
-		h1[i]->GetFunction("gaus")->SetLineColor(kRed+1);
+		h1[i]->GetFunction("gaus")->SetLineColor(kCyan+1);
 		h1[i]->GetFunction("gaus")->SetLineWidth(1);
 		h1[i]->GetFunction("gaus")->SetFillStyle(3019);
 		h1[i]->GetFunction("gaus")->SetFillColor(kRed+1);

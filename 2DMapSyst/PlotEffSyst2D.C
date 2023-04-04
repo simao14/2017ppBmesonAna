@@ -27,7 +27,7 @@ void PlotEffSyst2D(int Opt){
 	TString BmesonName;
 	if(Opt == 0) BmesonName =  "BP";
 	if(Opt == 1) BmesonName =  "Bs";
-	gSystem->mkdir(Form("SystPlots/%s/Pt",BmesonName.Data()), true);
+	gSystem->mkdir("EffSystPlots", true);
 
 	TFile * fin = new TFile(infile.Data());
 	fin->cd();
@@ -39,6 +39,17 @@ void PlotEffSyst2D(int Opt){
 	TH1D * Eff1DHisBDT = (TH1D * ) fin->Get("Eff2DBDTHis");
 
   TFile fout(outFile, "recreate");
+
+	//Draw Eff2DHis
+	TCanvas * EFFplot  = new TCanvas("cSyst","cSyst",600,600);
+	EFFplot->cd();
+	Eff1DHis->SetMarkerStyle(20);
+	Eff1DHis->SetMarkerSize(1);
+	Eff1DHis->SetMarkerColor(kBlack);
+	Eff1DHis->SetLineColor(kBlack);
+	Eff1DHis->Draw("ep");
+	EFFplot->SaveAs(Form("EffSystPlots/%s_pt_EFFplot.pdf",BmesonName.Data()));
+
 
 	//Draw Systematic Uncertainties
 	TCanvas * cSyst  = new TCanvas("cSyst","cSyst",600,600);
@@ -59,7 +70,7 @@ void PlotEffSyst2D(int Opt){
 	Eff1DHis->Draw("epSAME");
 	Eff1DHisTnPDown->Draw("epSAME");
 
-	TLegend* leg = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");
+	TLegend* leg = new TLegend(0.62,0.77,0.89,0.89,NULL,"brNDC");
 	leg->SetBorderSize(0);
 	leg->SetTextSize(0.025);
 	leg->SetTextFont(42);
@@ -69,7 +80,7 @@ void PlotEffSyst2D(int Opt){
 	leg->AddEntry(Eff1DHisTnPDown,"T&P Variation Down","PL");
 	leg->Draw("same");
 
-	cSyst->SaveAs(Form("SystPlots/%s/Pt/TnPSystComp.png",BmesonName.Data()));
+	cSyst->SaveAs(Form("EffSystPlots/%s_pt_TnPSystComp.pdf",BmesonName.Data()));
 
 
 	Eff1DHisBDT->SetMarkerStyle(20);
@@ -79,7 +90,7 @@ void PlotEffSyst2D(int Opt){
 	Eff1DHis->Draw("ep");
 	Eff1DHisBDT->Draw("epSAME");
 
-	TLegend* leg2 = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");
+	TLegend* leg2 = new TLegend(0.7,0.8,0.89,0.89,NULL,"brNDC");
 	leg2->SetBorderSize(0);
 	leg2->SetTextSize(0.025);
 	leg2->SetTextFont(42);
@@ -88,7 +99,7 @@ void PlotEffSyst2D(int Opt){
 	leg2->AddEntry(Eff1DHisBDT,"BDT Weighted","PL");
 	leg2->Draw("same");
 
-	cSyst->SaveAs(Form("SystPlots/%s/Pt/MCDataSystComp.png",BmesonName.Data()));
+	cSyst->SaveAs(Form("EffSystPlots/%s_pt_MCDataSystComp.pdf",BmesonName.Data()));
 
 	Eff1DHisBpt->SetMarkerStyle(20);
 	Eff1DHisBpt->SetMarkerSize(1);
@@ -97,7 +108,7 @@ void PlotEffSyst2D(int Opt){
 	Eff1DHis->Draw("ep");
 	Eff1DHisBpt->Draw("epSAME");
 
-	TLegend* leg3 = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");
+	TLegend* leg3 = new TLegend(0.7,0.8,0.89,0.89,NULL,"brNDC");
 	leg3->SetBorderSize(0);
 	leg3->SetTextSize(0.025);
 	leg3->SetTextFont(42);
@@ -106,7 +117,7 @@ void PlotEffSyst2D(int Opt){
 	leg3->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 	leg3->Draw("same");
 
-	cSyst->SaveAs(Form("SystPlots/%s/Pt/BptSystComp.png",BmesonName.Data()));
+	cSyst->SaveAs(Form("EffSystPlots/%s_pt_BptSystComp.pdf",BmesonName.Data()));
 
 	//Done drawing 
 
@@ -168,11 +179,11 @@ void PlotEffSyst2D(int Opt){
 
 
 	TnPSyst->Draw("ep");
-	c->SaveAs(Form("SystPlots/%s/Pt/TnPSystRatio.png",BmesonName.Data()));
+	c->SaveAs(Form("EffSystPlots/%s_pt_TnPSystRatio.pdf",BmesonName.Data()));
 	BptSyst->Draw("ep");
-	c->SaveAs(Form("SystPlots/%s/Pt/BptSysRatio.png",BmesonName.Data()));
+	c->SaveAs(Form("EffSystPlots/%s_pt_BptSysRatio.pdf",BmesonName.Data()));
 	BDTSyst->Draw("ep");
-	c->SaveAs(Form("SystPlots/%s/Pt/MCDataSystRatio.png",BmesonName.Data()));
+	c->SaveAs(Form("EffSystPlots/%s_pt_MCDataSystRatio.pdf",BmesonName.Data()));
 
   TnPSyst->Write();
   BptSyst->Write();
