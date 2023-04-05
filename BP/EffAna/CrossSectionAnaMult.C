@@ -21,9 +21,83 @@ using namespace std;
 using std::cout;
 using std::endl;
 
+void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::string> col_name, std::vector<std::string> labels, 
+		std::vector<std::vector<double> > numbers, std::string caption){
+	
+	std::ofstream file_check;
+	std::ofstream file;
+
+	//Begin Document
+                                                                                    
+	file.open(filename + ".tex");
+	file_check.open(filename + "_check.tex");
+
+
+	file_check << "\\documentclass{article}" << std::endl;
+	//file << "\\usepackage[utf8]{inputenc}" << std::endl;     
+	file_check << "\\usepackage{rotating}" << std::endl;                                                                                   
+	// file_check << "\\usepackage{cancel}" << std::endl;
+	file_check << "\\usepackage{geometry}" << std::endl;
+	file_check << "\\usepackage{booktabs}" << std::endl;
+	file_check << "\\geometry{a4paper, total={170mm,257mm}, left=20mm, top=20mm,}" << std::endl;
+
+	file_check << "\\begin{document}" << std::endl;
+	// Create table                                                                                                                                                                                                                                                
+	std::string col="c";
+	for(int i=1; i<n_col; i++)
+		col+="|c";
+
+		file_check << "\\begin{sidewaystable}"<< std::endl;
+		file_check << "\\begin{tabular}{"+col+"}" << std::endl;
+		file_check << "\\toprule" << std::endl;
+		file << "\\begin{tabular}{"+col+"}" << std::endl;
+		file << "\\toprule" << std::endl;
+	
+	for(int c=0; c<n_col-1; c++){
+		file << col_name[c] << " & ";
+		file_check << col_name[c] << " & ";
+	}
+	
+	file << col_name[n_col-1] << " \\\\ \\midrule" << std::endl;
+	file_check << col_name[n_col-1] << " \\\\ \\midrule" << std::endl;
+	
+	for(int i=1; i<n_lin; i++)
+	{	
+		file << labels[i-1] << " & ";
+		file_check << labels[i-1] << " & ";
+		for(int c=1; c<n_col-1; c++){
+			file << /*std::setprecision(3)<<*/  numbers[i-1][c-1]<< " \\% & ";
+			file_check << /*std::setprecision(3)<<*/  numbers[i-1][c-1]<< " \\% & ";
+									}
+			file << /*std::setprecision(3)<<*/  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl;
+			file_check << /*std::setprecision(3)<<*/  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl; 
+	}
+	
+	file << "\\bottomrule" << std::endl;
+	file_check << "\\bottomrule" << std::endl;
+
+	//End Table                                                                                                                                    
+	file << "\\end{tabular}" << std::endl;
+	file_check << "\\end{tabular}" << std::endl;
+	file_check << "\\caption{"+caption+"}" << std::endl;
+	file_check << "\\end{sidewaystable}"<< std::endl;
+
+	//file_check << "\\end{table}" << std::endl;
+	//End document                                                                                                                                 
+
+	file_check << "\\end{document}" << std::endl;
+
+	file.close();
+	file_check.close();
+	
+	system(("pdflatex " + filename+ "_check.tex").c_str());
+	system(("open " + filename + "_check.pdf").c_str());
+}
+
 void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	gSystem->mkdir("EffFinal" ,true);
+	gSystem->mkdir("FinalFiles" ,true);
 
 	int NBins;
 	//const int NBins = 6;
@@ -289,11 +363,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
 					{
 
-
+						
 						XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 						YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 						BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
-
+						
 						BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
 						BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
 
@@ -408,7 +482,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	hEffInv->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hEffInv->GetYaxis()->SetTitle("<(Eff * Acc)>");
+	hEffInv->GetYaxis()->SetTitle("<(Eff * Acc)> 2D Inv");
 	hEffInv->GetYaxis()->SetTitleOffset(1.4);
 	hEffInv->GetXaxis()->CenterTitle();
 	hEffInv->GetYaxis()->CenterTitle();
@@ -601,6 +675,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	TFile * foutCorr;
 	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
 	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_m.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnPMC.root",var_m.Data()),"RECREATE");
 	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%sMC.root",var_m.Data()),"RECREATE");
 
 	TH1D * Eff1DHisvar;
@@ -613,6 +688,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (whichvar==2){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
 	}
+
+
+
 	TH1D * CorrDiffHisBin = new TH1D("CorrDiffHisBin","",NBins,ptBins);
 	CorrDiffHisBin->GetXaxis()->SetTitle("nMult");
 	CorrDiffHisBin->GetYaxis()->SetTitle("#sigma (pb)");
@@ -666,6 +744,81 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
+	TH2D * invAcc2D=(TH2D *) fin1DEff->Get("invAcc2D");
+	invAcc2D->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	invAcc2D->GetYaxis()->SetTitle("rapidity");
+
+	invAcc2D->Draw("pcol");
+
+	if (usemc==0){c->SaveAs("EffFinal/acc_2Dmap.pdf");}
+	else {c->SaveAs("EffFinal/acc_2Dmap.pdf");}
+
+	invEff2D->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	invEff2D->GetYaxis()->SetTitle("rapidity");
+
+	invEff2D->Draw("pcol");
+
+	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap.pdf");}
+	else {c->SaveAs("EffFinal/totaleff_2Dmap.pdf");}
+
+	hEffInv->SetMarkerColor(kRed+1);
+	hEffInv->SetLineColor(kRed+1);
+	hEff->SetMarkerColor(kBlue+1);
+	hEff->SetLineColor(kBlue+1);
+	hEffInv->Draw("ep");
+	hEff->Draw("ep");
+	Eff1DHisvar->Draw("ep");
+
+	TLegend *leg = new TLegend(0.30,0.65,0.75,0.85,NULL,"brNDC");
+	leg->SetBorderSize(0);
+	leg->SetTextSize(0.040);
+	leg->SetTextFont(42);
+	leg->SetFillStyle(0);
+	leg->SetLineWidth(3);
+
+	leg->AddEntry(hEffInv,"2D Inv.","pl");
+	leg->AddEntry(hEff,"2D","pl");
+	leg->AddEntry(Eff1DHisvar,"1D","pl");
+
+	leg->Draw("SAME");
+
+	//if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s.pdf",NBins,var_m.Data()));}
+	//else {c->SaveAs(Form("EffFinal/ReAnaEffcomp_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
+	double tusk;
+	double d4c;
+	std::vector<double> cv;
+	std::vector<double> cvreal;
+	std::vector<std::vector<double>> comparison_values;
+	std::vector<std::string> labels = {"2D", "2D Inv."};
+	std::vector<std::string> col_name;
+	string name;
+	TString whichvarname;
+	col_name.push_back("Relative error 1D vs:");
+	if(whichvar==2){name="$<p_T<$"; whichvarname="pt";} else if(whichvar==0){name="$<y<$";whichvarname="y";} else if(whichvar==1){name="$<nTrks<$";whichvarname="nMult";}
+	for(int i=0;i<NBins;i++){
+		std::ostringstream clabel;
+		clabel<<ptBins[i]<<name<<ptBins[i+1];
+		std::string label1 = clabel.str();
+		col_name.push_back(label1);
+		tusk=abs(1/NewEff[i]-Eff1D[i])/Eff1D[i]*100;
+		d4c=abs(NewEffReal[i]-Eff1D[i])/Eff1D[i]*100;
+		cout<<"2D:"<<d4c<<endl;
+		cout<<"2D Inv:"<<tusk<<endl;
+		cv.push_back(tusk);
+		cvreal.push_back(d4c);
+	}
+	comparison_values.push_back(cvreal);
+	comparison_values.push_back(cv);
+
+	latex_table(Form("1D2Dcomparisons_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_values, "1D vs 2D efficiency comparisons");
+	std::vector<std::string> filetype ={"_check.aux", "_check.log", "_check.pdf",".tex","_check.tex"};
+	for (int j=0;j<(int)(filetype.size());j++){
+				rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("EffFinal/1D2Dcomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+			}
+
+
 
 	foutCorr->cd();
 	CorrDiffHis->Write();

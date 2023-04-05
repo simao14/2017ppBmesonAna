@@ -800,7 +800,14 @@ void  MCEff(int DoTnP, int Rescale){
 	Eff1DGENAccHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccHis->GetYaxis()->SetTitleOffset(1.5);
 
-
+	TH1D * Eff1DGENAccYHis = new TH1D("Eff1DGENAccYHis","",YBin,YBin1D);
+	
+	Eff1DGENAccYHis->GetXaxis()->SetTitle("rapidity");
+	Eff1DGENAccYHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DGENAccYHis->GetXaxis()->CenterTitle();	
+	Eff1DGENAccYHis->GetYaxis()->CenterTitle();
+	Eff1DGENAccYHis->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DGENAccYHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff1DGENMultHis = new TH1D("Eff1DGENMultHis","",NMultiBin,MultiBin1D);
 
@@ -1072,8 +1079,8 @@ void  MCEff(int DoTnP, int Rescale){
 				trkWeight = EventWeight * trk1[j] * trk2[j];
 
 				muidtrkWeight = EventWeight * muid1[j] * muid2[j] * trk1[j] * trk2[j];
-				TotalWeight = EventWeight * TnPWeight;
-				//TotalWeight=1;
+				//TotalWeight = EventWeight * TnPWeight;
+				TotalWeight=1;
 
 
         if (passTracking(Tracking::tight)) {
@@ -1301,9 +1308,9 @@ void  MCEff(int DoTnP, int Rescale){
 
 
 		cout << "Now Loop Gen" << endl;
+		
 
-
-
+		
 		for(int i = 0; i < NEvents; i++){
 
 
@@ -1328,8 +1335,8 @@ void  MCEff(int DoTnP, int Rescale){
       PVzWeight = (0.013245 * TMath::Exp(-(PVz-0.753876)*(PVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(PVz-0.608178)*(PVz-0.608178)/(2 * 5.785230 * 5.785230)));
 			//	EventWeight = PVzWeight * CentWeight * pthat * weight;
 			
-			EventWeight = PVzWeight * CentWeight * weight;
-			//EventWeight = 1;	
+			//EventWeight = PVzWeight * CentWeight * weight;
+			EventWeight = 1;	
 
 
 			for(int j = 0; j < Gsize; j++){
@@ -1364,6 +1371,7 @@ void  MCEff(int DoTnP, int Rescale){
 					NoWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					EvtWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					Eff1DGENAccHis->Fill(Gpt[j],EventWeight);
+					Eff1DGENAccYHis->Fill(Gy[j],EventWeight);
 					Eff1DGENAccMultHis->Fill(nMult,EventWeight);
 
 				}
@@ -1602,8 +1610,6 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DGENAccMultHis->Sumw2();
 		Sel1DHisMult->Divide(Eff1DGENAccMultHis);
 	
-
-
 		TH1D * Acc1DHisMult = (TH1D * ) Eff1DGENAccMultHis->Clone("Acc1DHisMult");
 		Acc1DHisMult->Sumw2();
 		Eff1DGENMultHis->Sumw2();
@@ -1619,7 +1625,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 		//Save 1D Eff Plots/
 
-		Eff1DHisMult->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Eff1DHisMult->GetXaxis()->SetTitle("B^{+} nMult");
 		Eff1DHisMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
 		Eff1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisMult->GetXaxis()->CenterTitle();
@@ -1644,7 +1650,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisY->SetLineColor(kBlack);
 
 
-		Sel1DHisMult->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Sel1DHisMult->GetXaxis()->SetTitle("B^{+} nMult ");
 		Sel1DHisMult->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisMult->GetXaxis()->CenterTitle();
@@ -1659,7 +1665,7 @@ void  MCEff(int DoTnP, int Rescale){
 	
 
 
-		Acc1DHisMult->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Acc1DHisMult->GetXaxis()->SetTitle("B^{+} nMult ");
 		Acc1DHisMult->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisMult->GetXaxis()->CenterTitle();

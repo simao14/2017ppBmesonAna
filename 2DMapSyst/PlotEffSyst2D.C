@@ -76,8 +76,8 @@ void PlotEffSyst2D(int Opt){
 	leg->SetTextFont(42);
 	leg->SetFillStyle(0);
 	leg->AddEntry(Eff1DHis,"Nominal","PL");
-	leg->AddEntry(Eff1DHisTnPUp,"T&P Variation Up","PL");
-	leg->AddEntry(Eff1DHisTnPDown,"T&P Variation Down","PL");
+	leg->AddEntry(Eff1DHisTnPUp,"TnP Variation Up","PL");
+	leg->AddEntry(Eff1DHisTnPDown,"TnP Variation Down","PL");
 	leg->Draw("same");
 
 	cSyst->SaveAs(Form("EffSystPlots/%s_pt_TnPSystComp.pdf",BmesonName.Data()));
