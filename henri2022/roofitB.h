@@ -936,13 +936,13 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 	TCanvas* c_params = new TCanvas("params", "params", 700, 700);
 	TCanvas* c_errors = new TCanvas("errors", "errors", 700, 700);
 
+	gStyle->SetOptFit(0111);
 	gPad->SetLeftMargin(0.15);
 	gStyle->SetStatX(0.95);		//Stat box x position (top right hand corner)	
 	gStyle->SetStatY(0.9); 		//Stat box y position 	
 	gStyle->SetStatW(0.1);	 		//Stat box width as fraction of pad size	0.05	
 	gStyle->SetStatFont(62);  		//Stat box font
 	gStyle->SetStatFontSize(0);
-	gStyle->SetOptFit(0111);
 	gStyle->SetStatBorderSize(0);
 	gStyle->SetStatColor(0);
 	gStyle->SetStatStyle(0);		//Stat box fill style hollow
@@ -960,7 +960,7 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h1[i]->GetFunction("gaus")->SetLineColor(kCyan+1);
 		h1[i]->GetFunction("gaus")->SetLineWidth(1);
 		h1[i]->GetFunction("gaus")->SetFillStyle(3019);
-		h1[i]->GetFunction("gaus")->SetFillColor(kRed+1);
+		h1[i]->GetFunction("gaus")->SetFillColor(kCyan+1);
 		h1[i]->GetXaxis()->SetTitle(Form("%s",XName[i].Data()));
 		h1[i]->GetYaxis()->SetTitle("Toy MCs");
 		h1[i]->GetXaxis()->SetRangeUser(-5, 5);

@@ -821,9 +821,22 @@ if(varExp=="nMult"){
 			low_high_b[i] = _ptBins[i+1] - x[i] ;
 		}
 		
+
+
 		TGraph *binning= new TGraphAsymmErrors (_nBins,x,zero,low_high_b,low_high_b,zero,zero);
 		binning->SetMarkerColorAlpha(kBlack, 0); //transparent
-		binning->SetLineWidth(2);
+		binning->SetLineWidth(6);
+
+		TMultiGraph* m_back_sig= new TMultiGraph(); //to be used latter to acomodate both sig and back
+		TLegend *legsigback = new TLegend(0.75,0.71,0.89,0.89, NULL, "brNDC");
+		legsigback->SetBorderSize(0);
+		legsigback->SetTextSize(0.025);
+		legsigback->SetTextFont(42);
+		legsigback->SetFillStyle(0);
+		m_back_sig->Add(binning);
+		m_back_sig->GetXaxis()->SetTitle("p_{T}");
+		m_back_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
+
 
 		TCanvas* c_back= new TCanvas("c_back","",700,700);
 		TLegend *legback = new TLegend(0.62,0.77,0.89,0.89,NULL,"brNDC"); 
@@ -834,7 +847,7 @@ if(varExp=="nMult"){
 		legback->SetTextFont(42);
 		legback->SetFillStyle(0);
 		TMultiGraph* m_back= new TMultiGraph();
-		const char* backlabel[4]={"Linear", "2nd Poly", "mass range", "jpsipi/JpsiK"};
+		const char* backlabel[4]={"Linear", "2nd Poly", "mass range", "J/#psi#pi^{+}/J/#psiK^{+}"};
 		double y_max_back=0;
 		for (int j=0;j<(int)(background.size());j++){
 			Double_t y[_nBins];
@@ -844,9 +857,11 @@ if(varExp=="nMult"){
 			}
 			TGraph *g_back= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 			g_back->SetMarkerColor(j+1);
-			g_back->SetMarkerStyle(21);
+			g_back->SetMarkerStyle(22);
 			m_back->Add(g_back);
+			m_back_sig->Add(g_back);
 			legback->AddEntry(g_back,backlabel[j],"p");
+			legsigback->AddEntry(g_back,backlabel[j],"p");
 	}
 		m_back->Add(binning);
 		m_back->GetXaxis()->SetTitle("p_{T}");
@@ -857,7 +872,7 @@ if(varExp=="nMult"){
 		c_back->SaveAs(Form("./results/tables/background_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
 
-		TCanvas* c_sig= new TCanvas("c_back","",700,700);
+		TCanvas* c_sig= new TCanvas("c_sig","",700,700);
 		TLegend *legsig = new TLegend(0.62,0.8,0.89,0.75,NULL,"brNDC"); 
 		if (tree == "ntphi"){legsig = new TLegend(0.75,0.8,0.89,0.89,NULL,"brNDC");}
 		else{legsig = new TLegend(0.75,0.8,0.89,0.89,NULL,"brNDC");}
@@ -866,7 +881,7 @@ if(varExp=="nMult"){
 		legsig->SetTextFont(42);
 		legsig->SetFillStyle(0);
 		TMultiGraph* m_sig= new TMultiGraph();
-		const char* siglabel[4]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian","2 CB"};
+		const char* siglabel[3]={"Triple Gaussian", "Fixed Mean", "CB+Gaussian"};
 		double y_max_sig=0;
 		for (int j=0;j<(int)(signal.size());j++){
 			Double_t y[_nBins];
@@ -875,10 +890,13 @@ if(varExp=="nMult"){
 				if (y[i]>y_max_sig){y_max_sig=y[i];}
 			}
 		TGraph *g_sig= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
-		g_sig->SetMarkerColor(j+1);
+		g_sig->SetMarkerColor(j+5);
 		g_sig->SetMarkerStyle(21);
 		m_sig->Add(g_sig);
+		m_back_sig->Add(g_sig);
 		legsig->AddEntry(g_sig,siglabel[j],"p");
+		legsigback->AddEntry(g_sig,siglabel[j],"p");
+
 }
 	m_sig->Add(binning);
 	m_sig->GetXaxis()->SetTitle("p_{T}");
@@ -887,6 +905,14 @@ if(varExp=="nMult"){
 	m_sig->Draw("AE1*");
 	legsig->Draw();
 	c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+
+		TCanvas *c_sig_back= new TCanvas("c_sig_back","",700,700);
+		m_back_sig->GetYaxis()->SetRangeUser(0, 3.6);
+		m_back_sig->GetXaxis()->SetTitle("p_{T}");
+		m_back_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
+		m_back_sig->Draw("AE1*");
+		legsigback->Draw();
+		c_sig_back->SaveAs(Form("./results/tables/background_signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
 	TCanvas* c_gen= new TCanvas("c_gen","",700,700);
 	TLegend *legen = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
