@@ -36,14 +36,14 @@ bpEff () {
     echo "Takes BPw.root as input"
     ls -l BDTWeights/BPw.root
 
-    #root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
+    #root -b -l -q MCEff.C'(1,0)' > eff.log                           # >> bpsyst2d.root
     wait
-    popd
-    root -b -l -q CrossSectionAna.C'(1,0)'                              #UNIFY
 
-    #root -b -l -q CrossSectionAnaMult.C'(1,0)'
-    # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
+    root -b -l -q CrossSectionAna.C'(1)'                              #UNIFY
+    #root -b -l -q CrossSectionAnaMult.C'(1,0)'                       # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
+    popd
 }
+
 bsEff () {
     pushd Bs/EffAna
     echo "Takes Bsw.root as input"
@@ -51,12 +51,10 @@ bsEff () {
 
     #root -b -l -q MCEff.C'(1,0)' > eff.log
     wait
-    popd
-    root -b -l -q CrossSectionAna.C'(1,1)'                               #UNIFY
 
-    #root -b -l -q CrossSectionAnaMult.C'(1,0)'
-    # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
-    
+    root -b -l -q CrossSectionAna.C'(1)'                                #UNIFY
+    #root -b -l -q CrossSectionAnaMult.C'(1,0)'                         # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
+    popd  
 }
 
 syst () {
@@ -74,14 +72,12 @@ syst () {
 bpStat () {
     pushd MCStatSyst/BP
     root -b -l -q Generate2DMaps.C
-    # more than 2hr
     root -b -l -q MCStatCal.C > mcstat.log
     popd
 }
 bsStat() {
     cd MCStatSyst/Bs
     root -b -l -q Generate2DMaps.C
-    # ~1hr
     root -b -l -q MCStatCal.C > mcstat.log
     cd ../..
 }
@@ -123,7 +119,7 @@ paperPlots () {
 #UNCOMMENT ACORDINGLY
 #(Run by THIS ORDER!)
 
-#makeTnP
+#maketnp
 #bptshape
 
 #yield
