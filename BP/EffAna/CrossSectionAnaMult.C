@@ -724,7 +724,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	}
 	
 	hInvEff->SetMaximum(NewEff[0]*1.5);
-	TCanvas *c = new TCanvas("c","c",600,600);
+	TCanvas *c = new TCanvas("c","c",700,700);
 	c->cd();
 
 	hEffInv->Draw("ep");
@@ -749,7 +749,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	invAcc2D->GetXaxis()->SetTitle("p_{T} (GeV/c)");
 	invAcc2D->GetYaxis()->SetTitle("rapidity");
 
-	invAcc2D->Draw("pcol");
+	invAcc2D->Draw("pcolz");
 
 	if (usemc==0){c->SaveAs("EffFinal/acc_2Dmap.pdf");}
 	else {c->SaveAs("EffFinal/acc_2Dmap.pdf");}
@@ -757,10 +757,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	invEff2D->GetXaxis()->SetTitle("p_{T} (GeV/c)");
 	invEff2D->GetYaxis()->SetTitle("rapidity");
 
-	invEff2D->Draw("pcol");
-
-	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap.pdf");}
-	else {c->SaveAs("EffFinal/totaleff_2Dmap.pdf");}
+	invEff2D->Draw("pcolz");
+	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap_BP.pdf");}
+	else {c->SaveAs(        "EffFinal/totaleff_2Dmap_BP_MC.pdf");}
 
 	hEffInv->SetMarkerColor(kRed+1);
 	hEffInv->SetLineColor(kRed+1);
