@@ -754,9 +754,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (usemc==0){c->SaveAs("EffFinal/acc_2Dmap.pdf");}
 	else {c->SaveAs("EffFinal/acc_2Dmap.pdf");}
 
-	invEff2D->GetXaxis()->SetTitle("p_{T} (GeV/c)");
-	invEff2D->GetYaxis()->SetTitle("rapidity");
-
+	invEff2D->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	invEff2D->GetYaxis()->SetTitle("|y|");
 	invEff2D->Draw("pcolz");
 	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap_BP.pdf");}
 	else {c->SaveAs(        "EffFinal/totaleff_2Dmap_BP_MC.pdf");}
