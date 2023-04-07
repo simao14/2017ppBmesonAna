@@ -260,12 +260,12 @@ if(meson_n == 0){
 	TH2D * HisEmpty;
 	if(meson_n == 0) { 
 		HisEmpty = new TH2D("HisEmpty","",100,5,60,100,100.0,2000000);
-		HisEmpty->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+		HisEmpty->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	} else {
 		HisEmpty = new TH2D("HisEmpty","",100,7,50,100,100.0,2000000);
-		HisEmpty->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+		HisEmpty->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 		}
-	HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} (pb c/GeV)");
+	HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
 	HisEmpty->GetXaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->SetTitleOffset(1.8);
@@ -326,7 +326,7 @@ if(meson_n == 0){
 	leged->SetTextSize(0.025);     
 	leged->SetTextFont(42);
 	leged->SetFillStyle(0);
-	if(meson_n == 0) {leged->AddEntry(BPPPCrossGraph2D,"B^{#pm}","PL");}
+	if(meson_n == 0) {leged->AddEntry(BPPPCrossGraph2D,"B^{+}","PL");}
 	else {leged->AddEntry(BPPPCrossGraph2D,"B^{0}_{s}","PL");}
 	leged->Draw();
 	BPPPCrossGraph2D->Draw("ep");	
@@ -344,12 +344,12 @@ if(meson_n == 0){
   	TGraphAsymmErrors *BPPbPbCrossGraphSyst;
 	BPPbPbCrossGraph = new TGraphAsymmErrors(NBins, BPXsecPbPbX, BPXsecPbPbY,BPXSecPbPbXErrDown, BPXSecPbPbXErrUp,BPXSecPbPbYErrDown,BPXSecPbPbYErrUp);
   	BPPbPbCrossGraphSyst  = new TGraphAsymmErrors(NBins, BPXsecPbPbX, BPXsecPbPbY, BPXSecPbPbXErrDown, BPXSecPbPbXErrUp, BPXSecPbPbYSystDown,BPXSecPbPbYSystUp);
-	BPPbPbCrossGraph->SetLineColor(kOrange-2);
+	BPPbPbCrossGraph->SetLineColor(kOrange-1);
 	BPPbPbCrossGraph->SetMarkerStyle(21);
 	BPPbPbCrossGraph->SetMarkerSize(1);
-	BPPbPbCrossGraph->SetMarkerColor(kOrange-2);
-	BPPbPbCrossGraphSyst->SetFillColorAlpha(kOrange-2,0.5);
-	BPPbPbCrossGraphSyst->SetLineColor(kOrange-2);
+	BPPbPbCrossGraph->SetMarkerColor(kOrange-1);
+	BPPbPbCrossGraphSyst->SetFillColorAlpha(kOrange-1,0.5);
+	BPPbPbCrossGraphSyst->SetLineColor(kOrange-1);
 
 	TCanvas * c2New = new TCanvas("c2New","c2New",700,700);
 	c2New->cd();
@@ -361,8 +361,8 @@ if(meson_n == 0){
 	leg->SetTextSize(0.025);     
 	leg->SetTextFont(42);
 	leg->SetFillStyle(0);
-	leg->AddEntry(BPPbPbCrossGraph,"2018 PbPb 5.02 TeV","PL");
-	leg->AddEntry(BPPPCrossGraph2D,"2017 pp 5.02 TeV","PL");
+	leg->AddEntry(BPPbPbCrossGraph,"2018 PbPb","PL");
+	leg->AddEntry(BPPPCrossGraph2D,"2017 pp","PL");
 	leg->Draw();
 	BPPbPbCrossGraph->Draw("ep");	
 	BPPPCrossGraph2D->Draw("ep");	
@@ -417,11 +417,11 @@ if(meson_n == 0){
 	TH2D * HisEmpty2;
 	if (meson_n == 0){
 		HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,100.0,30000000);
-		HisEmpty2->GetXaxis()->SetTitle("p_{T} (GeV/c)");}
+		HisEmpty2->GetXaxis()->SetTitle("p_{T} [GeV/c]");}
 	else {	
 		HisEmpty2 = new TH2D("HisEmpty2","",100,7,50,100,100.0,30000000);
-		HisEmpty2->GetXaxis()->SetTitle("p_{T} (GeV/c)");}
-	HisEmpty2->GetYaxis()->SetTitle("d#sigma/d p_{T} (pb c/GeV)");
+		HisEmpty2->GetXaxis()->SetTitle("p_{T} [GeV/c]");}
+	HisEmpty2->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
 	HisEmpty2->GetXaxis()->CenterTitle();
 	HisEmpty2->GetYaxis()->CenterTitle();
 	//HisEmpty2->SetTitle("B^{+} Cross Section With Fiducial Region");
@@ -478,10 +478,10 @@ if(meson_n == 0){
 	BPPPCrossGraph2DHigh->SetMarkerStyle(21);
 	BPPPCrossGraph2DHigh->SetMarkerSize(1);
 	
-	BPPPCrossGraph2015Syst->SetLineColor(kOrange+1);
-	BPPPCrossGraph2015Syst->SetFillColorAlpha(kOrange+1, 0.5);
-	BPPPCrossGraph2015->SetLineColor(kOrange+1);
-	BPPPCrossGraph2015->SetMarkerColor(kOrange+1);
+	BPPPCrossGraph2015Syst->SetLineColor(kOrange-1);
+	BPPPCrossGraph2015Syst->SetFillColorAlpha(kOrange-1, 0.5);
+	BPPPCrossGraph2015->SetLineColor(kOrange-1);
+	BPPPCrossGraph2015->SetMarkerColor(kOrange-1);
 	if (meson_n==0){
 		BPPPCrossGraph2DLow->SetLineColor(kGreen-9);
 		BPPPCrossGraph2DLow->SetMarkerColor(kGreen-9);
@@ -536,12 +536,9 @@ if(meson_n==0){          //HENRIQUE STUFF
 		BFONLL2->GetPoint(i,XTempChange,YTempChange);
 		YErrLowTemp = BFONLL2->GetErrorYlow(i);
 		YErrHighTemp = BFONLL2->GetErrorYhigh(i);
-
 		BPFONLL->SetPoint(i,XTempChange,YTempChange);
 		BPFONLL->SetPointEYhigh(i,YErrHighTemp);
 		BPFONLL->SetPointEYlow(i,YErrLowTemp);
-		
-
 		BFONLLLow->AddPoint(XTempChange,YTempChange);
 		BFONLLLow->SetPointEYhigh(i,YErrHighTemp);
 		BFONLLLow->SetPointEYlow(i,YErrLowTemp);
@@ -597,12 +594,12 @@ if(meson_n==0){          //HENRIQUE STUFF
 	leg3->SetTextSize(0.025);     
 	leg3->SetTextFont(42);
 	leg3->SetFillStyle(0);
-	leg3->AddEntry(BPPPCrossGraph2DLow,"2017 pp 5.02 TeV (scaled to |y| < 2.4)","PL");	
-	leg3->AddEntry(BPPPCrossGraph2DHigh,"2017 pp 5.02 TeV","PL");	
-	leg3->AddEntry(BPPPCrossGraph2015,"2015 pp 5.02 TeV","PL");
+	leg3->AddEntry(BPPPCrossGraph2DLow,"2017 pp (|y| < 1.5)","PL");	
+	leg3->AddEntry(BPPPCrossGraph2DHigh,"2017 pp","PL");	
+	leg3->AddEntry(BPPPCrossGraph2015,"2015 ","PL");
 	//leg3->AddEntry(BPPPCrossGraph2015Low,"2015 pp 5.02 TeV(scaled)","PL");
-	leg3->AddEntry(BPFONLL,"FONLL Calculations","f");
-	if(meson_n==0){leg3->AddEntry(BFONLLLow,"FONLL Calculations(|y| < 2.4)","f");}
+	leg3->AddEntry(BPFONLL,"FONLL","f");
+	if(meson_n==0){leg3->AddEntry(BFONLLLow,"FONLL (|y| < 1.5)","f");}
 	leg3->Draw("same");
 	MyPad1->Update();
 
@@ -648,12 +645,12 @@ if (meson_n == 0){
 TH2D * HisEmpty3;
 if (meson_n == 0){
 	HisEmpty3 = new TH2D("HisEmpty3","",100,5,60,100,0,2);
-	HisEmpty3->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	HisEmpty3->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 } else {
 	HisEmpty3 = new TH2D("HisEmpty3","",100,7,50,100,0,2);
-	HisEmpty3->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	HisEmpty3->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 }
-	HisEmpty3->GetYaxis()->SetTitle("Comparisons");
+	HisEmpty3->GetYaxis()->SetTitle("Data/FONLL");
 	HisEmpty3->GetXaxis()->CenterTitle();
 	HisEmpty3->GetYaxis()->CenterTitle();
 	HisEmpty3->GetYaxis()->SetTitleOffset(0.5);
@@ -665,20 +662,20 @@ if (meson_n == 0){
 	HisEmpty3->Draw();
 
 	TGraphAsymmErrors *Ratio2 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, Ratio2Y,BXSecPPXErrDown2015, BXSecPPXErrUp2015,Ratio2YErr,Ratio2YErr);
-		Ratio2->SetLineColor(kOrange+1);
+		Ratio2->SetLineColor(kOrange-1);
 		Ratio2->SetMarkerStyle(21);
 		Ratio2->SetMarkerSize(1);
-		Ratio2->SetMarkerColor(kOrange+1);
+		Ratio2->SetMarkerColor(kOrange-1);
 		//leg4->AddEntry(Ratio2,"2017/2015","PL");	
 		//Ratio2->Draw("epSAME");
 
   	TGraphAsymmErrors *RatioDataLow;
   	if (meson_n ==0){
 		RatioDataLow = new TGraphAsymmErrors(1, BPXsecPPXLow.data() + 1, RatioDataYLow.data(),BPXsecPPXErrDownLow.data() + 1, BPXsecPPXErrUpLow.data() + 1, RatioDataYLowErr.data(), RatioDataYLowErr.data());
-		RatioDataLow->SetLineColor(kOrange+1);
+		RatioDataLow->SetLineColor(kOrange-1);
 		RatioDataLow->SetMarkerStyle(25);
 		RatioDataLow->SetMarkerSize(1);
-		RatioDataLow->SetMarkerColor(kOrange+1);
+		RatioDataLow->SetMarkerColor(kOrange-1);
 		//RatioDataLow->Draw("epSAME");
 		//leg4->AddEntry(RatioDataLow,"2017/2015 (scaled to |y| < 2.4)","PL");	
 		}
@@ -714,10 +711,10 @@ if (meson_n == 0){
 TH2D * HisEmpty4;
 if (meson_n == 0){
 	HisEmpty4 = new TH2D("HisEmpty4","",100,5,60,100,0,2);
-	HisEmpty4->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	HisEmpty4->GetXaxis()->SetTitle("B^{+} p_{T} [GeV/c]");
 } else {
 	HisEmpty4 = new TH2D("HisEmpty4","",100,7,50,100,0,2);
-	HisEmpty4->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	HisEmpty4->GetXaxis()->SetTitle("B^{0}_{s} p_{T} [GeV/c]");
 }
 	HisEmpty4->GetYaxis()->SetTitle("2017 Data/FONLL");
 	HisEmpty4->GetXaxis()->CenterTitle();
@@ -906,22 +903,15 @@ for (auto i=start2015;i<NBins2015;i++){
 	
 
   TGraphAsymmErrors gRatioBs_low(NBinsLow, binlow,RatioBs,bl_low_xErrL, bl_low_xErrH,RatioBsStat, RatioBsStat);
-
   TGraphAsymmErrors gRatioBs_high(NBinsHigh,binhigh,RatioBs + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsStat + NBinsLow, RatioBsStat + NBinsLow);
-
   TGraphAsymmErrors gRatioBs_syst_low(NBinsLow,binlow,RatioBs,bl_low_xErrL, bl_low_xErrH,RatioBsSyst, RatioBsSyst);
-
   TGraphAsymmErrors gRatioBs_syst_high(NBinsHigh,binhigh,RatioBs + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsSyst + NBinsLow, RatioBsSyst + NBinsLow);
-
   TGraphAsymmErrors gRatioBs_Fon_low(NBinsLow,binlow,Unity.data(),bl_low_xErrL, bl_low_xErrH,RatioBsFonErrLow, RatioBsFonErrHigh);
-
   TGraphAsymmErrors gRatioBs_Fon_high(NBinsHigh,binhigh,Unity.data(),bl_high_xErrL, bl_high_xErrH,RatioBsFonErrLow + NBinsLow,RatioBsFonErrHigh + NBinsLow);
 
 if(meson_n==0){								  
   TGraphAsymmErrors gRatioBs2015_low(NBinsLow2015,binlow_2015,RatioBs2015,bl_low_2015_xErrL, bl_low_2015_xErrH,RatioBsStat2015, RatioBsStat2015);
-
   TGraphAsymmErrors gRatioBs2015_syst_low(NBinsLow2015,binlow_2015,RatioBs2015,bl_low_2015_xErrL, bl_low_2015_xErrH,RatioBsSyst2015, RatioBsSyst2015);
-
   gRatioBs2015_low.SetMarkerStyle(20);
   gRatioBs2015_low.SetMarkerColor(kViolet+1);
   gRatioBs2015_syst_low.SetFillColorAlpha(kViolet+1, 0.5);

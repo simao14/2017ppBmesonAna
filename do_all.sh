@@ -80,7 +80,7 @@ comp () {
     # get pdf variation errors
     python master.py
     # Get pre-selection error
-    python comppre.py                     #<-----------------------NOT RUNNING (FILE FROM CODE MISSING)
+    python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
 
     cd BsBPFinalResults/BsBPRatio/
     root -b -l -q PlotBsBPRatio.C'(1)'
@@ -90,7 +90,7 @@ comp () {
     root -b -l -q Bmeson_Comparisons.C'(0)'
     root -b -l -q Bmeson_Comparisons.C'(1)'
 
-    python syst_table.py                  #<-----------------------NOT RUNNING
+    python syst_table.py                  #<----------------------- NOT RUNNING
     cd ../..
 
     cd RAA/
