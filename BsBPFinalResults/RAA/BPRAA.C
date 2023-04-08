@@ -38,19 +38,11 @@ using std::cout;
 using std::endl;
 
 void BPRAA(){
-
-	gSystem->mkdir("RAAPlots/BP", true);
-	gSystem->mkdir("RAAPlots/Bs", true);
 	
 	gStyle->SetOptStat(0);
-
 	TCanvas * c = new TCanvas("c","c",600,600);
-
 	c->cd();
-
 	c->SetLeftMargin(0.16);
-
-
 	TString InfileBP = "../../BP/EffAna/FinalFiles/BPPPCorrYieldPT.root";
 
 	TFile * FileBP = new TFile(InfileBP.Data());
@@ -414,10 +406,10 @@ void BPRAA(){
 
 
 	HisEmptyRAA->Draw();
-	BsRAAGraphSyst2015->Draw("5same");
-	BsRAAGraph2015->Draw("epSAME");
-	BsRAAGraphSyst->Draw("5same");
-	BsRAAGraph->Draw("ep");
+	BPRAAGraphSyst2015->Draw("5same");
+	BPRAAGraph2015->Draw("epSAME");
+	BPRAAGraphSyst->Draw("5same");
+	BPRAAGraph->Draw("ep");
 
 
 	TLegend* leg2 = new TLegend(0.65,0.80,0.9,0.85,NULL,"brNDC");
