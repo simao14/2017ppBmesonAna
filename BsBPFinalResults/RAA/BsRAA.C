@@ -356,7 +356,7 @@ void BsRAA(){
 
 
 
-	TH2D * HisEmptyRAA = new TH2D("HisEmptyRAA","",100,7,50,100,0,2);
+	TH2D * HisEmptyRAA = new TH2D("HisEmptyRAA","",100,7,50,100,0,2.2);
 	HisEmptyRAA->GetXaxis()->SetTitle("B^{0}_{s} p_{T} [GeV/c]");
 	HisEmptyRAA->GetYaxis()->SetTitle("RAA = #frac{1}{T_{AA}} #frac{dN_{PbPb}/dp_{T}}{d #sigma_{pp}/d p_{T}}");
 	HisEmptyRAA->GetXaxis()->CenterTitle();
