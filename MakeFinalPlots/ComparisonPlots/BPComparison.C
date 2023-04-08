@@ -213,7 +213,7 @@ void BPComparison(){
 
 	TH2D * HisEmpty = new TH2D("HisEmpty","",100,5,60,100,100.0,2000000);
 	HisEmpty->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
-	HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} (pb c/GeV)");
+	HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
 	HisEmpty->GetXaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->SetTitleOffset(1.8);
@@ -304,9 +304,9 @@ void BPComparison(){
 
 
 	
-	c2New->SaveAs("Plots/BP/BPPbPbPPCross.png");
+	c2New->SaveAs("Plots/BP/BPPbPbPPCross.pdf");
 	c2New->SetLogy();
-	c2New->SaveAs("Plots/BP/BPPbPbPPCrossLog.png");
+	c2New->SaveAs("Plots/BP/BPPbPbPPCrossLog.pdf");
 
 
 
@@ -335,8 +335,8 @@ void BPComparison(){
 
 
 	TH2D * HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,100.0,30000000);
-	HisEmpty2->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
-	HisEmpty2->GetYaxis()->SetTitle("d#sigma/d p_{T} (pb c/GeV)");
+	HisEmpty2->GetXaxis()->SetTitle("B^{+} p_{T} [GeV/c]");
+	HisEmpty2->GetYaxis()->SetTitle("d#sigma/d p_{T} [pb c/GeV]");
 	HisEmpty2->GetXaxis()->CenterTitle();
 	HisEmpty2->GetYaxis()->CenterTitle();
 	HisEmpty2->SetTitle("B^{+} Cross Section With Fiducial Region");
@@ -514,7 +514,7 @@ void BPComparison(){
 
 
 	TH2D * HisEmpty4 = new TH2D("HisEmpty4","",100,5,60,100,0,2);
-	HisEmpty4->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	HisEmpty4->GetXaxis()->SetTitle("B^{+} p_{T} [GeV/c]");
 	HisEmpty4->GetYaxis()->SetTitle("2017 Data/FONLL");
 	HisEmpty4->GetXaxis()->CenterTitle();
 	HisEmpty4->GetYaxis()->CenterTitle();
@@ -561,15 +561,13 @@ void BPComparison(){
 
 
 
-	cRatio->SaveAs("Plots/BP/BPFONLLComp.png");
+	cRatio->SaveAs("Plots/BP/BPFONLLComp.pdf");
 //	cRatio->SetLogy();
 
 	//MyPad1->SetLogy();
 	
 	MyPad1->SetLogy();
 	MyPad1->Update();
-
-	cRatio->SaveAs("Plots/BP/BPFONLLCompLog.png");
 
 	cRatio->SaveAs("Plots/BP/BPFONLLCompLog.pdf");
 
