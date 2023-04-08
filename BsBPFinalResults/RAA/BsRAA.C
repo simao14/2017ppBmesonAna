@@ -356,7 +356,7 @@ void BsRAA(){
 
 
 
-	TH2D * HisEmptyRAA = new TH2D("HisEmptyRAA","",100,7,50,100,0,2.5);
+	TH2D * HisEmptyRAA = new TH2D("HisEmptyRAA","",100,7,50,100,0,2);
 	HisEmptyRAA->GetXaxis()->SetTitle("B^{0}_{s} p_{T} [GeV/c]");
 	HisEmptyRAA->GetYaxis()->SetTitle("RAA = #frac{1}{T_{AA}} #frac{dN_{PbPb}/dp_{T}}{d #sigma_{pp}/d p_{T}}");
 	HisEmptyRAA->GetXaxis()->CenterTitle();
@@ -452,16 +452,18 @@ void BsRAA(){
 	c2->SaveAs("RAAPlots/BsRAA.pdf");
 
 	HisEmptyRAA->Draw();
-	BsRAAGraph->Draw("ep");
-	BsRAAGraph2015->Draw("epSAME");
+
+	//BsRAAGraph2015->Draw("epSAME");
+	BsRAAGraphSyst2015->Draw("5same");
 	BsRAAGraph2015->Draw("epSAME");
 	BsRAAGraphSyst->Draw("5same");
-	BsRAAGraphSyst2015->Draw("5same");
+	BsRAAGraph->Draw("ep");
+
 	Unity->Draw("SAME");
 
 
 
-	TLegend* leg2 = new TLegend(0.7,0.80,0.9,0.85,NULL,"brNDC");
+	TLegend* leg2 = new TLegend(0.65,0.80,0.9,0.85,NULL,"brNDC");
 	leg2->SetBorderSize(0);
 	leg2->SetFillStyle(0);
 	leg2->AddEntry(BsRAAGraph,"2018 PbPb + 2017 pp","PL");

@@ -383,8 +383,8 @@ void BPRAA(){
 	TGraphAsymmErrors *BPRAAGraph2015 = new TGraphAsymmErrors(NBins2015, BPRAAX2015, BPRAAY2015,BPRAAXErrDown2015, BPRAAXErrUp2015,BPRAAYErrDown2015,BPRAAYErrUp2015);
 	TGraphAsymmErrors *BPRAAGraphSyst2015 = new TGraphAsymmErrors(NBins2015, BPRAAX2015, BPRAAY2015,BPRAAXErrDown2015, BPRAAXErrUp2015,BPRAAYSystDown2015,BPRAAYSystUp2015);
 
-	BPRAAGraph->SetMarkerColor(kBlue-9);
-	BPRAAGraph->SetLineColor(kBlue-9);
+	BPRAAGraph->SetMarkerColor(kGreen-9);
+	BPRAAGraph->SetLineColor(kGreen-9);
 	BPRAAGraph->SetMarkerStyle(20);
 	BPRAAGraph->SetMarkerSize(1);
 	BPRAAGraphSyst->SetFillColorAlpha(kGreen-9,0.5);
@@ -414,14 +414,13 @@ void BPRAA(){
 
 
 	HisEmptyRAA->Draw();
-	BPRAAGraph->Draw("ep");
-	BPRAAGraph->Draw("epSAME");
-	BPRAAGraph2015->Draw("epSAME");
-	BPRAAGraphSyst->Draw("5same");
-	BPRAAGraphSyst2015->Draw("5same");
+	BsRAAGraphSyst2015->Draw("5same");
+	BsRAAGraph2015->Draw("epSAME");
+	BsRAAGraphSyst->Draw("5same");
+	BsRAAGraph->Draw("ep");
 
 
-	TLegend* leg2 = new TLegend(0.7,0.80,0.9,0.85,NULL,"brNDC");
+	TLegend* leg2 = new TLegend(0.65,0.80,0.9,0.85,NULL,"brNDC");
 	leg2->SetBorderSize(0);
 	leg2->SetFillStyle(0);
 	leg2->AddEntry(BPRAAGraph,"2018 PbPb + 2017 pp","PL");
