@@ -229,7 +229,7 @@ void BPRAA(){
 	leg->Draw("same");
 	//c->SaveAs("RAAPlots/BP/BPPbPbPPCross.png");
 	c->SetLogy();
-	c->SaveAs("RAAPlots/BPPbPbPPCrossLog.png");
+	c->SaveAs("RAAPlots/BPPbPbPPCrossLog.pdf");
 
 	//Fid and Non-Fid
 	//Fid Non Fid
@@ -288,7 +288,7 @@ void BPRAA(){
 	leg5->AddEntry(BPPPCrossGraph2,"No Fiducial Region","PL");
 	leg5->Draw("same");
 
-    c->SaveAs("RAAPlots/BPFidOrNotComp.png");
+    c->SaveAs("RAAPlots/BPFidOrNotComp.pdf");
 
 
 
@@ -380,33 +380,22 @@ void BPRAA(){
 	TGraphAsymmErrors *BPRAAGraph = new TGraphAsymmErrors(NBins, BPRAAX, BPRAAY,BPRAAXErrDown, BPRAAXErrUp,BPRAAYErrDown,BPRAAYErrUp);
 	BPRAAGraph->SetName("BPRAAGraph");
 	TGraphAsymmErrors *BPRAAGraphSyst = new TGraphAsymmErrors(NBins, BPRAAX, BPRAAY,BPRAAXErrDown, BPRAAXErrUp,BPRAAYSystDown,BPRAAYSystUp);
-
-
-
 	TGraphAsymmErrors *BPRAAGraph2015 = new TGraphAsymmErrors(NBins2015, BPRAAX2015, BPRAAY2015,BPRAAXErrDown2015, BPRAAXErrUp2015,BPRAAYErrDown2015,BPRAAYErrUp2015);
 	TGraphAsymmErrors *BPRAAGraphSyst2015 = new TGraphAsymmErrors(NBins2015, BPRAAX2015, BPRAAY2015,BPRAAXErrDown2015, BPRAAXErrUp2015,BPRAAYSystDown2015,BPRAAYSystUp2015);
 
-
+	BPRAAGraph->SetMarkerColor(kBlue-9);
 	BPRAAGraph->SetLineColor(kBlue-9);
-//	BPRAAGraph->SetFillColorAlpha(kBlue-9,0.5);
 	BPRAAGraph->SetMarkerStyle(20);
 	BPRAAGraph->SetMarkerSize(1);
-	BPRAAGraph->SetMarkerColor(kBlue-9);
-
-
-
+	BPRAAGraphSyst->SetFillColorAlpha(kGreen-9,0.5);
+	BPRAAGraphSyst->SetLineColor(kGreen-9);
 
 	BPRAAGraph2015->SetLineColor(kOrange+1);
-//	BPRAAGraph->SetFillColorAlpha(kBlue-9,0.5);
+	BPRAAGraph2015->SetMarkerColor(kOrange+1);	
 	BPRAAGraph2015->SetMarkerStyle(21);
 	BPRAAGraph2015->SetMarkerSize(1);
-	BPRAAGraph2015->SetMarkerColor(kOrange+1);
-	
-
-	BPRAAGraphSyst->SetFillColorAlpha(kRed-9,0.5);
-	BPRAAGraphSyst->SetLineColor(kRed-9);
-	BPRAAGraphSyst2015->SetFillColorAlpha(kBlue-9,0.5);
-	BPRAAGraphSyst2015->SetLineColor(kBlue-9);
+	BPRAAGraphSyst2015->SetFillColorAlpha(kOrange+1,0.5);
+	BPRAAGraphSyst2015->SetLineColor(kOrange+1);
 
 
 

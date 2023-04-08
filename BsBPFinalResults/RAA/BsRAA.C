@@ -177,11 +177,11 @@ void BsRAA(){
 	BPPbPbCrossGraph->SetMarkerStyle(20);
 	BPPbPbCrossGraph->SetMarkerSize(1);
 	BPPbPbCrossGraph->SetMarkerColor(kGreen+2);
-	BsPPCrossGraph->SetLineColor(kOrange+1);
+	BsPPCrossGraph->SetLineColor(kBlue-9);
 //	BsPPCrossGraph->SetFillColorAlpha(kBlue-9,0.5);
 	BsPPCrossGraph->SetMarkerStyle(21);
 	BsPPCrossGraph->SetMarkerSize(1);
-	BsPPCrossGraph->SetMarkerColor(kOrange+1);
+	BsPPCrossGraph->SetMarkerColor(kBlue-9);
 	TGraphAsymmErrors *BPPPCrossGraphSyst  = new TGraphAsymmErrors(NBins, BsXsecPPX, BsXsecPPY, BsXSecPPXErrDown, BsXSecPPXErrUp, BsXSecPPYSystDown,BsXSecPPYSystUp);
   	TGraphAsymmErrors *BPPbPbCrossGraphSyst    = new TGraphAsymmErrors(NBins, BsXsecPbPbX, BsXsecPbPbY, BsXSecPbPbXErrDown, BsXSecPbPbXErrUp, BsXSecPbPbYSystDown,BsXSecPbPbYSystUp);
 	BPPPCrossGraphSyst->SetFillColorAlpha(kBlue-9,0.5);
@@ -204,7 +204,7 @@ void BsRAA(){
 
 	//c->SaveAs("RAAPlots/BsPbPbPPCross.png");
 	c->SetLogy();
-	c->SaveAs("RAAPlots/BsPbPbPPCrossLog.png");
+	c->SaveAs("RAAPlots/BsPbPbPPCrossLog.pdf");
 
 
 	//2015 References
@@ -433,19 +433,17 @@ void BsRAA(){
 	TGraphAsymmErrors *BsRAAGraphSyst2015 = new TGraphAsymmErrors(NBins2015, BsRAAX2015, BsRAAY2015,BsRAAXErrDown2015, BsRAAXErrUp2015,BsRAAYSystDown2015,BsRAAYSystUp2015);
 
 	BsRAAGraph->SetLineColor(kBlue-9);
-//	BsRAAGraph->SetFillColorAlpha(kBlue-9,0.5);
 	BsRAAGraph->SetMarkerStyle(20);
 	BsRAAGraph->SetMarkerSize(1);
 	BsRAAGraph->SetMarkerColor(kBlue-9);
+	BsRAAGraphSyst->SetFillColorAlpha(kBlue-9,0.5);
+	BsRAAGraphSyst->SetLineColor(kBlue-9);
 	BsRAAGraph2015->SetLineColor(kOrange+1);
-//	BsRAAGraph->SetFillColorAlpha(kBlue-9,0.5);
+	BsRAAGraph2015->SetMarkerColor(kOrange+1);
 	BsRAAGraph2015->SetMarkerStyle(21);
 	BsRAAGraph2015->SetMarkerSize(1);
-	BsRAAGraph2015->SetMarkerColor(kOrange+1);
-	BsRAAGraphSyst->SetFillColorAlpha(kRed-9,0.5);
-	BsRAAGraphSyst->SetLineColor(kRed-9);
-	BsRAAGraphSyst2015->SetFillColorAlpha(kBlue-9,0.5);
-	BsRAAGraphSyst2015->SetLineColor(kBlue-9);
+	BsRAAGraphSyst2015->SetFillColorAlpha(kOrange+1,0.5);
+	BsRAAGraphSyst2015->SetLineColor(kOrange+1);
 
 	HisEmptyRAA->Draw();
 	BsRAAGraph->Draw("ep");
@@ -463,7 +461,7 @@ void BsRAA(){
 
 
 
-	TLegend* leg2 = new TLegend(0.75,0.80,0.9,0.85,NULL,"brNDC");
+	TLegend* leg2 = new TLegend(0.7,0.80,0.9,0.85,NULL,"brNDC");
 	leg2->SetBorderSize(0);
 	leg2->SetFillStyle(0);
 	leg2->AddEntry(BsRAAGraph,"2018 PbPb + 2017 pp","PL");
