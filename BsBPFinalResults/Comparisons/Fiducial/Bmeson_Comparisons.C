@@ -413,10 +413,10 @@ if(meson_n == 0){
 	MyPad1->cd();
 	TH2D * HisEmpty2;
 	if (meson_n == 0){
-		HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,500.0,2250000);
+		HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,500.0,2300000);
 		HisEmpty2->GetXaxis()->SetTitle("p_{T} [GeV/c]");}
 	else {	
-		HisEmpty2 = new TH2D("HisEmpty2","",100,7,50,100,500.0,2250000);
+		HisEmpty2 = new TH2D("HisEmpty2","",100,7,50,100,500.0,2300000);
 		HisEmpty2->GetXaxis()->SetTitle("p_{T} [GeV/c]");}
 	HisEmpty2->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
 	HisEmpty2->GetYaxis()->SetTitleSize(40);
@@ -934,6 +934,15 @@ if(meson_n==0){
   gRatioBs2015_high.SetMarkerColor(kOrange+1);
   gRatioBs2015_high.SetLineColor(kOrange+1);
   gRatioBs2015_high.SetMarkerStyle(20);
+
+
+  TLatex *lat = new TLatex();
+  lat->SetNDC();
+    lat->SetTextSize(0.042);  //Enlarge Labels
+    if (meson_ == 0) {
+    lat->DrawLatex(0.2,0.1,Form("B_{s}^{0} Global Uncertainty: #pm %.1f%%",7.7));}
+	 else {lat->DrawLatex(0.2,0.1 ,Form("B^{+} global Uncertainty: #pm %.1f%%",3.5));}
+
 
   gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
   gRatioBs_syst_low.SetFillColorAlpha(hcolor, halpha);

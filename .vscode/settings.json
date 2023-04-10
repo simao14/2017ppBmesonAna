@@ -89,6 +89,7 @@
         "BsNewFidNoScale.C": "cpp",
         "CalEffSystB.C": "cpp",
         "yield_cs.C": "cpp",
-        "CrossSectionAnaMult.C": "cpp"
+        "CrossSectionAnaMult.C": "cpp",
+        "bmesons_new.C": "cpp"
     }
 }
