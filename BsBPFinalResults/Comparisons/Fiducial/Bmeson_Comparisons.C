@@ -938,8 +938,8 @@ if(meson_n==0){
   TLatex *lat = new TLatex();
   lat->SetNDC();
     lat->SetTextSize(0.1); 
-    if (meson_n == 0) {lat->DrawLatex(0.2,0.35 ,Form("B^{+} global Uncertainty: #pm %.1f%%",3.5)) ;}
-	 else {lat->DrawLatex(0.2,0.35,Form("B_{s}^{0} Global Uncertainty: #pm %.1f%%",7.7)) ;}
+    if (meson_n == 0) {lat->DrawLatex(0.2,0.85 ,Form("B^{+} global Uncertainty: #pm %.1f%%",3.5)) ;}
+	 else {lat->DrawLatex(0.2,0.85,Form("B_{s}^{0} Global Uncertainty: #pm %.1f%%",7.7)) ;}
 
   gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
   gRatioBs_syst_low.SetFillColorAlpha(hcolor, halpha);
