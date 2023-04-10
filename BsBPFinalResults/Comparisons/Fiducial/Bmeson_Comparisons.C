@@ -587,6 +587,12 @@ double YErrHighTemp;
 	BPFONLL->Draw("5");
 	BFONLLLow->Draw("5");
 
+	  TLatex *lat = new TLatex();
+  lat->SetNDC();
+    lat->SetTextSize(0.1); 
+    if (meson_n == 0) {lat->DrawLatex(0.2,0.15 ,Form("B^{+} global Uncertainty: #pm %.1f%%",3.5)) ;}
+	 else {lat->DrawLatex(0.2,0.15,Form("B_{s}^{0} Global Uncertainty: #pm %.1f%%",7.7)) ;}
+
 	TLegend* leg3 = new TLegend(0.75,0.64,0.9,0.85,NULL,"brNDC");
 	leg3->SetBorderSize(0);
 	leg3->SetTextSize(0.025);     
@@ -935,11 +941,6 @@ if(meson_n==0){
   gRatioBs2015_high.SetLineColor(kOrange+1);
   gRatioBs2015_high.SetMarkerStyle(20);
 
-  TLatex *lat = new TLatex();
-  lat->SetNDC();
-    lat->SetTextSize(0.1); 
-    if (meson_n == 0) {lat->DrawLatex(0.2,1 ,Form("B^{+} global Uncertainty: #pm %.1f%%",3.5)) ;}
-	 else {lat->DrawLatex(0.2,1,Form("B_{s}^{0} Global Uncertainty: #pm %.1f%%",7.7)) ;}
 
   gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
   gRatioBs_syst_low.SetFillColorAlpha(hcolor, halpha);
