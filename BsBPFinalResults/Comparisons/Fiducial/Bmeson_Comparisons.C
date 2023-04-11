@@ -308,15 +308,15 @@ if(meson_n == 0){
 	BPPPCrossGraph2D->SetMarkerStyle(20);
 	BPPPCrossGraph2D->SetMarkerSize(1);
 	if (meson_n==0){
-		BPPPCrossGraph2D->SetLineColor(kGreen-9);
-		BPPPCrossGraph2D->SetMarkerColor(kGreen-9);
-		BPPPCrossGraph2DSyst->SetFillColorAlpha(kGreen-9,0.5);
-		BPPPCrossGraph2DSyst->SetLineColor(kGreen-9);
+		BPPPCrossGraph2D->SetLineColor(kGreen+2);
+		BPPPCrossGraph2D->SetMarkerColor(kGreen+2);
+		BPPPCrossGraph2DSyst->SetFillColorAlpha(kGreen-7,0.5);
+		BPPPCrossGraph2DSyst->SetLineColor(kGreen-7);
 	} else {
-		BPPPCrossGraph2D->SetLineColor(kBlue-9);
-		BPPPCrossGraph2D->SetMarkerColor(kBlue-9);
-		BPPPCrossGraph2DSyst->SetFillColorAlpha(kBlue-9,0.5);
-		BPPPCrossGraph2DSyst->SetLineColor(kBlue-9);
+		BPPPCrossGraph2D->SetLineColor(kBlue+2);
+		BPPPCrossGraph2D->SetMarkerColor(kBlue+2);
+		BPPPCrossGraph2DSyst->SetFillColorAlpha(kBlue-3,0.5);
+		BPPPCrossGraph2DSyst->SetLineColor(kBlue-3);
 
 	}
 	
@@ -483,19 +483,19 @@ if(meson_n == 0){
 	BPPPCrossGraph2015Syst->SetFillColorAlpha(kOrange+1, 0.5);
 
 	if (meson_n==0){
-		BPPPCrossGraph2DLow->SetLineColor(kGreen-9);
-		BPPPCrossGraph2DLow->SetMarkerColor(kGreen-9);
-		BPPPCrossGraph2DHigh->SetLineColor(kGreen-9);
-		BPPPCrossGraph2DHigh->SetMarkerColor(kGreen-9);
-		BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kGreen-9, 0.5);
-		BPPPCrossGraph2DScaledSyst->SetLineColor(kGreen-9);
+		BPPPCrossGraph2DLow->SetLineColor(kGreen+2);
+		BPPPCrossGraph2DLow->SetMarkerColor(kGreen+2);
+		BPPPCrossGraph2DHigh->SetLineColor(kGreen+2);
+		BPPPCrossGraph2DHigh->SetMarkerColor(kGreen+2);
+		BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kGreen-7, 0.5);
+		BPPPCrossGraph2DScaledSyst->SetLineColor(kGreen-7);
 	} else{
-		BPPPCrossGraph2DLow->SetLineColor(kBlue-9);
-		BPPPCrossGraph2DLow->SetMarkerColor(kBlue-9);
-		BPPPCrossGraph2DHigh->SetLineColor(kBlue-9);
-		BPPPCrossGraph2DHigh->SetMarkerColor(kBlue-9);
-		BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kBlue-9, 0.5);
-		BPPPCrossGraph2DScaledSyst->SetLineColor(kBlue-9);
+		BPPPCrossGraph2DLow->SetLineColor(kBlue+2);
+		BPPPCrossGraph2DLow->SetMarkerColor(kBlue+2);
+		BPPPCrossGraph2DHigh->SetLineColor(kBlue+2);
+		BPPPCrossGraph2DHigh->SetMarkerColor(kBlue+2);
+		BPPPCrossGraph2DScaledSyst->SetFillColorAlpha(kBlue-3, 0.5);
+		BPPPCrossGraph2DScaledSyst->SetLineColor(kBlue-3);
 	}
 
 
@@ -927,24 +927,19 @@ if(meson_n==0){
   TGraphAsymmErrors gRatioBs2015_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsStat2015 + NBinsLow2015, RatioBsStat2015 + NBinsLow2015);
   TGraphAsymmErrors gRatioBs2015_syst_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsSyst2015 + NBinsLow2015, RatioBsSyst2015 + NBinsLow2015);
 	
-  int hcolor = kBlue - 9;
-  double halpha = 0.5;
-  if (meson_n == 0) { hcolor = kGreen - 9;}
-
   gRatioBs_low.SetMarkerStyle(25);
-  gRatioBs_low.SetMarkerColor(hcolor);
-  gRatioBs_low.SetLineColor(hcolor);
+  gRatioBs_low.SetMarkerColor(kGreen +2);
+  gRatioBs_low.SetLineColor(kGreen +2);
   gRatioBs_high.SetMarkerStyle(21);
-  gRatioBs_high.SetMarkerColor(hcolor);
-  gRatioBs_high.SetLineColor(hcolor);
+  gRatioBs_high.SetMarkerColor(kGreen +2);
+  gRatioBs_high.SetLineColor(kGreen +2);
   gRatioBs2015_high.SetMarkerColor(kOrange+1);
   gRatioBs2015_high.SetLineColor(kOrange+1);
   gRatioBs2015_high.SetMarkerStyle(20);
 
-
   gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
-  gRatioBs_syst_low.SetFillColorAlpha(hcolor, halpha);
-  gRatioBs_syst_high.SetFillColorAlpha(hcolor, halpha);
+  gRatioBs_syst_low.SetFillColorAlpha(kGreen -7, 0.5);
+  gRatioBs_syst_high.SetFillColorAlpha(kGreen -7, 0.5);
   gRatioBs_Fon_low.SetLineColor(kRed-7); 
   gRatioBs_Fon_low.SetFillStyle(0);
   gRatioBs_Fon_high.SetLineColor(kRed+2);
