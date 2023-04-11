@@ -927,21 +927,27 @@ if(meson_n==0){
   TGraphAsymmErrors gRatioBs2015_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsStat2015 + NBinsLow2015, RatioBsStat2015 + NBinsLow2015);
   TGraphAsymmErrors gRatioBs2015_syst_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsSyst2015 + NBinsLow2015, RatioBsSyst2015 + NBinsLow2015);
 	
+	int color_mark =  kBlue + 2;
+	int color_syst = kBlue -3;
+if(meson_n==0){	
+color_mark = kGreen +2;
+color_syst = kGreen -7;
+}
+
+
   gRatioBs_low.SetMarkerStyle(25);
-  gRatioBs_low.SetMarkerColor(kGreen +2);
-  gRatioBs_low.SetLineColor(kGreen +2);
+  gRatioBs_low.SetMarkerColor(color_mark);
+  gRatioBs_low.SetLineColor(color_mark);
   gRatioBs_high.SetMarkerStyle(21);
-  gRatioBs_high.SetMarkerColor(kGreen +2);
-  gRatioBs_high.SetLineColor(kGreen +2);
-  gRatioBs2015_high.SetMarkerColor(kOrange+1);
-  gRatioBs2015_high.SetLineColor(kOrange+1);
+  gRatioBs_high.SetMarkerColor(color_mark);
+  gRatioBs_high.SetLineColor(color_mark);
+  gRatioBs2015_high.SetMarkerColor(kOrange+2);
+  gRatioBs2015_high.SetLineColor(kOrange+2);
   gRatioBs2015_high.SetMarkerStyle(20);
 
   gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
-  gRatioBs_syst_low.SetFillColorAlpha(kGreen -7, 0.5);
-  gRatioBs_syst_low.SetMarkerColor(kGreen -7);
-  gRatioBs_syst_high.SetFillColorAlpha(kGreen -7, 0.5);
-  gRatioBs_syst_high.SetMarkerColor(kGreen -7);
+  gRatioBs_syst_low.SetFillColorAlpha(color_syst, 0.5);
+  gRatioBs_syst_high.SetFillColorAlpha(color_syst, 0.5);
   gRatioBs_Fon_low.SetLineColor(kRed-7); 
   gRatioBs_Fon_low.SetFillStyle(0);
   gRatioBs_Fon_high.SetLineColor(kRed+2);
