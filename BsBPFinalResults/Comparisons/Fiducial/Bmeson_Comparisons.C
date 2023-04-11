@@ -939,7 +939,9 @@ if(meson_n==0){
 
   gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
   gRatioBs_syst_low.SetFillColorAlpha(kGreen -7, 0.5);
+  gRatioBs_syst_low.SetMarkerColor(kGreen -7);
   gRatioBs_syst_high.SetFillColorAlpha(kGreen -7, 0.5);
+  gRatioBs_syst_high.SetMarkerColor(kGreen -7);
   gRatioBs_Fon_low.SetLineColor(kRed-7); 
   gRatioBs_Fon_low.SetFillStyle(0);
   gRatioBs_Fon_high.SetLineColor(kRed+2);
