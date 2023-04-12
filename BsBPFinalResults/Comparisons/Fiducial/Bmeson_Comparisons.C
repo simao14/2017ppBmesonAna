@@ -9,6 +9,7 @@
 #include "TLegend.h"
 #include "scale.h"
 #include "../../../henri2022/parameter.h" 
+#include "CMS_lumi.C" 
 
 using namespace std;
 using std::cout;
@@ -413,10 +414,10 @@ if(meson_n == 0){
 	MyPad1->cd();
 	TH2D * HisEmpty2;
 	if (meson_n == 0){
-		HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,500.0,2300000);
+		HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,500.0,3000000);
 		HisEmpty2->GetXaxis()->SetTitle("p_{T} [GeV/c]");}
 	else {	
-		HisEmpty2 = new TH2D("HisEmpty2","",100,7,50,100,500.0,2300000);
+		HisEmpty2 = new TH2D("HisEmpty2","",100,7,50,100,500.0,3000000);
 		HisEmpty2->GetXaxis()->SetTitle("p_{T} [GeV/c]");}
 	HisEmpty2->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
 	HisEmpty2->GetYaxis()->SetTitleSize(40);
@@ -598,12 +599,12 @@ double YErrHighTemp;
 	leg3->SetTextSize(0.025);     
 	leg3->SetTextFont(42);
 	leg3->SetFillStyle(0);
-	leg3->AddEntry(BPPPCrossGraph2DLow,"2017 pp (|y| < 1.5)","PL");	
+	leg3->AddEntry(BPPPCrossGraph2DLow,"2017 pp (|y| > 1.5)","PL");	
 	leg3->AddEntry(BPPPCrossGraph2DHigh,"2017 pp","PL");	
-	leg3->AddEntry(BPPPCrossGraph2015,"2015 ","PL");
+	leg3->AddEntry(BPPPCrossGraph2015,"2015 pp","PL");
 	//leg3->AddEntry(BPPPCrossGraph2015Low,"2015 pp 5.02 TeV(scaled)","PL");
 	leg3->AddEntry(BPFONLL,"FONLL","f");
-	leg3->AddEntry(BFONLLLow,"FONLL (|y| < 1.5)","f");
+	leg3->AddEntry(BFONLLLow,"FONLL (|y| > 1.5)","f");
 	leg3->Draw("same");
 	MyPad1->Update();
 
@@ -979,9 +980,10 @@ color_syst = kGreen -7;
 	//leg4->Draw("same");
 	MyPad2->Update();
 
-	//cRatio->SaveAs(Form("Plots/%s/%sCrossComp.png", B_m.Data(), B_m.Data()));
 	MyPad1->SetLogy();
+	  CMS_lumi(MyPad1,19011,0);
 	MyPad1->Update();
+  
 	cRatio->SaveAs(Form("Plots/%sCrossCompLog.pdf", B_m.Data()));
 	//FONLL
 

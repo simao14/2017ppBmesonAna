@@ -287,40 +287,31 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	double muidtnp1systdown;
 	double muidtnp1statup;
 	double muidtnp1statdown;
-
 	double tnptotal1;
 	double tnptotal1up;
 	double tnptotal1down;
-
 	double tnptotal1systup;
 	double tnptotal1systdown;
 	double tnptotal1statup;
 	double tnptotal1statdown;
-
 	double trgtnp2;
 	double trktnp2;
 	double muidtnp2;
-
 	double trgtnp2systup;
 	double trgtnp2systdown;
 	double trgtnp2statup;
 	double trgtnp2statdown;
-
-
 	double trktnp2systup;
 	double trktnp2systdown;
 	double trktnp2statup;
 	double trktnp2statdown;
-
 	double muidtnp2systup;
 	double muidtnp2systdown;
 	double muidtnp2statup;
 	double muidtnp2statdown;
-
 	double tnptotal2;
 	double tnptotal2up;
 	double tnptotal2down;
-
 	double tnptotal2systup;
 	double tnptotal2systdown;
 	double tnptotal2statup;
