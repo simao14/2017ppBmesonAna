@@ -36,13 +36,10 @@ bpEff () {
     echo "Takes BPw.root as input"
     ls -l BDTWeights/BPw.root
 
-    #root -b -l -q MCEff.C'(1,0)' > eff.log # >> bpsyst2d.root
+    #root -b -l -q MCEff.C'(1,0)' > eff.log                                          
     wait
+    root -b -l -q CrossSectionAnaMult.C'(1,2,0)'  #(TnPon =1 noTnP=0 , pT=2,y=0,mult=1 , data =0 mc = 1)   
     popd
-    root -b -l -q CrossSectionAna.C'(1,0)'                              #UNIFY
-
-    #root -b -l -q CrossSectionAnaMult.C'(1,0)'
-    # >> BP/EffAna/FinalFiles/BPPPCorrYieldPT.root
 }
 bsEff () {
     pushd Bs/EffAna
@@ -50,13 +47,10 @@ bsEff () {
     ls -l BDTWeights/Bsw.root
 
     #root -b -l -q MCEff.C'(1,0)' > eff.log
+    root -b -l -q CrossSectionAna.C'(1)'
     wait
-    popd
-    root -b -l -q CrossSectionAna.C'(1,1)'                               #UNIFY
-
-    #root -b -l -q CrossSectionAnaMult.C'(1,0)'
-    # >> Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root
-    
+    #root -b -l -q CrossSectionAnaMult.C'(1,2,0)'  #(TnPon =1 noTnP=0 , pT=2,y=0,mult=1 , data =0 mc = 1)              
+    popd  
 }
 
 syst () {
@@ -68,30 +62,25 @@ syst () {
     popd
 }
 
-################# NOT SURE WHAT THIS IS FOR
 ## MC Stat Systematics
-# takes 2D map eff as input
 bpStat () {
     pushd MCStatSyst/BP
     root -b -l -q Generate2DMaps.C
-    # more than 2hr
     root -b -l -q MCStatCal.C > mcstat.log
     popd
 }
 bsStat() {
     cd MCStatSyst/Bs
     root -b -l -q Generate2DMaps.C
-    # ~1hr
     root -b -l -q MCStatCal.C > mcstat.log
     cd ../..
 }
-################# NOT SURE WHAT THIS IS FOR
 
 comp () {
     # get pdf variation errors
     python master.py
     # Get pre-selection error
-    python comppre.py                     #<-----------------------NOT RUNNING (FILE FROM CODE MISSING)
+    python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
 
     cd BsBPFinalResults/BsBPRatio/
     root -b -l -q PlotBsBPRatio.C'(1)'
@@ -100,9 +89,8 @@ comp () {
     cd Comparisons/Fiducial/
     root -b -l -q Bmeson_Comparisons.C'(0)'
     root -b -l -q Bmeson_Comparisons.C'(1)'
-    #root -b -l -q BPNewFidNoScale.C                       #Unify w priotiy
-    #root -b -l -q BsNewFidNoScale.C                       #Unify w priotiy (Bs results are visualy ugly)
-    python syst_table.py                  #<-----------------------NOT RUNNING
+
+    python syst_table.py                  #<----------------------- NOT RUNNING
     cd ../..
 
     cd RAA/
@@ -123,7 +111,7 @@ paperPlots () {
 #UNCOMMENT ACORDINGLY
 #(Run by THIS ORDER!)
 
-#makeTnP
+#maketnp
 #bptshape
 
 #yield

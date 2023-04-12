@@ -162,7 +162,7 @@ void BsRAA(){
 	c->SetLeftMargin(0.16);
 
 	TH2D * HisEmpty = new TH2D("HisEmpty","",100,7,50,100,200.0,350000);
-	HisEmpty->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	HisEmpty->GetXaxis()->SetTitle("B^{0}_{s} p_{T} [GeV/c]");
 	HisEmpty->GetYaxis()->SetTitle("Cross Section (Or Production Yield)");
 	HisEmpty->GetXaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->CenterTitle();
@@ -177,11 +177,11 @@ void BsRAA(){
 	BPPbPbCrossGraph->SetMarkerStyle(20);
 	BPPbPbCrossGraph->SetMarkerSize(1);
 	BPPbPbCrossGraph->SetMarkerColor(kGreen+2);
-	BsPPCrossGraph->SetLineColor(kBlue+2);
+	BsPPCrossGraph->SetLineColor(kBlue-9);
 //	BsPPCrossGraph->SetFillColorAlpha(kBlue-9,0.5);
 	BsPPCrossGraph->SetMarkerStyle(21);
 	BsPPCrossGraph->SetMarkerSize(1);
-	BsPPCrossGraph->SetMarkerColor(kBlue+2);
+	BsPPCrossGraph->SetMarkerColor(kBlue-9);
 	TGraphAsymmErrors *BPPPCrossGraphSyst  = new TGraphAsymmErrors(NBins, BsXsecPPX, BsXsecPPY, BsXSecPPXErrDown, BsXSecPPXErrUp, BsXSecPPYSystDown,BsXSecPPYSystUp);
   	TGraphAsymmErrors *BPPbPbCrossGraphSyst    = new TGraphAsymmErrors(NBins, BsXsecPbPbX, BsXsecPbPbY, BsXSecPbPbXErrDown, BsXSecPbPbXErrUp, BsXSecPbPbYSystDown,BsXSecPbPbYSystUp);
 	BPPPCrossGraphSyst->SetFillColorAlpha(kBlue-9,0.5);
@@ -194,25 +194,22 @@ void BsRAA(){
 	BPPPCrossGraphSyst->Draw("5same");	
 	BPPbPbCrossGraphSyst->Draw("5same");	
 
-	TLegend* leg = new TLegend(0.45,0.65,0.75,0.85,NULL,"brNDC");
+	TLegend* leg = new TLegend(0.75,0.80,0.9,0.85,NULL,"brNDC");
 	leg->SetBorderSize(0);
-	leg->SetTextSize(0.040);
-	leg->SetTextFont(42);
 	leg->SetFillStyle(0);
-	leg->SetLineWidth(3);
-	leg->AddEntry(BPPbPbCrossGraph,"2018 PbPb 5.02 TeV","PL");
-	leg->AddEntry(BsPPCrossGraph,"2017 pp 5.02 TeV","PL");
+	leg->AddEntry(BPPbPbCrossGraph,"2018 PbPb","PL");
+	leg->AddEntry(BsPPCrossGraph,"2017 pp","PL");
 	leg->Draw("same");
 
 
-	c->SaveAs("RAAPlots/Bs/BsPbPbPPCross.png");
+	//c->SaveAs("RAAPlots/BsPbPbPPCross.png");
 	c->SetLogy();
-	c->SaveAs("RAAPlots/Bs/BsPbPbPPCrossLog.png");
+	c->SaveAs("RAAPlots/BsPbPbPPCrossLog.pdf");
 
 
 	//2015 References
 	TH2D * HisEmpty2 = new TH2D("HisEmpty2","",100,5,60,100,100.0,3000000);
-	HisEmpty2->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
+	HisEmpty2->GetXaxis()->SetTitle("B^{0}_{s} p_{T} [GeV/c]");
 	HisEmpty2->GetYaxis()->SetTitle("Cross Section (Or Production Yield)");
 	HisEmpty2->GetXaxis()->CenterTitle();
 	HisEmpty2->GetYaxis()->CenterTitle();
@@ -239,10 +236,10 @@ void BsRAA(){
 	TFile * finFONLL = new TFile("../BsFONLL.root");
 	finFONLL->cd();
 	TGraphAsymmErrors *BPFONLL = (TGraphAsymmErrors*) finFONLL->Get("gaeSigmaBplus");
-	BPFONLL->SetLineColor(kRed+2);
+	BPFONLL->SetLineColor(kBlue-9);
 	BPFONLL->SetMarkerStyle(20);
 	BPFONLL->SetMarkerSize(1);
-	BPFONLL->SetMarkerColor(kRed+2);
+	BPFONLL->SetMarkerColor(kBlue-9);
 	BPFONLL->Draw("epSAME");
 
 	
@@ -260,10 +257,10 @@ void BsRAA(){
 
 
 */
-	c->SaveAs("RAAPlots/Bs/BsCrossComp.png");
+	//c->SaveAs("RAAPlots/Bs/BsCrossComp.png");
 	c->SetLogy();
 
-	c->SaveAs("RAAPlots/Bs/BsCrossCompLog.png");
+	c->SaveAs("RAAPlots/BsCrossCompLog.pdf");
 
 /*
 
@@ -272,7 +269,7 @@ void BsRAA(){
 	//
 	//
 	TH2D * HisEmpty6 = new TH2D("HisEmpty6","",100,5,60,100,100.0,8000000);
-	HisEmpty6->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+	HisEmpty6->GetXaxis()->SetTitle("B^{+} p_{T} [GeV/c]");
 	HisEmpty6->GetYaxis()->SetTitle("Cross Section (Or Production Yield)");
 	HisEmpty6->GetXaxis()->CenterTitle();
 	HisEmpty6->GetYaxis()->CenterTitle();
@@ -359,9 +356,9 @@ void BsRAA(){
 
 
 
-	TH2D * HisEmptyRAA = new TH2D("HisEmptyRAA","",100,7,50,100,0,5.5);
-	HisEmptyRAA->GetXaxis()->SetTitle("B^{0}_{s} p_{T} (GeV/c)");
-	HisEmptyRAA->GetYaxis()->SetTitle("RAA = #frac{1}{TAA} #frac{dN_{PbPb}/dp_{T}}{d #sigma_{pp}/d p_{T}}");
+	TH2D * HisEmptyRAA = new TH2D("HisEmptyRAA","",100,7,50,100,0,2.2);
+	HisEmptyRAA->GetXaxis()->SetTitle("B^{0}_{s} p_{T} [GeV/c]");
+	HisEmptyRAA->GetYaxis()->SetTitle("RAA = #frac{1}{T_{AA}} #frac{dN_{PbPb}/dp_{T}}{d #sigma_{pp}/d p_{T}}");
 	HisEmptyRAA->GetXaxis()->CenterTitle();
 	HisEmptyRAA->GetYaxis()->CenterTitle();
 	HisEmptyRAA->GetYaxis()->SetTitleOffset(1.8);
@@ -435,63 +432,50 @@ void BsRAA(){
 	TGraphAsymmErrors *BsRAAGraph2015 = new TGraphAsymmErrors(NBins2015, BsRAAX2015, BsRAAY2015,BsRAAXErrDown2015, BsRAAXErrUp2015,BsRAAYErrDown2015,BsRAAYErrUp2015);
 	TGraphAsymmErrors *BsRAAGraphSyst2015 = new TGraphAsymmErrors(NBins2015, BsRAAX2015, BsRAAY2015,BsRAAXErrDown2015, BsRAAXErrUp2015,BsRAAYSystDown2015,BsRAAYSystUp2015);
 
-	BsRAAGraph->SetLineColor(kRed+2);
-//	BsRAAGraph->SetFillColorAlpha(kRed+2,0.5);
+	BsRAAGraph->SetLineColor(kBlue-9);
 	BsRAAGraph->SetMarkerStyle(20);
 	BsRAAGraph->SetMarkerSize(1);
-	BsRAAGraph->SetMarkerColor(kRed+2);
-	BsRAAGraph2015->SetLineColor(kBlue+2);
-//	BsRAAGraph->SetFillColorAlpha(kRed+2,0.5);
+	BsRAAGraph->SetMarkerColor(kBlue-9);
+	BsRAAGraphSyst->SetFillColorAlpha(kBlue-9,0.5);
+	BsRAAGraphSyst->SetLineColor(kBlue-9);
+	BsRAAGraph2015->SetLineColor(kOrange+1);
+	BsRAAGraph2015->SetMarkerColor(kOrange+1);
 	BsRAAGraph2015->SetMarkerStyle(21);
 	BsRAAGraph2015->SetMarkerSize(1);
-	BsRAAGraph2015->SetMarkerColor(kBlue+2);
-	BsRAAGraphSyst->SetFillColorAlpha(kRed-9,0.5);
-	BsRAAGraphSyst->SetLineColor(kRed-9);
-	BsRAAGraphSyst2015->SetFillColorAlpha(kBlue-9,0.5);
-	BsRAAGraphSyst2015->SetLineColor(kBlue-9);
+	BsRAAGraphSyst2015->SetFillColorAlpha(kOrange+1,0.5);
+	BsRAAGraphSyst2015->SetLineColor(kOrange+1);
 
 	HisEmptyRAA->Draw();
 	BsRAAGraph->Draw("ep");
 	BsRAAGraphSyst->Draw("5same");
 	Unity->Draw("SAME");
-	c2->SaveAs("RAAPlots/Bs/BsRAA.png");
-	c2->SaveAs("RAAPlots/Bs/BsRAA.pdf");
+	c2->SaveAs("RAAPlots/BsRAA.pdf");
 
 	HisEmptyRAA->Draw();
-	BsRAAGraph->Draw("ep");
-	BsRAAGraph2015->Draw("epSAME");
-	BsRAAGraph2015->Draw("epSAME");
-	BsRAAGraphSyst->Draw("5same");
+
+	//BsRAAGraph2015->Draw("epSAME");
 	BsRAAGraphSyst2015->Draw("5same");
+	BsRAAGraph2015->Draw("epSAME");
+	BsRAAGraphSyst->Draw("5same");
+	BsRAAGraph->Draw("ep");
+
 	Unity->Draw("SAME");
 
 
 
-	TLegend* leg2 = new TLegend(0.30,0.70,0.60,0.90,NULL,"brNDC");
+	TLegend* leg2 = new TLegend(0.65,0.80,0.9,0.85,NULL,"brNDC");
 	leg2->SetBorderSize(0);
-	leg2->SetTextSize(0.040);
-	leg2->SetTextFont(42);
 	leg2->SetFillStyle(0);
-	leg2->SetLineWidth(3);
 	leg2->AddEntry(BsRAAGraph,"2018 PbPb + 2017 pp","PL");
 	leg2->AddEntry(BsRAAGraph2015,"2015 PbPb + 2015 pp","PL");
 	leg2->Draw("same");
 
-
-
-
-
-
-	c2->SaveAs("RAAPlots/Bs/BsRAAComparison.png");
-	c2->SaveAs("RAAPlots/Bs/BsRAAComparison.pdf");
+	c2->SaveAs("RAAPlots/BsRAAComparison.pdf");
 
 
 	TFile * fout = new TFile("OutFile/BsRAA.root","RECREATE");
-
 	fout->cd();
-
 	BsRAAGraph->Write();
-
 	fout->Close();
 
 

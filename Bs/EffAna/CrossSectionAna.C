@@ -582,7 +582,7 @@ void CrossSectionAna(int DoTnP){
 	//return;
 
 	hInvEff->SetMaximum(NewEff[0]*1.5);
-	TCanvas *c = new TCanvas("c","c",600,600);
+	TCanvas *c = new TCanvas("c","c",700,700);
 
 	c->cd();
 
@@ -608,15 +608,16 @@ void CrossSectionAna(int DoTnP){
 	//c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
 	c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.pdf",NBins));
 
+	invAcc2D->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	invAcc2D->GetYaxis()->SetTitle("|y|");
+	invAcc2D->Draw("pcolz");
+	c->SaveAs("EffFinal/totaleff_2Dmap_Bs.pdf");
 
 	/*
-
 	   hInvEff->SetMarkerColor(2);
 	   hInvEff->SetLineColor(2);
 	   hInvEffSyst->SetMarkerColor(3);
 	   hInvEffSyst->SetLineColor(3);
-
-
 
 	   TLegend *leg = new TLegend(0.19,0.60,0.39,0.87,NULL,"brNDC");
 	   leg->SetBorderSize(0);
