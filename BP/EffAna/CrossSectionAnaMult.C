@@ -66,11 +66,11 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 		file << labels[i-1] << " & ";
 		file_check << labels[i-1] << " & ";
 		for(int c=1; c<n_col-1; c++){
-			file << /*std::setprecision(3)<<*/  numbers[i-1][c-1]<< " \\% & ";
-			file_check << /*std::setprecision(3)<<*/  numbers[i-1][c-1]<< " \\% & ";
+			file << std::setprecision(3)<<  numbers[i-1][c-1]<< " & ";
+			file_check << std::setprecision(3)<<  numbers[i-1][c-1]<< " & ";
 									}
-			file << /*std::setprecision(3)<<*/  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl;
-			file_check << /*std::setprecision(3)<<*/  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl; 
+			file << std::setprecision(3)<<  numbers[i-1][n_col-2]<< "  \\\\" << std::endl;
+			file_check << std::setprecision(3)<<  numbers[i-1][n_col-2]<< " \\\\" << std::endl; 
 	}
 	
 	file << "\\bottomrule" << std::endl;
@@ -98,6 +98,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	gSystem->mkdir("EffFinal" ,true);
 	gSystem->mkdir("FinalFiles" ,true);
+	gSystem->mkdir("Trash" ,true);
 
 	int NBins;
 	//const int NBins = 6;
@@ -333,25 +334,31 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	//Add 2D eff calculations
 	
-	TH2D * invEff2D = (TH2D *) fin1DEff->Get("invEff2D");
-	TH2D * invEffTrkTight = (TH2D *) fin1DEff->Get("invEffTrkTight");
-	TH2D * invEffTrkLoose = (TH2D *) fin1DEff->Get("invEffTrkLoose");
+	TH2D * invEff2D;
+	invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
+	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
+	TH2D * DrawinvEff2DY= (TH2D *) fin1DEff->Get("invEff2DY");
 
-	Float_t EffInvTrkTight;
-  	Float_t EffInvTrkLoose;
+	/*
+	if (whichvar==3){invEff2D= (TH2D *) fin1DEff->Get("invEff2D");}
+	else {invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");}
+	*/
+
 	int XBin;
 	int YBin;
+	double ymax;
+	
 	if (usemc==0){
 		for( int i = 0; i < NEvents; i++){
 
 			EffInfoTree->GetEntry(i);
-			if (whichvar==0){var=ByNew[0]; trackSelection=1;}
-			if (whichvar==1){var=nMult; trackSelection=1;}
-			if (whichvar==2){var=BptNew[0];}
+			if (whichvar==0){var=ByNew[0]; trackSelection=1; ymax=1.5;}
+			if (whichvar==1){var=nMult; trackSelection=1; ymax=1.5;}
+			if (whichvar==2){var=BptNew[0]; ymax=1.5;}
 			int j=0;
 				for(int k = 0; k < NBins; k++){
 
-					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
+					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
 					{
 
 						
@@ -389,11 +396,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 			EffInfoTree->GetEntry(i);
 			root->GetEntry(i);
 			for (int j = 0 ; j< BsizeNew ;j++){
-				if (whichvar==0){var=ByNew[j];}
-				if (whichvar==1){var=nMult;}
-				if (whichvar==2){var=BptNew[j];}
+				if (whichvar==0){var=ByNew[j]; ymax=1.5;}
+				if (whichvar==1){var=nMult; ymax=1.5;}
+				if (whichvar==2){var=BptNew[j]; ymax=1.5;}
 				for(int k = 0; k < NBins; k++){
-					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5 )||(BptNew[j] > 10)))
+					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
 					{
 						XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 						YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
@@ -431,7 +438,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	hInvEff->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hInvEff->GetYaxis()->SetTitle("<1/(Eff * Acc)>");
+	hInvEff->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon >");
 	hInvEff->GetYaxis()->SetTitleOffset(1.4);
 	hInvEff->GetXaxis()->CenterTitle();
 	hInvEff->GetYaxis()->CenterTitle();
@@ -445,7 +452,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,ptBins);
 
 	hInvEffSyst->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hInvEffSyst->GetYaxis()->SetTitle("<1/(Eff * Acc)> - BDT Data-MC Weighted");
+	hInvEffSyst->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon > - BDT Data-MC Weighted");
 	hInvEffSyst->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffSyst->GetXaxis()->CenterTitle();
 	hInvEffSyst->GetYaxis()->CenterTitle();
@@ -459,7 +466,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	hEff->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hEff->GetYaxis()->SetTitle("<(Eff * Acc)>");
+	hEff->GetYaxis()->SetTitle("< #alpha #times #epsilon >");
 	hEff->GetYaxis()->SetTitleOffset(1.4);
 	hEff->GetXaxis()->CenterTitle();
 	hEff->GetYaxis()->CenterTitle();
@@ -473,7 +480,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	hEffInv->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hEffInv->GetYaxis()->SetTitle("<(Eff * Acc)> 2D Inv");
+	hEffInv->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon >^{-1}");
 	hEffInv->GetYaxis()->SetTitleOffset(1.4);
 	hEffInv->GetXaxis()->CenterTitle();
 	hEffInv->GetYaxis()->CenterTitle();
@@ -488,7 +495,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	hInvEffUp->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hInvEffUp->GetYaxis()->SetTitle("<1./(Eff * Acc)>");
+	hInvEffUp->GetYaxis()->SetTitle("<1./ #alpha #times #epsilon >");
 	hInvEffUp->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffUp->GetXaxis()->CenterTitle();
 	hInvEffUp->GetYaxis()->CenterTitle();
@@ -503,7 +510,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	hInvEffDown->GetXaxis()->SetTitle(Form("B^{+} %s (GeV/c)",var_m.Data()));
-	hInvEffDown->GetYaxis()->SetTitle("<1/(Eff * Acc)>");
+	hInvEffDown->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon >");
 	hInvEffDown->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffDown->GetXaxis()->CenterTitle();
 	hInvEffDown->GetYaxis()->CenterTitle();
@@ -672,12 +679,18 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	TH1D * Eff1DHisvar;
 	if (whichvar==0){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid10");
 	    }
 	if (whichvar==1){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid10");
 		}
 	if (whichvar==2){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid10");
 	}
 
 
@@ -724,16 +737,16 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
   	
 	gSystem->mkdir("EffFinal",true);
 	//c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.png",NBins));
-	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s.pdf",NBins,var_m.Data()));}
+	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 	hEff->Draw("ep");
 
 	//c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
-	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s.pdf",NBins,var_m.Data()));}
+	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 	Eff1DHisvar->Draw("ep");
 
-	if (usemc==0){c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));}
+	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEff1D_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 
 	TH2D * invAcc2D=(TH2D *) fin1DEff->Get("invAcc2D");
@@ -743,13 +756,27 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	invAcc2D->Draw("pcolz");
 
 	if (usemc==0){c->SaveAs("EffFinal/acc_2Dmap.pdf");}
-	else {c->SaveAs("EffFinal/acc_2Dmap.pdf");}
+	else {c->SaveAs("EffFinal/acc_2Dmap_MC.pdf");}
 
-	invEff2D->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	invEff2D->GetYaxis()->SetTitle("|y|");
-	invEff2D->Draw("pcolz");
+
+	DrawinvEff2D->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	DrawinvEff2D->GetYaxis()->SetTitle("|y|");
+	DrawinvEff2D->GetZaxis()->SetLabelSize(0.02);
+
+	DrawinvEff2D->Draw("pcolz");
+
 	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap_BP.pdf");}
 	else {c->SaveAs(        "EffFinal/totaleff_2Dmap_BP_MC.pdf");}
+
+	DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	DrawinvEff2DY->GetYaxis()->SetTitle("|y|");
+	DrawinvEff2DY->GetZaxis()->SetLabelSize(0.02);
+	c->SetLogz();
+	DrawinvEff2DY->Draw("pcolz");
+
+	if (usemc==0){c->SaveAs("EffFinal/totaleff_Fid_2Dmap_BP.pdf");}
+	else {c->SaveAs(        "EffFinal/totaleff_Fid_2Dmap_BP_MC.pdf");}
+
 
 	hEffInv->SetMarkerColor(kRed+1);
 	hEffInv->SetLineColor(kRed+1);
@@ -779,34 +806,52 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	double d4c;
 	std::vector<double> cv;
 	std::vector<double> cvreal;
+	std::vector<double> eff_val1d;
+	std::vector<double> eff_val2d;
+	std::vector<double> eff_val2dinv;
 	std::vector<std::vector<double>> comparison_values;
+	std::vector<std::vector<double>> eff_val;
 	std::vector<std::string> labels = {"2D", "2D Inv."};
+	std::vector<std::string> labelseff = {"1D","2D", "2D Inv."};
 	std::vector<std::string> col_name;
+	std::vector<std::string> col_name_eff;
 	string name;
 	TString whichvarname;
 	col_name.push_back("Relative error 1D vs:");
+	col_name_eff.push_back("Eff values");
 	if(whichvar==2){name="$<p_T<$"; whichvarname="pt";} else if(whichvar==0){name="$<y<$";whichvarname="y";} else if(whichvar==1){name="$<nTrks<$";whichvarname="nMult";}
 	for(int i=0;i<NBins;i++){
 		std::ostringstream clabel;
 		clabel<<ptBins[i]<<name<<ptBins[i+1];
 		std::string label1 = clabel.str();
 		col_name.push_back(label1);
+		col_name_eff.push_back(label1);
 		tusk=abs(1/NewEff[i]-Eff1D[i])/Eff1D[i]*100;
 		d4c=abs(NewEffReal[i]-Eff1D[i])/Eff1D[i]*100;
 		cout<<"2D:"<<d4c<<endl;
 		cout<<"2D Inv:"<<tusk<<endl;
 		cv.push_back(tusk);
 		cvreal.push_back(d4c);
+		eff_val1d.push_back(Eff1D[i]);
+		eff_val2d.push_back(NewEffReal[i]);
+		eff_val2dinv.push_back(1/NewEff[i]);
+		
 	}
 	comparison_values.push_back(cvreal);
 	comparison_values.push_back(cv);
+	eff_val.push_back(eff_val1d);
+	eff_val.push_back(eff_val2d);
+	eff_val.push_back(eff_val2dinv);
 
 	latex_table(Form("1D2Dcomparisons_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_values, "1D vs 2D efficiency comparisons");
-	std::vector<std::string> filetype ={"_check.aux", "_check.log", "_check.pdf",".tex","_check.tex"};
+	latex_table(Form("Effyields_%s",whichvarname.Data()), NBins+1,  4,  col_name_eff , labelseff , eff_val, "Eff Values per bin");
+	std::vector<std::string> filetype ={"_check.aux", "_check.log",".tex","_check.tex"};
 	for (int j=0;j<(int)(filetype.size());j++){
-				rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("EffFinal/1D2Dcomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+				rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/1D2Dcomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+				rename(("Effyields_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/Effyields_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 			}
-
+	rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffFinal/1D2Dcomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
+	rename(("Effyields_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffFinal/Effyields_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
 
 	foutCorr->cd();
