@@ -53,33 +53,6 @@ const std::array<double, nmBins_both_full + 1> nmbinsvec_full = {0,100};
 /* float BPXSecPbPbYErrUpRatio[NBins] = {0.278198,0.159,0.041,0.0654,0.0690334,0.104543,0.24575}; */
 /* float BPXSecPbPbYErrDownRatio[NBins] = {0.278198,0.145,0.0795,0.065,0.0690334,0.104543,0.24575}; */
 
-const unsigned nptBinsPbPb = 4;
-// const unsigned nptBinsPbPb = nptBins;
-float BPXsecPbPbY[nptBinsPbPb] = {311668, 270167, 64384.4, 7704};
-float BPXsecPbPbX[nptBinsPbPb] = {8.73,12.4,17.2,27.3};
-float BPXSecPbPbXErrUp[nptBinsPbPb] = {1.27,2.6,2.8,22.7};
-float BPXSecPbPbXErrDown[nptBinsPbPb] = {1.23,2.4,2.2,7.3};
-
-float BPXSecPbPbYErrUpRatio[nptBinsPbPb] =   {0.159, 0.041, 0.0654, 0.0691};
-float BPXSecPbPbYErrDownRatio[nptBinsPbPb] = {0.145, 0.0795, 0.065, 0.0526};
-float BPXSecPbPbYSystUpRatio[nptBinsPbPb]   = {0.1404, 0.1714, 0.0775, 0.0715};
-float BPXSecPbPbYSystDownRatio[nptBinsPbPb] = {0.1359, 0.1705, 0.0761, 0.0698};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -89,15 +62,30 @@ float BPXSecPbPbYSystDownRatio[nptBinsPbPb] = {0.1359, 0.1705, 0.0761, 0.0698};
 
 
     //TO BE USED IN Bmesons_Comparison.C 
+const unsigned nptBinsPbPb = 4;
+float abscissae[4] = {8.5, 12.5, 17.5, 35};
+float abscissae_x_y [4] = {1.5,2.5,2.5,15};
+float BPXSecPbPbXErrDown[nptBinsPbPb] = {1.23,2.4,2.2,7.3};
+
 	//(THESE ARE LEADLEAD INFO)
-	vector<float> vect_BPXsecPbPbY = {4.82132e+06/11.1,311668,270167,64384.4,208537/11.1,28700.6/11.1,7000.73/11.1};
-	vector<float> vect_BPXsecPbPbX = {6,8.73,12.4,17.2,25,40,55};
-	vector<float> vect_BPXSecPbPbXErrUp = {1,1.27,2.6,2.8,5,10,5};
-	vector<float> vect_BPXSecPbPbXErrDown = {1,1.23,2.4,2.2,5,10,5};
-	vector<float> vect_BPXSecPbPbYErrUpRatio = {0.278198,0.159,0.041,0.0654,0.0690334,0.104543,0.24575};
-	vector<float> vect_BPXSecPbPbYErrDownRatio = {0.278198,0.145,0.0795,0.065,0.0690334,0.104543,0.24575};
-	vector<float> vect_BPXSecPbPbYSystUpRatio = {0.3577,0.1404,0.1714,0.0775,0.0858,0.0715,0.1253};
-	vector<float> vect_BPXSecPbPbYSystDownRatio = {0.3210,0.1359,0.1705,0.0761,0.0843,0.0699,0.1220};
+//BP_PBPB
+float BPXsecPbPbY[nptBinsPbPb] = {311668, 270167, 64384.4, 7704};
+
+float BPXSecPbPbYErrUpRatio[nptBinsPbPb] =   {0.159, 0.041, 0.0654, 0.0691};
+float BPXSecPbPbYErrDownRatio[nptBinsPbPb] = {0.145, 0.0795, 0.065, 0.0526};
+
+float BPXSecPbPbYSystUpRatio[nptBinsPbPb]   = {0.1404, 0.1714, 0.0775, 0.0715};
+float BPXSecPbPbYSystDownRatio[nptBinsPbPb] = {0.1359, 0.1705, 0.0761, 0.0698};
+
+
+//Bs_PBPB
+float BsXsecPbPbY[nptBinsPbPb] = {160432,75523.7,25354.5,2272.18};	
+
+float BsXSecPbPbYErrUpPercent[nptBinsPbPb] = {0.513,0.224,0.216,0.216};
+float BsXSecPbPbYErrDownPercent[nptBinsPbPb] = {0.483,0.256,0.207,0.163};
+
+float BsXSecPbPbYSystUpPercent[nptBinsPbPb] = {0.4564,0.1482,0.1218,0.1647};
+float BsXSecPbPbYSystDownPercent[nptBinsPbPb] = {0.4564,0.1454,0.1210,0.1640};
 	//(THESE ARE LEADLEAD INFO)
 
 	//(THESE ARE 2015 Bs INFO)
