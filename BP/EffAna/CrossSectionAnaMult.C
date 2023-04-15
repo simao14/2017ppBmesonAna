@@ -526,17 +526,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 		NewEff[i] = SumCounts[i]/Counts[i];
 		NewEffErr[i] = TMath::Sqrt(SumCountsErr[i])/Counts[i];
-
-
 		NewEffUp[i] = SumCountsUp[i]/Counts[i];
 		NewEffErrUp[i] = TMath::Sqrt(SumCountsErrUp[i])/Counts[i];
-
-
-
 		NewEffDown[i] = SumCountsDown[i]/Counts[i];
 		NewEffErrDown[i] = TMath::Sqrt(SumCountsErrDown[i])/Counts[i];
-
-
 		NewEffReal[i] = SumCountsEff[i]/Counts[i];
 		NewEffRealErr[i] = TMath::Sqrt(SumCountsEffErr[i])/Counts[i];
 
@@ -649,8 +642,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	CorrDiffHisReal->GetYaxis()->SetTitleOffset(1.3);
 	CorrDiffHisReal->GetXaxis()->CenterTitle();
 	CorrDiffHisReal->GetYaxis()->CenterTitle();
-
-
 
 
 	for(int i = 0; i < NBins;i++){
