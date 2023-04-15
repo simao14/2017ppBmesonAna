@@ -759,14 +759,14 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap_BP.pdf");}
 	else {c->SaveAs(        "EffFinal/totaleff_2Dmap_BP_MC.pdf");}
 
-	DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	DrawinvEff2DY->GetYaxis()->SetTitle("|y|");
-	DrawinvEff2DY->GetZaxis()->SetLabelSize(0.02);
-	c->SetLogz();
-	DrawinvEff2DY->Draw("pcolz");
+	//DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	//DrawinvEff2DY->GetYaxis()->SetTitle("|y|");
+	//DrawinvEff2DY->GetZaxis()->SetLabelSize(0.02);
+	//c->SetLogz();
+	//DrawinvEff2DY->Draw("pcolz");
 
-	if (usemc==0){c->SaveAs("EffFinal/totaleff_Fid_2Dmap_BP.pdf");}
-	else {c->SaveAs(        "EffFinal/totaleff_Fid_2Dmap_BP_MC.pdf");}
+	//if (usemc==0){c->SaveAs("EffFinal/totaleff_Fid_2Dmap_BP.pdf");}
+	//else {c->SaveAs(        "EffFinal/totaleff_Fid_2Dmap_BP_MC.pdf");}
 
 
 	hEffInv->SetMarkerColor(kRed+1);
