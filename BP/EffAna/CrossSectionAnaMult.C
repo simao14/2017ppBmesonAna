@@ -669,18 +669,18 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	TH1D * Eff1DHisvar;
 	if (whichvar==0){
-		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
-		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid");
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid10");
 	    }
 	if (whichvar==1){
-		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
-		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid");
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid10");
 		}
 	if (whichvar==2){
-		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
-		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid");
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid10");
 	}
 
@@ -717,7 +717,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 		CorrDiffHisBin->SetBinError(i+1,CorrYieldDiffErr[i]);
 
 	}
-	
+	gSystem->mkdir("EffFinal",true);
 	hInvEff->SetMaximum(NewEff[0]*1.5);
 	TCanvas *c = new TCanvas("c","c",700,700);
 	c->cd();
@@ -726,13 +726,18 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	
   	//c->BuildLegend(0.6, 0.6, 0.9, 0.8);
   	
-	gSystem->mkdir("EffFinal",true);
-	//c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.png",NBins));
+	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEffInv_%dBins_%s.pdf",NBins,var_m.Data()));}
+	else {c->SaveAs(Form("EffFinal/ReAnaEffInv_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
+	hInvEff->Draw("ep");
+	
+  	
 	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
 	hEff->Draw("ep");
 
-	//c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
+	
 	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 	Eff1DHisvar->Draw("ep");
