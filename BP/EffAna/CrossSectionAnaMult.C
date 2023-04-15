@@ -335,7 +335,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	//Add 2D eff calculations
 	
 	TH2D * invEff2D;
+
+
 	invEff2D= (TH2D *) fin1DEff->Get("invEff2D");
+
 	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2D");
 	TH2D * DrawinvEff2DY= (TH2D *) fin1DEff->Get("invEff2DY");
 
@@ -396,9 +399,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 			EffInfoTree->GetEntry(i);
 			root->GetEntry(i);
 			for (int j = 0 ; j< BsizeNew ;j++){
-				if (whichvar==0){var=ByNew[j]; ymax=1.5;}
-				if (whichvar==1){var=nMult; ymax=1.5;}
-				if (whichvar==2){var=BptNew[j]; ymax=1.5;}
+				if (whichvar==0){var=ByNew[j]; ymax=-1;}
+				if (whichvar==1){var=nMult; ymax=-1;}
+				if (whichvar==2){var=BptNew[j]; ymax=-1;}
 				for(int k = 0; k < NBins; k++){
 					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
 					{
@@ -446,7 +449,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEff->SetLineColor(1);
 	hInvEff->SetMarkerStyle(20);
 
-	hInvEff->SetMinimum(0);
+	//hInvEff->SetMinimum(0);
 
 
 	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,ptBins);
@@ -460,7 +463,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEffSyst->SetLineColor(2);
 	hInvEffSyst->SetMarkerStyle(20);
 
-	hInvEffSyst->SetMinimum(0);
+	//hInvEffSyst->SetMinimum(0);
 
 	TH1D * hEff = new TH1D("hEff","",NBins,ptBins);
 
@@ -474,7 +477,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hEff->SetLineColor(1);
 	hEff->SetMarkerStyle(20);
 
-	hEff->SetMinimum(0);
+	//hEff->SetMinimum(0);
 
 	TH1D * hEffInv = new TH1D("hEffInv","",NBins,ptBins);
 
@@ -488,7 +491,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hEffInv->SetLineColor(1);
 	hEffInv->SetMarkerStyle(20);
 
-	hEffInv->SetMinimum(0);
+	//hEffInv->SetMinimum(0);
 
 
 	TH1D * hInvEffUp = new TH1D("hInvEffUp","",NBins,ptBins);
@@ -502,7 +505,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEffUp->SetMarkerColor(1);
 	hInvEffUp->SetLineColor(1);
 	hInvEffUp->SetMarkerStyle(20);
-	hInvEffUp->SetMinimum(0);
+	//hInvEffUp->SetMinimum(0);
 
 
 
@@ -517,7 +520,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEffDown->SetMarkerColor(1);
 	hInvEffDown->SetLineColor(1);
 	hInvEffDown->SetMarkerStyle(20);
-	hInvEffDown->SetMinimum(0);
+	//hInvEffDown->SetMinimum(0);
 
 
 
@@ -717,7 +720,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 		CorrDiffHisBin->SetBinError(i+1,CorrYieldDiffErr[i]);
 
 	}
-	
+	gSystem->mkdir("EffFinal",true);
 	hInvEff->SetMaximum(NewEff[0]*1.5);
 	TCanvas *c = new TCanvas("c","c",700,700);
 	c->cd();
@@ -726,13 +729,18 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	
   	//c->BuildLegend(0.6, 0.6, 0.9, 0.8);
   	
-	gSystem->mkdir("EffFinal",true);
-	//c->SaveAs(Form("EffFinal/ReAnaEff_%dBins.png",NBins));
+	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEffInv_%dBins_%s.pdf",NBins,var_m.Data()));}
+	else {c->SaveAs(Form("EffFinal/ReAnaEffInv_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
+	hInvEff->Draw("ep");
+	
+  	
 	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEff_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
+
 	hEff->Draw("ep");
 
-	//c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins.png",NBins));
+	
 	if (usemc==0) {c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s.pdf",NBins,var_m.Data()));}
 	else {c->SaveAs(Form("EffFinal/ReAnaEffReal_%dBins_%s_MC.pdf",NBins,var_m.Data()));}
 	Eff1DHisvar->Draw("ep");
@@ -759,14 +767,17 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap_BP.pdf");}
 	else {c->SaveAs(        "EffFinal/totaleff_2Dmap_BP_MC.pdf");}
 
-	//DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	//DrawinvEff2DY->GetYaxis()->SetTitle("|y|");
-	//DrawinvEff2DY->GetZaxis()->SetLabelSize(0.02);
-	//c->SetLogz();
-	//DrawinvEff2DY->Draw("pcolz");
 
-	//if (usemc==0){c->SaveAs("EffFinal/totaleff_Fid_2Dmap_BP.pdf");}
-	//else {c->SaveAs(        "EffFinal/totaleff_Fid_2Dmap_BP_MC.pdf");}
+/*
+	DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} [GeV/c]");
+	DrawinvEff2DY->GetYaxis()->SetTitle("|y|");
+	DrawinvEff2DY->GetZaxis()->SetLabelSize(0.02);
+	c->SetLogz();
+	DrawinvEff2DY->Draw("pcolz");
+
+	if (usemc==0){c->SaveAs("EffFinal/totaleff_Fid_2Dmap_BP.pdf");}
+	else {c->SaveAs(        "EffFinal/totaleff_Fid_2Dmap_BP_MC.pdf");}
+*/
 
 
 	hEffInv->SetMarkerColor(kRed+1);

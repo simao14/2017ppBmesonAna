@@ -1542,7 +1542,7 @@ void  MCEff(int DoTnP, int Rescale){
 	
 					Eff1DGENHisGpt->Fill(Gpt[j],EventWeight * BptWeight);
 					Eff1DGENMultHisGpt->Fill(nMult,EventWeight * BptWeight);
-				
+					
 					Eff1DGENMultHis->Fill(nMult,EventWeight);
 					Eff1DGENYHis->Fill(Gy[j],EventWeight);
 				
@@ -2689,7 +2689,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisYFid->Draw("ep");
 		c1DSave->SaveAs("Plot1DEfficiency/By/Sel1DHisFid.png");
 
-		Eff1DHisYFid->Draw("ep");
+		image.png->Draw("ep");
 		c1DSave->SaveAs("Plot1DEfficiency/By/Eff1DHisFid.png");
 
 		Acc1DHisYFid10->Draw("ep");
