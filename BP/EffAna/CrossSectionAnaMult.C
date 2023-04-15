@@ -335,8 +335,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	//Add 2D eff calculations
 	
 	TH2D * invEff2D;
-	invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
-	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
+	invEff2D= (TH2D *) fin1DEff->Get("invEff2D");
+	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2D");
 	TH2D * DrawinvEff2DY= (TH2D *) fin1DEff->Get("invEff2DY");
 
 	/*
