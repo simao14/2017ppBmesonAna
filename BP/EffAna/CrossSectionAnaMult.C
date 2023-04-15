@@ -335,7 +335,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	//Add 2D eff calculations
 	
 	TH2D * invEff2D;
-	invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
+
+
+	invEff2D= (TH2D *) fin1DEff->Get("invEff2D");
+
 	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2D");
 	TH2D * DrawinvEff2DY= (TH2D *) fin1DEff->Get("invEff2DY");
 
@@ -764,6 +767,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (usemc==0){c->SaveAs("EffFinal/totaleff_2Dmap_BP.pdf");}
 	else {c->SaveAs(        "EffFinal/totaleff_2Dmap_BP_MC.pdf");}
 
+
 /*
 	DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	DrawinvEff2DY->GetYaxis()->SetTitle("|y|");
@@ -774,6 +778,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (usemc==0){c->SaveAs("EffFinal/totaleff_Fid_2Dmap_BP.pdf");}
 	else {c->SaveAs(        "EffFinal/totaleff_Fid_2Dmap_BP_MC.pdf");}
 */
+
 
 	hEffInv->SetMarkerColor(kRed+1);
 	hEffInv->SetLineColor(kRed+1);
