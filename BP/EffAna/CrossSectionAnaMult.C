@@ -336,7 +336,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	
 	TH2D * invEff2D;
 	invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
-	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
+	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2D");
 	TH2D * DrawinvEff2DY= (TH2D *) fin1DEff->Get("invEff2DY");
 
 	/*
@@ -396,9 +396,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 			EffInfoTree->GetEntry(i);
 			root->GetEntry(i);
 			for (int j = 0 ; j< BsizeNew ;j++){
-				if (whichvar==0){var=ByNew[j]; ymax=1.5;}
-				if (whichvar==1){var=nMult; ymax=1.5;}
-				if (whichvar==2){var=BptNew[j]; ymax=1.5;}
+				if (whichvar==0){var=ByNew[j]; ymax=-1;}
+				if (whichvar==1){var=nMult; ymax=-1;}
+				if (whichvar==2){var=BptNew[j]; ymax=-1;}
 				for(int k = 0; k < NBins; k++){
 					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
 					{
@@ -446,7 +446,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEff->SetLineColor(1);
 	hInvEff->SetMarkerStyle(20);
 
-	hInvEff->SetMinimum(0);
+	//hInvEff->SetMinimum(0);
 
 
 	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,ptBins);
@@ -460,7 +460,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEffSyst->SetLineColor(2);
 	hInvEffSyst->SetMarkerStyle(20);
 
-	hInvEffSyst->SetMinimum(0);
+	//hInvEffSyst->SetMinimum(0);
 
 	TH1D * hEff = new TH1D("hEff","",NBins,ptBins);
 
@@ -474,7 +474,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hEff->SetLineColor(1);
 	hEff->SetMarkerStyle(20);
 
-	hEff->SetMinimum(0);
+	//hEff->SetMinimum(0);
 
 	TH1D * hEffInv = new TH1D("hEffInv","",NBins,ptBins);
 
@@ -488,7 +488,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hEffInv->SetLineColor(1);
 	hEffInv->SetMarkerStyle(20);
 
-	hEffInv->SetMinimum(0);
+	//hEffInv->SetMinimum(0);
 
 
 	TH1D * hInvEffUp = new TH1D("hInvEffUp","",NBins,ptBins);
@@ -502,7 +502,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEffUp->SetMarkerColor(1);
 	hInvEffUp->SetLineColor(1);
 	hInvEffUp->SetMarkerStyle(20);
-	hInvEffUp->SetMinimum(0);
+	//hInvEffUp->SetMinimum(0);
 
 
 
@@ -517,7 +517,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEffDown->SetMarkerColor(1);
 	hInvEffDown->SetLineColor(1);
 	hInvEffDown->SetMarkerStyle(20);
-	hInvEffDown->SetMinimum(0);
+	//hInvEffDown->SetMinimum(0);
 
 
 
@@ -678,18 +678,18 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	TH1D * Eff1DHisvar;
 	if (whichvar==0){
-		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
-		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid10");
 	    }
 	if (whichvar==1){
-		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
-		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid10");
 		}
 	if (whichvar==2){
-		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
-		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
+		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid10");
 	}
 

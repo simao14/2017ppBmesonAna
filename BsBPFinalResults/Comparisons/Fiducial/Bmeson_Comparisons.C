@@ -64,11 +64,6 @@ void Bmeson_Comparisons(int meson_n){
 	gSystem->mkdir("Plots/", true);
 	TString InfileB = Form("../../../%s/EffAna/FinalFiles/%sPPCorrYieldPT.root",B_m.Data(),B_m.Data());
 	TFile * FileB= new TFile(InfileB.Data());
-	TH1D * BCross = (TH1D *) FileB->Get("CorrDiffHisBin");
-	BCross->SetMarkerStyle(20);
-	BCross->SetMarkerSize(1);
-	BCross->SetMarkerColor(1);
-	BCross->SetLineColor(1);
 	
 	double ptBins[NBins+1];
 
