@@ -310,8 +310,8 @@ if (meson_n == 0){
   	cout << endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
 
 	for(int i=0;i<NBins;i++){		
-		cout << "BIN " <<              Form("[%.0f,%.0f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.0f #pm (SYSTup) %.0f #pm %.0f (STATdown) %.0f #pm (SYSTdown) %.0f ",BPXsecPPY2D[i], BPXSecPPY2DErrUp[i], BPXSecPPYSystUp[i], BPXSecPPY2DErrDown[i], BPXSecPPYSystDown[i]) << endl;
-		cout << "(normalized) BIN " << Form("[%.0f,%.0f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.1f #pm (SYSTup) %.1f #pm %.1f (STATdown) %.1f #pm (SYSTdown) %.1f ",BPXsecPPY2D[i], 100*BPXSecPPY2DErrUp[i]/BPXsecPPY2D[i], 100*BPXSecPPYSystUp[i]/BPXsecPPY2D[i], 100*BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i], 100*BPXSecPPYSystDown[i]/BPXsecPPY2D[i]) << endl;
+		cout << "BIN " <<              Form("[%.0f,%.0f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.0f #pm (SYSTup) %.0f #pm (STATdown) %.0f #pm (SYSTdown) %.0f ",BPXsecPPY2D[i], BPXSecPPY2DErrUp[i], BPXSecPPYSystUp[i], BPXSecPPY2DErrDown[i], BPXSecPPYSystDown[i]) << endl;
+		cout << "(normalized) BIN " << Form("[%.0f,%.0f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.1f #pm (SYSTup) %.1f #pm (STATdown) %.1f #pm (SYSTdown) %.1f ",BPXsecPPY2D[i], 100*BPXSecPPY2DErrUp[i]/BPXsecPPY2D[i], 100*BPXSecPPYSystUp[i]/BPXsecPPY2D[i], 100*BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i], 100*BPXSecPPYSystDown[i]/BPXsecPPY2D[i]) << endl;
 	}
  
  	cout<< endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
