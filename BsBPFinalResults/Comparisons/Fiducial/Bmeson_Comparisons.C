@@ -307,11 +307,11 @@ if (meson_n == 0){
 	TGraphAsymmErrors *BPRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BPXsecPPYHigh.data(), BPXsecPPXErrHigh.data(), BPXsecPPXErrHigh.data(), BPYSystDown_high.data(), BPYSystUp_high.data());                 											
   // separate plots for different fiducial regions
  
-  	cout<< endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
+  	cout << endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
 
 	for(int i=0;i<NBins;i++){		
-		cout "BIN " << Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%f #pm (STATup) %f #pm (SYSTup) %f #pm %f (STATdown) %f #pm (SYSTdown) %f ",BPXsecPPY2D[i],BPXSecPPY2DErrUp[i],BPXSecPPYSystUp[i],BPXSecPPY2DErrDown[i],BPXSecPPYSystDown[i]) << endl;
-		cout "(normalized) BIN " << Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%f #pm (STATup) %f #pm (SYSTup) %f #pm %f (STATdown) %f #pm (SYSTdown) %f ",BPXsecPPY2D[i],BPXSecPPY2DErrUp[i]/BPXsecPPY2D[i],BPXSecPPYSystUp[i]/BPXsecPPY2D[i],BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i],BPXSecPPYSystDown[i]/BPXsecPPY2D[i]) << endl;
+		cout << "BIN " << Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%f #pm (STATup) %.1f #pm (SYSTup) %.1f #pm %.1f (STATdown) %.1f #pm (SYSTdown) %.1f ",BPXsecPPY2D[i],BPXSecPPY2DErrUp[i],BPXSecPPYSystUp[i],BPXSecPPY2DErrDown[i],BPXSecPPYSystDown[i]) << endl;
+		cout << "(normalized) BIN " << Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%.1f #pm (STATup) %.1f #pm (SYSTup) %.1f #pm %.1f (STATdown) %.1f #pm (SYSTdown) %.1f ",BPXsecPPY2D[i],BPXSecPPY2DErrUp[i]/BPXsecPPY2D[i],BPXSecPPYSystUp[i]/BPXsecPPY2D[i],BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i],BPXSecPPYSystDown[i]/BPXsecPPY2D[i]) << endl;
 	}
  
  	cout<< endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
