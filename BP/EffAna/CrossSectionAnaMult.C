@@ -22,7 +22,7 @@ using std::cout;
 using std::endl;
 
 void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::string> col_name, std::vector<std::string> labels, 
-		std::vector<std::vector<double> > numbers, std::string caption){
+		std::vector<std::vector<double> > numbers , std::string caption, int useerr, std::vector<std::vector<double> > error ={{0}}){
 	
 	std::ofstream file_check;
 	std::ofstream file;
@@ -60,19 +60,33 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	
 	file << col_name[n_col-1] << " \\\\ \\midrule" << std::endl;
 	file_check << col_name[n_col-1] << " \\\\ \\midrule" << std::endl;
-	
-	for(int i=1; i<n_lin; i++)
-	{	
-		file << labels[i-1] << " & ";
-		file_check << labels[i-1] << " & ";
-		for(int c=1; c<n_col-1; c++){
-			file << std::setprecision(3)<<  numbers[i-1][c-1]<< " & ";
-			file_check << std::setprecision(3)<<  numbers[i-1][c-1]<< " & ";
-									}
-			file << std::setprecision(3)<<  numbers[i-1][n_col-2]<< "  \\\\" << std::endl;
-			file_check << std::setprecision(3)<<  numbers[i-1][n_col-2]<< " \\\\" << std::endl; 
+	if (useerr==0){
+		for(int i=1; i<n_lin; i++)
+		{	
+			file << labels[i-1] << " & ";
+			file_check << labels[i-1] << " & ";
+			for(int c=1; c<n_col-1; c++){
+				file << std::setprecision(3)<<  numbers[i-1][c-1]<< " \\% & ";
+				file_check << std::setprecision(3)<<  numbers[i-1][c-1]<< " \\% & ";
+										}
+				file << std::setprecision(3)<<  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl;
+				file_check << std::setprecision(3)<<  numbers[i-1][n_col-2]<< " \\% \\\\" << std::endl; 
+		}
 	}
-	
+	else {
+		for(int i=1; i<n_lin; i++)
+		{	
+			file << labels[i-1] << " & ";
+			file_check << labels[i-1] << " & ";
+			for(int c=1; c<n_col-1; c++){
+				file << std::setprecision(3)<<  numbers[i-1][c-1] << "$\\pm$" <<std::setprecision(1)<< error[i-1][c-1]<< " \\% & ";
+				file_check << std::setprecision(3)<<  numbers[i-1][c-1] << "$\\pm$" <<std::setprecision(1)<< error[i-1][c-1]<< " \\% & ";
+										}
+				file << std::setprecision(3)<<  numbers[i-1][n_col-2] << "$\\pm$" <<std::setprecision(1)<< error[i-1][n_col-2]<< " \\% \\\\" << std::endl;
+				file_check << std::setprecision(3)<<  numbers[i-1][n_col-2] << "$\\pm$" << std::setprecision(1)<<error[i-1][n_col-2]<< " \\% \\\\" << std::endl; 
+		}
+	}
+
 	file << "\\bottomrule" << std::endl;
 	file_check << "\\bottomrule" << std::endl;
 
@@ -364,11 +378,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 						
 						XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 						YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
-						BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
-						
-						BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
-						BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
 
+						BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
+						BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
+
+						BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
 						BEffErr[j] = BEffInvErr[j]/(BEffInv[j] * BEffInv[j]);
 
 						if(trackSelection>0 && BEffInv[j] > 0){
@@ -396,9 +410,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 			EffInfoTree->GetEntry(i);
 			root->GetEntry(i);
 			for (int j = 0 ; j< BsizeNew ;j++){
-				if (whichvar==0){var=ByNew[j]; ymax=-1;}
-				if (whichvar==1){var=nMult; ymax=-1;}
-				if (whichvar==2){var=BptNew[j]; ymax=-1;}
+				if (whichvar==0){var=ByNew[j]; ymax=1.5;}
+				if (whichvar==1){var=nMult; ymax=1.5;}
+				if (whichvar==2){var=BptNew[j]; ymax=1.5;}
 				for(int k = 0; k < NBins; k++){
 					if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - 5.27932) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
 					{
@@ -803,18 +817,25 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	double d4c;
 	std::vector<double> cv;
 	std::vector<double> cvreal;
+	std::vector<double> cvinv;
+	std::vector<double> cvrealinv;
 	std::vector<double> eff_val1d;
 	std::vector<double> eff_val2d;
 	std::vector<double> eff_val2dinv;
+	std::vector<double> eff_err1d;
+	std::vector<double> eff_err2d;
+	std::vector<double> eff_err2dinv;
 	std::vector<std::vector<double>> comparison_values;
+	std::vector<std::vector<double>> comparison_inv_values;
 	std::vector<std::vector<double>> eff_val;
+	std::vector<std::vector<double>> eff_err;
 	std::vector<std::string> labels = {"2D", "2D Inv."};
 	std::vector<std::string> labelseff = {"1D","2D", "2D Inv."};
 	std::vector<std::string> col_name;
 	std::vector<std::string> col_name_eff;
 	string name;
 	TString whichvarname;
-	col_name.push_back("Relative error 1D vs:");
+	col_name.push_back("Relative difference 1D vs:");
 	col_name_eff.push_back("Eff values");
 	if(whichvar==2){name="$<p_T<$"; whichvarname="pt";} else if(whichvar==0){name="$<y<$";whichvarname="y";} else if(whichvar==1){name="$<nTrks<$";whichvarname="nMult";}
 	for(int i=0;i<NBins;i++){
@@ -829,25 +850,42 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 		cout<<"2D Inv:"<<tusk<<endl;
 		cv.push_back(tusk);
 		cvreal.push_back(d4c);
+		cvinv.push_back(abs(NewEff[i]-1/Eff1D[i])*Eff1D[i]*100);
+		cvrealinv.push_back(abs(1/NewEffReal[i]-1/Eff1D[i])*Eff1D[i]*100);
 		eff_val1d.push_back(Eff1D[i]);
 		eff_val2d.push_back(NewEffReal[i]);
 		eff_val2dinv.push_back(1/NewEff[i]);
-		
+		eff_err1d.push_back(Eff1DErr[i]);
+		eff_err2d.push_back(NewEffRealErr[i]);
+		eff_err2dinv.push_back(NewEffErr[i]/(NewEff[i]*NewEff[i]));
 	}
+	
 	comparison_values.push_back(cvreal);
 	comparison_values.push_back(cv);
+	comparison_inv_values.push_back(cvrealinv);
+	comparison_inv_values.push_back(cvinv);
 	eff_val.push_back(eff_val1d);
 	eff_val.push_back(eff_val2d);
 	eff_val.push_back(eff_val2dinv);
+	eff_err.push_back(eff_err1d);
+	eff_err.push_back(eff_err2d);
+	eff_err.push_back(eff_err2dinv);
 
-	latex_table(Form("1D2Dcomparisons_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_values, "1D vs 2D efficiency comparisons");
-	latex_table(Form("Effyields_%s",whichvarname.Data()), NBins+1,  4,  col_name_eff , labelseff , eff_val, "Eff Values per bin");
+
+	latex_table(Form("1D2Dcomparisons_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_values, "1D vs 2D efficiency comparisons",0);
+	latex_table(Form("Effyields_%s",whichvarname.Data()), NBins+1,  4,  col_name_eff , labelseff , eff_val , "Eff Values per bin",1, eff_err);
+
+	latex_table(Form("1D2Dcomparisons_inv_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_inv_values, "1D vs 2D inverse efficiency comparisons",0);
+	//latex_table(Form("Effyields_%s",whichvarname.Data()), NBins+1,  4,  col_name_eff , labelseff , eff_val , "Eff Values per bin",1, eff_err);
+
 	std::vector<std::string> filetype ={"_check.aux", "_check.log",".tex","_check.tex"};
 	for (int j=0;j<(int)(filetype.size());j++){
 				rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/1D2Dcomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+				rename(("1D2Dcomparisons_inv_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/1D2Dcomparisons_inv_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 				rename(("Effyields_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/Effyields_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 			}
 	rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffFinal/1D2Dcomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
+	rename(("1D2Dcomparisons_inv_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffFinal/1D2Dcomparisons_inv_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 	rename(("Effyields_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffFinal/Effyields_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
 

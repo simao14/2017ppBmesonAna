@@ -117,16 +117,16 @@ paperPlots () {
 #yield
 #wait
 
-bpEff &
-bsEff &
-wait
-
-#syst
+#bpEff &
+#bsEff &
 #wait
 
-# bpStat&
-# bsStat&
-# wait
+syst
+wait
 
-#comp
-#paperPlots
+bpStat&
+bsStat&
+wait
+
+comp
+paperPlots
