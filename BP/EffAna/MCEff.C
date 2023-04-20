@@ -2361,6 +2361,10 @@ void  MCEff(int DoTnP, int Rescale){
 		invEff2D->Sumw2();
 		invEff2D->Divide(TnPWeightHis);
 
+		TH2D * invEff2DReal = (TH2D * ) TnPWeightHis->Clone("invEff2DReal");
+		invEff2DReal->Sumw2();
+		invEff2DReal->Divide(EvtWeightGenFidHis);
+
 		TH2D * invEff2DY = (TH2D * ) EvtWeightGenFidHis->Clone("invEff2DY");
 		invEff2DY->Sumw2();
 		invEff2DY->Divide(TnPWeightHis);
@@ -2445,6 +2449,7 @@ void  MCEff(int DoTnP, int Rescale){
 		invAcc2D->Write();
 		invEffonly2D->Write();
 		invEff2D->Write();
+		invEff2DReal->Write();
 		invEff2DY->Write();
 		invEffTrkTight->Write();
 		invEffTrkLoose->Write();
@@ -2689,7 +2694,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisYFid->Draw("ep");
 		c1DSave->SaveAs("Plot1DEfficiency/By/Sel1DHisFid.png");
 
-		image.png->Draw("ep");
+		Acc1DHisYFid->Draw("ep");
 		c1DSave->SaveAs("Plot1DEfficiency/By/Eff1DHisFid.png");
 
 		Acc1DHisYFid10->Draw("ep");
@@ -2744,6 +2749,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 		invEff2D->Write();
 		invEff2DY->Write();
+		invEff2DReal->Write();
 		invEff2DTnPSystUp->Write();
 		invEff2DTnPSystDown->Write();
 		invEff2DBDTSyst->Write();
