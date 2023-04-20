@@ -156,8 +156,8 @@ if (meson_n == 0){
 
   // percent error
   	int B_nu;
-  	if (meson_n == 0){ B_nu = 5 ;}
-  	else { B_nu =10 ;}
+  	if (meson_n == 0){ B_nu = 2.4 ;}
+  	else { B_nu = 4.8;}
 	float BPTrackingSyst[NBins];
 	for( int c=0; c < NBins; c++){BPTrackingSyst[c]= B_nu ;}
 	float BPMCDataSyst[NBins];
