@@ -119,6 +119,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	int TnP = 1;
 
+	const double epsilon = 1e-7;
 
 	double BRchain = 6.02061e-5;
 
@@ -196,50 +197,46 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 	Float_t var;
 	TString var_m;
-	
+	TString var_file;
+
 	if (whichvar==0){
 		var_m="y"; 
+		var_file="Y";
 		NBins=8;} 
 	if (whichvar==1){
 		var_m="Mult";
+		var_file="Mult";
 		NBins=7;}
 	if (whichvar==2){
 		var_m="pt";
+		var_file="PT";
 		NBins=7;}
 
 	double ptBins[NBins + 1];
 
 	int Counts[NBins];
+	int CountsTight[NBins];
+	int CountsLoose[NBins];
 	double SumCounts[NBins];
 	double SumCountsErr[NBins];
+	double SumCountsTight[NBins];
+	double SumCountsLoose[NBins];
 	double NewEff[NBins];
 	double NewEffErr[NBins];
-
+	double NewEffTight[NBins];
+	double NewEffLoose[NBins];
 	double NewEffReal[NBins];
 	double NewEffRealErr[NBins];
-
-
-
 	double SumCountsUp[NBins];
 	double SumCountsErrUp[NBins];
-
 	double SumCountsDown[NBins];
 	double SumCountsErrDown[NBins];
-
-
 	double SumCountsEff[NBins];
 	double SumCountsEffErr[NBins];
-
-
-
 	double SumCountsSyst[NBins];
 	double SumCountsSystErr[NBins];
 	double NewEffSyst[NBins];
 	double NewEffSystErr[NBins];
-
-
-	//	double CorrectionFactor[NBins];
-
 	double NewEffUp[NBins];
 	double NewEffErrUp[NBins];
 	double NewEffDown[NBins];
@@ -264,6 +261,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	}
 	for(int i = 0; i < NBins; i++){
 		Counts[i] = 0;
+		CountsTight[i] = 0;
+		CountsLoose[i] = 0;
 		SumCounts[i] = 0;
 		SumCountsErr[i] = 0;
 		SumCountsEff[i] = 0;
@@ -274,7 +273,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 		SumCountsErrUp[i] = 0;
 		SumCountsDown[i] = 0;
 		SumCountsErrDown[i] = 0;
-
+		SumCountsTight[i] = 0;
+		SumCountsLoose[i] = 0;
 	}
 
 
@@ -352,7 +352,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 	invEff2D= (TH2D *) fin1DEff->Get("invEff2D");
-
+	TH2D * invEffTrkTight = (TH2D *) fin1DEff->Get("invEffTrkTight");
+	TH2D * invEffTrkLoose = (TH2D *) fin1DEff->Get("invEffTrkLoose");
 	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2D");
 	TH2D * DrawinvEff2DY= (TH2D *) fin1DEff->Get("invEff2DY");
 
@@ -360,6 +361,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	if (whichvar==3){invEff2D= (TH2D *) fin1DEff->Get("invEff2D");}
 	else {invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");}
 	*/
+
+	Float_t EffInvTrkTight;
+    Float_t EffInvTrkLoose;
 
 	int XBin;
 	int YBin;
@@ -387,6 +391,19 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 						BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
 						BEffErr[j] = BEffInvErr[j]/(BEffInv[j] * BEffInv[j]);
+
+						EffInvTrkTight = invEffTrkTight->GetBinContent(XBin,YBin);
+          				EffInvTrkLoose = invEffTrkLoose->GetBinContent(XBin,YBin);
+
+						if (EffInvTrkLoose > 0) {
+							SumCountsLoose[k] += EffInvTrkLoose;
+							CountsLoose[k]++;
+						}
+						
+						if (trackSelection > 1 && EffInvTrkTight > 0) {
+							SumCountsTight[k] += EffInvTrkTight;
+							CountsTight[k]++;
+						}
 
 						if(trackSelection>0 && BEffInv[j] > 0){
 							SumCounts[k] = SumCounts[k] + BEffInv[j];
@@ -536,7 +553,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	hInvEffDown->SetMarkerStyle(20);
 	//hInvEffDown->SetMinimum(0);
 
+	TH1D *hInvEffTight = (TH1D*) hInvEff->Clone("hInvEffTight");
+	hInvEffTight->GetYaxis()->SetTitle("<1/(Eff * Acc)> - Tight track selection");
 
+ 	TH1D *hInvEffLoose = (TH1D*) hInvEff->Clone("hInvEffLoose");
+	hInvEffLoose->GetYaxis()->SetTitle("<1/(Eff * Acc)> - Loose track selection");
 
 	for(int i = 0; i < NBins; i++){
 
@@ -550,6 +571,14 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 		NewEffReal[i] = SumCountsEff[i]/Counts[i];
 		NewEffRealErr[i] = TMath::Sqrt(SumCountsEffErr[i])/Counts[i];
 
+		NewEffTight[i] = SumCountsTight[i]/CountsTight[i];
+		NewEffLoose[i] = SumCountsLoose[i]/CountsLoose[i];
+
+		hInvEffTight->SetBinContent(i+1, NewEffTight[i]);
+		hInvEffTight->SetBinError(i+1, epsilon);
+    	// TODO: currently loose is the same as nominal
+		hInvEffLoose->SetBinContent(i+1, NewEff[i]);
+		hInvEffLoose->SetBinError(i+1, epsilon);
 
 		hInvEff->SetBinContent(i+1,NewEff[i]);
 		hInvEff->SetBinError(i+1,NewEffErr[i]);
@@ -595,14 +624,22 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 
 
 
-	TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_m.Data()));
+	//TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_m.Data()));
+	TString fYield = Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_m.Data());
+	TFile * RawYield = new TFile(fYield);
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 
+	TFile * RawYieldTight;
+	TH1D * hPtTight;
+	if (whichvar==2){
+	RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");
+	hPtTight = (TH1D *) RawYieldTight->Get("hPt");
+	}
 
 	double RawCount;
 	double RawCountErr;
-
+	double RawCountTight;
 	double CorrYield= 0;
 	double CorrYieldErr= 0;
 
@@ -632,8 +669,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	CorrDiffHis->GetXaxis()->CenterTitle();
 	CorrDiffHis->GetYaxis()->CenterTitle();
 
-
-
+	TH1D * CorrDiffHisTight = (TH1D*) CorrDiffHis->Clone("hPtSigma_tight");
 
 	for(int i = 0; i < NBins;i++){
 		RawCount = hPt->GetBinContent(i+1);
@@ -643,6 +679,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 		CorrDiffHis->SetBinContent(i+1,CorrYieldDiff[i]);
 		CorrDiffHis->SetBinError(i+1,CorrYieldDiffErr[i]);
 
+		if (whichvar==2){
+		RawCountTight = hPtTight->GetBinContent(i+1);
+		CorrDiffHisTight->SetBinContent(i+1, (RawCountTight *  NewEffTight[i]) / (BRchain*2* lumi) );
+		CorrDiffHisTight->SetBinError(i+1, epsilon);
+		}
 	}
 
 	
@@ -679,10 +720,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	CorrDiffHisReal->SetMarkerStyle(20);
 
 	TFile * foutCorr;
-	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_m.Data()),"RECREATE");
-	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_m.Data()),"RECREATE");
-	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnPMC.root",var_m.Data()),"RECREATE");
-	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%sMC.root",var_m.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnP.root",var_file.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%s.root",var_file.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("FinalFiles/BPPPCorrYield%sNoTnPMC.root",var_file.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("FinalFiles/BPPPCorrYield%sMC.root",var_file.Data()),"RECREATE");
 
 	TH1D * Eff1DHisvar;
 	if (whichvar==0){
@@ -898,6 +939,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar, int usemc=0){
 	CorrDiffHis->Write();
 	CorrDiffHisBin->Write();
 	CorrDiffHisReal->Write();
+	CorrDiffHisTight->Write();
+	hPtTight->SetName("hPtTight");
+	hPtTight->Write();
+	hInvEffTight->Write();
+	hInvEffLoose->Write();
 	hInvEff->Write();
 	hEff->Write();
 	hEffInv->Write();

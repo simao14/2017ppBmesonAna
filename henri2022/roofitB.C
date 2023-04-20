@@ -9,7 +9,7 @@
 #include <TGraph.h>
 #include "TMultiGraph.h"
 #include "TGraphErrors.h"
-#include<stdio.h>
+#include <stdio.h>
 
 void read_samples(RooWorkspace& w, std::vector<TString>, TString fName, TString treeName, TString sample);
 
@@ -692,7 +692,7 @@ if(varExp=="nMult"){
 				yield_val->SetLineWidth(2);
 				yield_val->Draw();
 				chi_sig=new TLatex(0.21, 0.60, Form("#chi^{2}/ndf = %.2f ", Mychi2_sig));
-				chi_sig->SetNDC();background_syst
+				chi_sig->SetNDC();
 				chi_sig->SetTextFont(42);
 				chi_sig->SetTextSize(0.025);
 				chi_sig->SetLineWidth(2);

@@ -9,7 +9,7 @@
 #include "TLegend.h"
 #include "scale.h"
 #include "../../../henri2022/parameter.h" 
-#include "CMS_lumi.C" 
+//#include "CMS_lumi.C" 
 
 using namespace std;
 using std::cout;
@@ -991,7 +991,7 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
   Unity2->Draw("SAME");
 
 	MyPadr2->Update();
-	CMS_lumi(MyPadr,19011,0);
+	//CMS_lumi(MyPadr,19011,0);
 	MyPadr->Update();
   
   	cr->SetLogy();   
