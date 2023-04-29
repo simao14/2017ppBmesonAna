@@ -61,7 +61,7 @@ void Bmeson_Comparisons(int meson_n){
 	
 
 	gSystem->mkdir("Plots/", true);
-	TString InfileB = Form("../../../%s/EffAna/FinalFiles/%sPPCorrYieldPT.root",B_m.Data(),B_m.Data());
+	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYieldPT.root",B_m.Data(),B_m.Data());
 	TFile * FileB= new TFile(InfileB.Data());
 	
 	double ptBins[NBins+1];
@@ -997,21 +997,6 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
   	cr->SetLogy();   
 	cr->SaveAs(Form("Plots/%sCrossCompLog.pdf", B_m.Data()));
 	//FONLL
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // summary of errors (in ratio, not percent)
   gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,true );
