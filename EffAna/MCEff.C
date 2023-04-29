@@ -18,7 +18,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
-#include "../../parameter.h"
+#include "../parameter.h"
 
 
 using namespace std;
@@ -29,17 +29,33 @@ using std::endl;
 bool reweightPtOnY = true;
 
 
-void  MCEff(int DoTnP, int Rescale){
-	gSystem->mkdir( "Syst" , true);
-	gSystem->mkdir( "NewEff2DMaps" , true);
-	gSystem->mkdir( "1DEffPlots" , true);
-	gSystem->mkdir( "TnPHis" , true);
-	gSystem->mkdir( "MuonInfoPlots" , true);
-	gSystem->mkdir( "Eff2DMapTnP" , true);
-	gSystem->mkdir( "Plot1DEfficiency" , true);
-	gSystem->mkdir( "Plot1DEfficiency/Pt" , true);
-	gSystem->mkdir( "Plot1DEfficiency/Mult" , true);
-	gSystem->mkdir( "Plot1DEfficiency/By" , true);
+void  MCEff(int DoTnP, int Rescale, int meson_n){
+
+	int NCand;
+	TString var_n;
+	TString var_N;
+	if (meson_n == 0){
+		var_n="BP";
+		var_N="B^{+}";
+		NCand = 13000;
+	}
+	else {
+		var_n="Bs";
+		var_N="B^{0}_{s}";
+		NCand = 8000;
+	}
+
+	gSystem->mkdir( var_n.Data() , true);
+	gSystem->mkdir( Form("%s/Syst",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/NewEff2DMaps",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/1DEffPlots",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/TnPHis",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/MuonInfoPlots",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Eff2DMapTnP",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency/Pt",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency/Mult",var_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency/By",var_n.Data()) , true);
 
 	gStyle->SetOptStat(0);
 
@@ -47,19 +63,25 @@ void  MCEff(int DoTnP, int Rescale){
 	int ptmax = 50;
 
 	TString infile;
-	infile = "/data3/tasheng/presel/output/BP_MC_BDTs_nom_tnp.root";
+	infile = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",var_n.Data());
 
 	TFile * fin = new TFile(infile.Data());
 
 	fin->cd();
 
-	TTree * ntKp = (TTree * ) fin->Get("Bfinder/ntKp");
+	TTree * tree;
+	if (meson_n == 0){tree = (TTree * ) fin->Get("Bfinder/ntKp");}
+	else {tree = (TTree * ) fin->Get("Bfinder/ntphi");}
+
 	//	TTree * BDT = (TTree * ) fin->Get("BDT");
+
 	TTree * ntHi = (TTree * ) fin->Get("hiEvtAnalyzer/HiTree");
 	TTree * ntSkim = (TTree * ) fin->Get("skimanalysis/HltTree");
 	TTree * ntHlt = (TTree *) fin->Get("hltanalysis/HltTree");
+
 	//	TTree * TnPInfo = (TTree * ) fin->Get("TnPInfo");
 	//	TTree * CentWeightTree =	(TTree * ) fin->Get("CentWeightTree");
+
 	TTree * ntGen = (TTree * ) fin->Get("Bfinder/ntGen");
 	
 //	TString BDT1Name = "BDT_pt_3_5";
@@ -85,11 +107,15 @@ void  MCEff(int DoTnP, int Rescale){
 
 	
 //	TTree * BDT1 = (TTree *) fin->Get(BDT1Name.Data());
-	TTree * BDT2 = (TTree *) fin->Get(BDT2Name.Data());
+	TTree * BDT2 ;
 	TTree * BDT3 = (TTree *) fin->Get(BDT3Name.Data());
 	TTree * BDT4 = (TTree *) fin->Get(BDT4Name.Data());
 	TTree * BDT5 = (TTree *) fin->Get(BDT5Name.Data());
-	TTree * BDT6 = (TTree *) fin->Get(BDT6Name.Data());
+	TTree * BDT6 ;
+	if (meson_n==0){
+		BDT2 = (TTree *) fin->Get(BDT2Name.Data());
+		BDT6 = (TTree *) fin->Get(BDT6Name.Data());
+	}
 //	TTree * BDT7 = (TTree *) fin->Get("BDT_pt_2_3");
 //	TTree * BDT7 = (TTree *) fin->Get(BDT7Name.Data());
 //	TTree * BDT8 = (TTree *) fin->Get(BDT8Name.Data());
@@ -103,8 +129,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 	root->SetBranchAddress("EvtInfo.nMult",&nMult);
 
-	const int NCand = 13000;
-
+	
 
 	int run;
 	int lumi;
@@ -213,42 +238,46 @@ void  MCEff(int DoTnP, int Rescale){
 	ntSkim->SetBranchAddress("pBeamScrapingFilter",&pBeamScrapingFilter);
 	ntSkim->SetBranchAddress("pPAprimaryVertexFilter",&pPAprimaryVertexFilter);
 	ntSkim->SetBranchAddress("HBHENoiseFilterResult",&HBHENoiseFilterResult);
-	ntKp->SetBranchAddress("Bsize",&Bsize);
-	ntKp->SetBranchAddress("PVz",&PVz);
-	ntKp->SetBranchAddress("Btrk1Pt",Btrk1Pt);
-	//	ntKp->SetBranchAddress("Btrk2Pt",Btrk2Pt);
-	ntKp->SetBranchAddress("Btrk1PtErr",Btrk1PtErr);
-	//	ntKp->SetBranchAddress("Btrk2PtErr",Btrk2PtErr);
-	ntKp->SetBranchAddress("Bchi2cl",Bchi2cl);
-	ntKp->SetBranchAddress("BsvpvDistance",BsvpvDistance);
-	ntKp->SetBranchAddress("BsvpvDisErr",BsvpvDisErr);
-	ntKp->SetBranchAddress("Bpt",Bpt);
-	ntKp->SetBranchAddress("By",By);
-	ntKp->SetBranchAddress("Btrk1Eta",Btrk1Eta);
-	//ntKp->SetBranchAddress("Btrk2Eta",Btrk2Eta);
-	ntKp->SetBranchAddress("Bmass",Bmass);
-	ntKp->SetBranchAddress("Bdtheta",Bdtheta);
-	ntKp->SetBranchAddress("Bmu1isTriggered",Bmu1isTriggered);
-	ntKp->SetBranchAddress("Bmu2isTriggered",Bmu2isTriggered);
-	ntKp->SetBranchAddress("Bmumumass",Bmumumass);
-	ntKp->SetBranchAddress("Bmu1eta",Bmu1eta);
-	ntKp->SetBranchAddress("Bmu2eta",Bmu2eta);
-	ntKp->SetBranchAddress("Bmu1pt",Bmu1pt);
-	ntKp->SetBranchAddress("Bmu2pt",Bmu2pt);
+	tree->SetBranchAddress("Bsize",&Bsize);
+	tree->SetBranchAddress("PVz",&PVz);
+	tree->SetBranchAddress("Btrk1Pt",Btrk1Pt);
+	tree->SetBranchAddress("Btrk1PtErr",Btrk1PtErr);
+	
+	tree->SetBranchAddress("Bchi2cl",Bchi2cl);
+	tree->SetBranchAddress("BsvpvDistance",BsvpvDistance);
+	tree->SetBranchAddress("BsvpvDisErr",BsvpvDisErr);
+	tree->SetBranchAddress("Bpt",Bpt);
+	tree->SetBranchAddress("By",By);
+	tree->SetBranchAddress("Btrk1Eta",Btrk1Eta);
+	tree->SetBranchAddress("Bmass",Bmass);
+	tree->SetBranchAddress("Bdtheta",Bdtheta);
+	tree->SetBranchAddress("Bmu1isTriggered",Bmu1isTriggered);
+	tree->SetBranchAddress("Bmu2isTriggered",Bmu2isTriggered);
+	tree->SetBranchAddress("Bmumumass",Bmumumass);
+	tree->SetBranchAddress("Bmu1eta",Bmu1eta);
+	tree->SetBranchAddress("Bmu2eta",Bmu2eta);
+	tree->SetBranchAddress("Bmu1pt",Bmu1pt);
+	tree->SetBranchAddress("Bmu2pt",Bmu2pt);
 
-	//	ntKp->SetBranchAddress("Bmu1phi",Bmu1phi);
-	//	ntKp->SetBranchAddress("Bmu2phi",Bmu2phi);
+	if (meson_n != 0) {
+		tree->SetBranchAddress("Btrk2Pt",Btrk2Pt);
+		tree->SetBranchAddress("Btrk2PtErr",Btrk2PtErr);
+		tree->SetBranchAddress("Btrk2Eta",Btrk2Eta);
+	}
 
-	ntKp->SetBranchAddress("Bmu1TMOneStationTight",Bmu1TMOneStationTight);
-	ntKp->SetBranchAddress("Bmu1InPixelLayer",Bmu1InPixelLayer);
-	ntKp->SetBranchAddress("Bmu1InStripLayer",Bmu1InStripLayer);
-	ntKp->SetBranchAddress("Bmu2TMOneStationTight",Bmu2TMOneStationTight);
-	ntKp->SetBranchAddress("Bmu2InPixelLayer",Bmu2InPixelLayer);
-	ntKp->SetBranchAddress("Bmu2InStripLayer",Bmu2InStripLayer);
-	ntKp->SetBranchAddress("Bmu1isGlobalMuon",Bmu1isGlobalMuon);
-	ntKp->SetBranchAddress("Bmu2isGlobalMuon",Bmu2isGlobalMuon);
-	ntKp->SetBranchAddress("Bmu1isTrackerMuon",Bmu1isTrackerMuon);
-	ntKp->SetBranchAddress("Bmu2isTrackerMuon",Bmu2isTrackerMuon);
+	//	tree->SetBranchAddress("Bmu1phi",Bmu1phi);
+	//	tree->SetBranchAddress("Bmu2phi",Bmu2phi);
+
+	tree->SetBranchAddress("Bmu1TMOneStationTight",Bmu1TMOneStationTight);
+	tree->SetBranchAddress("Bmu1InPixelLayer",Bmu1InPixelLayer);
+	tree->SetBranchAddress("Bmu1InStripLayer",Bmu1InStripLayer);
+	tree->SetBranchAddress("Bmu2TMOneStationTight",Bmu2TMOneStationTight);
+	tree->SetBranchAddress("Bmu2InPixelLayer",Bmu2InPixelLayer);
+	tree->SetBranchAddress("Bmu2InStripLayer",Bmu2InStripLayer);
+	tree->SetBranchAddress("Bmu1isGlobalMuon",Bmu1isGlobalMuon);
+	tree->SetBranchAddress("Bmu2isGlobalMuon",Bmu2isGlobalMuon);
+	tree->SetBranchAddress("Bmu1isTrackerMuon",Bmu1isTrackerMuon);
+	tree->SetBranchAddress("Bmu2isTrackerMuon",Bmu2isTrackerMuon);
 
 
 	//	Int_t HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v1;
@@ -258,36 +287,40 @@ void  MCEff(int DoTnP, int Rescale){
 
 
 
-	ntKp->SetBranchAddress("Bmu1dxyPV",Bmu1dxyPV);
-	ntKp->SetBranchAddress("Bmu2dxyPV",Bmu2dxyPV);
-	ntKp->SetBranchAddress("Bmu1dzPV",Bmu1dzPV);
-	ntKp->SetBranchAddress("Bmu2dzPV",Bmu2dzPV);
-	ntKp->SetBranchAddress("Btrk1highPurity",Btrk1highPurity);
-	ntKp->SetBranchAddress("Btrk2highPurity",Btrk2highPurity);
-	ntKp->SetBranchAddress("Btktkmass",Btktkmass);
-	ntKp->SetBranchAddress("Btrk1PixelHit",Btrk1PixelHit);
-	ntKp->SetBranchAddress("Btrk2PixelHit",Btrk2PixelHit);
-	ntKp->SetBranchAddress("Btrk1StripHit",Btrk1StripHit);
-	ntKp->SetBranchAddress("Btrk2StripHit",Btrk2StripHit);
-	ntKp->SetBranchAddress("Btrk1Chi2ndf",Btrk1Chi2ndf);
-	ntKp->SetBranchAddress("Btrk2Chi2ndf",Btrk2Chi2ndf);
-	ntKp->SetBranchAddress("Bgen",Bgen);
-	ntKp->SetBranchAddress("Bgenpt",Bgenpt);
-	ntKp->SetBranchAddress("Bgeny",Bgeny);
-	ntKp->SetBranchAddress("Btrk1nStripLayer",Btrk1nStripLayer);	
-	ntKp->SetBranchAddress("Btrk2nStripLayer",Btrk2nStripLayer);
-	ntKp->SetBranchAddress("Btrk1nPixelLayer",Btrk1nPixelLayer);
-	ntKp->SetBranchAddress("Btrk2nPixelLayer",Btrk2nPixelLayer);
+	tree->SetBranchAddress("Bmu1dxyPV",Bmu1dxyPV);
+	tree->SetBranchAddress("Bmu2dxyPV",Bmu2dxyPV);
+	tree->SetBranchAddress("Bmu1dzPV",Bmu1dzPV);
+	tree->SetBranchAddress("Bmu2dzPV",Bmu2dzPV);
+	tree->SetBranchAddress("Btrk1highPurity",Btrk1highPurity);
+	tree->SetBranchAddress("Btrk2highPurity",Btrk2highPurity);
+	tree->SetBranchAddress("Btktkmass",Btktkmass);
+	tree->SetBranchAddress("Btrk1PixelHit",Btrk1PixelHit);
+	tree->SetBranchAddress("Btrk2PixelHit",Btrk2PixelHit);
+	tree->SetBranchAddress("Btrk1StripHit",Btrk1StripHit);
+	tree->SetBranchAddress("Btrk2StripHit",Btrk2StripHit);
+	tree->SetBranchAddress("Btrk1Chi2ndf",Btrk1Chi2ndf);
+	tree->SetBranchAddress("Btrk2Chi2ndf",Btrk2Chi2ndf);
+	tree->SetBranchAddress("Bgen",Bgen);
+	tree->SetBranchAddress("Bgenpt",Bgenpt);
+	tree->SetBranchAddress("Bgeny",Bgeny);
+	tree->SetBranchAddress("Btrk1nStripLayer",Btrk1nStripLayer);	
+	tree->SetBranchAddress("Btrk2nStripLayer",Btrk2nStripLayer);
+	tree->SetBranchAddress("Btrk1nPixelLayer",Btrk1nPixelLayer);
+	tree->SetBranchAddress("Btrk2nPixelLayer",Btrk2nPixelLayer);
 
 	if(Rescale == 0){
 
 
 //	BDT1->SetBranchAddress("BDT_pt_3_5",BDT_pt_3_5);
-	BDT2->SetBranchAddress("BDT_pt_5_7",BDT_pt_5_7);
+	
 	BDT3->SetBranchAddress("BDT_pt_7_10",BDT_pt_7_10);
 	BDT4->SetBranchAddress("BDT_pt_10_15",BDT_pt_10_15);
 	BDT5->SetBranchAddress("BDT_pt_15_20",BDT_pt_15_20);
-	BDT6->SetBranchAddress("BDT_pt_20_50",BDT_pt_20_50);
+	
+	if (meson_n==0){
+		BDT2->SetBranchAddress("BDT_pt_5_7",BDT_pt_5_7);
+		BDT6->SetBranchAddress("BDT_pt_20_50",BDT_pt_20_50);
+	}
 //	BDT7->SetBranchAddress("BDT_pt_2_3",BDT_pt_2_3);
 
 //	BDT7->SetBranchAddress("BDT_pt_2_3",BDT_pt_2_3);
@@ -297,11 +330,15 @@ void  MCEff(int DoTnP, int Rescale){
 	if(Rescale == 1){
 
 //	BDT1->SetBranchAddress("BDT_pt_New_3_5",BDT_pt_3_5);
-	BDT2->SetBranchAddress("BDT_pt_New_5_7",BDT_pt_5_7);
+	
 	BDT3->SetBranchAddress("BDT_pt_New_7_10",BDT_pt_7_10);
 	BDT4->SetBranchAddress("BDT_pt_New_10_15",BDT_pt_10_15);
 	BDT5->SetBranchAddress("BDT_pt_New_15_20",BDT_pt_15_20);
-	BDT6->SetBranchAddress("BDT_pt_New_20_50",BDT_pt_20_50);
+	
+	if (meson_n==0){
+		BDT2->SetBranchAddress("BDT_pt_New_5_7",BDT_pt_5_7);
+		BDT6->SetBranchAddress("BDT_pt_New_20_50",BDT_pt_20_50);
+	}
 //	BDT7->SetBranchAddress("BDT_pt_New_2_3",BDT_pt_2_3);
 //	BDT8->SetBranchAddress("BDT_pt_New_1_2",BDT_pt_1_2);
 
@@ -311,10 +348,10 @@ void  MCEff(int DoTnP, int Rescale){
 	Bool_t Bmu1isAcc[NCand];
 	Bool_t Bmu2isAcc[NCand];
 
-	ntKp->SetBranchAddress("Bmu1SoftMuID",Bmu1SoftMuID);
-	ntKp->SetBranchAddress("Bmu2SoftMuID",Bmu2SoftMuID);
-	ntKp->SetBranchAddress("Bmu1isAcc",Bmu1isAcc);
-	ntKp->SetBranchAddress("Bmu2isAcc",Bmu2isAcc);
+	tree->SetBranchAddress("Bmu1SoftMuID",Bmu1SoftMuID);
+	tree->SetBranchAddress("Bmu2SoftMuID",Bmu2SoftMuID);
+	tree->SetBranchAddress("Bmu1isAcc",Bmu1isAcc);
+	tree->SetBranchAddress("Bmu2isAcc",Bmu2isAcc);
 
 	Int_t Gsize;
 	Float_t Gy[NCand];
@@ -331,6 +368,9 @@ void  MCEff(int DoTnP, int Rescale){
 	Float_t Gtk1pt[NCand];
 	Float_t Gtk1eta[NCand];
 	Float_t Gtk1phi[NCand];
+	Float_t Gtk2pt[NCand];
+	Float_t Gtk2eta[NCand];
+	Float_t Gtk2phi[NCand];
 
 	ntGen->SetBranchAddress("Gsize",&Gsize);
 	ntGen->SetBranchAddress("Gy",Gy);
@@ -347,6 +387,12 @@ void  MCEff(int DoTnP, int Rescale){
 	ntGen->SetBranchAddress("Gtk1pt",Gtk1pt);
 	ntGen->SetBranchAddress("Gtk1eta",Gtk1eta);
 	ntGen->SetBranchAddress("Gtk1phi",Gtk1phi);
+
+	if (meson_n != 0) {
+		ntGen->SetBranchAddress("Gtk2pt",Gtk2pt);
+		ntGen->SetBranchAddress("Gtk2eta",Gtk2eta);
+		ntGen->SetBranchAddress("Gtk2phi",Gtk2phi);
+	}
 
 	Int_t HLT_HIL1DoubleMu0_v1;
 	ntHlt->SetBranchAddress("HLT_HIL1DoubleMu0_v1",&HLT_HIL1DoubleMu0_v1);
@@ -476,11 +522,7 @@ void  MCEff(int DoTnP, int Rescale){
 	   TnPInfo->SetBranchAddress("trg2systdown",trg2systdown);
 	   */
 
-
-	float Factor = 4.0;
-
-
-	int NEvents = ntKp->GetEntries();
+	int NEvents = tree->GetEntries();
 
 	const int yBinN = 5;
  	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
@@ -498,7 +540,9 @@ void  MCEff(int DoTnP, int Rescale){
     return bins;
   };
 
-  auto bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});
+  std::vector<double> bptBinVec;
+  if (meson_n == 0){bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});}
+  else {bptBinVec = createBins({0, 10, 40, 50}, {1/8., 1/4., 1/2.});}
   auto BptBinning = bptBinVec.data();
   const int BptBin = bptBinVec.size() - 1;
 
@@ -594,9 +638,25 @@ void  MCEff(int DoTnP, int Rescale){
 //	double  PtBin1D[NPtBins1D + 1] = {7,10,15,20,50};
 
 	
-	const int NPtBins1D = 7;
-	double  PtBin1D[NPtBins1D + 1] = {5,7,10,15,20,30,50,60};
+	int NPtBins1D;
+	
+	if (meson_n == 0){NPtBins1D = 7;}
+	else {NPtBins1D = 4;}
 
+	double  PtBin1DBPvec[7 + 1] = {5,7,10,15,20,30,50,60};
+	double  PtBin1DBsvec[4 + 1] = {7,10,15,20,50};
+	double  PtBin1D[NPtBins1D + 1];
+
+	if (meson_n == 0){
+		for (int i=0;i<NPtBins1D+1;i++){
+		PtBin1D[i] = PtBin1DBPvec[i];
+		}
+	}
+	else{
+		for (int i=0;i<NPtBins1D+1;i++){
+		PtBin1D[i] = PtBin1DBsvec[i];
+		}
+	}
 	const int NMultiBin = 7;
 	double  MultiBin1D[NMultiBin + 1] = {0,20,30,40,50,60,70,100};
 
@@ -669,11 +729,16 @@ void  MCEff(int DoTnP, int Rescale){
 
 	TFile * finBDTWeight = new TFile("BDTWeights/BPw.root");
 
-	TH1D * weights_BDT_pt_5_7 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_5_7");
+	TH1D * weights_BDT_pt_5_7 ;
 	TH1D * weights_BDT_pt_7_10 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_7_10");
 	TH1D * weights_BDT_pt_10_15 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_10_15");
 	TH1D * weights_BDT_pt_15_20 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_15_20");
-	TH1D * weights_BDT_pt_20_50 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_20_50");
+	TH1D * weights_BDT_pt_20_50 ;
+
+	if (meson_n==0){
+		weights_BDT_pt_5_7 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_5_7");
+		weights_BDT_pt_20_50 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_20_50");
+	}
 
 	
 	TH1D * Eff1DRECOHisBpt = new TH1D("Eff1DRECOHisBpt","",NPtBins1D,PtBin1D);
@@ -759,9 +824,11 @@ void  MCEff(int DoTnP, int Rescale){
 	// TF1 * BptWFunc = new TF1("BptWFunc"," 968.466885/x**(4.494808) + 0.800573 + 0.003677 * x",0,100);
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.000000/(x*x) +0.435893*TMath::Log(x) - 0.116910",0,100);
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.070585/x**(8.245110) + 0.833796 + 0.016723 * x",0,100);
-	TF1 * BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);
+	TF1 * BptWFunc;
+	if (meson_n==0){BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);}
+	else {BptWFunc = new TF1("BptWFunc","10.120482/x**(1.847846) + 0.634875 + 0.013032 * x",0,100);}
 
-  TFile fBptWeight("../../NewBptStudies/ResultFile/BptWeight_BP.root");
+  TFile fBptWeight(Form("../NewBptStudies/ResultFile/BptWeight_%s.root",var_n.Data()));
   std::map<int, TF1*> BptWtF;
   if (reweightPtOnY) {
     for (auto iy = 0; iy < yBinN; ++iy) {
@@ -1134,13 +1201,13 @@ void  MCEff(int DoTnP, int Rescale){
 	TString outfileName;
 
 	if(Rescale == 0){
-		if(DoTnP == 0) outfileName = "NewEff2DMaps/EffFineNoTnP.root";
-		if(DoTnP == 1) outfileName = "NewEff2DMaps/EffFineBDT.root";
+		if(DoTnP == 0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP.root",var_n.Data());
+		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDT.root",var_n.Data());
 	}
 	
 	if(Rescale == 1){
 
-		if(DoTnP == 1) outfileName = "NewEff2DMaps/EffFineBDTNew.root";
+		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew.root",var_n.Data());
 	}
 
 	TFile * fout = new TFile(outfileName.Data(),"RECREATE");
@@ -1149,13 +1216,20 @@ void  MCEff(int DoTnP, int Rescale){
 
 
 	//NEvents = 10;
+	bool passBDT;
+	bool preselection;
+	bool passTracking;
+
+	double ptlow;
+	if (meson_n==0){ptlow=5;}
+	else {ptlow=7;}
 
 	for(int i = 0; i < NEvents; i++){
 
 
 		if(i%10000==0) cout << "Now Working on = " << i  <<  endl;
 
-		ntKp->GetEntry(i);
+		tree->GetEntry(i);
 		ntSkim->GetEntry(i);
 		ntHi->GetEntry(i);
 		ntHlt->GetEntry(i);
@@ -1166,11 +1240,15 @@ void  MCEff(int DoTnP, int Rescale){
 
 		//BDT//
 //		BDT1->GetEntry(i);
-		BDT2->GetEntry(i);
+		
 		BDT3->GetEntry(i);
 		BDT4->GetEntry(i);
 		BDT5->GetEntry(i);
-		BDT6->GetEntry(i);
+		
+		if (meson_n==0){
+			BDT2->GetEntry(i);
+			BDT6->GetEntry(i);
+		}
 //		BDT7->GetEntry(i);
 //		BDT8->GetEntry(i);
 	
@@ -1179,47 +1257,70 @@ void  MCEff(int DoTnP, int Rescale){
 	
 		TnPInfo->GetEntry(i);
 
+		
 
 		for(int j = 0; j < Bsize; j++){
-      bool passBDT = ((Bpt[j] > 5 && Bpt[j] < 7 && BDT_pt_5_7[j] > 0.08)
+		if (meson_n==0){
+      	 	passBDT = ((Bpt[j] > 5 && Bpt[j] < 7 && BDT_pt_5_7[j] > 0.08)
                       || (Bpt[j] > 7 && Bpt[j] < 10 && BDT_pt_7_10[j] > 0.07)
                       || (Bpt[j] > 10 && Bpt[j] < 15 && BDT_pt_10_15[j] > 0)
                       || (Bpt[j] > 15 && Bpt[j] < 20 && BDT_pt_15_20[j] > 0.02)
                       || (Bpt[j] > 20 && Bpt[j] < 50 && BDT_pt_20_50[j] > 0.04)
                       || (Bpt[j] > 50 && Bpt[j] < 60));
-
-      bool preselection = (pPAprimaryVertexFilter == 1
+			preselection = (pPAprimaryVertexFilter == 1
                            && pBeamScrapingFilter == 1 && HLT_HIL1DoubleMu0_v1 == 1)
-        && (Bmu1isTriggered[j] == 1 && Bmu2isTriggered[j] == 1)
-        && (Btrk1Pt[j] > 0.5 && Bchi2cl[j] > 0.05 && BsvpvDistance[j]/BsvpvDisErr[j] > 2.0
-            && Bpt[j] > 2 && abs(Btrk1Eta[j]-0.0) < 2.4  &&
-            (TMath::Abs(By[j])<2.4 && TMath::Abs(Bmumumass[j]-3.096916)<0.15
-             &&((abs(Bmu1eta[j])<1.2&&Bmu1pt[j]>3.5)
-             ||(abs(Bmu1eta[j])>1.2&&abs(Bmu1eta[j])<2.1 &&Bmu1pt[j]>(5.47-1.89*abs(Bmu1eta[j])))
-             ||(abs(Bmu1eta[j])>2.1&&abs(Bmu1eta[j])<2.4&&Bmu1pt[j]>1.5))
-             &&((abs(Bmu2eta[j])<1.2&&Bmu2pt[j]>3.5)
-             ||(abs(Bmu2eta[j])>1.2&&abs(Bmu2eta[j])<2.1&&Bmu2pt[j]>(5.47-1.89*abs(Bmu2eta[j])))
-             ||(abs(Bmu2eta[j])>2.1&&abs(Bmu2eta[j])<2.4&&Bmu2pt[j]>1.5))
-             &&Bmu1TMOneStationTight[j]&&Bmu2TMOneStationTight[j]
-             &&Bmu1InPixelLayer[j]>0&&(Bmu1InPixelLayer[j]+Bmu1InStripLayer[j])>5
-             &&Bmu2InPixelLayer[j]>0&& (Bmu2InPixelLayer[j]+Bmu2InStripLayer[j])>5
-             &&Bmu1dxyPV[j]<0.3&&Bmu2dxyPV[j]<0.3
-             &&Bmu1dzPV[j]<20&&Bmu2dzPV[j]<20
-             &&Bmu1isTrackerMuon[j]&&Bmu2isTrackerMuon[j]
-             &&Bmu1isGlobalMuon[j]&&Bmu2isGlobalMuon[j]
-             &&Btrk1highPurity[j]
-             &&abs(Btrk1Eta[j])<2.4&&Btrk1Pt[j]>0.5)
-            && (Btrk1PixelHit[j] + Btrk1StripHit[j] > 10) && (abs(PVz)<15));
+						   && (Bmu1isTriggered[j] == 1 && Bmu2isTriggered[j] == 1)
+						   && (Btrk1Pt[j] > 0.5 && Bchi2cl[j] > 0.05 && BsvpvDistance[j]/BsvpvDisErr[j] > 2.0
+						   && Bpt[j] > 2 && abs(Btrk1Eta[j]-0.0) < 2.4  &&
+						   (TMath::Abs(By[j])<2.4 && TMath::Abs(Bmumumass[j]-3.096916)<0.15
+						   &&((abs(Bmu1eta[j])<1.2&&Bmu1pt[j]>3.5)
+						   ||(abs(Bmu1eta[j])>1.2&&abs(Bmu1eta[j])<2.1 &&Bmu1pt[j]>(5.47-1.89*abs(Bmu1eta[j])))
+						   ||(abs(Bmu1eta[j])>2.1&&abs(Bmu1eta[j])<2.4&&Bmu1pt[j]>1.5))
+						   &&((abs(Bmu2eta[j])<1.2&&Bmu2pt[j]>3.5)
+						   ||(abs(Bmu2eta[j])>1.2&&abs(Bmu2eta[j])<2.1&&Bmu2pt[j]>(5.47-1.89*abs(Bmu2eta[j])))
+						   ||(abs(Bmu2eta[j])>2.1&&abs(Bmu2eta[j])<2.4&&Bmu2pt[j]>1.5))
+						   &&Bmu1TMOneStationTight[j]&&Bmu2TMOneStationTight[j]
+						   &&Bmu1InPixelLayer[j]>0&&(Bmu1InPixelLayer[j]+Bmu1InStripLayer[j])>5
+						   &&Bmu2InPixelLayer[j]>0&& (Bmu2InPixelLayer[j]+Bmu2InStripLayer[j])>5
+						   &&Bmu1dxyPV[j]<0.3&&Bmu2dxyPV[j]<0.3
+						   &&Bmu1dzPV[j]<20&&Bmu2dzPV[j]<20
+						   &&Bmu1isTrackerMuon[j]&&Bmu2isTrackerMuon[j]
+						   &&Bmu1isGlobalMuon[j]&&Bmu2isGlobalMuon[j]
+						   &&Btrk1highPurity[j]
+						   &&abs(Btrk1Eta[j])<2.4&&Btrk1Pt[j]>0.5)
+						   && (Btrk1PixelHit[j] + Btrk1StripHit[j] > 10) && (abs(PVz)<15));
+		}      
+		else{      
+			passBDT = ((Bpt[j] > 7 && Bpt[j] < 10 &&  BDT_pt_7_10[j] > 0.06)
+                      || (Bpt[j] > 10 && Bpt[j] < 15 &&  BDT_pt_10_15[j] > -0.04)
+                      || (Bpt[j] > 15 && Bpt[j] < 20 &&  BDT_pt_15_20[j] > 0.05 )
+                      || (Bpt[j] > 20 && Bpt[j] < 50)
+                      || (Bpt[j] > 50) );
+			preselection = ((abs(Btktkmass[j]-1.019455)<0.015)&&(((((abs(Btktkmass[j]-1.019455)<0.015)&& TMath::Abs(Bmumumass[j]-3.096916)<0.15 && Bpt[j] > 0 && Bpt[j] < 5 && (abs(Btrk1Eta[j])<2.4 && abs(Btrk2Eta[j])<2.4 && Btrk1Pt[j]>0.0 && Btrk2Pt[j]>0.0) && Btrk1Pt[j] > 0.5 && Btrk2Pt[j] > 0.5  && Bchi2cl[j] > 0.05 && BsvpvDistance[j]/BsvpvDisErr[j] > 2.0)  && ( (Bpt[j] < 2 && Bpt[j] > 0) || (Bpt[j] < 3 && Bpt[j] > 2) || (Bpt[j] < 5 && Bpt[j] > 3)  )))  ||  ( Bpt[j] > 3 && ((pPAprimaryVertexFilter == 1 && pBeamScrapingFilter == 1 && HLT_HIL1DoubleMu0_v1 == 1 && (abs(PVz)<15))  &&  (Bmu1isTriggered[j] == 1 && Bmu2isTriggered[j] == 1 ) &&  (Bchi2cl[j] > 0.05 && BsvpvDistance[j]/BsvpvDisErr[j] > 2.0)    && (TMath::Abs(By[j])<2.4&&TMath::Abs(Bmumumass[j]-3.096916)<0.15&&((abs(Bmu1eta[j])<1.2&&Bmu1pt[j]>3.5)||(abs(Bmu1eta[j])>1.2&&abs(Bmu1eta[j])<2.1&&Bmu1pt[j]>(5.47-1.89*abs(Bmu1eta[j])))||(abs(Bmu1eta[j])>2.1&&abs(Bmu1eta[j])<2.4&&Bmu1pt[j]>1.5))&&((abs(Bmu2eta[j])<1.2&&Bmu2pt[j]>3.5)||(abs(Bmu2eta[j])>1.2&&abs(Bmu2eta[j])<2.1&&Bmu2pt[j]>(5.47-1.89*abs(Bmu2eta[j])))||(abs(Bmu2eta[j])>2.1&&abs(Bmu2eta[j])<2.4&&Bmu2pt[j]>1.5))&&Bmu1InPixelLayer[j]>0&&(Bmu1InPixelLayer[j]+Bmu1InStripLayer[j])>5&&Bmu2InPixelLayer[j]>0&&(Bmu2InPixelLayer[j]+Bmu2InStripLayer[j])>5&&Bmu1dxyPV[j]<0.3&&Bmu2dxyPV[j]<0.3&&Bmu1dzPV[j]<20&&Bmu2dzPV[j]<20&&Bmu1isTrackerMuon[j]&&Bmu2isTrackerMuon[j]&&Bmu1isGlobalMuon[j]&&Bmu2isGlobalMuon[j])  && ( Btrk1Pt[j] > 0.5 && Btrk2Pt[j] > 0.5 && abs(Btrk1Eta[j]-0.0) < 2.4 && abs(Btrk2Eta[j]-0.0) < 2.4  && Btrk1highPurity[j]  && Btrk2highPurity[j]  && Btrk1PixelHit[j] + Btrk1StripHit[j] > 10  && Btrk2PixelHit[j] + Btrk2StripHit[j] > 10)))));
+		}
+      	 
 
       // tracking selection variation
-      auto passTracking = [=] (Tracking cut) {
+      auto passTrackingBP = [&] (Tracking cut) {
         return (Btrk1PtErr[j]/Btrk1Pt[j] < ptErr[cut] &&
                 Btrk1Chi2ndf[j]/(Btrk1nStripLayer[j]+Btrk1nPixelLayer[j])
                 < chi2Nlayer[cut]);
       };
 
+	  auto passTrackingBs = [&] (Tracking cut) {
+          return (Btrk1PtErr[j]/Btrk1Pt[j] < ptErr[cut] &&
+                  Btrk1Chi2ndf[j]/(Btrk1nStripLayer[j]+Btrk1nPixelLayer[j])
+                  < chi2Nlayer[cut] &&
+                  Btrk2PtErr[j]/Btrk2Pt[j] < ptErr[cut] &&
+                  Btrk2Chi2ndf[j]/(Btrk2nStripLayer[j]+Btrk2nPixelLayer[j])
+                  < chi2Nlayer[cut]);
+        };
+
+	  if (meson_n==0){passTracking = passTrackingBP(Tracking::loose);}
+	  else {passTracking = passTrackingBs(Tracking::loose);}
+
       if ((Bgen[j] == 23333) && preselection
-          && passTracking(Tracking::loose) && passBDT){
+          && passTracking && passBDT){
 
 				
 				//EventWeight = pthat * weight;
@@ -1249,10 +1350,10 @@ void  MCEff(int DoTnP, int Rescale){
 				//TotalWeight=1;
 
 
-        if (passTracking(Tracking::tight)) {
+        if (passTracking) {
           TrkTightHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
         }
-        if (passTracking(Tracking::standard)) {
+        if (passTracking) {
           TnPWeightHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
           TnPSFHis->Fill(TnPWeight);
           TnPSFHisMu1->Fill(TnPMu1Nominal[j]);
@@ -1264,17 +1365,17 @@ void  MCEff(int DoTnP, int Rescale){
           muidtrkWeightHis->Fill(Bpt[j],abs(By[j]),muidtrkWeight);
         }
 
-		if (passTracking(Tracking::standard) && ((Bpt[j]>5 && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
+		if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
           Eff1DRECOHis->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHis->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHis->Fill(By[j],TotalWeight);
         }
-		 if (passTracking(Tracking::standard) && Bpt[j]>10) {
+		 if (passTracking && Bpt[j]>10) {
           Eff1DRECOHisfid10->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHisfid10->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHisfid10->Fill(By[j],TotalWeight);
         }
-		if (passTracking(Tracking::standard) && ((Bpt[j]>5) )) {
+		if (passTracking && ((Bpt[j]>ptlow) )) {
           Eff1DRECOHisfid->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHisfid->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHisfid->Fill(By[j],TotalWeight);
@@ -1282,7 +1383,7 @@ void  MCEff(int DoTnP, int Rescale){
         TrkLooseHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
 
         // The following systematics are only related to standard track sel
-        if (!passTracking(Tracking::standard)) {
+        if (!passTracking) {
           continue;
         }
 
@@ -1425,7 +1526,7 @@ void  MCEff(int DoTnP, int Rescale){
 	
 				BDTWeight = 1;
 
-				if(Bpt[j] < 7 && Bpt[j] > 5){
+				if(Bpt[j] < 7 && Bpt[j] > 5 && meson_n==0){
 					BDTWeightBin = weights_BDT_pt_5_7->GetXaxis()->FindBin(BDT_pt_5_7[j]);
 					BDTWeight = weights_BDT_pt_5_7->GetBinContent(BDTWeightBin);
 				}	
@@ -1446,13 +1547,13 @@ void  MCEff(int DoTnP, int Rescale){
 				
 				}
 				
-				if(Bpt[j] < 50 && Bpt[j] > 20){
+				if(Bpt[j] < 50 && Bpt[j] > 20 && meson_n==0){
 					BDTWeightBin = weights_BDT_pt_20_50->GetXaxis()->FindBin(BDT_pt_20_50[j]);
 					BDTWeight = weights_BDT_pt_20_50->GetBinContent(BDTWeightBin);
 
 				}
 
-				if(Bpt[j] < 60 && Bpt[j] > 50) BDTWeight = 1;
+				if(Bpt[j] < 60 && Bpt[j] > 50 && meson_n==0) BDTWeight = 1;
 
 			
 				Eff1DRECOHisBDT->Fill(Bpt[j],TotalWeight * BDTWeight);
@@ -1472,31 +1573,20 @@ void  MCEff(int DoTnP, int Rescale){
 				Eff1DRECOHisBptMult->Fill(nMult,TotalWeight * BptWeight);
 
 			}
-
-
-
-
-
 		}
-
-
-
   }
-
-
-
 
 		cout << "Now Loop Gen" << endl;
 		
-
-		
+		bool genselect;
+		bool genselect2;
 		for(int i = 0; i < NEvents; i++){
 
 
 			ntGen->GetEntry(i);
 			ntHi->GetEntry(i);
 			//CentWeightTree->GetEntry(i);
-			ntKp->GetEntry(i);
+			tree->GetEntry(i);
 			root->GetEntry(i);
 
 			// PVzWeight = 1;
@@ -1511,25 +1601,35 @@ void  MCEff(int DoTnP, int Rescale){
 			//	PVzWeight = (0.163562 * TMath::Exp(- 0.021039 * (PVz - 0.426587)*(PVz - 0.426587)))/(0.159629 * TMath::Exp(- 0.020014 * (PVz - 0.589381)*(PVz - 0.589381)));
 
 			//	PVzWeight = (TMath::Gaus(PVz,0.432315,4.874300)/(sqrt(2*3.14159)*4.874300))/(TMath::Gaus(PVz,0.909938,4.970989)/(sqrt(2*3.14159)*4.970989));
-      PVzWeight = (0.013245 * TMath::Exp(-(PVz-0.753876)*(PVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(PVz-0.608178)*(PVz-0.608178)/(2 * 5.785230 * 5.785230)));
+      if (meson_n==0){
+	  	PVzWeight = (0.013245 * TMath::Exp(-(PVz-0.753876)*(PVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(PVz-0.608178)*(PVz-0.608178)/(2 * 5.785230 * 5.785230)));
+	  }
+	  else{
+	  	PVzWeight = (0.013244 * TMath::Exp(-(PVz-0.753860)*(PVz-0.753860)/(2 * 6.023788 * 6.023788)))/(0.013793 * TMath::Exp(-(PVz-0.611353)*(PVz-0.611353)/(2 * 5.783899 * 5.783899)));
+	  }
 			//	EventWeight = PVzWeight * CentWeight * pthat * weight;
 			
 			EventWeight = PVzWeight * CentWeight * weight;
 			//EventWeight = 1;	
 
+			
 
 			for(int j = 0; j < Gsize; j++){
 
 		
 			//	EventWeight = PVzWeight * BptWeight * weight;
+
+				if (meson_n==0){ 
+					genselect = TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0;
+					genselect2 = TMath::Abs(Gtk1eta[j])<2.4;
+				}
+				else {
+					genselect = TMath::Abs(GpdgId[j])==531 && GisSignal[j]>0;
+					genselect2 = TMath::Abs(Gtk1eta[j])<2.4 && TMath::Abs(Gtk2eta[j])<2.4;
+				}
 				
-
-
-
-
-	//			if((TMath::Abs(Gy[j])<2.4 && TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0 ) ){
-				if( (TMath::Abs(Gy[j])<2.4 && TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0 )  && ((Gpt[j]>5 && Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))  ){
-
+				if( (TMath::Abs(Gy[j])<2.4 && genselect )  && ((Gpt[j]>ptlow && Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))  ){
+				
 					auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Gy[j]))
 						- yBins.begin() - 1;
 					BptWeight = BptWtF[iY]->Eval(Gpt[j]);
@@ -1548,8 +1648,8 @@ void  MCEff(int DoTnP, int Rescale){
 				
 				}
 
-				if ( (TMath::Abs(Gy[j])<2.4 && TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0 ) && Gpt[j]>5 ){
-
+				if ( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>ptlow ){
+				
 					EvtWeightGenFidHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);					
 					
 					Eff1DGENMultHisFid->Fill(nMult,EventWeight);
@@ -1559,7 +1659,7 @@ void  MCEff(int DoTnP, int Rescale){
 					Eff1DGENHisFid->Fill(Gpt[j],EventWeight);	
 				}
 
-				if( (TMath::Abs(Gy[j])<2.4 && TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0 && (Gpt[j]>10) ) ){
+				if( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>10 ){
 
 					EvtWeightGenFid10His->Fill(Gpt[j],abs(Gy[j]),EventWeight);					
 					Eff1DGENMultHisFid10->Fill(nMult,EventWeight);
@@ -1568,8 +1668,8 @@ void  MCEff(int DoTnP, int Rescale){
 					
 				}
 
-				if((TMath::Abs(Gy[j])<2.4 && TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0 && TMath::Abs(Gtk1eta[j])<2.4 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && ((Gpt[j]>5 && Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))) ){
-
+				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && ((Gpt[j]>ptlow && Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))) ){
+				
 					NoWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					EvtWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					Eff1DGENAccHis->Fill(Gpt[j],EventWeight);
@@ -1577,7 +1677,7 @@ void  MCEff(int DoTnP, int Rescale){
 					Eff1DGENAccMultHis->Fill(nMult,EventWeight);
 
 				}
-				if((TMath::Abs(Gy[j])<2.4 && TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0 && TMath::Abs(Gtk1eta[j])<2.4 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) ) ){
+				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && Gpt[j]>ptlow ) ){
 
 
 					Eff1DGENAccHisFid->Fill(Gpt[j],EventWeight);
@@ -1586,7 +1686,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 				}
 
-				if((TMath::Abs(Gy[j])<2.4 && TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0 && TMath::Abs(Gtk1eta[j])<2.4 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && (Gpt[j]>10) ) ){
+				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && Gpt[j]>10 ) ){
 
 
 					Eff1DGENAccHisFid10->Fill(Gpt[j],EventWeight);
@@ -1744,7 +1844,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 		//Save 1D Eff Plots/
 
-		Eff1DHis->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Eff1DHis->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Eff1DHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
 		Eff1DHis->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHis->GetXaxis()->CenterTitle();
@@ -1755,7 +1855,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHis->SetLineColor(kBlack);
 
 
-		Sel1DHis->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Sel1DHis->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Sel1DHis->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHis->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHis->GetXaxis()->CenterTitle();
@@ -1765,7 +1865,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHis->SetMarkerColor(kBlack);
 		Sel1DHis->SetLineColor(kBlack);
 
-		Acc1DHis->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Acc1DHis->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Acc1DHis->GetYaxis()->SetTitle("#alpha");
 		Acc1DHis->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHis->GetXaxis()->CenterTitle();
@@ -1775,7 +1875,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Acc1DHis->SetMarkerColor(kBlack);
 		Acc1DHis->SetLineColor(kBlack);
 
-		Eff1DHisFid->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Eff1DHisFid->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Eff1DHisFid->GetYaxis()->SetTitle("#alpha #times #epsilon");
 		Eff1DHisFid->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisFid->GetXaxis()->CenterTitle();
@@ -1785,7 +1885,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisFid->SetMarkerColor(kBlack);
 		Eff1DHisFid->SetLineColor(kBlack);
 
-		Sel1DHisFid->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Sel1DHisFid->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Sel1DHisFid->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisFid->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisFid->GetXaxis()->CenterTitle();
@@ -1795,7 +1895,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisFid->SetMarkerColor(kBlack);
 		Sel1DHisFid->SetLineColor(kBlack);
 
-		Acc1DHisFid->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Acc1DHisFid->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Acc1DHisFid->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisFid->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisFid->GetXaxis()->CenterTitle();
@@ -1805,7 +1905,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Acc1DHisFid->SetMarkerColor(kBlack);
 		Acc1DHisFid->SetLineColor(kBlack);
 
-		Eff1DHisFid10->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Eff1DHisFid10->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Eff1DHisFid10->GetYaxis()->SetTitle("#alpha #times #epsilon");
 		Eff1DHisFid10->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisFid10->GetXaxis()->CenterTitle();
@@ -1815,7 +1915,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisFid10->SetMarkerColor(kBlack);
 		Eff1DHisFid10->SetLineColor(kBlack);
 
-		Sel1DHisFid10->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Sel1DHisFid10->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Sel1DHisFid10->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisFid10->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisFid10->GetXaxis()->CenterTitle();
@@ -1825,7 +1925,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisFid10->SetMarkerColor(kBlack);
 		Sel1DHisFid10->SetLineColor(kBlack);
 
-		Acc1DHisFid10->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		Acc1DHisFid10->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		Acc1DHisFid10->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisFid10->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisFid10->GetXaxis()->CenterTitle();
@@ -1907,7 +2007,7 @@ void  MCEff(int DoTnP, int Rescale){
 		leg->AddEntry(Eff1DHisTnPDown,"T&P Variation Down","PL");
 		leg->Draw("same");
 
-		cSyst->SaveAs("Syst/TnPSyst.png");
+		cSyst->SaveAs(Form("%s/Syst/TnPSyst.png",var_n.Data()));
 
 
 
@@ -1930,7 +2030,7 @@ void  MCEff(int DoTnP, int Rescale){
 		leg2->Draw("same");
 
 
-		cSyst->SaveAs("Syst/BDTWeighted.png");
+		cSyst->SaveAs(Form("%s/Syst/BDTWeighted.png",var_n.Data()));
 
 
 
@@ -1955,7 +2055,7 @@ void  MCEff(int DoTnP, int Rescale){
 		leg3->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 		leg3->Draw("same");
 
-		cSyst->SaveAs("Syst/BptWeighted.png");
+		cSyst->SaveAs(Form("%s/Syst/BptWeighted.png",var_n.Data()));
 
 
 
@@ -2001,7 +2101,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 		//Save 1D Eff Plots/
 
-		Eff1DHisMult->GetXaxis()->SetTitle("B^{+} nMult");
+		Eff1DHisMult->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Eff1DHisMult->GetYaxis()->SetTitle(" #alpha #times #epsilon ");
 		Eff1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisMult->GetXaxis()->CenterTitle();
@@ -2011,7 +2111,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisMult->SetMarkerColor(kBlack);
 		Eff1DHisMult->SetLineColor(kBlack);
 
-		Sel1DHisMult->GetXaxis()->SetTitle("B^{+} nMult ");
+		Sel1DHisMult->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Sel1DHisMult->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisMult->GetXaxis()->CenterTitle();
@@ -2021,7 +2121,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisMult->SetMarkerColor(kBlack);
 		Sel1DHisMult->SetLineColor(kBlack);
 
-		Acc1DHisMult->GetXaxis()->SetTitle("B^{+} nMult ");
+		Acc1DHisMult->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Acc1DHisMult->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisMult->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisMult->GetXaxis()->CenterTitle();
@@ -2031,7 +2131,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Acc1DHisMult->SetMarkerColor(kBlack);
 		Acc1DHisMult->SetLineColor(kBlack);
 
-		Eff1DHisMultFid->GetXaxis()->SetTitle("B^{+} nMult");
+		Eff1DHisMultFid->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Eff1DHisMultFid->GetYaxis()->SetTitle(" #alpha #times #epsilon ");
 		Eff1DHisMultFid->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisMultFid->GetXaxis()->CenterTitle();
@@ -2041,7 +2141,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisMultFid->SetMarkerColor(kBlack);
 		Eff1DHisMultFid->SetLineColor(kBlack);
 
-		Sel1DHisMultFid->GetXaxis()->SetTitle("B^{+} nMult ");
+		Sel1DHisMultFid->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Sel1DHisMultFid->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisMultFid->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisMultFid->GetXaxis()->CenterTitle();
@@ -2051,7 +2151,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisMultFid->SetMarkerColor(kBlack);
 		Sel1DHisMultFid->SetLineColor(kBlack);
 
-		Acc1DHisMultFid->GetXaxis()->SetTitle("B^{+} nMult ");
+		Acc1DHisMultFid->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Acc1DHisMultFid->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisMultFid->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisMultFid->GetXaxis()->CenterTitle();
@@ -2061,7 +2161,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Acc1DHisMultFid->SetMarkerColor(kBlack);
 		Acc1DHisMultFid->SetLineColor(kBlack);
 
-		Eff1DHisMultFid10->GetXaxis()->SetTitle("B^{+} nMult");
+		Eff1DHisMultFid10->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Eff1DHisMultFid10->GetYaxis()->SetTitle(" #alpha #times #epsilon ");
 		Eff1DHisMultFid10->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisMultFid10->GetXaxis()->CenterTitle();
@@ -2071,7 +2171,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisMultFid10->SetMarkerColor(kBlack);
 		Eff1DHisMultFid10->SetLineColor(kBlack);
 
-		Sel1DHisMultFid10->GetXaxis()->SetTitle("B^{+} nMult ");
+		Sel1DHisMultFid10->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Sel1DHisMultFid10->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisMultFid10->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisMultFid10->GetXaxis()->CenterTitle();
@@ -2081,7 +2181,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisMultFid10->SetMarkerColor(kBlack);
 		Sel1DHisMultFid10->SetLineColor(kBlack);
 
-		Acc1DHisMultFid10->GetXaxis()->SetTitle("B^{+} nMult ");
+		Acc1DHisMultFid10->GetXaxis()->SetTitle(Form("%s nMult",var_N.Data()));
 		Acc1DHisMultFid10->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisMultFid10->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisMultFid10->GetXaxis()->CenterTitle();
@@ -2092,7 +2192,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Acc1DHisMultFid10->SetLineColor(kBlack);
 
 
-		Eff1DHisY->GetXaxis()->SetTitle("B^{+} y ");
+		Eff1DHisY->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Eff1DHisY->GetYaxis()->SetTitle(" #alpha #times #epsilon ");
 		Eff1DHisY->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisY->GetXaxis()->CenterTitle();
@@ -2102,7 +2202,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisY->SetMarkerColor(kBlack);
 		Eff1DHisY->SetLineColor(kBlack);
 
-		Sel1DHisY->GetXaxis()->SetTitle("B^{+} y ");
+		Sel1DHisY->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Sel1DHisY->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisY->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisY->GetXaxis()->CenterTitle();
@@ -2112,7 +2212,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisY->SetMarkerColor(kBlack);
 		Sel1DHisY->SetLineColor(kBlack);
 
-		Acc1DHisY->GetXaxis()->SetTitle("B^{+} y ");
+		Acc1DHisY->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Acc1DHisY->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisY->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisY->GetXaxis()->CenterTitle();
@@ -2123,7 +2223,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Acc1DHisY->SetLineColor(kBlack);
 
 
-		Eff1DHisYFid->GetXaxis()->SetTitle("B^{+} y ");
+		Eff1DHisYFid->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Eff1DHisYFid->GetYaxis()->SetTitle(" #alpha #times #epsilon ");
 		Eff1DHisYFid->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisYFid->GetXaxis()->CenterTitle();
@@ -2133,7 +2233,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisYFid->SetMarkerColor(kBlack);
 		Eff1DHisYFid->SetLineColor(kBlack);
 
-		Sel1DHisYFid->GetXaxis()->SetTitle("B^{+} y ");
+		Sel1DHisYFid->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Sel1DHisYFid->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisYFid->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisYFid->GetXaxis()->CenterTitle();
@@ -2143,7 +2243,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisYFid->SetMarkerColor(kBlack);
 		Sel1DHisYFid->SetLineColor(kBlack);
 
-		Acc1DHisYFid->GetXaxis()->SetTitle("B^{+} y ");
+		Acc1DHisYFid->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Acc1DHisYFid->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisYFid->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisYFid->GetXaxis()->CenterTitle();
@@ -2153,7 +2253,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Acc1DHisYFid->SetMarkerColor(kBlack);
 		Acc1DHisYFid->SetLineColor(kBlack);
 
-		Eff1DHisYFid10->GetXaxis()->SetTitle("B^{+} y ");
+		Eff1DHisYFid10->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Eff1DHisYFid10->GetYaxis()->SetTitle(" #alpha #times #epsilon ");
 		Eff1DHisYFid10->GetYaxis()->SetTitleOffset(1.4);
 		Eff1DHisYFid10->GetXaxis()->CenterTitle();
@@ -2163,7 +2263,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Eff1DHisYFid10->SetMarkerColor(kBlack);
 		Eff1DHisYFid10->SetLineColor(kBlack);
 
-		Sel1DHisYFid10->GetXaxis()->SetTitle("B^{+} y ");
+		Sel1DHisYFid10->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Sel1DHisYFid10->GetYaxis()->SetTitle("#epsilon");
 		Sel1DHisYFid10->GetYaxis()->SetTitleOffset(1.4);
 		Sel1DHisYFid10->GetXaxis()->CenterTitle();
@@ -2173,7 +2273,7 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisYFid10->SetMarkerColor(kBlack);
 		Sel1DHisYFid10->SetLineColor(kBlack);
 
-		Acc1DHisYFid10->GetXaxis()->SetTitle("B^{+} y ");
+		Acc1DHisYFid10->GetXaxis()->SetTitle(Form("%s y",var_N.Data()));
 		Acc1DHisYFid10->GetYaxis()->SetTitle("#alpha");
 		Acc1DHisYFid10->GetYaxis()->SetTitleOffset(1.4);
 		Acc1DHisYFid10->GetXaxis()->CenterTitle();
@@ -2267,7 +2367,7 @@ void  MCEff(int DoTnP, int Rescale){
 		legMult->AddEntry(Eff1DHisTnPDownMult,"T&P Variation Down","PL");
 		legMult->Draw("same");
 
-		cSyst->SaveAs("Syst/TnPSystMult.png");
+		cSyst->SaveAs(Form("%s/Syst/TnPSystMult.png",var_n.Data()));
 
 
 
@@ -2290,7 +2390,7 @@ void  MCEff(int DoTnP, int Rescale){
 		leg2Mult->Draw("same");
 
 
-		cSyst->SaveAs("Syst/BDTWeightedMult.png");
+		cSyst->SaveAs(Form("%s/Syst/BDTWeightedMult.png",var_n.Data()));
 
 
 
@@ -2315,7 +2415,7 @@ void  MCEff(int DoTnP, int Rescale){
 		leg3Mult->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 		leg3Mult->Draw("same");
 
-		cSyst->SaveAs("Syst/BptWeightedMult.png");
+		cSyst->SaveAs(Form("%s/Syst/BptWeightedMult.png",var_n.Data()));
 
 		TCanvas * cSyst_y  = new TCanvas("cSyst_y","cSyst_y",600,600);
 		cSyst_y->cd();
@@ -2345,7 +2445,7 @@ void  MCEff(int DoTnP, int Rescale){
 		legY->AddEntry(Eff1DHisTnPDownY,"T&P Variation Down","PL");
 		legY->Draw("same");
 
-		cSyst_y->SaveAs("Syst/TnPSystY.png");
+		cSyst_y->SaveAs(Form("%s/Syst/TnPSystY.png",var_n.Data()));
 
 		//2D shits
 
@@ -2535,14 +2635,14 @@ void  MCEff(int DoTnP, int Rescale){
 		Sel1DHisMultFid10->Write();
 
 
-		TFile * fout2 = new TFile(Form("BPMuonInfoPlots_%d_%d.root",ptmin,ptmax),"RECREATE");
+		TFile * fout2 = new TFile(Form("%s/BPMuonInfoPlots_%d_%d.root",var_n.Data(),ptmin,ptmax),"RECREATE");
 		fout2->cd();
 
 		TCanvas *c = new TCanvas("c","c",600,600);
 		c->cd();
 
 		Eff1DHis->Draw("ep");
-		c->SaveAs("1DEffPlots/Eff1DHis.png");
+		c->SaveAs(Form("%s/1DEffPlots/Eff1DHis.png",var_n.Data()));
 
 		for(int i = 0; i < NPtBins; i ++){
 
@@ -2554,34 +2654,34 @@ void  MCEff(int DoTnP, int Rescale){
 
 
 		TnPSFHis->Draw();
-		c->SaveAs("TnPHis/TnPSFHis.png");
+		c->SaveAs(Form("%s/TnPHis/TnPSFHis.png",var_n.Data()));
 
 		TnPSFHisMu1->Draw();
-		c->SaveAs("TnPHis/TnPSFHisMu1.png");
+		c->SaveAs(Form("%s/TnPHis/TnPSFHisMu1.png",var_n.Data()));
 
 		TnPSFHisMu2->Draw();
-		c->SaveAs("TnPHis/TnPSFHisMu2.png");
+		c->SaveAs(Form("%s/TnPHis/TnPSFHisMu2.png",var_n.Data()));
 
 
 
 		Bmu1ptHis->Draw();
-		c->SaveAs("MuonInfoPlots/Bmu1ptHis.png");
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1ptHis.png",var_n.Data()));
 
 		Bmu2ptHis->Draw();
-		c->SaveAs("MuonInfoPlots/Bmu2ptHis.png");
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2ptHis.png",var_n.Data()));
 
 
 		Bmu1etaHis->Draw();
-		c->SaveAs("MuonInfoPlots/Bmu1etaHis.png");
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1etaHis.png",var_n.Data()));
 
 		Bmu2etaHis->Draw();
-		c->SaveAs("MuonInfoPlots/Bmu2etaHis.png");
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2etaHis.png",var_n.Data()));
 
 		Bmu1TrgSF->Draw();
-		c->SaveAs("MuonInfoPlots/Bmu1TrgSF.png");
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1TrgSF.png",var_n.Data()));
 
 		Bmu2TrgSF->Draw();
-		c->SaveAs("MuonInfoPlots/Bmu2TrgSF.png");
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2TrgSF.png",var_n.Data()));
 
 		Bmu1ptHis->Write();
 		Bmu2ptHis->Write();
@@ -2598,27 +2698,27 @@ void  MCEff(int DoTnP, int Rescale){
 		c->SetLogz();
 
 		invEff2DTnPSystUp->GetYaxis()->SetTitle("B |y|");
-		invEff2DTnPSystUp->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		invEff2DTnPSystUp->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		invEff2DTnPSystUp->GetXaxis()->CenterTitle();
 		invEff2DTnPSystUp->GetYaxis()->CenterTitle();
 		invEff2DTnPSystUp->GetYaxis()->SetTitleOffset(1.2);
 		invEff2DTnPSystUp->SetTitle("");
 
 		invEff2DTnPSystUp->Draw("COLZ");
-		c->SaveAs("Eff2DMapTnP/Eff2D_Up.png");
+		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Up.png",var_n.Data()));
 
 
 
 
 		invEff2DTnPSystDown->GetYaxis()->SetTitle("B |y|");
-		invEff2DTnPSystDown->GetXaxis()->SetTitle("B^{+} p_{T} (GeV/c)");
+		invEff2DTnPSystDown->GetXaxis()->SetTitle(Form("%s p_{T} (GeV/c)",var_N.Data()));
 		invEff2DTnPSystDown->GetXaxis()->CenterTitle();
 		invEff2DTnPSystDown->GetYaxis()->CenterTitle();
 		invEff2DTnPSystDown->GetYaxis()->SetTitleOffset(1.2);
 		invEff2DTnPSystDown->SetTitle("");
 
 		invEff2DTnPSystDown->Draw("COLZ");
-		c->SaveAs("Eff2DMapTnP/Eff2D_Down.png");
+		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Down.png",var_n.Data()));
 
 
 		TCanvas * c1DSave = new TCanvas("c1DSave","c1DSave",600,600);
@@ -2626,87 +2726,87 @@ void  MCEff(int DoTnP, int Rescale){
 		
 
 		Acc1DHis->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Acc1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHis.png",var_n.Data()));
 	
 		Sel1DHis->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Sel1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHis.png",var_n.Data()));
 
 		Eff1DHis->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Eff1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHis.png",var_n.Data()));
 
 		Acc1DHisFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Acc1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHisFid.png",var_n.Data()));
 	
 		Sel1DHisFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Sel1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHisFid.png",var_n.Data()));
 
 		Eff1DHisFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Eff1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHisFid.png",var_n.Data()));
 
 		Acc1DHisFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Acc1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHisFid10.png",var_n.Data()));
 	
 		Sel1DHisFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Sel1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHisFid10.png",var_n.Data()));
 
 		Eff1DHisFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Pt/Eff1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHisFid10.png",var_n.Data()));
 
 		Acc1DHisMult->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Acc1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHis.png",var_n.Data()));
 	
 		Sel1DHisMult->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Sel1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHis.png",var_n.Data()));
 
 		Eff1DHisMult->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Eff1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHis.png",var_n.Data()));
 
 		Acc1DHisMultFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Acc1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHisFid.png",var_n.Data()));
 	
 		Sel1DHisMultFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Sel1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHisFid.png",var_n.Data()));
 
 		Eff1DHisMultFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Eff1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHisFid.png",var_n.Data()));
 
 		Acc1DHisMultFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Acc1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHisFid10.png",var_n.Data()));
 	
 		Sel1DHisMultFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Sel1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHisFid10.png",var_n.Data()));
 
 		Eff1DHisMultFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/Mult/Eff1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHisFid10.png",var_n.Data()));
 
 		Acc1DHisY->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Acc1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHis.png",var_n.Data()));
 	
 		Sel1DHisY->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Sel1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHis.png",var_n.Data()));
 
 		Eff1DHisY->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Eff1DHis.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHis.png",var_n.Data()));
 
 		Acc1DHisYFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Acc1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHisFid.png",var_n.Data()));
 	
 		Sel1DHisYFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Sel1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHisFid.png",var_n.Data()));
 
 		Acc1DHisYFid->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Eff1DHisFid.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid.png",var_n.Data()));
 
 		Acc1DHisYFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Acc1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHisFid10.png",var_n.Data()));
 	
 		Sel1DHisYFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Sel1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHisFid10.png",var_n.Data()));
 
 		Eff1DHisYFid10->Draw("ep");
-		c1DSave->SaveAs("Plot1DEfficiency/By/Eff1DHisFid10.png");
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid10.png",var_n.Data()));
 
-		TFile * foutSyst = new TFile("NewEff2DMaps/BPSyst.root","RECREATE");
+		TFile * foutSyst = new TFile(Form("%s/NewEff2DMaps/BPSyst.root",var_n.Data()),"RECREATE");
 		foutSyst->cd();
 		Eff1DHisTnPUp->Write();
 		Eff1DHisTnPDown->Write();
@@ -2745,7 +2845,7 @@ void  MCEff(int DoTnP, int Rescale){
 
 
 
-		TFile * foutSyst2D = new TFile("NewEff2DMaps/BPSyst2D.root","RECREATE");
+		TFile * foutSyst2D = new TFile(Form("%s/NewEff2DMaps/BPSyst2D.root",var_n.Data()),"RECREATE");
 
 		invEff2D->Write();
 		invEff2DY->Write();

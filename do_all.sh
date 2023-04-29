@@ -37,7 +37,7 @@ bpEff () {
     ls -l BDTWeights/BPw.root
 
     #root -b -l -q MCEff.C'(1,0)' > eff.log                                          
-    wait
+    #wait
     root -b -l -q CrossSectionAnaMult.C'(1,2,0)'  #(TnPon =1 noTnP=0 , pT=2,y=0,mult=1 , data =0 mc = 1)   
     popd
 }
@@ -47,8 +47,8 @@ bsEff () {
     ls -l BDTWeights/Bsw.root
 
     #root -b -l -q MCEff.C'(1,0)' > eff.log
+    #wait
     root -b -l -q CrossSectionAna.C'(1)'
-    wait
     #root -b -l -q CrossSectionAnaMult.C'(1,2,0)'  #(TnPon =1 noTnP=0 , pT=2,y=0,mult=1 , data =0 mc = 1)              
     popd  
 }
@@ -117,9 +117,9 @@ paperPlots () {
 #yield
 #wait
 
-#bpEff &
-#bsEff &
-#wait
+bpEff &
+bsEff &
+wait
 
 syst
 wait
