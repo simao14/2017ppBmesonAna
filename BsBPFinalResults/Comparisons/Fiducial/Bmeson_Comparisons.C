@@ -155,7 +155,7 @@ if (meson_n == 0){
 	float BPXSecPPYSystDownScaled[NBins];
 
   // percent error
-  	int B_nu;
+  	float B_nu;
   	if (meson_n == 0){ B_nu = 2.4 ;}
   	else { B_nu = 4.8;}
 	float BPTrackingSyst[NBins];
