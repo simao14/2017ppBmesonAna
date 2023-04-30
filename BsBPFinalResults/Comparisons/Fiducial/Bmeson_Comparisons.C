@@ -155,10 +155,10 @@ if (meson_n == 0){
 	float BPXSecPPYSystDownScaled[NBins];
 
   // percent error
-  	float B_nu;
+  	double B_nu;
   	if (meson_n == 0){ B_nu = 2.4 ;}
   	else { B_nu = 4.8;}
-	float BPTrackingSyst[NBins];
+	double BPTrackingSyst[NBins];
 	for( int c=0; c < NBins; c++){BPTrackingSyst[c]= B_nu ;}
 	float BPMCDataSyst[NBins];
 	float BPPDFSyst[NBins];
@@ -240,7 +240,7 @@ if (meson_n == 0){
 
 // CREATE THE CANVAS and the pads
 
-  // separate plots for different fiducial regions
+  // separate plots for different fiducial regionsBPXsecPPY2D
   	vector<float> BPXsecPPXLow ;
   	vector<float> BPXsecPPXHigh ;
     	vector<float> BPXsecPPXErrLow ;
@@ -373,6 +373,7 @@ if (meson_n == 0){
 
 	c->SaveAs(Form("Plots/%sCrossONLYLog.pdf", B_m.Data()));
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
+
 
 
 //  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 

@@ -362,7 +362,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TFile * fin1DEff; 
 
 	if(DoTnP == 0) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineNoTnP.root",var_n.Data()));
-	if(DoTnP == 1) fin1DEff = new TFile(Form("%s/EffAna/NewEff2DMaps/EffFineBDT.root",var_n.Data()));	
+	if(DoTnP == 1) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineBDT.root",var_n.Data()));	
 
 
 	fin1DEff->cd();
