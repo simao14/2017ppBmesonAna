@@ -528,6 +528,10 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
  	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
 	double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.4};
 
+	//const int yBinN = 6;
+ 	//std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4});
+	//double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4};
+
   // create a vector of pT binning with specified regional widths
   auto createBins = [] (std::vector<double> edges,
                         std::vector<double> binWidth) {
@@ -539,7 +543,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
     }
     return bins;
   };
-
+  	
   std::vector<double> bptBinVec;
   if (meson_n == 0){bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});}
   else {bptBinVec = createBins({0, 10, 40, 50}, {1/8., 1/4., 1/2.});}
@@ -661,7 +665,10 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	double  MultiBin1D[NMultiBin + 1] = {0,20,30,40,50,60,70,100};
 
 	const int YBin = 8;
-	double  YBin1D[YBin + 1] = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4};
+	double  YBin1D[YBin + 1] = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4}
+	
+	//const int YBin = 12;
+	//double  YBin1D[YBin + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0,// 1.5,1.8,2.1, 2.4};
 
 //	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins,PtBin);
 	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins1D,PtBin1D);
@@ -690,6 +697,24 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisfid->GetYaxis()->CenterTitle();
 	Eff1DRECOHisfid->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOHisfid->GetYaxis()->SetTitleOffset(1.5);
+
+	TH1D * TrkTight1DRECOHis = new TH1D("TrkTight1DRECOHis","",NPtBins1D,PtBin1D);
+
+	TrkTight1DRECOHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	TrkTight1DRECOHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	TrkTight1DRECOHis->GetXaxis()->CenterTitle();	
+	TrkTight1DRECOHis->GetYaxis()->CenterTitle();
+	TrkTight1DRECOHis->GetXaxis()->SetTitleOffset(1.2);	
+	TrkTight1DRECOHis->GetYaxis()->SetTitleOffset(1.5);
+
+	TH1D * TrkLoose1DRECOHis = new TH1D("TrkLoose1DRECOHis","",NPtBins1D,PtBin1D);
+
+	TrkLoose1DRECOHis->GetXaxis()->SetTitle("p_{T} (GeV/c)");
+	TrkLoose1DRECOHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	TrkLoose1DRECOHis->GetXaxis()->CenterTitle();	
+	TrkLoose1DRECOHis->GetYaxis()->CenterTitle();
+	TrkLoose1DRECOHis->GetXaxis()->SetTitleOffset(1.2);	
+	TrkLoose1DRECOHis->GetYaxis()->SetTitleOffset(1.5);
 
 	//TnP Varied
 
@@ -727,7 +752,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	
 
 
-	TFile * finBDTWeight = new TFile("BDTWeights/BPw.root");
+	TFile * finBDTWeight = new TFile(Form("BDTWeights/%sw.root",var_n.Data()));
 
 	TH1D * weights_BDT_pt_5_7 ;
 	TH1D * weights_BDT_pt_7_10 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_7_10");
@@ -771,6 +796,25 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisTnPDownY->GetYaxis()->CenterTitle();
 	Eff1DRECOHisTnPDownY->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOHisTnPDownY->GetYaxis()->SetTitleOffset(1.5);	
+
+	TH1D * Eff1DRECOHisBDTY = new TH1D("Eff1DRECOHisBDTY","",YBin,YBin1D);
+
+	Eff1DRECOHisBDTY->GetXaxis()->SetTitle("Multiplicity");
+	Eff1DRECOHisBDTY->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DRECOHisBDTY->GetXaxis()->CenterTitle();	
+	Eff1DRECOHisBDTY->GetYaxis()->CenterTitle();
+	Eff1DRECOHisBDTY->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DRECOHisBDTY->GetYaxis()->SetTitleOffset(1.5);
+
+
+	TH1D * Eff1DRECOHisBptY = new TH1D("Eff1DRECOHisBptY","",YBin,YBin1D);
+
+	Eff1DRECOHisBptY->GetXaxis()->SetTitle("Multiplicity");
+	Eff1DRECOHisBptY->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DRECOHisBptY->GetXaxis()->CenterTitle();	
+	Eff1DRECOHisBptY->GetYaxis()->CenterTitle();
+	Eff1DRECOHisBptY->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DRECOHisBptY->GetYaxis()->SetTitleOffset(1.5);
 
 	//Mult Stuffs
 
@@ -858,6 +902,24 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOMultHisfid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOMultHisfid10->GetYaxis()->SetTitleOffset(1.5);
 
+	TH1D * TrkLoose1DRECOHisMult = new TH1D("TrkLoose1DRECOHisMult","",NMultiBin,MultiBin1D);
+
+	TrkLoose1DRECOHisMult->GetXaxis()->SetTitle("Multiplicity");
+	TrkLoose1DRECOHisMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	TrkLoose1DRECOHisMult->GetXaxis()->CenterTitle();	
+	TrkLoose1DRECOHisMult->GetYaxis()->CenterTitle();
+	TrkLoose1DRECOHisMult->GetXaxis()->SetTitleOffset(1.2);	
+	TrkLoose1DRECOHisMult->GetYaxis()->SetTitleOffset(1.5);
+
+	TH1D * TrkTight1DRECOHisMult = new TH1D("TrkTight1DRECOHisMult","",NMultiBin,MultiBin1D);
+
+	TrkTight1DRECOHisMult->GetXaxis()->SetTitle("Multiplicity");
+	TrkTight1DRECOHisMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	TrkTight1DRECOHisMult->GetXaxis()->CenterTitle();	
+	TrkTight1DRECOHisMult->GetYaxis()->CenterTitle();
+	TrkTight1DRECOHisMult->GetXaxis()->SetTitleOffset(1.2);	
+	TrkTight1DRECOHisMult->GetYaxis()->SetTitleOffset(1.5);
+
 	TH1D * Eff1DRECOMultHisfid = new TH1D("Eff1DRECOMultHisfid","",NMultiBin,MultiBin1D);
 
 	Eff1DRECOMultHisfid->GetXaxis()->SetTitle("Multiplicity");
@@ -894,6 +956,24 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOYHisfid->GetYaxis()->CenterTitle();
 	Eff1DRECOYHisfid->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOYHisfid->GetYaxis()->SetTitleOffset(1.5);
+
+	TH1D * TrkLoose1DRECOHisY = new TH1D("TrkLoose1DRECOHisY","",YBin,YBin1D);
+
+	TrkLoose1DRECOHisY->GetXaxis()->SetTitle("Rapidity");
+	TrkLoose1DRECOHisY->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	TrkLoose1DRECOHisY->GetXaxis()->CenterTitle();	
+	TrkLoose1DRECOHisY->GetYaxis()->CenterTitle();
+	TrkLoose1DRECOHisY->GetXaxis()->SetTitleOffset(1.2);	
+	TrkLoose1DRECOHisY->GetYaxis()->SetTitleOffset(1.5);
+
+	TH1D * TrkTight1DRECOHisY = new TH1D("TrkTight1DRECOHisY","",YBin,YBin1D);
+
+	TrkTight1DRECOHisY->GetXaxis()->SetTitle("Rapidity");
+	TrkTight1DRECOHisY->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	TrkTight1DRECOHisY->GetXaxis()->CenterTitle();	
+	TrkTight1DRECOHisY->GetYaxis()->CenterTitle();
+	TrkTight1DRECOHisY->GetXaxis()->SetTitleOffset(1.2);	
+	TrkTight1DRECOHisY->GetYaxis()->SetTitleOffset(1.5);
 
 //	TH1D * Eff1DGENHis = new TH1D("Eff1DGENHis","",NPtBins,PtBin);
 	TH1D * Eff1DGENHis = new TH1D("Eff1DGENHis","",NPtBins1D,PtBin1D);
@@ -1042,6 +1122,15 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENYHisFid10->GetYaxis()->CenterTitle();
 	Eff1DGENYHisFid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENYHisFid10->GetYaxis()->SetTitleOffset(1.5);
+
+	TH1D * Eff1DGENYHisGpt = new TH1D("Eff1DGENYHisGpt","",YBin,YBin1D);
+
+	Eff1DGENYHisGpt->GetXaxis()->SetTitle("Multiplicity");
+	Eff1DGENYHisGpt->GetYaxis()->SetTitle("#alpha #times #epsilon");
+	Eff1DGENYHisGpt->GetXaxis()->CenterTitle();	
+	Eff1DGENYHisGpt->GetYaxis()->CenterTitle();
+	Eff1DGENYHisGpt->GetXaxis()->SetTitleOffset(1.2);	
+	Eff1DGENYHisGpt->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff1DGENMultHisGpt = new TH1D("Eff1DGENMultHisGpt","",NMultiBin,MultiBin1D);
 
@@ -1219,6 +1308,8 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	bool passBDT;
 	bool preselection;
 	bool passTracking;
+	bool passTrackingTight;
+	bool passTrackingLoose;
 
 	double ptlow;
 	if (meson_n==0){ptlow=5;}
@@ -1316,11 +1407,19 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
                   < chi2Nlayer[cut]);
         };
 
-	  if (meson_n==0){passTracking = passTrackingBP(Tracking::loose);}
-	  else {passTracking = passTrackingBs(Tracking::loose);}
+	  if (meson_n==0){
+		passTracking = passTrackingBP(Tracking::standard);
+		passTrackingLoose = passTrackingBP(Tracking::loose);
+		passTrackingTight = passTrackingBP(Tracking::tight);
+	  }
+	  else {
+		passTracking = passTrackingBs(Tracking::standard);
+		passTrackingLoose = passTrackingBs(Tracking::loose);
+		passTrackingTight = passTrackingBs(Tracking::tight);
+	  }
 
       if ((Bgen[j] == 23333) && preselection
-          && passTracking && passBDT){
+          && passTrackingLoose && passBDT){
 
 				
 				//EventWeight = pthat * weight;
@@ -1350,9 +1449,13 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 				//TotalWeight=1;
 
 
-        if (passTracking) {
+        if (passTrackingTight && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10))) {
           TrkTightHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
+		  TrkTight1DRECOHis->Fill(Bpt[j],TotalWeight);
+		  TrkTight1DRECOHisY->Fill(By[j],TotalWeight);
+		  TrkTight1DRECOHisMult->Fill(nMult,TotalWeight);
         }
+
         if (passTracking) {
           TnPWeightHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
           TnPSFHis->Fill(TnPWeight);
@@ -1380,7 +1483,12 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
           Eff1DRECOMultHisfid->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHisfid->Fill(By[j],TotalWeight);
         }
-        TrkLooseHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
+		if (((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10))) {
+          TrkLooseHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
+		  TrkLoose1DRECOHis->Fill(Bpt[j],TotalWeight);
+		  TrkLoose1DRECOHisY->Fill(By[j],TotalWeight);
+		  TrkLoose1DRECOHisMult->Fill(nMult,TotalWeight);
+        }
 
         // The following systematics are only related to standard track sel
         if (!passTracking) {
@@ -1447,14 +1555,20 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 				TnPWeightHisSystUp->Fill(Bpt[j],abs(By[j]),TotalWeightSystUp);
 				TnPWeightHisSystDown->Fill(Bpt[j],abs(By[j]),TotalWeightSystDown);
 
-				Eff1DRECOHisTnPUp->Fill(Bpt[j],TotalWeightSystUp);
-				Eff1DRECOHisTnPDown->Fill(Bpt[j],TotalWeightSystDown);
+				if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
 
-				Eff1DRECOHisTnPUpMult->Fill(nMult,TotalWeightSystUp);
-				Eff1DRECOHisTnPDownMult->Fill(nMult,TotalWeightSystDown);
+					Eff1DRECOHisTnPUp->Fill(Bpt[j],TotalWeightSystUp);
+					Eff1DRECOHisTnPDown->Fill(Bpt[j],TotalWeightSystDown);
+
+					Eff1DRECOHisTnPUpMult->Fill(nMult,TotalWeightSystUp);
+					Eff1DRECOHisTnPDownMult->Fill(nMult,TotalWeightSystDown);
+					
+					Eff1DRECOHisTnPUpY->Fill(By[j],TotalWeightSystUp);
+					Eff1DRECOHisTnPDownY->Fill(By[j],TotalWeightSystDown);
+					
+				}
+
 				
-				Eff1DRECOHisTnPUpY->Fill(By[j],TotalWeightSystUp);
-				Eff1DRECOHisTnPDownY->Fill(By[j],TotalWeightSystDown);
 
 				muid1total =  sqrt(muid1syst/muid1[j] * muid1syst/muid1[j] + muid1stat/muid1[j] * muid1stat/muid1[j]);
 				muid2total =  sqrt(muid2syst/muid2[j] * muid2syst/muid2[j] + muid2stat/muid2[j] * muid2stat/muid2[j]);
@@ -1535,42 +1649,49 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 					BDTWeightBin = weights_BDT_pt_7_10->GetXaxis()->FindBin(BDT_pt_7_10[j]);
 					BDTWeight = weights_BDT_pt_7_10->GetBinContent(BDTWeightBin);
 				}	
+
 				if(Bpt[j] < 15 && Bpt[j] > 10){
 					BDTWeightBin = weights_BDT_pt_10_15->GetXaxis()->FindBin(BDT_pt_10_15[j]);
-					BDTWeight = weights_BDT_pt_10_15->GetBinContent(BDTWeightBin);
-					
+					BDTWeight = weights_BDT_pt_10_15->GetBinContent(BDTWeightBin);	
 				}
 				
 				if(Bpt[j] < 20 && Bpt[j] > 15){
 					BDTWeightBin = weights_BDT_pt_15_20->GetXaxis()->FindBin(BDT_pt_15_20[j]);
-					BDTWeight = weights_BDT_pt_15_20->GetBinContent(BDTWeightBin);
-				
+					BDTWeight = weights_BDT_pt_15_20->GetBinContent(BDTWeightBin);	
 				}
 				
 				if(Bpt[j] < 50 && Bpt[j] > 20 && meson_n==0){
 					BDTWeightBin = weights_BDT_pt_20_50->GetXaxis()->FindBin(BDT_pt_20_50[j]);
 					BDTWeight = weights_BDT_pt_20_50->GetBinContent(BDTWeightBin);
-
 				}
 
 				if(Bpt[j] < 60 && Bpt[j] > 50 && meson_n==0) BDTWeight = 1;
 
-			
-				Eff1DRECOHisBDT->Fill(Bpt[j],TotalWeight * BDTWeight);
 				BDTWeightHisSyst->Fill(Bpt[j],abs(By[j]),TotalWeight * BDTWeight);
+
 
 			
         auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Bgeny[j]))
           - yBins.begin() - 1;
-				BptWeight = BptWtF[iY]->Eval(Bgenpt[j]);
+				//BptWeight = BptWtF[iY]->Eval(Bgenpt[j]);
+				BptWeight = 1;
 
+			if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
+
+				Eff1DRECOHisBDT->Fill(Bpt[j],TotalWeight * BDTWeight);
 				Eff1DRECOHisBpt->Fill(Bpt[j],TotalWeight * BptWeight);
-				BptWeightHisSyst->Fill(Bpt[j],abs(By[j]),TotalWeight * BptWeight);
-			
 
+				Eff1DRECOHisBDTY->Fill(By[j],TotalWeight * BDTWeight);				
+				Eff1DRECOHisBptY->Fill(By[j],TotalWeight * BptWeight);
 
 				Eff1DRECOHisBDTMult->Fill(nMult,TotalWeight * BDTWeight);				
 				Eff1DRECOHisBptMult->Fill(nMult,TotalWeight * BptWeight);
+				
+			}
+
+				BptWeightHisSyst->Fill(Bpt[j],abs(By[j]),TotalWeight * BptWeight);
+
+				
 
 			}
 		}
@@ -1632,7 +1753,8 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 				
 					auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Gy[j]))
 						- yBins.begin() - 1;
-					BptWeight = BptWtF[iY]->Eval(Gpt[j]);
+					//BptWeight = BptWtF[iY]->Eval(Gpt[j]);
+					BptWeight = 1;
 
 					NoWeightGenHis->Fill(Gpt[j],abs(Gy[j]),1);
 					EvtWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
@@ -1641,6 +1763,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 					Eff1DGENHis->Fill(Gpt[j],EventWeight);
 	
 					Eff1DGENHisGpt->Fill(Gpt[j],EventWeight * BptWeight);
+					Eff1DGENYHisGpt->Fill(Gy[j],EventWeight * BptWeight);
 					Eff1DGENMultHisGpt->Fill(nMult,EventWeight * BptWeight);
 					
 					Eff1DGENMultHis->Fill(nMult,EventWeight);
@@ -1949,26 +2072,30 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		Eff1DGENHis->Sumw2();
 		Eff1DHisTnPUp->Divide(Eff1DGENHis);
 
-
 		TH1D * Eff1DHisTnPDown = (TH1D * ) Eff1DRECOHisTnPDown->Clone("Eff1DHisTnPDown");
 		Eff1DHisTnPDown->Sumw2();
 		Eff1DGENHis->Sumw2();
 		Eff1DHisTnPDown->Divide(Eff1DGENHis);
-
-
 
 		TH1D * Eff1DHisBDT = (TH1D * ) Eff1DRECOHisBDT->Clone("Eff1DHisBDT");
 		Eff1DHisBDT->Sumw2();
 		Eff1DGENHis->Sumw2();
 		Eff1DHisBDT->Divide(Eff1DGENHis);
 
-
-
 		TH1D * Eff1DHisBpt = (TH1D * ) Eff1DRECOHisBpt->Clone("Eff1DHisBpt");
 		Eff1DHisBpt->Sumw2();
 		Eff1DGENHisGpt->Sumw2();
 		Eff1DHisBpt->Divide(Eff1DGENHisGpt);
 
+		TH1D * InvEff1DHisTight = (TH1D * ) Eff1DGENHis->Clone("InvEff1DHisTight");
+		InvEff1DHisTight->Sumw2();
+		TrkTight1DRECOHis->Sumw2();
+		InvEff1DHisTight->Divide(TrkTight1DRECOHis);
+
+		TH1D * InvEff1DHisLoose = (TH1D * ) Eff1DGENHis->Clone("InvEff1DHisLoose");
+		InvEff1DHisLoose->Sumw2();
+		TrkTight1DRECOHis->Sumw2();
+		InvEff1DHisLoose->Divide(TrkLoose1DRECOHis);
 
 		//Draw Syst//
 
@@ -2319,6 +2446,36 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		Eff1DGENMultHisGpt->Sumw2();
 		Eff1DHisBptMult->Divide(Eff1DGENMultHisGpt);
 
+		TH1D * Eff1DHisBDTY = (TH1D * ) Eff1DRECOHisBDTY->Clone("Eff1DHisBDTY");
+		Eff1DHisBDTY->Sumw2();
+		Eff1DGENYHis->Sumw2();
+		Eff1DHisBDTY->Divide(Eff1DGENYHis);
+
+		TH1D * Eff1DHisBptY = (TH1D * ) Eff1DRECOHisBptY->Clone("Eff1DHisBptY");
+		Eff1DHisBptY->Sumw2();
+		Eff1DGENYHisGpt->Sumw2();
+		Eff1DHisBptY->Divide(Eff1DGENYHisGpt);
+//////////
+		TH1D * InvEff1DHisTightY = (TH1D * ) Eff1DGENYHis->Clone("InvEff1DHisTightY");
+		InvEff1DHisTightY->Sumw2();
+		TrkTight1DRECOHisY->Sumw2();
+		InvEff1DHisTightY->Divide(TrkTight1DRECOHisY);
+
+		TH1D * InvEff1DHisLooseY = (TH1D * ) Eff1DGENYHis->Clone("InvEff1DHisLooseY");
+		InvEff1DHisLooseY->Sumw2();
+		TrkLoose1DRECOHisY->Sumw2();
+		InvEff1DHisLooseY->Divide(TrkLoose1DRECOHisY);
+		
+		TH1D * InvEff1DHisTightMult = (TH1D * ) Eff1DGENMultHis->Clone("InvEff1DHisTightMult");
+		InvEff1DHisTightMult->Sumw2();
+		TrkTight1DRECOHisMult->Sumw2();
+		InvEff1DHisTightMult->Divide(TrkTight1DRECOHisMult);
+
+		TH1D * InvEff1DHisLooseMult = (TH1D * ) Eff1DGENMultHis->Clone("InvEff1DHisLooseMult");
+		InvEff1DHisLooseMult->Sumw2();
+		TrkLoose1DRECOHisMult->Sumw2();
+		InvEff1DHisLooseMult->Divide(TrkLoose1DRECOHisMult);
+
 
 		//Draw Syst//
 
@@ -2328,7 +2485,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		Eff1DHisMult->SetMarkerSize(1);
 		Eff1DHisMult->SetMarkerColor(kBlack);
 		Eff1DHisMult->SetLineColor(kBlack);
-
+		
 
 		Eff1DHisTnPUpMult->SetMarkerStyle(20);
 		Eff1DHisTnPUpMult->SetMarkerSize(1);
@@ -2634,8 +2791,17 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		Sel1DHisYFid10->Write();
 		Sel1DHisMultFid10->Write();
 
+		InvEff1DHisTight->Write();
+		InvEff1DHisLoose->Write();
+		InvEff1DHisTightY->Write();
+		InvEff1DHisLooseY->Write();
+		InvEff1DHisTightMult->Write();
+		InvEff1DHisLooseMult->Write();
 
-		TFile * fout2 = new TFile(Form("%s/BPMuonInfoPlots_%d_%d.root",var_n.Data(),ptmin,ptmax),"RECREATE");
+
+
+
+		TFile * fout2 = new TFile(Form("%s/%sMuonInfoPlots_%d_%d.root",var_n.Data(),var_n.Data(),ptmin,ptmax),"RECREATE");
 		fout2->cd();
 
 		TCanvas *c = new TCanvas("c","c",600,600);
@@ -2806,12 +2972,23 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		Eff1DHisYFid10->Draw("ep");
 		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid10.png",var_n.Data()));
 
-		TFile * foutSyst = new TFile(Form("%s/NewEff2DMaps/BPSyst.root",var_n.Data()),"RECREATE");
+		TFile * foutSyst = new TFile(Form("%s/NewEff2DMaps/%sSyst.root",var_n.Data(),var_n.Data()),"RECREATE");
 		foutSyst->cd();
+		
 		Eff1DHisTnPUp->Write();
 		Eff1DHisTnPDown->Write();
 		Eff1DHisBpt->Write();
 		Eff1DHisBDT->Write();
+
+		Eff1DHisTnPUpMult->Write();
+		Eff1DHisTnPDownMult->Write();
+		Eff1DHisBptMult->Write();
+		Eff1DHisBDTMult->Write();
+
+		Eff1DHisTnPUpY->Write();
+		Eff1DHisTnPDownY->Write();
+		Eff1DHisBptY->Write();
+		Eff1DHisBDTY->Write();
 
 		Eff1DHis->Write();
 		Eff1DHisY->Write();
@@ -2824,32 +3001,16 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		Sel1DHis->Write();
 		Sel1DHisY->Write();
 		Sel1DHisMult->Write();
-
-		Eff1DHisFid->Write();
-		Eff1DHisYFid->Write();
-		Eff1DHisMultFid->Write();
-
-		Acc1DHisFid->Write();
-		Acc1DHisYFid->Write();
-		Acc1DHisMultFid->Write();
-
-		Sel1DHisFid->Write();
-		Sel1DHisYFid->Write();
-		Sel1DHisMultFid->Write();
 	
-		Eff1DHisTnPUpMult->Write();
-		Eff1DHisTnPDownMult->Write();
-		Eff1DHisBptMult->Write();
-		Eff1DHisBDTMult->Write();
+		
+
 		foutSyst->Close();
 
 
 
-		TFile * foutSyst2D = new TFile(Form("%s/NewEff2DMaps/BPSyst2D.root",var_n.Data()),"RECREATE");
+		TFile * foutSyst2D = new TFile(Form("%s/NewEff2DMaps/%sSyst2D.root",var_n.Data(),var_n.Data()),"RECREATE");
 
 		invEff2D->Write();
-		invEff2DY->Write();
-		invEff2DReal->Write();
 		invEff2DTnPSystUp->Write();
 		invEff2DTnPSystDown->Write();
 		invEff2DBDTSyst->Write();

@@ -10,37 +10,87 @@ using namespace std;
 
 // 0 for B+ 
 // 1 for B_s
-void CalEffSystB(int meson_n ){
+void CalEffSystB(int meson_n, int whichvar, int usemc=0){
 
 	TString B_m ;
-	int NBins = 7;
+	int NBins;
 	TString t_tree ;
 	int NCand = 10 ;
 	double b_m_mass ;
+	TString var_n;
+	TString var_l;
 
 	if(meson_n == 0){
-		NBins = nptBinsBP;
 		B_m = "BP";
 		t_tree = "ntKp";
 		NCand = 10;
 		b_m_mass = 5.27932 ;
-	} else {
-		NBins = nptBins;
+	} 
+	if(meson_n == 1){
 		B_m = "Bs";
 		t_tree = "ntphi";
 		NCand = 15;
 		b_m_mass = 5.3663 ;
 	}
 
-	//MOMENTUM BINS
+
+	if(meson_n == 0 && whichvar==0){
+		NBins = nptBinsBP;
+		var_n="pt";
+		var_l="p_{T} [GeV/c]";
+		
+	}
+	if(meson_n == 1 && whichvar==0){
+		NBins = nptBins;
+		var_n="pt";
+		var_l="p_{T} [GeV/c]";
+	}
+	if(whichvar==1){
+		NBins = nyBins_both;
+		var_n="y";
+		var_l="Rapidity";
+		
+	}
+	if(whichvar==2){
+		NBins = nmBins_both;
+		var_n="Mult";
+		var_l="Multiplicity";
+		
+	}
+
+	// BINS
 	double ptBins[NBins + 1];
-	if(meson_n==0) { for( int c=0; c <NBins+1; c++){ ptBins[c]=ptbinsvecBP[c];}}
-	else{            for( int c=0; c <NBins+1; c++){ ptBins[c]=ptbinsvec[c];  }}
+	if (whichvar==1){
+	for(int i = 0; i < NBins + 1; i++){
+		ptBins[i] =  ybinsvec[i];             
+		}
+	} 
+	if (whichvar==2){
+		for(int i = 0; i < NBins + 1; i++){
+		ptBins[i] =  nmbinsvec[i];             
+		}
+	}
+	if (whichvar==0 && meson_n==0){
+		for(int i = 0; i < NBins + 1; i++){
+		ptBins[i] =  ptbinsvecBP[i];             
+		}
+	}
+	if (whichvar==0 && meson_n!=0){
+		for(int i = 0; i < NBins + 1; i++){
+		ptBins[i] =  ptbinsvec[i];             
+		}
+	}
 
 //	gStyle->SetOptTitle(0);
 	gStyle->SetOptStat(0);
 
-	TString FileName = Form("/data3/tasheng/presel/%sData_nom.root",B_m.Data());
+	TString FileName;
+	if (usemc==0){
+	FileName = Form("/data3/tasheng/presel/%sData_nom.root",B_m.Data());
+	}
+	else {
+	FileName = Form("/data3/tasheng/presel/%sMC_nom.root",B_m.Data());
+	}
 	TFile * fin = new TFile(FileName.Data());
 	fin->cd();
 	TTree * EffInfoTree = (TTree * ) fin->Get(t_tree.Data());
@@ -50,10 +100,12 @@ void CalEffSystB(int meson_n ){
 	Float_t BmassNew[NCand];
 	Float_t ByNew[NCand];
 	Float_t BptNew[NCand];
+	Int_t nMult;
 	EffInfoTree->SetBranchAddress("Bsize", &BsizeNew);
 	EffInfoTree->SetBranchAddress("Bmass", BmassNew);
 	EffInfoTree->SetBranchAddress("By", ByNew);
 	EffInfoTree->SetBranchAddress("Bpt", BptNew);
+	EffInfoTree->SetBranchAddress("nMult",&nMult); 
 	Float_t BEffInv[NCand];
 	Float_t BEffInvErr[NCand];
 	Float_t BEffInvTnPUp[NCand];
@@ -85,22 +137,26 @@ void CalEffSystB(int meson_n ){
 		SumCountsBptSyst[i] = 0;
 	}
 
-	TFile * finSyst2D = new TFile(Form("../%s/EffAna/NewEff2DMaps/%sSyst2D.root",B_m.Data(), B_m.Data()));
+	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D.root",B_m.Data(), B_m.Data()));
 	TH2D * invEff2D = (TH2D *) finSyst2D->Get("invEff2D");
 	TH2D * invEff2DTnPSystUp = (TH2D *) finSyst2D->Get("invEff2DTnPSystUp");
 	TH2D * invEff2DTnPSystDown = (TH2D *) finSyst2D->Get("invEff2DTnPSystDown");
 	TH2D * invEff2DBDTSyst = (TH2D *) finSyst2D->Get("invEff2DBDTSyst");
 	TH2D * invEff2DBptSyst = (TH2D *) finSyst2D->Get("invEff2DBptSyst");
 
+
+	Float_t var;
 	int XBin;
 	int YBin;
 	for( int i = 0; i < NEvents; i++){
 		EffInfoTree->GetEntry(i);
-
 		for(int j = 0; j < BsizeNew; j++){
+			if (whichvar==1){var=ByNew[j];}
+			if (whichvar==2){var=nMult;}
+			if (whichvar==0){var=BptNew[j];}
 			for(int k = 0; k < NBins; k++){
 				
-				if(BptNew[j] > ptBins[k] && BptNew[j] < ptBins[k+1] && TMath::Abs(BmassNew[j] - b_m_mass) < 0.08 && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5)||(BptNew[j] > 10))){
+				if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - b_m_mass) < 0.08 && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5)||(BptNew[j] > 10))){
 					XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 					YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 					
@@ -143,40 +199,40 @@ void CalEffSystB(int meson_n ){
 	}
 
 	TH1D * Eff2DHis = new TH1D("Eff2DHis","",NBins,ptBins);
-	Eff2DHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	Eff2DHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
+	Eff2DHis->GetXaxis()->SetTitle(var_l.Data());
+	Eff2DHis->GetYaxis()->SetTitle("<1/(#alpha #times #epsilon)>");
 	Eff2DHis->GetXaxis()->CenterTitle();	
 	Eff2DHis->GetYaxis()->CenterTitle();
 	Eff2DHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DTnPUpSystHis = new TH1D("Eff2DTnPUpSystHis","",NBins,ptBins);
-	Eff2DTnPUpSystHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	Eff2DTnPUpSystHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
+	Eff2DTnPUpSystHis->GetXaxis()->SetTitle(var_l.Data());
+	Eff2DTnPUpSystHis->GetYaxis()->SetTitle("<1/(#alpha #times #epsilon)>");
 	Eff2DTnPUpSystHis->GetXaxis()->CenterTitle();	
 	Eff2DTnPUpSystHis->GetYaxis()->CenterTitle();
 	Eff2DTnPUpSystHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DTnPUpSystHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DTnPDownSystHis = new TH1D("Eff2DTnPDownSystHis","",NBins,ptBins);
-	Eff2DTnPDownSystHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	Eff2DTnPDownSystHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
+	Eff2DTnPDownSystHis->GetXaxis()->SetTitle(var_l.Data());
+	Eff2DTnPDownSystHis->GetYaxis()->SetTitle("<1/(#alpha #times #epsilon)>");
 	Eff2DTnPDownSystHis->GetXaxis()->CenterTitle();	
 	Eff2DTnPDownSystHis->GetYaxis()->CenterTitle();
 	Eff2DTnPDownSystHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DTnPDownSystHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DBDTHis = new TH1D("Eff2DBDTHis","",NBins,ptBins);
-	Eff2DBDTHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	Eff2DBDTHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
+	Eff2DBDTHis->GetXaxis()->SetTitle(var_l.Data());
+	Eff2DBDTHis->GetYaxis()->SetTitle("<1/(#alpha #times #epsilon)>");
 	Eff2DBDTHis->GetXaxis()->CenterTitle();	
 	Eff2DBDTHis->GetYaxis()->CenterTitle();
 	Eff2DBDTHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff2DBDTHis->GetYaxis()->SetTitleOffset(1.5);
 
 	TH1D * Eff2DBptHis = new TH1D("Eff2DBptHis","",NBins,ptBins);
-	Eff2DBptHis->GetXaxis()->SetTitle("p_{T} [GeV/c]");
-	Eff2DBptHis->GetYaxis()->SetTitle("<1/(#alpha#epsilon)>");
+	Eff2DBptHis->GetXaxis()->SetTitle(var_l.Data());
+	Eff2DBptHis->GetYaxis()->SetTitle("<1/(#alpha #times #epsilon)>");
 	Eff2DBptHis->GetXaxis()->CenterTitle();	
 	Eff2DBptHis->GetYaxis()->CenterTitle();
 	Eff2DBptHis->GetXaxis()->SetTitleOffset(1.2);	
@@ -196,7 +252,15 @@ void CalEffSystB(int meson_n ){
 	}
 	
 	gSystem->mkdir("OutFiles", true);
-	TFile * fout = new TFile(Form("OutFiles/%sSyst2D.root",B_m.Data()),"RECREATE");
+	TFile * fout;
+
+	if (usemc==0){
+		fout = new TFile(Form("OutFiles/%sSyst2D_%s.root",B_m.Data(),var_n.Data()),"RECREATE");
+	}
+	else {
+		fout= new TFile(Form("OutFiles/%sSyst2D_%s_MC.root",B_m.Data(),var_n.Data()),"RECREATE");
+	} 
+
 	fout->cd();
 	Eff2DHis->Write();
 	Eff2DTnPUpSystHis->Write();

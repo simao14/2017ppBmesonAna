@@ -1,17 +1,19 @@
 DOANALYSISPbPb_ROOFIT_FULL_BP=0
 DOANALYSISPbPb_ROOFIT_BINNED_PT_BP=1
-DOANALYSISPbPb_ROOFIT_BINNED_Y_BP=1
-DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP=1
-DOANALYSISPbPb_ROOFIT_BINNED_PT_BP_TRK=1
+DOANALYSISPbPb_ROOFIT_BINNED_Y_BP=0
+DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP=0
+DOANALYSISPbPb_ROOFIT_BINNED_PT_BP_TRK=0
+DOANALYSISPbPb_ROOFIT_BINNED_Y_BP_TRK=1
+DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP_TRK=0
 
 INPUTMCPbPbCANDWISE_BP="/data3/tasheng/presel/BPMC_nom.root"
-INPUTDATAPbPbCANDWISE_BP="/data3/tasheng/presel/BPData_nom.root"
-#INPUTMCPbPbCANDWISE_BP="/lstore/cms/henrique/dados/BPMC_nom.root"
-#INPUTDATAPbPbCANDWISE_BP="/lstore/cms/henrique/dados/BPData_nom.root"
+INPUTDATAPbPbCANDWISE_BP="/data3/tasheng/presel/BPMC_nom.root"
+#INPUTDATAPbPbCANDWISE_BP="/data3/tasheng/presel/BPData_nom.root"
+#INPUTMCPbPbCANDWISE_BP="/data3/smcosta/data/BPMC_nom.root"
+#INPUTDATAPbPbCANDWISE_BP="/data3/smcosta/data/BPData_nom.root"
 
 INPUTJPSI="/data3/tasheng/presel/jpsinp_nom.root"
-#INPUTJPSI="/lstore/cms/henrique/dados/jpsinp_nom.root"
-#INPUTJPSI="~/dat/presel/jpsinp_nom.root"
+#INPUTJPSI="/data3/smcosta/data/jpsinp_nom.root"
 
 #LUMIPbPb=13.1983052423 #paper 20170227
 LUMIPbPb=56.564165324
@@ -35,8 +37,10 @@ mkdir -p ROOTfiles/
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_FULL="ROOTfiles/yields_Bp_full.root"
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y="ROOTfiles/yields_Bp_binned_y.root"
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Mult="ROOTfiles/yields_Bp_binned_Mult.root"
-OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT="ROOTfiles/yields_Bp_binned_pt.root"
-OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT_trk="ROOTfiles/yields_Bp_binned_pt_trk.root"
+OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT="ROOTfiles/yields_Bp_binned_pt_MC.root"
+OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT_trk="ROOTfiles/yields_Bp_binned_pt_trk_MC.root"
+OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y_trk="ROOTfiles/yields_Bp_binned_y_trk.root"
+OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Mult_trk="ROOTfiles/yields_Bp_binned_Mult_trk.root"
 
 #NPROOFIT_PbPb="yes"  #must be !=1 in order to fir the mc file
 NPROOFIT_PbPb="467.13*TMath::Erf((Bmass-5.14)/-0.03)+467.13+63.57*TMath::Gaus(Bmass,5.06,0.0846)/(sqrt(2*3.14159)*0.0846)+21.5*TMath::Gaus(Bmass,5.36,0.0581)/(sqrt(2*3.14159)*0.0581)"
@@ -59,13 +63,17 @@ root -b  -q 'roofitB.C('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
-
 if [ $DOANALYSISPbPb_ROOFIT_BINNED_Y_BP  -eq 1  ]; then
 root -b  -q 'roofitB.C+('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"By\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y\"','\"results/BP/By\"','\"$NPROOFIT_PbPb\"','0','\"\"','\"$INPUTJPSI\"')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
+if [ $DOANALYSISPbPb_ROOFIT_BINNED_Y_BP_TRK  -eq 1  ]; then
+root -b  -q 'roofitB.C+('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"By\"','\"$TRGPbPb\"','\"$cut_trk_tight\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y_trk\"','\"results/BP/By\"','\"$NPROOFIT_PbPb\"','0','\"\"','\"$INPUTJPSI\"')' 
+
+rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
+fi
 
 if [ $DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP  -eq 1  ]; then
 root -b  -q 'roofitB.C+('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"nMult\"','\"$TRGPbPb\"','\"$CUTPbPb\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Mult\"','\"results/BP/nMult\"','\"$NPROOFIT_PbPb\"','0','\"\"','\"$INPUTJPSI\"')' 
@@ -73,3 +81,8 @@ root -b  -q 'roofitB.C+('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
+if [ $DOANALYSISPbPb_ROOFIT_BINNED_MULTI_BP_TRK  -eq 1  ]; then
+root -b  -q 'roofitB.C+('0','\"ntKp\"','0','1','0','\"$INPUTDATAPbPbCANDWISE_BP\"','\"$INPUTMCPbPbCANDWISE_BP\"','\"nMult\"','\"$TRGPbPb\"','\"$cut_trk_tight\"','\"$SELGENPbPb\"','$ISMCPbPb','1','$ISDOWEIGHTPbPb','\"$OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Mult_trk\"','\"results/BP/nMult\"','\"$NPROOFIT_PbPb\"','0','\"\"','\"$INPUTJPSI\"')' 
+
+rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
+fi
