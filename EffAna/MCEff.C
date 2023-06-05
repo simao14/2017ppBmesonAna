@@ -524,13 +524,13 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 	int NEvents = tree->GetEntries();
 
-	const int yBinN = 5;
- 	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
-	double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.4};
+	//const int yBinN = 5;
+ 	//std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
+	//double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.4};
 
-	//const int yBinN = 6;
- 	//std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4});
-	//double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4};
+	const int yBinN = 6;
+ 	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4});
+	double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4};
 
   // create a vector of pT binning with specified regional widths
   auto createBins = [] (std::vector<double> edges,
@@ -549,6 +549,11 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
   else {bptBinVec = createBins({0, 10, 40, 50}, {1/8., 1/4., 1/2.});}
   auto BptBinning = bptBinVec.data();
   const int BptBin = bptBinVec.size() - 1;
+
+  //std::vector<double> yBinVec = createBins({0.0 ,0.5, 1.0, 1.5, 2.0, 2.4}, {1/160.,1/160., 1/160., 1/160., 1/150.});
+  std::vector<double> yBinVec = createBins({0.0 ,0.5, 1.0, 1.5, 1.8, 2.1, 2.4}, {1/160., 1/160.,1/160., 1/200., 1/200., 1/200.});
+  auto yonlyBinning = yBinVec.data(); 
+  const int yonlyBin = yBinVec.size() - 1;
 
 	double PVzWeight;
 
@@ -586,6 +591,23 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	double trktotalerr;
 	double trgtotalerr;
 
+	TH1D * recoyonlyHis = new TH1D("recoyonlyHis","",yonlyBin,yonlyBinning);
+	TH1D * genyonlyHis = new TH1D("genyonlyHis","",yonlyBin,yonlyBinning);
+
+	TH1D * recoyonlyHisfid = new TH1D("recoyonlyHisfid","",yonlyBin,yonlyBinning);
+	TH1D * genyonlyHisfid = new TH1D("genyonlyHisfid","",yonlyBin,yonlyBinning);
+
+	TH1D * recoyonlyHisfid10 = new TH1D("recoyonlyHisfid10","",yonlyBin,yonlyBinning);
+	TH1D * genyonlyHisfid10 = new TH1D("genyonlyHisfid10","",yonlyBin,yonlyBinning);
+
+	TH1D * recoyonlyHispt = new TH1D("recoyonlyHispt","",BptBin,BptBinning);
+	TH1D * genyonlyHispt = new TH1D("genyonlyHispt","",BptBin,BptBinning);
+
+	TH1D * recoyonlyHisptfid = new TH1D("recoyonlyHisptfid","",BptBin,BptBinning);
+	TH1D * genyonlyHisptfid = new TH1D("genyonlyHisptfid","",BptBin,BptBinning);
+
+	TH1D * recoyonlyHisptfid10 = new TH1D("recoyonlyHisptfid10","",BptBin,BptBinning);
+	TH1D * genyonlyHisptfid10 = new TH1D("genyonlyHisptfid10","",BptBin,BptBinning);
 
 	TH2D * NoWeightHis = new TH2D("NoWeightHis","",BptBin,BptBinning,yBinN,yBinning);
 	TH2D * EvtWeightHis = new TH2D("EvtWeightHis","",BptBin,BptBinning,yBinN,yBinning);
@@ -664,11 +686,11 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	const int NMultiBin = 7;
 	double  MultiBin1D[NMultiBin + 1] = {0,20,30,40,50,60,70,100};
 
-	const int YBin = 8;
-	double  YBin1D[YBin + 1] = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4}
+	//const int YBin = 8;
+	//double  YBin1D[YBin + 1] = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4};
 	
-	//const int YBin = 12;
-	//double  YBin1D[YBin + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0,// 1.5,1.8,2.1, 2.4};
+	const int YBin = 12;
+	double  YBin1D[YBin + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
 
 //	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins,PtBin);
 	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins1D,PtBin1D);
@@ -1472,16 +1494,23 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
           Eff1DRECOHis->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHis->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHis->Fill(By[j],TotalWeight);
+		  recoyonlyHis->Fill(abs(By[j]),TotalWeight);
+		  recoyonlyHispt->Fill(Bpt[j],TotalWeight);
+
         }
 		 if (passTracking && Bpt[j]>10) {
           Eff1DRECOHisfid10->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHisfid10->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHisfid10->Fill(By[j],TotalWeight);
+		  recoyonlyHisfid10->Fill(abs(By[j]),TotalWeight);
+		  recoyonlyHisptfid10->Fill(Bpt[j],TotalWeight);
         }
 		if (passTracking && ((Bpt[j]>ptlow) )) {
           Eff1DRECOHisfid->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHisfid->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHisfid->Fill(By[j],TotalWeight);
+		  recoyonlyHisfid->Fill(abs(By[j]),TotalWeight);
+		  recoyonlyHisptfid->Fill(Bpt[j],TotalWeight);
         }
 		if (((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10))) {
           TrkLooseHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
@@ -1758,7 +1787,9 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 					NoWeightGenHis->Fill(Gpt[j],abs(Gy[j]),1);
 					EvtWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
-					BptWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight * BptWeight);					
+					BptWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight * BptWeight);			
+					genyonlyHis->Fill(abs(Gy[j]),EventWeight);	
+					genyonlyHispt->Fill(Gpt[j],EventWeight);	
 					
 					Eff1DGENHis->Fill(Gpt[j],EventWeight);
 	
@@ -1773,18 +1804,26 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 				if ( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>ptlow ){
 				
-					EvtWeightGenFidHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);					
+					EvtWeightGenFidHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);			
+
+					genyonlyHisfid->Fill(abs(Gy[j]),EventWeight);
+
+					genyonlyHisptfid->Fill(Gpt[j],EventWeight);		
 					
 					Eff1DGENMultHisFid->Fill(nMult,EventWeight);
 					
 					Eff1DGENYHisFid->Fill(Gy[j],EventWeight);
 
 					Eff1DGENHisFid->Fill(Gpt[j],EventWeight);	
+
+
 				}
 
 				if( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>10 ){
 
-					EvtWeightGenFid10His->Fill(Gpt[j],abs(Gy[j]),EventWeight);					
+					EvtWeightGenFid10His->Fill(Gpt[j],abs(Gy[j]),EventWeight);	
+					genyonlyHisfid10->Fill(abs(Gy[j]),EventWeight);	
+					genyonlyHisptfid10->Fill(Gpt[j],EventWeight);			
 					Eff1DGENMultHisFid10->Fill(nMult,EventWeight);
 					Eff1DGENYHisFid10->Fill(Gy[j],EventWeight);
 					Eff1DGENHisFid10->Fill(Gpt[j],EventWeight);
@@ -2618,6 +2657,30 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEff2D->Sumw2();
 		invEff2D->Divide(TnPWeightHis);
 
+		TH1D * invEff1DY = (TH1D * ) genyonlyHis->Clone("invEff1DY");
+		invEff1DY->Sumw2();
+		invEff1DY->Divide(recoyonlyHis);
+
+		TH1D * invEff1DYFid = (TH1D * ) genyonlyHisfid->Clone("invEff1DYFid");
+		invEff1DYFid->Sumw2();
+		invEff1DYFid->Divide(recoyonlyHisfid);
+
+		TH1D * invEff1DYFid10 = (TH1D * ) genyonlyHisfid10->Clone("invEff1DYFid10");
+		invEff1DYFid10->Sumw2();
+		invEff1DYFid10->Divide(recoyonlyHisfid10);
+
+		TH1D * invEff1DFGpt = (TH1D * ) genyonlyHispt->Clone("invEff1DFGpt");
+		invEff1DFGpt->Sumw2();
+		invEff1DFGpt->Divide(recoyonlyHispt);
+
+		TH1D * invEff1DFGptFid = (TH1D * ) genyonlyHisptfid->Clone("invEff1DFGptFid");
+		invEff1DFGptFid->Sumw2();
+		invEff1DFGptFid->Divide(recoyonlyHisptfid);
+
+		TH1D * invEff1DFGptFid10 = (TH1D * ) genyonlyHisptfid10->Clone("invEff1DFGptFid10");
+		invEff1DFGptFid10->Sumw2();
+		invEff1DFGptFid10->Divide(recoyonlyHisptfid10);
+
 		TH2D * invEff2DReal = (TH2D * ) TnPWeightHis->Clone("invEff2DReal");
 		invEff2DReal->Sumw2();
 		invEff2DReal->Divide(EvtWeightGenFidHis);
@@ -2706,6 +2769,12 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invAcc2D->Write();
 		invEffonly2D->Write();
 		invEff2D->Write();
+		invEff1DY->Write();
+		invEff1DYFid->Write();
+		invEff1DYFid10->Write();
+		invEff1DFGpt->Write();
+		invEff1DFGptFid->Write();
+		invEff1DFGptFid10->Write();
 		invEff2DReal->Write();
 		invEff2DY->Write();
 		invEffTrkTight->Write();
@@ -3015,6 +3084,14 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEff2DTnPSystDown->Write();
 		invEff2DBDTSyst->Write();
 		invEff2DBptSyst->Write();
+
+		invEff1DY->Write();
+		invEff1DYFid->Write();
+		invEff1DYFid10->Write();
+
+		invEff1DFGpt->Write();
+		invEff1DFGptFid->Write();
+		invEff1DFGptFid10->Write();
 
 		foutSyst2D->Close();
 
