@@ -9,7 +9,7 @@
 #include "TLegend.h"
 #include "scale.h"
 #include "../../../henri2022/parameter.h" 
-//#include "CMS_lumi.C" 
+#include "CMS_lumi.C" 
 
 using namespace std;
 using std::cout;
@@ -61,7 +61,7 @@ void Bmeson_Comparisons(int meson_n){
 	
 
 	gSystem->mkdir("Plots/", true);
-	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYieldPT.root",B_m.Data(),B_m.Data());
+	TString InfileB = Form("../../../%s/EffAna/FinalFiles/%sPPCorrYieldPT.root",B_m.Data(),B_m.Data());
 	TFile * FileB= new TFile(InfileB.Data());
 	
 	double ptBins[NBins+1];
@@ -155,9 +155,9 @@ if (meson_n == 0){
 	float BPXSecPPYSystDownScaled[NBins];
 
   // percent error
-  	float B_nu;
-  	if (meson_n == 0){ B_nu = 2.4 ;}
-  	else { B_nu = 4.8;}
+  	int B_nu;
+  	if (meson_n == 0){ B_nu = 5 ;}
+  	else { B_nu =10 ;}
 	float BPTrackingSyst[NBins];
 	for( int c=0; c < NBins; c++){BPTrackingSyst[c]= B_nu ;}
 	float BPMCDataSyst[NBins];
@@ -357,8 +357,9 @@ if (meson_n == 0){
 
 	TLatex *lat = new TLatex();
 	lat->SetNDC();
-	lat->SetTextSize(0.02); 
+	lat->SetTextSize(0.025); 
 	lat->SetTextFont(42);
+	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
 	if (meson_n == 0) {lat->DrawLatex(0.6,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
 	else {	lat->DrawLatex(0.6,0.7,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 	
@@ -420,7 +421,8 @@ if (meson_n == 0){
 			BPRAAGraph->Draw("epSAME");
 			BPRAAGraph_low->Draw("epSAME");
 			BPRAAGraph_low_just_marker->Draw("epSAME");
-				
+
+			lat->DrawLatex(0.15,0.91 , "CMS work in progress");
 				if (meson_n == 0) {
 					lat->DrawLatex(0.6,0.65 ,Form("2018 PbPb global Unc. #pm %.1f%%",3.9));
 					lat->DrawLatex(0.6,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;
@@ -495,6 +497,7 @@ if (meson_n == 0){
 	BPRAAGraph_low->Draw("epSAME");
 	BPRAAGraph_low_just_marker->Draw("epSAME");
 
+	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
 				if (meson_n == 0) {
 					lat->DrawLatex(0.62,0.65 ,Form("2015 pp global Unc. #pm %.1f%%",3.8));
 					lat->DrawLatex(0.62,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;
@@ -662,7 +665,9 @@ double YErrHighTemp;
 	BPFONLL->Draw("5");
 	BFONLLLow->Draw("5");
 
+
 	lat->SetTextSize(0.035); 
+	lat->DrawLatex(0.1,0.91 , "CMS work in progress");
     if (meson_n == 0) {lat->DrawLatex(0.57,0.62 ,Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;}
 	else {lat->DrawLatex(0.6,0.62,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 
@@ -997,6 +1002,21 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
   	cr->SetLogy();   
 	cr->SaveAs(Form("Plots/%sCrossCompLog.pdf", B_m.Data()));
 	//FONLL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // summary of errors (in ratio, not percent)
   gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,true );
