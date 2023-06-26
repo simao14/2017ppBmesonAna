@@ -39,6 +39,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	// file_check << "\\usepackage{cancel}" << std::endl;
 	file_check << "\\usepackage{geometry}" << std::endl;
 	file_check << "\\usepackage{booktabs}" << std::endl;
+	file_check << "\\usepackage{graphicx}" << std::endl;
 	file_check << "\\geometry{a4paper, total={170mm,257mm}, left=20mm, top=20mm,}" << std::endl;
 
 	file_check << "\\begin{document}" << std::endl;
@@ -49,10 +50,10 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 
 		file_check << "\\begin{sidewaystable}"<< std::endl;
 		file_check << "\\tabcolsep=0.11cm" << std::endl;
-		file_check << "\\begin{tabular}{"+col+"}" << std::endl;
+		file_check << "\\resizebox{\\textwidth}{!}{\\begin{tabular}{"+col+"}" << std::endl;
 		file_check << "\\toprule" << std::endl;
 		file << "\\tabcolsep=0.11cm" << std::endl;
-		file << "\\begin{tabular}{"+col+"}" << std::endl;
+		file << "\\resizebox{\\textwidth}{!}{\\begin{tabular}{"+col+"}" << std::endl;
 		file << "\\toprule" << std::endl;
 	
 	for(int c=0; c<n_col-1; c++){
@@ -81,11 +82,11 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 			file << labels[i-1] << " & ";
 			file_check << labels[i-1] << " & ";
 			for(int c=1; c<n_col-1; c++){
-				file << std::setprecision(3)<<  numbers[i-1][c-1] << "$\\pm$" <<std::setprecision(1)<< error[i-1][c-1]<< " \\% & ";
-				file_check << std::setprecision(3)<<  numbers[i-1][c-1] << "$\\pm$" <<std::setprecision(1)<< error[i-1][c-1]<< " \\% & ";
+				file << std::setprecision(3)<<  numbers[i-1][c-1] << "$\\pm$" <<std::setprecision(1)<< error[i-1][c-1]<< " & ";
+				file_check << std::setprecision(3)<<  numbers[i-1][c-1] << "$\\pm$" <<std::setprecision(1)<< error[i-1][c-1]<< "  & ";
 										}
-				file << std::setprecision(3)<<  numbers[i-1][n_col-2] << "$\\pm$" <<std::setprecision(1)<< error[i-1][n_col-2]<< " \\% \\\\" << std::endl;
-				file_check << std::setprecision(3)<<  numbers[i-1][n_col-2] << "$\\pm$" << std::setprecision(1)<<error[i-1][n_col-2]<< " \\% \\\\" << std::endl; 
+				file << std::setprecision(3)<<  numbers[i-1][n_col-2] << "$\\pm$" <<std::setprecision(1)<< error[i-1][n_col-2]<< "  \\\\" << std::endl;
+				file_check << std::setprecision(3)<<  numbers[i-1][n_col-2] << "$\\pm$" << std::setprecision(1)<<error[i-1][n_col-2]<< "  \\\\" << std::endl; 
 		}
 	}
 	if (useerr==2) {
@@ -106,8 +107,8 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	file_check << "\\bottomrule" << std::endl;
 
 	//End Table                                                                                                                                    
-	file << "\\end{tabular}" << std::endl;
-	file_check << "\\end{tabular}" << std::endl;
+	file << "\\end{tabular}}" << std::endl;
+	file_check << "\\end{tabular}}" << std::endl;
 	file_check << "\\caption{"+caption+"}" << std::endl;
 	file_check << "\\end{sidewaystable}"<< std::endl;
 
@@ -171,10 +172,19 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TTree * root;
 
 	if (usemc==0){
-	FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
+		if (meson_n==0){
+			FileName = Form("/data3/tasheng/presel/_%sData_nom.root",var_n.Data());
+		} else {
+			FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
+		}
 	}
 	else {
-	FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
+		if (meson_n==0){
+			FileName = Form("/data3/tasheng/presel/_%sMC_nom.root",var_n.Data());
+		} else {
+			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
+		}
+		
 	}
 	fin = new TFile(FileName.Data());
 
@@ -387,6 +397,16 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	if(DoTnP == 1) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineBDT.root",var_n.Data()));	
 
 
+	TFile * input2D;
+	if(DoTnP == 1 && usemc==0)	input2D = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%s.root",var_n.Data(),var_n.Data(),var_file.Data()));
+	if(DoTnP == 1 && usemc==1)	input2D = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sMC.root",var_n.Data(),var_n.Data(),var_file.Data()));
+	if(DoTnP == 0 && usemc==1)	input2D = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnPMC.root",var_n.Data(),var_n.Data(),var_file.Data()));
+	TH1D * Eff2D;
+	TH1D * CorrDiffHis2D;
+	Eff2D=(TH1D *) input2D->Get("hEffInv");
+	CorrDiffHis2D=(TH1D *) input2D->Get("hPtSigma");
+
+
 	fin1DEff->cd();
 
 
@@ -397,18 +417,27 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TH1D * DrawinvEff2DY;
 	if (whichvar==1){
 		invEff2D= (TH1D *) fin1DEff->Get("invEff1DY");
+		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DYBpt");
 		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DYFid");
 		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DYFid10");
 
-		DrawinvEff2D= (TH1D *) fin1DEff->Get("invEff1DY");
-		DrawinvEff2DY= (TH1D *) fin1DEff->Get("invEff1DYFid");
-	} else if (whichvar==0){
 		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGpt");
-		invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGptFid");
+		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGptFid");
+		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGptFid10");
+
+		//DrawinvEff2D= (TH1D *) fin1DEff->Get("invEff1DY");
+		DrawinvEff2DY= (TH1D *) fin1DEff->Get("invEff1DYFid");
+
+		DrawinvEff2D= (TH1D *) fin1DEff->Get("invEff1DYBpt");
+		
+	} else if (whichvar==0){
+		invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGpt");
+		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGptBpt");
+		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGptFid");
 		//invEff2D= (TH1D *) fin1DEff->Get("invEff1DFGptFid10");
 
 		DrawinvEff2D= (TH1D *) fin1DEff->Get("invEff1DFGpt");
-		DrawinvEff2DY= (TH1D *) fin1DEff->Get("invEff1DFGptFid");
+		DrawinvEff2DY= (TH1D *) fin1DEff->Get("invEff1DFGptFid10");
 	}
 
 
@@ -442,6 +471,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 			{
 				
 				YBin = invEff2D->FindBin( TMath::Abs(var));
+				//YBin = invEff2D->FindBin(BptNew[j]);
 
 				BEffInv[j] = invEff2D->GetBinContent(YBin);
 				BEffInvErr[j] = invEff2D->GetBinError(YBin);
@@ -678,7 +708,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	}
 
 	TH1D * CorrDiffHis = new TH1D("hPtSigma","",NBins,ptBins);
-	CorrDiffHis->GetXaxis()->SetTitle(Form("%s (GeV/c)",var_m.Data()));
+	CorrDiffHis->GetXaxis()->SetTitle(Form("%s",var_M.Data()));
 	CorrDiffHis->GetYaxis()->SetTitle(Form("d #sigma/d %s (pb GeV^{-1} c)",var_M.Data()));
 
 	CorrDiffHis->GetYaxis()->SetTitleOffset(1.3);
@@ -688,7 +718,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	CorrDiffHis->GetYaxis()->CenterTitle();
 
 	TH1D * CorrDiffHisLow = new TH1D("hPtSigmaLow","",NBins,ptBins);
-	CorrDiffHisLow->GetXaxis()->SetTitle(Form("%s (GeV/c)",var_m.Data()));
+	CorrDiffHisLow->GetXaxis()->SetTitle(Form("%s",var_M.Data()));
 	CorrDiffHisLow->GetYaxis()->SetTitle(Form("d #sigma/d %s (pb GeV^{-1} c)",var_M.Data()));
 
 	CorrDiffHisLow->GetYaxis()->SetTitleOffset(1.3);
@@ -696,6 +726,16 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	CorrDiffHisLow->GetYaxis()->SetLabelSize(0.02);
 	CorrDiffHisLow->GetXaxis()->CenterTitle();
 	CorrDiffHisLow->GetYaxis()->CenterTitle();
+
+	TH1D * CorrDiffHis2DLow = new TH1D("hPtSigma2DLow","",NBins,ptBins);
+	CorrDiffHis2DLow->GetXaxis()->SetTitle(Form("%s",var_M.Data()));
+	CorrDiffHis2DLow->GetYaxis()->SetTitle(Form("d #sigma/d %s (pb GeV^{-1} c)",var_M.Data()));
+
+	CorrDiffHis2DLow->GetYaxis()->SetTitleOffset(1.3);
+	CorrDiffHis2DLow->GetXaxis()->SetLabelSize(0.02);
+	CorrDiffHis2DLow->GetYaxis()->SetLabelSize(0.02);
+	CorrDiffHis2DLow->GetXaxis()->CenterTitle();
+	CorrDiffHis2DLow->GetYaxis()->CenterTitle();
 
 	TH1D * CorrDiffHisTight = (TH1D*) CorrDiffHis->Clone("hPtSigma_tight");
 
@@ -721,20 +761,6 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	if (meson_n==0 && whichvar==0){startLow=0; endLow=5;}
 	if (meson_n==1 && whichvar==0){startLow=0; endLow=3;}
 	if (whichvar==1){startLow=1; endLow=1;}
-
-	for (int i=startLow; i<NBins-endLow;i++){
-		CorrDiffHisLow->SetBinContent(i+1,CorrDiffHis->GetBinContent(i+1));
-		CorrDiffHisLow->SetBinError(i+1,CorrDiffHis->GetBinError(i+1));
-	}
-
-
-	CorrDiffHis->SetMarkerColor(kBlack);
-	CorrDiffHis->SetMarkerSize(1);
-	CorrDiffHis->SetMarkerStyle(20);
-
-	CorrDiffHisLow->SetMarkerColor(kBlue);
-	CorrDiffHisLow->SetMarkerSize(1);
-	CorrDiffHisLow->SetMarkerStyle(20);
 
 	TH1D * CorrDiffHisReal = new TH1D("hPtSigmaReal","",NBins,ptBins);
 	CorrDiffHisReal->GetXaxis()->SetTitle(Form("%s (GeV/c)",var_m.Data()));
@@ -775,6 +801,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisY");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisYFid10");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisBptY");
 
 		InvEff1DHisvarTight=(TH1D *) fin1DEff->Get("InvEff1DHisTightY");
 		InvEff1DHisvarLoose=(TH1D *) fin1DEff->Get("InvEff1DHisLooseY");
@@ -783,6 +810,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMult");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisMultFid10");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisBptMult");
 
 		InvEff1DHisvarTight=(TH1D *) fin1DEff->Get("InvEff1DHisTightMult");
 		InvEff1DHisvarLoose=(TH1D *) fin1DEff->Get("InvEff1DHisLooseMult");
@@ -791,6 +819,8 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 		Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHis");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid");
 		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisFid10");
+		//Eff1DHisvar=(TH1D *) fin1DEff->Get("Eff1DHisBpt");
+
 
 		InvEff1DHisvarTight=(TH1D *) fin1DEff->Get("InvEff1DHisTight");
 		InvEff1DHisvarLoose=(TH1D *) fin1DEff->Get("InvEff1DHisLoose");
@@ -811,6 +841,15 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	CorrDiffHisBin->SetMarkerSize(1);
 	CorrDiffHisBin->SetMarkerStyle(20);
 
+	TH1D * CorrDiffHisBinLow = new TH1D("CorrDiffHisBinLow","",NBins,ptBins);
+	CorrDiffHisBinLow->GetXaxis()->SetTitle("nMult");
+	CorrDiffHisBinLow->GetYaxis()->SetTitle("#sigma (pb)");
+
+	CorrDiffHisBinLow->GetYaxis()->SetTitleOffset(1.3);
+	CorrDiffHisBinLow->GetXaxis()->CenterTitle();
+	CorrDiffHisBinLow->GetYaxis()->CenterTitle();
+
+	
 	TH1D * CorrDiffHisBin_tight = new TH1D("CorrDiffHisBin_tight","",NBins,ptBins);
 	CorrDiffHisBin_tight->GetXaxis()->SetTitle("nMult");
 	CorrDiffHisBin_tight->GetYaxis()->SetTitle("#sigma (pb)");
@@ -904,6 +943,50 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	}
 
+	for (int i=startLow; i<NBins-endLow;i++){
+		CorrDiffHisLow->SetBinContent(i+1,CorrDiffHis->GetBinContent(i+1));
+		CorrDiffHisLow->SetBinError(i+1,CorrDiffHis->GetBinError(i+1));
+
+		CorrDiffHis2DLow->SetBinContent(i+1,CorrDiffHis2D->GetBinContent(i+1));
+		CorrDiffHis2DLow->SetBinError(i+1,CorrDiffHis2D->GetBinError(i+1));
+
+		CorrDiffHisBinLow->SetBinContent(i+1,CorrDiffHisBin->GetBinContent(i+1));
+		CorrDiffHisBinLow->SetBinError(i+1,CorrDiffHisBin->GetBinError(i+1));
+	}
+
+
+	CorrDiffHis->SetMarkerColor(kBlue+2);
+	CorrDiffHis->SetLineColor(kBlue+2);
+	CorrDiffHis->SetMarkerSize(1);
+	CorrDiffHis->SetMarkerStyle(20);
+
+	CorrDiffHisLow->SetMarkerColor(kBlue-3);
+	CorrDiffHisLow->SetLineColor(kBlue-3);
+	CorrDiffHisLow->SetMarkerSize(1);
+	CorrDiffHisLow->SetMarkerStyle(20);
+
+	CorrDiffHis2D->SetMarkerColor(kRed+2);
+	CorrDiffHis2D->SetLineColor(kRed+2);
+	CorrDiffHis2D->SetMarkerSize(1);
+	CorrDiffHis2D->SetMarkerStyle(20);
+
+	CorrDiffHis2DLow->SetMarkerColor(kRed-3);
+	CorrDiffHis2DLow->SetLineColor(kRed-3);
+	CorrDiffHis2DLow->SetMarkerSize(1);
+	CorrDiffHis2DLow->SetMarkerStyle(20);
+
+	CorrDiffHisBin->SetMarkerColor(kViolet+2);
+	CorrDiffHisBin->SetLineColor(kViolet+2);
+	CorrDiffHisBin->SetMarkerSize(1);
+	CorrDiffHisBin->SetMarkerStyle(20);
+
+	CorrDiffHisBinLow->SetMarkerColor(kViolet-3);	
+	CorrDiffHisBinLow->SetLineColor(kViolet-3);	
+	CorrDiffHisBinLow->SetMarkerSize(1);
+	CorrDiffHisBinLow->SetMarkerStyle(20);
+
+
+
 	hInvEff->SetMaximum(NewEff[0]*1.5);
 	TCanvas *c = new TCanvas("c","c",700,700);
 	c->cd();
@@ -942,8 +1025,8 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	else {c->SaveAs(Form("%s/EffFinal/acc_2Dmap_MC.pdf",var_n.Data()));}
 
 
-	DrawinvEff2D->GetXaxis()->SetTitle("|y|");
-	DrawinvEff2D->GetYaxis()->SetTitle("eff");
+	DrawinvEff2D->GetXaxis()->SetTitle("p_{T} GeV/c");
+	DrawinvEff2D->GetYaxis()->SetTitle("1/ #alpha #times #epsilon ");
 	DrawinvEff2D->GetZaxis()->SetLabelSize(0.02);
 	DrawinvEff2D->GetYaxis()->SetTitleOffset(1.4);
 	DrawinvEff2D->GetXaxis()->CenterTitle();
@@ -958,8 +1041,8 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	else {c->SaveAs(        Form("%s/EffFinal/totaleff_1Dmap_%s_%s_MC.pdf",var_n.Data(),var_m.Data(),var_n.Data()));}
 
 
-	DrawinvEff2DY->GetXaxis()->SetTitle("|y|");
-	DrawinvEff2DY->GetYaxis()->SetTitle("eff");
+	DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} GeV/c");
+	DrawinvEff2DY->GetYaxis()->SetTitle("1/ #alpha #times #epsilon ");
 	DrawinvEff2DY->GetZaxis()->SetLabelSize(0.02);
 	DrawinvEff2DY->GetYaxis()->SetTitleOffset(1.4);
 	DrawinvEff2DY->GetXaxis()->CenterTitle();
@@ -973,28 +1056,41 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	if (usemc==0){c->SaveAs(Form("%s/EffFinal/totaleff_Fid_1Dmap_%s_%s.pdf",var_n.Data(),var_m.Data(),var_n.Data()));}
 	else {c->SaveAs(        Form("%s/EffFinal/totaleff_Fid_1Dmap_%s_%s_MC.pdf",var_n.Data(),var_m.Data(),var_n.Data()));}
 
+	double cmax2 = -10000;
+	double cmin2 =  10000;
+	for(int i = 0; i < NBins;i++){
+		if (cmax2 < CorrDiffHis->GetBinContent(i+1)){cmax2=CorrDiffHis->GetBinContent(i+1);}
+		if (cmax2 < CorrDiffHisBin->GetBinContent(i+1)){cmax2=CorrDiffHisBin->GetBinContent(i+1);}
+		if (cmax2 < CorrDiffHis2D->GetBinContent(i+1)){cmax2=CorrDiffHis2D->GetBinContent(i+1);}
+		if (cmin2 > CorrDiffHis->GetBinContent(i+1)){cmin2=CorrDiffHis->GetBinContent(i+1);}
+		if (cmin2 > CorrDiffHisBin->GetBinContent(i+1)){cmin2=CorrDiffHisBin->GetBinContent(i+1);}
+		if (cmin2 > CorrDiffHis2D->GetBinContent(i+1)){cmin2=CorrDiffHis2D->GetBinContent(i+1);}
+	}
+	CorrDiffHis->GetYaxis()->SetRangeUser( cmin2*0.9, cmax2*1.1);
+
 	CorrDiffHis->SetMinimum(0);
 	CorrDiffHisLow->SetMinimum(0);
 	CorrDiffHis->Draw("ep");
 	CorrDiffHisLow->Draw("epsame");
+	CorrDiffHisBin->Draw("epsame");
+	CorrDiffHisBinLow->Draw("epsame");
+	CorrDiffHis2D->Draw("epsame");
+	CorrDiffHis2DLow->Draw("epsame");
 
-	TLegend* leg3 = new TLegend(0.55,0.65,0.85,0.83,NULL,"brNDC");
+	TLegend* leg3 = new TLegend(0.45,0.65,0.75,0.83,NULL,"brNDC");
 	leg3->SetBorderSize(0);
 	leg3->SetFillStyle(0);
-	leg3->AddEntry(CorrDiffHis,"Cross Section","PL");
-	if(whichvar == 0) {leg3->AddEntry(CorrDiffHisLow,"Cross Section (|y| > 1.5)","PL");}
-	if(whichvar == 1) {leg3->AddEntry(CorrDiffHisLow,"Cross Section (p_{T} > 10 GeV/c)","PL");}
+	leg3->AddEntry(CorrDiffHis,"1D F-G Cross Section","PL");
+	leg3->AddEntry(CorrDiffHisBin," 1D Cross Section","PL");
+	leg3->AddEntry(CorrDiffHis2D,"2D Cross Section","PL");
+	if(whichvar == 0) {leg3->AddEntry(CorrDiffHisLow,"1D F-G Cross Section (|y| > 1.5)","PL"); leg3->AddEntry(CorrDiffHisBinLow," 1D Cross Section (|y| > 1.5)","PL"); leg3->AddEntry(CorrDiffHis2DLow,"2D Cross Section (|y| > 1.5)","PL");}
+	if(whichvar == 1) {leg3->AddEntry(CorrDiffHisLow,"1D F-G Cross Section (p_{T} > 10 GeV/c)","PL");leg3->AddEntry(CorrDiffHisBinLow," 1D Cross Section (p_{T} > 10 GeV/c)","PL");leg3->AddEntry(CorrDiffHis2DLow,"2D Cross Section (p_{T} > 10 GeV/c)","PL");}
 	leg3->Draw("same");
 
 	if (usemc==0){c->SaveAs(Form("%s/EffFinal/xsection_%s_%s.pdf",var_n.Data(),var_m.Data(),var_n.Data()));}
 	else {c->SaveAs(        Form("%s/EffFinal/xsection_%s_%s_MC.pdf",var_n.Data(),var_m.Data(),var_n.Data()));}
 
-	TFile * input2D;
-	if(DoTnP == 1 && usemc==0)	input2D = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%s.root",var_n.Data(),var_n.Data(),var_file.Data()));
-	if(DoTnP == 1 && usemc==1)	input2D = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sMC.root",var_n.Data(),var_n.Data(),var_file.Data()));
-	if(DoTnP == 0 && usemc==1)	input2D = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnPMC.root",var_n.Data(),var_n.Data(),var_file.Data()));
-	TH1D * Eff2D;
-	Eff2D=(TH1D *) input2D->Get("hEffInv");
+	
 	
 
 	float InvEff2D[NBins];
@@ -1049,14 +1145,18 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	std::vector<double> cvreal;
 	std::vector<double> cvinv;
 	std::vector<double> cvrealinv;
-	std::vector<double> cvxs;
-	std::vector<double> cvxserr;
 	std::vector<double> eff_val1d;
 	std::vector<double> eff_val2d;
 	std::vector<double> eff_val2dinv;
 	std::vector<double> eff_err1d;
 	std::vector<double> eff_err2d;
 	std::vector<double> eff_err2dinv;
+	std::vector<double> xs_val1d;
+	std::vector<double> xs_val2d;
+	std::vector<double> xs_val2dinv;
+	std::vector<double> xs_err1d;
+	std::vector<double> xs_err2d;
+	std::vector<double> xs_err2dinv;
 	std::vector<std::vector<double>> comparison_values;
 	std::vector<std::vector<double>> comparison_inv_values;
 	std::vector<std::vector<double>> eff_val;
@@ -1065,7 +1165,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	std::vector<std::vector<double>> xs_err;
 	std::vector<std::string> labels = {"2D", "1D F-G"};
 	std::vector<std::string> labelseff = {"1D","2D", "1D F-G"};
-	std::vector<std::string> labelsxs = {"Cross Section values","Stat error"};
+	std::vector<std::string> labelsxs = {"1D","2D", "1D F-G"};
 	std::vector<std::string> col_name;
 	std::vector<std::string> col_name_eff;
 	std::vector<std::string> col_name_xs;
@@ -1096,8 +1196,15 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 		eff_err1d.push_back(Eff1DErr[i]);
 		eff_err2d.push_back(InvEff2DErr[i]);
 		eff_err2dinv.push_back(NewEffErr[i]/(NewEff[i]*NewEff[i]));
-		cvxs.push_back(CorrDiffHis->GetBinContent(i+1));
-		cvxserr.push_back(CorrDiffHis->GetBinError(i+1)/CorrDiffHis->GetBinContent(i+1));
+
+		xs_val1d.push_back(CorrDiffHisBin->GetBinContent(i+1));
+		xs_err1d.push_back(CorrDiffHisBin->GetBinError(i+1));
+
+		xs_val2d.push_back(CorrDiffHis2D->GetBinContent(i+1));
+		xs_err2d.push_back(CorrDiffHis2D->GetBinError(i+1));
+
+		xs_val2dinv.push_back(CorrDiffHis->GetBinContent(i+1));
+		xs_err2dinv.push_back(CorrDiffHis->GetBinError(i+1));
 	}
 	
 	comparison_values.push_back(cvreal);
@@ -1110,8 +1217,15 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	eff_err.push_back(eff_err1d);
 	eff_err.push_back(eff_err2d);
 	eff_err.push_back(eff_err2dinv);
-	xs_val.push_back(cvxs);
-	xs_val.push_back(cvxserr);
+
+	xs_val.push_back(xs_val1d);
+	xs_val.push_back(xs_val2d);
+	xs_val.push_back(xs_val2dinv);
+	xs_err.push_back(xs_err1d);
+	xs_err.push_back(xs_err2d);
+	xs_err.push_back(xs_err2dinv);
+
+
 
 
 	latex_table(Form("1D2Dcomparisons_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_values, "1D vs 2D efficiency comparisons",0);
@@ -1120,7 +1234,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	latex_table(Form("1D2Dcomparisons_inv_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_inv_values, "1D vs 2D inverse efficiency comparisons",0);
 
-	latex_table(Form("xsectionvalues_%s",whichvarname.Data()), NBins+1,  3,  col_name_xs , labelsxs , xs_val , "Cross Section Values per bin",2);
+	latex_table(Form("xsectionvalues_%s",whichvarname.Data()), NBins+1,  4,  col_name_xs , labelsxs , xs_val , "Cross Section Values per bin",1,xs_err);
 
 	std::vector<std::string> filetype ={"_check.aux", "_check.log",".tex","_check.tex"};
 	for (int j=0;j<(int)(filetype.size());j++){

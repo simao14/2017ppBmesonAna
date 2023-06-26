@@ -169,10 +169,19 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TTree * root;
 
 	if (usemc==0){
-	FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
+		if (meson_n==0){
+			FileName = Form("/data3/tasheng/presel/_%sData_nom.root",var_n.Data());
+		} else {
+			FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
+		}
 	}
 	else {
-	FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
+		if (meson_n==0){
+			FileName = Form("/data3/tasheng/presel/_%sMC_nom.root",var_n.Data());
+		} else {
+			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
+		}
+		
 	}
 	fin = new TFile(FileName.Data());
 
@@ -394,6 +403,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 
 	invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
+	//invEff2D= (TH2D *) fin1DEff->Get("invEff2DBptSyst");
 	TH2D * invEffTrkTight = (TH2D *) fin1DEff->Get("invEffTrkTight");
 	TH2D * invEffTrkLoose = (TH2D *) fin1DEff->Get("invEffTrkLoose");
 	TH2D * DrawinvEff2D= (TH2D *) fin1DEff->Get("invEff2D");
@@ -459,6 +469,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 					SumCounts[k] = SumCounts[k] + BEffInv[j];
 					SumCountsErr[k] = SumCountsErr[k] + BEffInvErr[j] * BEffInvErr[j];
 					SumCountsEff[k] = SumCountsEff[k] + BEff[j];
+					
 					SumCountsEffErr[k] = SumCountsEffErr[k] + BEffErr[j] * BEffErr[j];
 					SumCountsSyst[k] = 	SumCountsSyst[k]  + BEffInvBDTWeighted[j];
 					SumCountsSystErr[k] = 	SumCountsSystErr[k]  + BEffInvErrBDTWeighted[j] * BEffInvErrBDTWeighted[j];
@@ -634,6 +645,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	}
 
 
+	
 
 	//TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_m.Data()));
 	TString fYield = Form("../henri2022/ROOTfiles/yields_%s_binned_%s.root",var_n2.Data(),var_m.Data());

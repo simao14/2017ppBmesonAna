@@ -63,7 +63,13 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	int ptmax = 50;
 
 	TString infile;
-	infile = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",var_n.Data());
+	TString infile2;
+	if (meson_n==0){
+		infile = Form("/data3/tasheng/presel/output/_%s_MC_BDTs_nom_tnp.root",var_n.Data());
+	}
+	if (meson_n==1){
+		infile = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",var_n.Data());
+	}
 
 	TFile * fin = new TFile(infile.Data());
 
@@ -121,13 +127,20 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 //	TTree * BDT8 = (TTree *) fin->Get(BDT8Name.Data());
 	
 
-
+	TTree * rootGen;
 	TTree * root = (TTree * ) fin->Get("Bfinder/root");  //reconstructed variable
+	rootGen = (TTree * ) fin->Get("Bfinder/root");
+
+	//if (meson_n==0){rootGen = (TTree * ) fin2->Get("Bfinder/hi");} //gen variable
+	//else {rootGen = (TTree * ) fin->Get("Bfinder/root");}
+
 	TTree * TnPInfo = (TTree *) fin->Get("TnPInfo");
 
 	Int_t nMult;
+	Int_t GenMult;
 
 	root->SetBranchAddress("EvtInfo.nMult",&nMult);
+	rootGen->SetBranchAddress("mult",&GenMult);
 
 	
 
@@ -524,13 +537,13 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 	int NEvents = tree->GetEntries();
 
-	//const int yBinN = 5;
- 	//std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
-	//double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.4};
+	const int yBinN = 5;
+ 	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
+	double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.4};
 
-	const int yBinN = 6;
- 	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4});
-	double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4};
+	//const int yBinN = 6;
+ 	//std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4});
+	//double yBinning[yBinN+1] = {0.0, 0.5, 1.0, 1.5, 1.8, 2.1, 2.4};
 
   // create a vector of pT binning with specified regional widths
   auto createBins = [] (std::vector<double> edges,
@@ -550,8 +563,8 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
   auto BptBinning = bptBinVec.data();
   const int BptBin = bptBinVec.size() - 1;
 
-  //std::vector<double> yBinVec = createBins({0.0 ,0.5, 1.0, 1.5, 2.0, 2.4}, {1/160.,1/160., 1/160., 1/160., 1/150.});
-  std::vector<double> yBinVec = createBins({0.0 ,0.5, 1.0, 1.5, 1.8, 2.1, 2.4}, {1/160., 1/160.,1/160., 1/200., 1/200., 1/200.});
+  std::vector<double> yBinVec = createBins({0.0 ,0.5, 1.0, 1.5, 2.0, 2.4}, {1/160.,1/160., 1/160., 1/160., 1/150.});
+  //std::vector<double> yBinVec = createBins({0.0 ,0.5, 1.0, 1.5, 1.8, 2.1, 2.4}, {1/160., 1/160.,1/160., 1/200., 1/200., 1/200.});
   auto yonlyBinning = yBinVec.data(); 
   const int yonlyBin = yBinVec.size() - 1;
 
@@ -594,6 +607,9 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TH1D * recoyonlyHis = new TH1D("recoyonlyHis","",yonlyBin,yonlyBinning);
 	TH1D * genyonlyHis = new TH1D("genyonlyHis","",yonlyBin,yonlyBinning);
 
+	TH1D * recoyonlyHisBpt = new TH1D("recoyonlyHisBpt","",yonlyBin,yonlyBinning);
+	TH1D * genyonlyHisBpt = new TH1D("genyonlyHisBpt","",yonlyBin,yonlyBinning);
+
 	TH1D * recoyonlyHisfid = new TH1D("recoyonlyHisfid","",yonlyBin,yonlyBinning);
 	TH1D * genyonlyHisfid = new TH1D("genyonlyHisfid","",yonlyBin,yonlyBinning);
 
@@ -602,6 +618,9 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 	TH1D * recoyonlyHispt = new TH1D("recoyonlyHispt","",BptBin,BptBinning);
 	TH1D * genyonlyHispt = new TH1D("genyonlyHispt","",BptBin,BptBinning);
+
+	TH1D * recoyonlyHisptBpt = new TH1D("recoyonlyHisptBpt","",BptBin,BptBinning);
+	TH1D * genyonlyHisptBpt = new TH1D("genyonlyHisptBpt","",BptBin,BptBinning);
 
 	TH1D * recoyonlyHisptfid = new TH1D("recoyonlyHisptfid","",BptBin,BptBinning);
 	TH1D * genyonlyHisptfid = new TH1D("genyonlyHisptfid","",BptBin,BptBinning);
@@ -686,11 +705,11 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	const int NMultiBin = 7;
 	double  MultiBin1D[NMultiBin + 1] = {0,20,30,40,50,60,70,100};
 
-	//const int YBin = 8;
-	//double  YBin1D[YBin + 1] = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4};
+	const int YBin = 8;
+	double  YBin1D[YBin + 1] = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5, 2.4};
 	
-	const int YBin = 12;
-	double  YBin1D[YBin + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
+	//const int YBin = 12;
+	//double  YBin1D[YBin + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
 
 //	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins,PtBin);
 	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins1D,PtBin1D);
@@ -1702,19 +1721,22 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 			
         auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Bgeny[j]))
           - yBins.begin() - 1;
-				//BptWeight = BptWtF[iY]->Eval(Bgenpt[j]);
-				BptWeight = 1;
+				BptWeight = BptWtF[iY]->Eval(Bgenpt[j]);
+				//BptWeight = 1;
 
 			if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
 
 				Eff1DRECOHisBDT->Fill(Bpt[j],TotalWeight * BDTWeight);
 				Eff1DRECOHisBpt->Fill(Bpt[j],TotalWeight * BptWeight);
-
+				
 				Eff1DRECOHisBDTY->Fill(By[j],TotalWeight * BDTWeight);				
 				Eff1DRECOHisBptY->Fill(By[j],TotalWeight * BptWeight);
 
 				Eff1DRECOHisBDTMult->Fill(nMult,TotalWeight * BDTWeight);				
 				Eff1DRECOHisBptMult->Fill(nMult,TotalWeight * BptWeight);
+
+				recoyonlyHisBpt->Fill(abs(By[j]),TotalWeight * BDTWeight);
+		 		recoyonlyHisptBpt->Fill(Bpt[j],TotalWeight * BDTWeight);
 				
 			}
 
@@ -1737,6 +1759,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 			ntHi->GetEntry(i);
 			//CentWeightTree->GetEntry(i);
 			tree->GetEntry(i);
+			rootGen->GetEntry(i);
 			root->GetEntry(i);
 
 			// PVzWeight = 1;
@@ -1782,22 +1805,25 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 				
 					auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Gy[j]))
 						- yBins.begin() - 1;
-					//BptWeight = BptWtF[iY]->Eval(Gpt[j]);
-					BptWeight = 1;
+					BptWeight = BptWtF[iY]->Eval(Gpt[j]);
+					//BptWeight = 1;
 
 					NoWeightGenHis->Fill(Gpt[j],abs(Gy[j]),1);
 					EvtWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					BptWeightGenHis->Fill(Gpt[j],abs(Gy[j]),EventWeight * BptWeight);			
 					genyonlyHis->Fill(abs(Gy[j]),EventWeight);	
 					genyonlyHispt->Fill(Gpt[j],EventWeight);	
+
+					genyonlyHisBpt->Fill(abs(Gy[j]),EventWeight * BptWeight);	
+					genyonlyHisptBpt->Fill(Gpt[j],EventWeight * BptWeight);	
 					
 					Eff1DGENHis->Fill(Gpt[j],EventWeight);
 	
 					Eff1DGENHisGpt->Fill(Gpt[j],EventWeight * BptWeight);
 					Eff1DGENYHisGpt->Fill(Gy[j],EventWeight * BptWeight);
-					Eff1DGENMultHisGpt->Fill(nMult,EventWeight * BptWeight);
+					Eff1DGENMultHisGpt->Fill(GenMult,EventWeight * BptWeight);
 					
-					Eff1DGENMultHis->Fill(nMult,EventWeight);
+					Eff1DGENMultHis->Fill(GenMult,EventWeight);
 					Eff1DGENYHis->Fill(Gy[j],EventWeight);
 				
 				}
@@ -1810,7 +1836,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 					genyonlyHisptfid->Fill(Gpt[j],EventWeight);		
 					
-					Eff1DGENMultHisFid->Fill(nMult,EventWeight);
+					Eff1DGENMultHisFid->Fill(GenMult,EventWeight);
 					
 					Eff1DGENYHisFid->Fill(Gy[j],EventWeight);
 
@@ -1824,7 +1850,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 					EvtWeightGenFid10His->Fill(Gpt[j],abs(Gy[j]),EventWeight);	
 					genyonlyHisfid10->Fill(abs(Gy[j]),EventWeight);	
 					genyonlyHisptfid10->Fill(Gpt[j],EventWeight);			
-					Eff1DGENMultHisFid10->Fill(nMult,EventWeight);
+					Eff1DGENMultHisFid10->Fill(GenMult,EventWeight);
 					Eff1DGENYHisFid10->Fill(Gy[j],EventWeight);
 					Eff1DGENHisFid10->Fill(Gpt[j],EventWeight);
 					
@@ -1836,7 +1862,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 					EvtWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					Eff1DGENAccHis->Fill(Gpt[j],EventWeight);
 					Eff1DGENAccYHis->Fill(Gy[j],EventWeight);
-					Eff1DGENAccMultHis->Fill(nMult,EventWeight);
+					Eff1DGENAccMultHis->Fill(GenMult,EventWeight);
 
 				}
 				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && Gpt[j]>ptlow ) ){
@@ -1844,7 +1870,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 					Eff1DGENAccHisFid->Fill(Gpt[j],EventWeight);
 					Eff1DGENAccYHisFid->Fill(Gy[j],EventWeight);
-					Eff1DGENAccMultHisFid->Fill(nMult,EventWeight);
+					Eff1DGENAccMultHisFid->Fill(GenMult,EventWeight);
 
 				}
 
@@ -1853,7 +1879,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 					Eff1DGENAccHisFid10->Fill(Gpt[j],EventWeight);
 					Eff1DGENAccYHisFid10->Fill(Gy[j],EventWeight);
-					Eff1DGENAccMultHisFid10->Fill(nMult,EventWeight);
+					Eff1DGENAccMultHisFid10->Fill(GenMult,EventWeight);
 
 				}
 			}
@@ -2661,6 +2687,10 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEff1DY->Sumw2();
 		invEff1DY->Divide(recoyonlyHis);
 
+		TH1D * invEff1DYBpt = (TH1D * ) genyonlyHisBpt->Clone("invEff1DYBpt");
+		invEff1DYBpt->Sumw2();
+		invEff1DYBpt->Divide(recoyonlyHisBpt);
+
 		TH1D * invEff1DYFid = (TH1D * ) genyonlyHisfid->Clone("invEff1DYFid");
 		invEff1DYFid->Sumw2();
 		invEff1DYFid->Divide(recoyonlyHisfid);
@@ -2672,6 +2702,10 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		TH1D * invEff1DFGpt = (TH1D * ) genyonlyHispt->Clone("invEff1DFGpt");
 		invEff1DFGpt->Sumw2();
 		invEff1DFGpt->Divide(recoyonlyHispt);
+
+		TH1D * invEff1DFGptBpt = (TH1D * ) genyonlyHisptBpt->Clone("invEff1DFGptBpt");
+		invEff1DFGptBpt->Sumw2();
+		invEff1DFGptBpt->Divide(recoyonlyHisptBpt);
 
 		TH1D * invEff1DFGptFid = (TH1D * ) genyonlyHisptfid->Clone("invEff1DFGptFid");
 		invEff1DFGptFid->Sumw2();
@@ -2770,9 +2804,11 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEffonly2D->Write();
 		invEff2D->Write();
 		invEff1DY->Write();
+		invEff1DYBpt->Write();
 		invEff1DYFid->Write();
 		invEff1DYFid10->Write();
 		invEff1DFGpt->Write();
+		invEff1DFGptBpt->Write();
 		invEff1DFGptFid->Write();
 		invEff1DFGptFid10->Write();
 		invEff2DReal->Write();
@@ -2867,8 +2903,14 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		InvEff1DHisTightMult->Write();
 		InvEff1DHisLooseMult->Write();
 
+		Eff1DHisBptY->Write();
+		Eff1DHisBpt->Write();
+		Eff1DHisBptMult->Write();
 
-
+		invEff2DTnPSystUp->Write();
+		invEff2DTnPSystDown->Write();
+		invEff2DBDTSyst->Write();
+		invEff2DBptSyst->Write();
 
 		TFile * fout2 = new TFile(Form("%s/%sMuonInfoPlots_%d_%d.root",var_n.Data(),var_n.Data(),ptmin,ptmax),"RECREATE");
 		fout2->cd();
@@ -3088,10 +3130,12 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEff1DY->Write();
 		invEff1DYFid->Write();
 		invEff1DYFid10->Write();
+		invEff1DYBpt->Write();
 
 		invEff1DFGpt->Write();
 		invEff1DFGptFid->Write();
 		invEff1DFGptFid10->Write();
+		invEff1DFGptBpt->Write();
 
 		foutSyst2D->Close();
 
