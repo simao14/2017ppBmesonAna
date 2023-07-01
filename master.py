@@ -3,48 +3,53 @@
 # from subprocess import run, PIPE, Popen
 import os
 from time import ctime
+import argparse
 import re
 import ROOT as r
 import numpy as np
 
-# examples
-# p1 = subprocess.Popen(['echo', link], stdout=PIPE)
-# p2 = run(['xclip', '-i', '-selection', 'clipboard'], input=link)
+parser = argparse.ArgumentParser()
+parser.add_argument('var', type=str)
+opt = parser.parse_args()
 
-bp_list = [
-    # skim output
-    "CutSkim/BPMC.root",
-    "CutSkim/BPData.root",
-    # fit output
-    "BP/RawYieldFits/ROOTfiles/yields_Bp_binned_pt.root",
-    # cross section
-]
+print(opt.var)
+
+if opt.var == "Bpt":
+    binsBP=7
+    binsBs=4
+    var_n = "pt"
+    var_N = "PT"
+elif opt.var == "By":
+     binsBP=8
+     binsBs=8
+     var_n = "y"
+     var_N = "Y"
+elif opt.var == "nMult":
+     binsBP=8
+     binsBs=8
+     var_n = "Mult"
+     var_N = "Mult"
+else:
+    print("Invalid Input")
 
 bp_pdf_list = [
-    "henri2022/filesbp/signal_systematics_table_Bpt_ntKp.tex",
-    "henri2022/filesbp/background_systematics_table_Bpt_ntKp.tex",
+    "henri2022/filesbp/signal_systematics_table_%s_ntKp.tex" % opt.var,
+    "henri2022/filesbp/background_systematics_table_%s_ntKp.tex" % opt.var,
     # "BP/RawYieldFits/signal_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/background_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
     ]
 
-bp_list.extend(bp_pdf_list)
-
 bs_pdf_list = [
-    "henri2022/filesbs/signal_systematics_table_Bpt_ntphi.tex",
-    "henri2022/filesbs/background_systematics_table_Bpt_ntphi.tex",
+    "henri2022/filesbs/signal_systematics_table_%s_ntphi.tex" % opt.var,
+    "henri2022/filesbs/background_systematics_table_%s_ntphi.tex" % opt.var,
     # "Bs/RawYieldFits/signal_systematics_table_Bpt_ntphi.tex",
     # "Bs/RawYieldFits/background_systematics_table_Bpt_ntphi.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
     ]
 
-def print_time():
-    """print the mtime of all the files"""
-    for file in bp_list:
-        # p1 = Popen(['ls', '-lh', file])
-        time = os.path.getmtime(file)
-        print(ctime(time), file)
-
+if not os.path.exists("syst_error"):
+    os.makedirs("syst_error")
 
 def get_pdf_syst(inFileList, outfile, hname, nbins, nshape):
     """
@@ -80,8 +85,8 @@ def get_pdf_syst(inFileList, outfile, hname, nbins, nshape):
     fout.Close()
     return
 
-get_pdf_syst(bp_pdf_list, "bp_pdf.root", "bp_error", 7, [3, 4])
-get_pdf_syst(bs_pdf_list, "bs_pdf.root", "bs_error", 4, [3, 3])
+get_pdf_syst(bp_pdf_list, "syst_error/bp_pdf_%s.root" % var_n, "bp_error", binsBP, [3, 4])
+get_pdf_syst(bs_pdf_list, "syst_error/bs_pdf_%s.root" % var_n, "bs_error", binsBs, [3, 3])
 
 def make_line(item, array, suf = '', form = '{:.2f}'):
     entry = [item.ljust(22)] + [form.format(num) + suf for num in array]
@@ -115,7 +120,7 @@ def read_tracking_syst(inYield, nbins):
     arr = np.array(g.GetX())
     error_tight = np.array(g.GetY())
     out_table = ''
-    out_table += make_line('pT', arr)
+    out_table += make_line('%s' % var_n, arr)
     out_table += make_line('raw yield', get_y(h_yield_nom))
     out_table += make_line('tight raw yield', get_y(h_yield_tight))
     out_table += make_line('loose raw yield', get_y(h_yield_nom))
@@ -131,11 +136,11 @@ def read_tracking_syst(inYield, nbins):
     return g, out_table
 
 def get_tracking_syst(outfile, out_table):
-    in_file_bp = "BP/EffAna/FinalFiles/BPPPCorrYieldPT.root"
-    in_file_bs = "Bs/EffAna/FinalFiles/BsPPCorrYieldPT.root"
-    g_bp, t_bp = read_tracking_syst(in_file_bp, 7)
+    in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_N
+    in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_N
+    g_bp, t_bp = read_tracking_syst(in_file_bp, binsBP)
     g_bp.SetName('bp_track_sel_error')
-    g_bs, t_bs = read_tracking_syst(in_file_bs, 4)
+    g_bs, t_bs = read_tracking_syst(in_file_bs, binsBs)
     g_bs.SetName('bs_track_sel_error')
     fout = r.TFile(outfile, "recreate")
     g_bp.Write()
@@ -147,4 +152,64 @@ def get_tracking_syst(outfile, out_table):
         fout.write('\n')
         fout.write('\\PBs track selection systematics\n')
         fout.write(t_bs)
-get_tracking_syst("syst_track_sel.root", "syst_track_sel.txt")
+
+
+get_tracking_syst("syst_error/syst_track_sel_%s.root" % var_n, "syst_error/syst_track_sel_%s.txt" % var_n)
+
+def read_tracking_syst1D(inYield, nbins):
+    """Return graphs and tables for eff, yield, and corrected yield"""
+    fin = r.TFile(inYield)
+    r.SetOwnership(fin, False)
+    h_nom = fin.Get("CorrDiffHisBin")
+    h_tight = fin.Get("CorrDiffHisBin_tight")
+    h_tight_ratio = h_tight.Clone()
+    h_tight_ratio.Divide(h_nom)
+    g = r.TGraphAsymmErrors(h_tight_ratio)
+    # g = r.TGraphAsymmErrors(h_nom, h_tight, 'pois')
+    for ibin in range(g.GetN()):
+        g.SetPointY(ibin, 100 * abs(g.GetPointY(ibin) - 1))
+    # show percent error
+    g.GetYaxis().SetTitle("Track selection error in %")
+    ## syst table
+    h_yield_nom = fin.Get("hPt")
+    h_yield_tight = fin.Get("hPtTight")
+    h_inveff_nom = fin.Get("InvEff1DHisvar")
+    h_inveff_tight = fin.Get("InvEff1DHisTight")
+    arr = np.array(g.GetX())
+    error_tight = np.array(g.GetY())
+    out_table = ''
+    out_table += make_line('%s' % var_n, arr)
+    out_table += make_line('raw yield', get_y(h_yield_nom))
+    out_table += make_line('tight raw yield', get_y(h_yield_tight))
+    out_table += make_line('loose raw yield', get_y(h_yield_nom))
+    out_table += make_line('inverse eff', get_y(h_inveff_nom))
+    out_table += make_line('tight inverse eff', get_y(h_inveff_tight))
+    out_table += make_line('loose inverse eff', get_y(h_inveff_nom))
+    out_table += make_line('corrected yield', get_y(h_nom), '', '{:.0f}')
+    out_table += make_line('corrected tight yield', get_y(h_tight), '', '{:.0f}')
+    out_table += make_line('corrected loose yield', get_y(h_nom), '', '{:.0f}')
+    out_table += make_line('tight error', error_tight, '\%')
+    out_table += make_line('loose error', np.zeros(len(arr)), '\%')
+    print(out_table)
+    return g, out_table
+
+def get_tracking_syst1D(outfile, out_table):
+    in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_N
+    in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_N
+    g_bp, t_bp = read_tracking_syst1D(in_file_bp, binsBP)
+    g_bp.SetName('bp_track_sel_error')
+    g_bs, t_bs = read_tracking_syst1D(in_file_bs, binsBs)
+    g_bs.SetName('bs_track_sel_error')
+    fout = r.TFile(outfile, "recreate")
+    g_bp.Write()
+    g_bs.Write()
+    fout.Close()
+    with open(out_table, 'w') as fout:
+        fout.write('\\PBp track selection systematics\n')
+        fout.write(t_bp)
+        fout.write('\n')
+        fout.write('\\PBs track selection systematics\n')
+        fout.write(t_bs)
+
+
+get_tracking_syst1D("syst_error/syst_track_sel_%s_1D.root" % var_n, "syst_error/syst_track_sel_%s_1D.txt" % var_n)

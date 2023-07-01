@@ -1,6 +1,8 @@
 #include "TH1.h"
 #include "TTree.h"
 #include "TFile.h"
+#include <iostream>
+#include <fstream>
 #include "../henri2022/parameter.h" 
 
 using namespace std;
@@ -80,7 +82,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	system(("open " + filename + "_check.pdf").c_str());
 }
 
-void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
+void PlotEffSyst1D(int Opt, int whichvar){
 
 	TString var_n;
 	TString var_l;
@@ -143,36 +145,32 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	TString infile;
   	TString outFile;
 
-	if(Opt == 0 && usemc==0) {
-    infile =  Form("OutFiles/BPSyst2D_%s.root",var_n.Data());
-    outFile =  Form("OutFiles/BPError2D_%s.root",var_n.Data());
-  } else if(Opt == 1 && usemc==0) {
-    infile =  Form("OutFiles/BsSyst2D_%s.root",var_n.Data());
-    outFile =  Form("OutFiles/BsError2D_%s.root",var_n.Data());
-  } else if(Opt == 0 && usemc==1) {
-    infile =  Form("OutFiles/BPSyst2D_%s_MC.root",var_n.Data());
-    outFile =  Form("OutFiles/BPError2D_%s_MC.root",var_n.Data());
-  } else if(Opt == 1 && usemc==1) {
-    infile =  Form("OutFiles/BsSyst2D_%s_MC.root",var_n.Data());
-    outFile =  Form("OutFiles/BsError2D_%s_MC.root",var_n.Data());
+	if(Opt == 0) {
+    infile =  Form("OutFiles/BPSyst1D_%s.root",var_n.Data());
+    outFile =  Form("OutFiles/BPError1D_%s.root",var_n.Data());
+  } else if(Opt == 1) {
+    infile =  Form("OutFiles/BsSyst1D_%s.root",var_n.Data());
+    outFile =  Form("OutFiles/BsError1D_%s.root",var_n.Data());
   }
 
 	TString BmesonName;
-	if(Opt == 0) BmesonName =  "BP";
-	if(Opt == 1) BmesonName =  "Bs";
+	TString bmesonName;
+
+	if(Opt == 0) BmesonName =  "BP"; bmesonName =  "bp";
+	if(Opt == 1) BmesonName =  "Bs"; bmesonName =  "bs";
 	gSystem->mkdir("EffSystPlots", true);
 	gSystem->mkdir(Form("EffSystPlots/%s",BmesonName.Data()), true);
 
 	TFile * fin = new TFile(infile.Data());
 	fin->cd();
 
-	TH1D * Eff1DHis = (TH1D * ) fin->Get("Eff2DHis");
-	TH1D * Eff1DHisTnPUp = (TH1D * ) fin->Get("Eff2DTnPUpSystHis");
-	TH1D * Eff1DHisTnPDown = (TH1D * ) fin->Get("Eff2DTnPDownSystHis");
-	TH1D * Eff1DHisBpt = (TH1D * ) fin->Get("Eff2DBptHis");
-	TH1D * Eff1DHisBDT = (TH1D * ) fin->Get("Eff2DBDTHis");
+	TH1D * Eff1DHis = (TH1D * ) fin->Get("Eff1DHisInv");
+	TH1D * Eff1DHisTnPUp = (TH1D * ) fin->Get("Eff1DTnPUpSystHis");
+	TH1D * Eff1DHisTnPDown = (TH1D * ) fin->Get("Eff1DTnPDownSystHis");
+	TH1D * Eff1DHisBpt = (TH1D * ) fin->Get("Eff1DBptHis");
+	TH1D * Eff1DHisBDT = (TH1D * ) fin->Get("Eff1DBDTHis");
 
-  TFile fout(outFile, "recreate");
+  	TFile fout(outFile, "recreate");
 
 	//Draw Eff2DHis
 	TCanvas * EFFplot  = new TCanvas("cSyst","cSyst",600,600);
@@ -182,8 +180,8 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	Eff1DHis->SetMarkerColor(kBlack);
 	Eff1DHis->SetLineColor(kBlack);
 	Eff1DHis->Draw("ep");
-	if (usemc==0){EFFplot->SaveAs(Form("EffSystPlots/%s/%s_EFFplot.pdf",BmesonName.Data(),var_n.Data()));}
-	else {EFFplot->SaveAs(Form("EffSystPlots/%s/%s_EFFplot_MC.pdf",BmesonName.Data(),var_n.Data()));}
+	EFFplot->SaveAs(Form("EffSystPlots/%s/%s_EFFplot.pdf",BmesonName.Data(),var_n.Data()));
+
 
 	//Draw Systematic Uncertainties
 	TCanvas * cSyst  = new TCanvas("cSyst","cSyst",600,600);
@@ -214,8 +212,8 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	leg->AddEntry(Eff1DHisTnPDown,"TnP Variation Down","PL");
 	leg->Draw("same");
 
-	if (usemc==0){cSyst->SaveAs(Form("EffSystPlots/%s/%s_TnPSystComp.pdf",BmesonName.Data(),var_n.Data()));}
-	else {cSyst->SaveAs(Form("EffSystPlots/%s/%s_TnPSystComp_MC.pdf",BmesonName.Data(),var_n.Data()));}
+	cSyst->SaveAs(Form("EffSystPlots/%s/%s_TnPSystComp.pdf",BmesonName.Data(),var_n.Data()));
+
 
 	Eff1DHisBDT->SetMarkerStyle(20);
 	Eff1DHisBDT->SetMarkerSize(1);
@@ -233,15 +231,20 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	leg2->AddEntry(Eff1DHisBDT,"BDT Weighted","PL");
 	leg2->Draw("same");
 
-	if (usemc==0) {cSyst->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystComp.pdf",BmesonName.Data(),var_n.Data()));}
-	else {cSyst->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystComp_MC.pdf",BmesonName.Data(),var_n.Data()));}
+	cSyst->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystComp.pdf",BmesonName.Data(),var_n.Data()));
 
 	Eff1DHisBpt->SetMarkerStyle(20);
 	Eff1DHisBpt->SetMarkerSize(1);
 	Eff1DHisBpt->SetMarkerColor(kRed);
 	Eff1DHisBpt->SetLineColor(kRed);
-	Eff1DHis->Draw("ep");
-	Eff1DHisBpt->Draw("epSAME");
+
+	if (Opt==0){
+		Eff1DHisBpt->Draw("ep");
+		Eff1DHis->Draw("epSAME");
+	} else if (Opt==1) {
+		Eff1DHis->Draw("ep");
+		Eff1DHisBpt->Draw("epSame");
+	}
 
 	TLegend* leg3 = new TLegend(0.7,0.8,0.89,0.89,NULL,"brNDC");
 	leg3->SetBorderSize(0);
@@ -252,8 +255,8 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	leg3->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 	leg3->Draw("same");
 
-	if (usemc==0){cSyst->SaveAs(Form("EffSystPlots/%s/%s_BptSystComp.pdf",BmesonName.Data(),var_n.Data()));}
-	else {cSyst->SaveAs(Form("EffSystPlots/%s/%s_BptSystComp_MC.pdf",BmesonName.Data(),var_n.Data()));}
+	cSyst->SaveAs(Form("EffSystPlots/%s/%s_BptSystComp.pdf",BmesonName.Data(),var_n.Data()));
+
 	//Done drawing 
 
 
@@ -310,39 +313,52 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 
 	}
 
-
-
 	TnPSyst->Draw("ep");
-	if (usemc==0){c->SaveAs(Form("EffSystPlots/%s/%s_TnPSystRatio.pdf",BmesonName.Data(),var_n.Data()));}
-	else {c->SaveAs(Form("EffSystPlots/%s/%s_TnPSystRatio_MC.pdf",BmesonName.Data(),var_n.Data()));}
+	c->SaveAs(Form("EffSystPlots/%s/%s_TnPSystRatio.pdf",BmesonName.Data(),var_n.Data()));
 	BptSyst->Draw("ep");
-	if (usemc==0){c->SaveAs(Form("EffSystPlots/%s/%s_BptSysRatio.pdf",BmesonName.Data(),var_n.Data()));}
-	else {c->SaveAs(Form("EffSystPlots/%s/%s_BptSysRatio_MC.pdf",BmesonName.Data(),var_n.Data()));}
+	c->SaveAs(Form("EffSystPlots/%s/%s_BptSysRatio.pdf",BmesonName.Data(),var_n.Data()));
 	BDTSyst->Draw("ep");
-	if (usemc==0){c->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystRatio.pdf",BmesonName.Data(),var_n.Data()));}
-	else {c->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystRatio_MC.pdf",BmesonName.Data(),var_n.Data()));}
+	c->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystRatio.pdf",BmesonName.Data(),var_n.Data()));
 
-  TnPSyst->Write();
-  BptSyst->Write();
-  BDTSyst->Write();
+  	TnPSyst->Write();
+  	BptSyst->Write();
+  	BDTSyst->Write();
 
+	//eff with syst (comparison with 2D)
+	TString InfileB = Form("../EffAna/%s/FinalFiles/%sPPCorrYield%s.root",BmesonName.Data(),BmesonName.Data(),var_N.Data());
+	TFile * FileB= new TFile(InfileB.Data());
 
+	TString errorFile = Form("../2DMapSyst/OutFiles/%sError2D_%s.root", BmesonName.Data(),var_n.Data());
+  	TFile fError(errorFile);
 
-	
+	TString trackSelErrorFile = Form("../syst_error/syst_track_sel_%s.root",var_n.Data());
+	TFile fTrackSelError(trackSelErrorFile);
 
+	TH1D * Eff2DHis = (TH1D *) FileB->Get("hInvEff");
+	TH1D * TnPSyst2D = (TH1D *) fError.Get("TnPSyst");
+	TH1D * BptSyst2D = (TH1D *) fError.Get("BptSyst");
+	TH1D * MCDataSyst2D = (TH1D *) fError.Get("BDTSyst");
 
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", bmesonName.Data()));
+	TGraph* trackSelSystMC = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", bmesonName.Data()));
 
 	float BP1DEffX[NBins];
 	float B1DEffXErrUp[NBins] ;
 	float BP1DEffY[NBins];
 	float BP1DEffYErrUp[NBins];
 
+	float BP2DEffY[NBins];
+	float BP2DEffYErrUp[NBins];
 
 	for( int c=0; c <NBins; c++){ 
 		BP1DEffX[c]=(ptBins[c]+ptBins[c+1])/2;
 		B1DEffXErrUp[c]=(abs(ptBins[c+1]-ptBins[c]))/2;
 		BP1DEffY[c] = Eff1DHis->GetBinContent(c+1);
 		BP1DEffYErrUp[c] = Eff1DHis->GetBinError(c+1);
+		BP2DEffY[c] = Eff2DHis->GetBinContent(c+1);
+		BP2DEffYErrUp[c] = Eff2DHis->GetBinError(c+1);
+		cout<< "1D eff:"<<BP1DEffY[c]<<endl;
+		cout<< "2D eff:"<<BP2DEffY[c]<<endl;
 	}
 
 	float BP1DEffYSystUp[NBins];
@@ -363,18 +379,34 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	float BPTnPSystDown1D[NBins];
 	float BPTnPSystUp1D[NBins];
 
+	float BPMCDataSyst2D[NBins];
+	float BPPtShapeSyst2D[NBins];
+	float BPTnPSystDown2D[NBins];
+	float BPTnPSystUp2D[NBins];
+	float BPTrackSelSyst[NBins];
+	float BPTrackSelSystMC[NBins];
+
   // Get systematics from input files
     for (auto ibin = 0; ibin < NBins; ++ibin){
 		BPMCDataSyst1D[ibin] = BDTSyst->GetBinContent(ibin + 1);
 		BPPtShapeSyst1D[ibin] = BptSyst->GetBinContent(ibin + 1);
 		BPTnPSystDown1D[ibin] = TnPSyst->GetBinContent(ibin + 1);
 		BPTnPSystUp1D[ibin] = BPTnPSystDown1D[ibin];
+
+	    BPMCDataSyst2D[ibin] = MCDataSyst2D->GetBinContent(ibin + 1);
+		BPPtShapeSyst2D[ibin] = BptSyst2D->GetBinContent(ibin + 1);
+		BPTnPSystDown2D[ibin] = TnPSyst2D->GetBinContent(ibin + 1);
+		BPTnPSystUp2D[ibin] = BPTnPSystDown2D[ibin];
+		BPTrackSelSyst[ibin] = trackSelSyst->GetY()[ibin];
+		BPTrackSelSystMC[ibin] = trackSelSystMC->GetY()[ibin];
   	}
 
   // RMS of all the errors
 	float BPTotalSystDownRatio1D[NBins];
 	float BPTotalSystUpRatio1D[NBins];
 
+	float BPTotalSystDownRatio2D[NBins];
+	float BPTotalSystUpRatio2D[NBins];
 
 	for(int i = 0; i < NBins; i++){
 
@@ -383,19 +415,28 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 
 		//BPTotalSystDownRatio1D[i] = TMath::Sqrt(TMath::Power(TMath::Power(BPTrackingSyst[i], 2) + BPMCDataSyst1D[i], 2) + TMath::Power(BPTrackSelSystMC[i], 2) + TMath::Power(BPPtShapeSyst1D[i], 2) + TMath::Power(BPTnPSystDown1D[i], 2)) / 100;
     	//BPTotalSystUpRatio1D[i] = TMath::Sqrt(TMath::Power(TMath::Power(BPTrackingSyst[i], 2) + BPMCDataSyst1D[i], 2) + TMath::Power(BPTrackSelSystMC[i], 2) + TMath::Power(BPPtShapeSyst1D[i], 2) + TMath::Power(BPTnPSystUp1D[i], 2)) / 100;
-	
+
+		//BPTotalSystDownRatio2D[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst2D[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) + TMath::Power(BPPtShapeSyst2D[i], 2) + TMath::Power(BPTnPSystDown2D[i], 2)) / 100;
+    	//BPTotalSystUpRatio2D[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst2D[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) + TMath::Power(BPPtShapeSyst2D[i], 2) + TMath::Power(BPTnPSystUp2D[i], 2)) / 100;
+
+		BPTotalSystDownRatio2D[i] = TMath::Sqrt(TMath::Power(BPMCDataSyst2D[i], 2) + TMath::Power(BPPtShapeSyst2D[i], 2) + TMath::Power(BPTnPSystDown2D[i], 2)) / 100;
+    	BPTotalSystUpRatio2D[i] = TMath::Sqrt(TMath::Power(BPMCDataSyst2D[i], 2) + TMath::Power(BPPtShapeSyst2D[i], 2) + TMath::Power(BPTnPSystUp2D[i], 2)) / 100;	
 	}
 
 	for(int i = 0; i < NBins; i++){
 		BP1DEffYSystUp[i] = BP1DEffY[i] * BPTotalSystUpRatio1D[i];
 		BP1DEffYSystDown[i] = BP1DEffY[i] * BPTotalSystDownRatio1D[i];
 
+		BP2DEffYSystUp[i] = BP2DEffY[i] * BPTotalSystUpRatio2D[i];
+		BP2DEffYSystDown[i] = BP2DEffY[i] * BPTotalSystDownRatio2D[i];
 	}
 
 	TGraphAsymmErrors *BP1DEffGraph = new TGraphAsymmErrors(NBins, BP1DEffX ,BP1DEffY , B1DEffXErrUp, B1DEffXErrUp, BP1DEffYErrUp, BP1DEffYErrUp); 
 	TGraphAsymmErrors *BP1DEffGraphSyst = new TGraphAsymmErrors(NBins, BP1DEffX , BP1DEffY, B1DEffXErrUp, B1DEffXErrUp, BP1DEffYSystDown, BP1DEffYSystUp);
 
-	
+	TGraphAsymmErrors *BP2DEffGraph = new TGraphAsymmErrors(NBins, BP1DEffX ,BP2DEffY , B1DEffXErrUp, B1DEffXErrUp, BP2DEffYErrUp, BP2DEffYErrUp); 
+	TGraphAsymmErrors *BP2DEffGraphSyst = new TGraphAsymmErrors(NBins, BP1DEffX , BP2DEffY, B1DEffXErrUp, B1DEffXErrUp, BP2DEffYSystDown, BP2DEffYSystUp);
+
 	gStyle->SetOptStat(0);
 	cSyst->cd(); 
 	cSyst->SetLeftMargin(0.15);
@@ -405,8 +446,8 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	if(Opt == 0 && whichvar==0) {HisEmpty = new TH2D("HisEmpty","",100,5,60,100,0,60);} 
 	if(Opt == 1 && whichvar==0) {HisEmpty = new TH2D("HisEmpty","",100,7,50,100,0,60);}
 
-	if(Opt == 0 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,-2.4,2.4,100,0,30);}
-	if(Opt == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,-2.4,2.4,100,0,30);}
+	if(Opt == 0 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,-2.4,2.4,100,0,60);}
+	if(Opt == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,-2.4,2.4,100,0,60);}
 
 	if(Opt == 0 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,60);}   // need to adjust range for when we have nmult results
 	if(Opt == 1 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,60);}
@@ -423,25 +464,44 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 	BP1DEffGraphSyst ->SetFillColorAlpha(kGreen-7,0.5);
 	BP1DEffGraphSyst ->SetLineColor(kGreen-7);
 
-	
+	BP2DEffGraph->SetMarkerStyle(20);
+	BP2DEffGraph->SetMarkerSize(1);
+	BP2DEffGraph->SetLineColor(kBlue+2);
+	BP2DEffGraph->SetMarkerColor(kBlue+2);
+	BP2DEffGraphSyst->SetFillColorAlpha(kBlue-3,0.5);
+	BP2DEffGraphSyst->SetLineColor(kBlue-3);
 	
 	HisEmpty->Draw();
+	BP2DEffGraphSyst->Draw("5same");
+	BP2DEffGraph->Draw("epSAME");
 	BP1DEffGraphSyst->Draw("5same");
 	BP1DEffGraph->Draw("epSAME");
 
+
+	
+	TLegend* leged;
+	leged = new TLegend(0.65,0.6,0.9,0.68,NULL,"brNDC");
+	leged->SetBorderSize(0);
+	leged->SetFillStyle(0);
+	leged->AddEntry(BP1DEffGraph,"1D Eff.","P");
+	leged->AddEntry(BP2DEffGraph,"2D Eff.","P");
+	leged->SetTextSize(0.022);
+	leged->Draw("same");
 	
 
 	cSyst->SaveAs(Form("EffSystPlots/%s/Effcomp_%s.pdf", BmesonName.Data(), var_n.Data()));
-	
 	string name;
 	TString whichvarname;
 	if(whichvar==0){name="$<p_T<$"; whichvarname="pt";} else if(whichvar==1){name="$<y<$";whichvarname="y";} else if(whichvar==2){name="$<nTrks<$";whichvarname="nMult";}
 	std::vector<std::string> col_name;
-	std::vector<std::string> labels = {"","Eff value","Stat error","Syst error"};
+	std::vector<std::string> labels = {"","1D value","Stat error","Syst error", "2D value","Stat error","Syst error"};
 	std::vector<std::vector<double>> eff_values;
 	std::vector<double> val1D;
 	std::vector<double> stat1D;
 	std::vector<double> syst1D;
+	std::vector<double> val2D;
+	std::vector<double> stat2D;
+	std::vector<double> syst2D;
 	for(int i=0;i<NBins;i++){
 
 		std::ostringstream clabel;
@@ -453,23 +513,28 @@ void PlotEffSyst2D(int Opt, int whichvar, int usemc=0){
 		stat1D.push_back(BP1DEffYErrUp[i]/BP1DEffY[i]);
 		syst1D.push_back(BP1DEffYSystDown[i]/BP1DEffY[i]);
 
+		val2D.push_back(BP2DEffY[i]);
+		stat2D.push_back(BP2DEffYErrUp[i]/BP2DEffY[i]);
+		syst2D.push_back(BP2DEffYSystDown[i]/BP2DEffY[i]);
+
 	}
 
 	eff_values.push_back(val1D);
 	eff_values.push_back(stat1D);
 	eff_values.push_back(syst1D);
-
+	eff_values.push_back(val2D);
+	eff_values.push_back(stat2D);
+	eff_values.push_back(syst2D);
 
 	gSystem->mkdir("Trash",true);
 
-	latex_table(Form("2DEfftable_%s",whichvarname.Data()), 4,  NBins+1,  labels , col_name , eff_values, "Efficiency values and errors");
+	latex_table(Form("1D2Dcomparisons_%s",whichvarname.Data()), 7,  NBins+1,  labels , col_name , eff_values, "1D vs 2D efficiency comparisons");
 
 	std::vector<std::string> filetype ={"_check.aux", "_check.log",".tex","_check.tex"};
 	for (int j=0;j<(int)(filetype.size());j++){
-				rename(("2DEfftable_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/2DEfftable_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+				rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/1D2Dcomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 			}
-	rename(("2DEfftable_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffSystPlots/"+std::string (BmesonName.Data())+"/2DEfftable_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
-
+	rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffSystPlots/"+std::string (BmesonName.Data())+"/1D2Dcomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
 
 }

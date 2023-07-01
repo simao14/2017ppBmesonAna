@@ -32,33 +32,55 @@ yield () {
 }
 
 bpEff () {
-    pushd BP/EffAna
+    pushd EffAna
     echo "Takes BPw.root as input"
     ls -l BDTWeights/BPw.root
 
-    #root -b -l -q MCEff.C'(1,0)' > eff.log                                          
-    #wait
-    root -b -l -q CrossSectionAnaMult.C'(1,2,0)'  #(TnPon =1 noTnP=0 , pT=2,y=0,mult=1 , data =0 mc = 1)   
+    root -b -l -q MCEff.C'(1,0,0)' > effbp.log                                          
+    wait
+    root -b -l -q CrossSectionAnaMult.C'(1,1,0)'  #(TnPon =1 noTnP=0 , pT=0,y=1,mult=2 , data =0 mc = 1)
+    rm -r BP/EffFinal   
+    root -b -l -q CrossSectionAnaMult.C'(1,0,0)'
+    root -b -l -q CrossSectionAnaY.C'(1,1,0)'
     popd
 }
 bsEff () {
-    pushd Bs/EffAna
+    pushd EffAna
     echo "Takes Bsw.root as input"
     ls -l BDTWeights/Bsw.root
 
-    #root -b -l -q MCEff.C'(1,0)' > eff.log
-    #wait
-    root -b -l -q CrossSectionAna.C'(1)'
-    #root -b -l -q CrossSectionAnaMult.C'(1,2,0)'  #(TnPon =1 noTnP=0 , pT=2,y=0,mult=1 , data =0 mc = 1)              
-    popd  
+    root -b -l -q MCEff.C'(1,0,1)' > effbs.log                                          
+    wait
+    root -b -l -q CrossSectionAnaMult.C'(1,1,1)'  #(TnPon =1 noTnP=0 , pT=0,y=1,mult=2 , data =0 mc = 1)
+    rm -r Bs/EffFinal   
+    root -b -l -q CrossSectionAnaMult.C'(1,0,1)'
+    root -b -l -q CrossSectionAnaY.C'(1,1,1)'
+    popd
 }
 
-syst () {
+syst2D () {
     pushd 2DMapSyst
-    root -b -l -q CalEffSystB.C'(0)'                      # >> outfiles/BPsyst2d.root
-    root -b -l -q CalEffSystB.C'(1)'                      # >> outfiles/Bssyst2d.root             
-    root -b -l -q PlotEffSyst2D.C'(0)'                                                          # << outfiles/BPsyst2d.root
-    root -b -l -q PlotEffSyst2D.C'(1)'                                                          # << outfiles/BPsyst2d.root
+    root -b -l -q CalEffSystB.C'(0,0)'                      # >> outfiles/BPsyst2d.root
+    root -b -l -q CalEffSystB.C'(0,1)'
+    root -b -l -q CalEffSystB.C'(1,0)'                      # >> outfiles/Bssyst2d.root
+    root -b -l -q CalEffSystB.C'(1,1)'             
+    root -b -l -q PlotEffSyst2D.C'(0,0)'                                                          # << outfiles/BPsyst2d.root
+    root -b -l -q PlotEffSyst2D.C'(0,1)'
+    root -b -l -q PlotEffSyst2D.C'(1,0)'                                                          # << outfiles/BPsyst2d.root
+    root -b -l -q PlotEffSyst2D.C'(1,1)'
+    popd
+}
+
+syst1D () {
+    pushd 1DMapSyst
+    root -b -l -q CalEffSystB.C'(0,0)'                      # >> outfiles/BPsyst2d.root
+    root -b -l -q CalEffSystB.C'(0,1)'
+    root -b -l -q CalEffSystB.C'(1,0)'                      # >> outfiles/Bssyst2d.root
+    root -b -l -q CalEffSystB.C'(1,1)'             
+    root -b -l -q PlotEffSyst1D.C'(0,0)'                                                          # << outfiles/BPsyst2d.root
+    root -b -l -q PlotEffSyst1D.C'(0,1)'
+    root -b -l -q PlotEffSyst1D.C'(1,0)'                                                          # << outfiles/BPsyst2d.root
+    root -b -l -q PlotEffSyst1D.C'(1,1)'
     popd
 }
 
@@ -78,7 +100,8 @@ bsStat() {
 
 comp () {
     # get pdf variation errors
-    python master.py
+    python master.py "Bpt"
+    python master.py "By"
     # Get pre-selection error
     python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
 
@@ -87,8 +110,10 @@ comp () {
     cd ..
 
     cd Comparisons/Fiducial/
-    root -b -l -q Bmeson_Comparisons.C'(0)'
-    root -b -l -q Bmeson_Comparisons.C'(1)'
+    root -b -l -q Bmeson_Comparisons.C'(0,0)'
+    root -b -l -q Bmeson_Comparisons.C'(1,0)'
+    root -b -l -q Bmeson_Comparisons.C'(0,1)'
+    root -b -l -q Bmeson_Comparisons.C'(1,1)'
 
     python syst_table.py                  #<----------------------- NOT RUNNING
     cd ../..
@@ -121,7 +146,9 @@ bpEff &
 bsEff &
 wait
 
-syst
+syst2D
+wait
+syst1D
 wait
 
 bpStat&

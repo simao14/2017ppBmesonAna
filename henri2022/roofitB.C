@@ -347,7 +347,6 @@ cout << endl << endl;
 		
 		if(doubly==1) dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count),"",dsMC, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto), "1"); 
 		if(doubly==2) dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count),"",dsMC, RooArgSet(*mass, *pt,  *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto), "1"); 
-		cout<<"problema aqui"<<endl;
 		// Apply track selection cut
 		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
 		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
@@ -373,7 +372,7 @@ cout << endl << endl;
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 
-
+		
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function" << endl;
