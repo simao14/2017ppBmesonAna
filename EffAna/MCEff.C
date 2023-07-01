@@ -30,7 +30,7 @@ bool reweightPtOnY = true;
 
 
 void  MCEff(int DoTnP, int Rescale, int meson_n){
-
+	
 	int NCand;
 	TString var_n;
 	TString var_N;
@@ -1721,9 +1721,9 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 			
         auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Bgeny[j]))
           - yBins.begin() - 1;
-				BptWeight = BptWtF[iY]->Eval(Bgenpt[j]);
+				BptWeight = BptWtF[iY]->Eval(Bgenpt[j]);  // comes from FONLL/MC ratios
 				//BptWeight = 1;
-
+		
 			if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
 
 				Eff1DRECOHisBDT->Fill(Bpt[j],TotalWeight * BDTWeight);
@@ -1805,7 +1805,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 				
 					auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Gy[j]))
 						- yBins.begin() - 1;
-					BptWeight = BptWtF[iY]->Eval(Gpt[j]);
+					BptWeight = BptWtF[iY]->Eval(Gpt[j]); // comes from FONLL/MC ratios
 					//BptWeight = 1;
 
 					NoWeightGenHis->Fill(Gpt[j],abs(Gy[j]),1);

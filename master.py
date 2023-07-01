@@ -3,24 +3,28 @@
 # from subprocess import run, PIPE, Popen
 import os
 from time import ctime
+import argparse
 import re
 import ROOT as r
 import numpy as np
 
+parser = argparse.ArgumentParser()
+parser.add_argument('var', type=str)
+opt = parser.parse_args()
 
-var=input("What variable? (write Bpt,By or nMult)")
+print(opt.var)
 
-if var == "Bpt":
+if opt.var == "Bpt":
     binsBP=7
     binsBs=4
     var_n = "pt"
     var_N = "PT"
-elif var == "By":
+elif opt.var == "By":
      binsBP=8
      binsBs=8
      var_n = "y"
      var_N = "Y"
-elif var == "nMult":
+elif opt.var == "nMult":
      binsBP=8
      binsBs=8
      var_n = "Mult"
@@ -29,16 +33,16 @@ else:
     print("Invalid Input")
 
 bp_pdf_list = [
-    "henri2022/filesbp/signal_systematics_table_%s_ntKp.tex" % var,
-    "henri2022/filesbp/background_systematics_table_%s_ntKp.tex" % var,
+    "henri2022/filesbp/signal_systematics_table_%s_ntKp.tex" % opt.var,
+    "henri2022/filesbp/background_systematics_table_%s_ntKp.tex" % opt.var,
     # "BP/RawYieldFits/signal_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/background_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
     ]
 
 bs_pdf_list = [
-    "henri2022/filesbs/signal_systematics_table_%s_ntphi.tex" % var,
-    "henri2022/filesbs/background_systematics_table_%s_ntphi.tex" % var,
+    "henri2022/filesbs/signal_systematics_table_%s_ntphi.tex" % opt.var,
+    "henri2022/filesbs/background_systematics_table_%s_ntphi.tex" % opt.var,
     # "Bs/RawYieldFits/signal_systematics_table_Bpt_ntphi.tex",
     # "Bs/RawYieldFits/background_systematics_table_Bpt_ntphi.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
