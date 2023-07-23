@@ -14,7 +14,7 @@
 void read_samples(RooWorkspace& w, std::vector<TString>, TString fName, TString treeName, TString sample);
 
 // PDF VARIATION FOR SYST STUDIES
-int syst_study=1;
+int syst_study=0;
 
 // VALIDATION STUDIES
 int val=0;
@@ -479,13 +479,13 @@ if(varExp=="By"){
       //for the paper run these
       if (drawLegend) {
         tex_pt = new TLatex(0.55,0.4,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.34,Form("%d < y < %d ",(double)_ptBins[i],(double)_ptBins[i+1]));
+        tex_y = new TLatex(0.55,0.34,Form("%f < y < %f ",(double)_ptBins[i],(double)_ptBins[i+1]));
         tex_nMult = new TLatex(0.21,0.62,"0 < nTrks < 100");
 		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
       } else {
         //fr the AN run these
         tex_pt = new TLatex(0.55,0.8,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.74,Form("%d < y < %d ",(double)_ptBins[i],(double)_ptBins[i+1]));
+        tex_y = new TLatex(0.55,0.74,Form("%f < y < %f ",(double)_ptBins[i],(double)_ptBins[i+1]));
         tex_nMult = new TLatex(0.21,0.62,"0 < nTrks < 100");
 		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
       }
@@ -572,8 +572,8 @@ if(varExp=="nMult"){
 		//lat->DrawLatex(0.48,0.70,Form("Significance: S/#sqrt{S+B} = %.1f", Significance));
 		lat->DrawLatex(0.64,0.70,Form("Significance: %.1f", real_significance));*/
 
-		c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1], doubly)+tree+".pdf");
-		cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (double)_ptBins[i], (double)_ptBins[i+1], doubly)+tree+".pdf");
+		c->SaveAs(Form("%s%s/%s_%s_%s_%f_%f_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1], doubly)+tree+".pdf");
+		cMC->SaveAs(Form("%s%s/%s_%s_%s_%f_%f_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (double)_ptBins[i], (double)_ptBins[i+1], doubly)+tree+".pdf");
 
 		RooCurve* modelcurve_back = new RooCurve();
 		std::vector<double> back_variation; 
@@ -623,7 +623,7 @@ if(varExp=="nMult"){
 					}else{tex_y->Draw();}
 					//CMS_lumi(c,19011,0);
 					//c->Update();
-					c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1],background[j].c_str(), doubly)+tree+".pdf");
+					c->SaveAs(Form("%s/%s_%s_%s_%f_%f_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1],background[j].c_str(), doubly)+tree+".pdf");
 				
 					modelcurve_back = frame->getCurve(Form("model%d_%s",_count,background[j].c_str()));
 					RooRealVar* fitYield_back = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count,background[j].c_str()))));
@@ -667,14 +667,16 @@ if(varExp=="nMult"){
 				//CMS_lumi(c,19011,0);
 				//c->Update();
 
-				if (signal[j] != "fixed") {cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (double)_ptBins[i], (double)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");}
-				c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
+				if (signal[j] != "fixed") {cMC->SaveAs(Form("%s%s/%s_%s_%s_%f_%f_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (double)_ptBins[i], (double)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");}
+				c->SaveAs(Form("%s%s/%s_%s_%s_%f_%f_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
+				
 				modelcurve_signal = frame->getCurve(Form("model%d_%s",_count,signal[j].c_str()));
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count,signal[j].c_str()))));
 				signal_variation.push_back(fitYield_signal->getVal());
 				signal_err.push_back(abs(((yield-fitYield_signal->getVal())/yield)*100));
 				if(abs(((yield-fitYield_signal->getVal())/yield)*100)>max_signal) max_signal=abs(((yield-fitYield_signal->getVal())/yield)*100);
 			}
+
 			general_err.push_back(max_signal);
 			full_err=sqrt(max_back*max_back+max_signal*max_signal);
 			general_err.push_back(full_err);
