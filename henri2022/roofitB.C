@@ -339,8 +339,8 @@ cout << endl << endl;
 		
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
-		cout << "Starting the fiting function" << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp);
+		cout << "Starting the fiting function for VARIABLE " << varExp.Data() << endl;
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp.Data());
 		
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT

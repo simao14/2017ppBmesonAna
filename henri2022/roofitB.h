@@ -53,7 +53,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	
 	//if (tree == "ntphi"){nbinsmasshisto = 50;} //100 bins is to much for bs case
 
-	if ( which_var == "Bpt" && (binmin == 50 & binmax == 60)){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case
+	if ( which_var == "Bpt" && (binmin == 50 & binmax == 60) ){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case
 
 	cout<<"total data: "<<ds->numEntries()<<endl;
 	TH1* h = dh->createHistogram("Bmass");
@@ -281,6 +281,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 	w.import(*m_jpsinp_cont);
 	// DEFINE MODEL to fit the non prompt background
 
+    
 	fit_jpsinp(w,  nbinsmasshisto, pdf, binmin, binmax, which_var);
 	}
 // FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
