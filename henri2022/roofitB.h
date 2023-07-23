@@ -32,7 +32,7 @@
 
 void plot_jpsifit(RooWorkspace& w, int nbin_hist, TString pdf, RooAbsPdf* model, RooDataSet* ds, TString plotName,  bool with_sig);
 void fix_parameters(RooWorkspace& w, TString pdfName, bool release=false);
-void fit_jpsinp (RooWorkspace& w, int nbin_hist, TString pdf, int bin_i, int bin_f, bool includeSignal=true, TString Var);
+void fit_jpsinp (RooWorkspace& w, int nbin_hist, TString pdf, int bin_i, int bin_f, bool includeSignal=true, TString Var="Bpt");
 template<typename... Targs>
 void plot_mcfit(RooWorkspace& w, RooAbsPdf* model, RooDataSet* ds, TString plotName,  Targs... options);
 
@@ -280,8 +280,6 @@ if(npfit != "1" && variation=="" && pdf==""){
 	RooAddPdf* m_jpsinp_cont = new RooAddPdf(Form("m_jpsinp_cont%d_%s",_count,""), "model for jpsi nonprompt bg", RooArgList(COMB_jpsi, *erfc), RooArgList(jpsinp_fraction));
 	w.import(*m_jpsinp_cont);
 	// DEFINE MODEL to fit the non prompt background
-
-
 
 	fit_jpsinp(w,  nbinsmasshisto, pdf, binmin, binmax, which_var);
 	}
@@ -599,7 +597,7 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, int bin_i, int bin_
 		d_s->reduce("(BDT_pt_5_7 > 0.08 && Bpt >= 5 && Bpt < 7) || (BDT_pt_7_10 > 0.07 && Bpt >= 7 && Bpt < 10) || (BDT_pt_10_15 > 0.0 && Bpt >= 10 && Bpt < 15) || (BDT_pt_15_20 > 0.02 && Bpt >= 15 && Bpt < 20) || (BDT_pt_20_50 > 0.04 && Bpt >= 20 && Bpt < 50) || (Bpt >= 20 && Bpt < 50) ");
 		
 		// Apply y selections
-		d_s = (RooDataSet*) d_s->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)")
+		d_s = (RooDataSet*) d_s->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)") ;
 	}
   	
 	// Get rid of B+ at gen level
