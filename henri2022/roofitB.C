@@ -33,20 +33,18 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 	TString selmc;
 	TString selmcgen;
 
-// Bpt Bpt Bpt Bpt	
 	if(varExp == "Bpt"){ 
-	if(full == 1){ _nBins = 1 ;}
-	else if(full == 0) {
-		if(tree=="ntphi"){ _nBins = nptBins;}
-		//if(tree=="ntphi"){ _nBins = nptBins_test;}
-		else if(tree=="ntKp"){ _nBins = nptBinsBP;}
-		//else if(tree=="ntKp"){ _nBins = nptBinsBP_test;}
+		if(full == 1){ _nBins = 1 ;}
+		else if(full == 0) {
+			if(tree=="ntphi"){ _nBins = nptBins;}
+			//if(tree=="ntphi"){ _nBins = nptBins_test;}
+			else if(tree=="ntKp"){ _nBins = nptBinsBP;}
+			//else if(tree=="ntKp"){ _nBins = nptBinsBP_test;}
 		}
 	} else if(varExp == "By"){
 		if(full == 1){_nBins = 1;}
 		else if(full == 0){ _nBins = nyBins_both;}
-	}
-		else if(varExp == "nMult"){
+	} else if(varExp == "nMult"){
 		if(full == 1){_nBins = 1;}
 		else if(full == 0){_nBins = nmBins_both;}
 	}
@@ -55,7 +53,7 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 	double _ptBins[_nBins+1];
 
 	if(varExp == "Bpt"){ 
-	if(full == 1){
+		if(full == 1){
             if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptBins_full[c];}}
 			else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptBins_fullBP[c];}}
 	}else if(full == 0) {
@@ -81,39 +79,11 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 		}
 	}
 
-std::cout<<"Variable "<<varExp<<std::endl;
+std::cout<<"Variable "<< varExp << endl;
 cout << "Systematics " << syst_study << endl;
 cout << tree << " BINS: ";
 for(int t; t< sizeof(_ptBins)/sizeof(_ptBins[0]);t++){cout <<"__"<<  _ptBins[t]<<"__";}
 cout << endl << endl;
-
-/*	if(varExp=="nMult"){
-		if(full==0) {
-			nBins_check = nBins_Mult;
-			_ptBins = MultBins;
-			_nBins = nBins_Mult;
-			_ptBins = MultBins;
-		}
-		else if(full==1){
-			nBins_check = nBins_full;
-			_ptBins = nMults_full;
-		}
-	}
-	else if(varExp=="By"){
-		if(full==0) {
-			nBins_check = nBinsY;
-			_ptBins = ptBinsY;
-		}
-		else if(full==1){
-			nBins_check = nBins_full;
-			_ptBins = hiBins_full;
-		}
-	}*/
-
-	/*	if(varExp == "By"){
-		_nBins = nBinsY;
-		_ptBins = ptBinsY;
-		}*/
 	
 	if (!(usePbPb==1||usePbPb==0)) std::cout<<"ERROR!!, you are using a non valid isPbPb option"<<std::endl;
 	bool isPbPb=(bool)(usePbPb);
@@ -178,6 +148,7 @@ cout << endl << endl;
     RooRealVar BDT_pt_15_20("BDT_pt_15_20", "BDT_pt_15_20", -1, 1);
     RooRealVar BDT_pt_20_50("BDT_pt_20_50", "BDT_pt_20_50", -1, 1);
 	RooRealVar BDT_pt_50_60("BDT_pt_50_60", "BDT_pt_50_60", -1, 1);
+	RooRealVar* trackSelection = new RooRealVar("track", "track", 0, 5);
 
 		ws->import(*mass);
 		ws->import(*y);
@@ -190,7 +161,6 @@ cout << endl << endl;
     	ws->import(BDT_pt_20_50);
 		ws->import(BDT_pt_50_60);
 
-	RooRealVar* trackSelection = new RooRealVar("track", "track", 0, 5);
 	RooDataSet* ds = new RooDataSet();
 	RooDataSet* dsMC = new RooDataSet();   
 	std::cout<<"Created dataset"<<std::endl;
@@ -199,7 +169,6 @@ cout << endl << endl;
 	std::cout<<"Created roodatahists"<<std::endl;
 	RooPlot* frame = new RooPlot();
 	RooHist* datahist = new RooHist();
-	RooCurve* modelcurve = new RooCurve();
 
 	//weightgen = weightgen_pp;
 	weightmc  = weightmc_pp;
@@ -332,24 +301,19 @@ cout << endl << endl;
 				var_mean_av[i] = ds_cut->mean(*nMult);}
   						}
 		
-		if(doubly==1)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto)); 
-		if(doubly==2)ds_cut = new RooDataSet(Form("ds_cut%d",_count),"",ds, RooArgSet(*mass, *pt, *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto)); 
-		cout<<"problema aqui"<<endl;
 		RooDataSet* dsMC_cut;
 		if(doubly==0) 	{		
-			if(varExp == "Bpt"){dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count), "", dsMC,
-            RooArgSet(*mass, *pt, *y, *trackSelection), Form("(%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f)&&((Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10))",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}
-        	
-			else if(varExp=="By" || varExp=="nMult"){
-        	dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}
-   					}
-		
-		
-		if(doubly==1) dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count),"",dsMC, RooArgSet(*mass, *pt, *y, *nMult), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto), "1"); 
-		if(doubly==2) dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count),"",dsMC, RooArgSet(*mass, *pt,  *y), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto), "1"); 
-		// Apply track selection cut
+			if(varExp == "Bpt"){
+				dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count), "", dsMC,
+            	RooArgSet(*mass, *pt, *y, *trackSelection), Form("(%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f)&&((Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10))",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
+			
+			} else if(varExp=="By" || varExp=="nMult"){
+        		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}
+   			}
+	
 		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
 		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
+		
 		ds_cut = (RooDataSet*) ds_cut->reduce(seldata);
 		dsMC_cut = (RooDataSet*) dsMC_cut->reduce(selmc);
 		RooRealVar * Events_in_MC = new RooRealVar(Form("Events_in_MC_%d",_count),"Events_in_MC", dsMC_cut->sumEntries());
@@ -376,7 +340,7 @@ cout << endl << endl;
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function" << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws);
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp);
 		
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
@@ -388,7 +352,7 @@ cout << endl << endl;
 		//TGraphAsymmErrors* datagraph = static_cast<TGraphAsymmErrors*>(datahist);
 
 		RooRealVar* fitYield = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("nsig%d_%s",_count,""))));
-		modelcurve = frame->getCurve(Form("model%d_%s",_count,""));   
+		//modelcurve = frame->getCurve(Form("model%d_%s",_count,""));   
 		yield = fitYield->getVal();
 		RooRealVar* BackGround = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("nbkg%d_%s",_count,""))));
 		MyBackground = BackGround->getVal();
@@ -515,13 +479,13 @@ if(varExp=="By"){
       //for the paper run these
       if (drawLegend) {
         tex_pt = new TLatex(0.55,0.4,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.34,Form("%d < y < %d ",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_y = new TLatex(0.55,0.34,Form("%d < y < %d ",(double)_ptBins[i],(double)_ptBins[i+1]));
         tex_nMult = new TLatex(0.21,0.62,"0 < nTrks < 100");
 		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
       } else {
         //fr the AN run these
         tex_pt = new TLatex(0.55,0.8,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.74,Form("%d < y < %d ",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_y = new TLatex(0.55,0.74,Form("%d < y < %d ",(double)_ptBins[i],(double)_ptBins[i+1]));
         tex_nMult = new TLatex(0.21,0.62,"0 < nTrks < 100");
 		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
       }
@@ -608,8 +572,8 @@ if(varExp=="nMult"){
 		//lat->DrawLatex(0.48,0.70,Form("Significance: S/#sqrt{S+B} = %.1f", Significance));
 		lat->DrawLatex(0.64,0.70,Form("Significance: %.1f", real_significance));*/
 
-		c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1], doubly)+tree+".pdf");
-		cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1], doubly)+tree+".pdf");
+		c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1], doubly)+tree+".pdf");
+		cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (double)_ptBins[i], (double)_ptBins[i+1], doubly)+tree+".pdf");
 
 		RooCurve* modelcurve_back = new RooCurve();
 		std::vector<double> back_variation; 
@@ -659,7 +623,7 @@ if(varExp=="nMult"){
 					}else{tex_y->Draw();}
 					//CMS_lumi(c,19011,0);
 					//c->Update();
-					c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str(), doubly)+tree+".pdf");
+					c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1],background[j].c_str(), doubly)+tree+".pdf");
 				
 					modelcurve_back = frame->getCurve(Form("model%d_%s",_count,background[j].c_str()));
 					RooRealVar* fitYield_back = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count,background[j].c_str()))));
@@ -703,8 +667,8 @@ if(varExp=="nMult"){
 				//CMS_lumi(c,19011,0);
 				//c->Update();
 
-				if (signal[j] != "fixed") {cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");}
-				c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
+				if (signal[j] != "fixed") {cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (double)_ptBins[i], (double)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");}
+				c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(double)_ptBins[i],(double)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
 				modelcurve_signal = frame->getCurve(Form("model%d_%s",_count,signal[j].c_str()));
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count,signal[j].c_str()))));
 				signal_variation.push_back(fitYield_signal->getVal());
