@@ -462,7 +462,6 @@ cout << endl << endl;
 		if( (_ptBins[i]==7 && _ptBins[i+1]==50) || (_ptBins[i]==5 && _ptBins[i+1]==60)){t_sub = 0.05 ;}
 		yield_val = new TLatex(0.21,0.65-t_sub,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
 		chi_square = new TLatex(0.21,0.60-t_sub,Form("#chi^{2}/ndf = %.2f",Mychi2));
-        tex_nMult = new TLatex(0.21,0.67,"0 < nTrks < 100");
       } else {
         //for the AN run these
         tex_pt = new TLatex(0.65,0.8,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
@@ -470,24 +469,20 @@ cout << endl << endl;
         tex_y2 = new TLatex(0.65,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
         tex_y1 = new TLatex(0.65,0.74,"1.5 < |y| < 2.4");
         tex_y11 = new TLatex(0.65,0.74,"|y| < 2.4");
-        tex_nMult = new TLatex(0.21,0.62,"0 < nTrks < 100");
-		chi_square=new TLatex(0.21,0.7,Form("#chi^{2}/ndf = %.2f",Mychi2));
+		chi_square=new TLatex(0.21,0.68,Form("#chi^{2}/ndf = %.2f",Mychi2));
       }
 		}
 
 if(varExp=="By"){
       //for the paper run these
       if (drawLegend) {
-        tex_pt = new TLatex(0.55,0.4,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.34,Form("%f < y < %f ",(double)_ptBins[i],(double)_ptBins[i+1]));
-        tex_nMult = new TLatex(0.21,0.62,"0 < nTrks < 100");
+        tex_y = new TLatex(0.55,0.34,Form("%.1f < y < %.1f ",(float)_ptBins[i],(float)_ptBins[i+1]));
 		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
       } else {
         //fr the AN run these
-        tex_pt = new TLatex(0.55,0.8,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.74,Form("%f < y < %f ",(double)_ptBins[i],(double)_ptBins[i+1]));
-        tex_nMult = new TLatex(0.21,0.62,"0 < nTrks < 100");
-		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
+        tex_y = new TLatex(0.65,0.8,Form("%.1f < y < %.1f ",(float)_ptBins[i],(float)_ptBins[i+1]));
+        tex_pt = new TLatex(0.65,0.74,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
+		chi_square=new TLatex(0.21,0.68,Form("#chi^{2}/ndf = %.2f",Mychi2));
       }
 		}
 if(varExp=="nMult"){ 
@@ -572,8 +567,13 @@ if(varExp=="nMult"){
 		//lat->DrawLatex(0.48,0.70,Form("Significance: S/#sqrt{S+B} = %.1f", Significance));
 		lat->DrawLatex(0.64,0.70,Form("Significance: %.1f", real_significance));*/
 
-		c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1], doubly)+tree+".pdf");
-		cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1], doubly)+tree+".pdf");
+		if(varExp == "By"){
+			c->SaveAs(  Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(), (float)_ptBins[i],(float)_ptBins[i+1])+tree+".pdf");
+			cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (float)_ptBins[i], (float)_ptBins[i+1])+tree+".pdf");
+		}else{
+			c->SaveAs(  Form("%s%s/%s_%s_%s_%d_%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1])+tree+".pdf");
+			cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1])+tree+".pdf");
+		}
 
 		RooCurve* modelcurve_back = new RooCurve();
 		std::vector<double> back_variation; 
@@ -623,8 +623,9 @@ if(varExp=="nMult"){
 					}else{tex_y->Draw();}
 					//CMS_lumi(c,19011,0);
 					//c->Update();
-					c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_cutY%d_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str(), doubly)+tree+".pdf");
-				
+					if(varExp == "By"){c->SaveAs(Form("%s/%s_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
+					else { c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
+
 					modelcurve_back = frame->getCurve(Form("model%d_%s",_count,background[j].c_str()));
 					RooRealVar* fitYield_back = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count,background[j].c_str()))));
 					back_variation.push_back(fitYield_back->getVal());
@@ -667,8 +668,13 @@ if(varExp=="nMult"){
 				//CMS_lumi(c,19011,0);
 				//c->Update();
 
-				if (signal[j] != "fixed") {cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");}
-				c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_cutY%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str(), doubly)+tree+".pdf");
+				if (signal[j] != "fixed") {
+					if(varExp == "By"){ cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+".pdf");} 
+					else { cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
+				}
+				
+				if(varExp == "By"){ c->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
+				else{ c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				
 				modelcurve_signal = frame->getCurve(Form("model%d_%s",_count,signal[j].c_str()));
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count,signal[j].c_str()))));
