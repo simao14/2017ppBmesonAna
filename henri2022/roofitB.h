@@ -164,9 +164,9 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	cMC->RedrawAxis();
 	
 	TLatex* texB_BINS = new TLatex(0.5,0.5,"");
-	if ( which_var == "Bpt"){texB_BINS = TLatex(0.22,0.8, Form("%d < p_{T} <%d GeV", (int) binmin, (int)binmax));}
-	else if( which_var == "By"){texB_BINS = TLatex(0.22,0.8, Form("%0.1f < y <%0.1f GeV",binmin, binmax));}
-	else if( which_var == "nMult"){texB_BINS = TLatex(0.22,0.8, Form("%d < Mult <%d GeV",(int)binmin, (int)binmax));}
+	if ( which_var == "Bpt"){texB_BINS = new TLatex(0.22,0.8, Form("%d < p_{T} <%d GeV", (int) binmin, (int)binmax));}
+	else if( which_var == "By"){texB_BINS = new TLatex(0.22,0.8, Form("%0.1f < y <%0.1f GeV",binmin, binmax));}
+	else if( which_var == "nMult"){texB_BINS = new TLatex(0.22,0.8, Form("%d < Mult <%d GeV",(int)binmin, (int)binmax));}
 	texB_BINS->SetNDC();
 	texB_BINS->SetTextFont(42);
 	texB_BINS->SetTextSize(0.03);
@@ -1040,9 +1040,9 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h2[i]->GetYaxis()->SetTitle("");
 		h2[i]->Draw("APsame");
 
-		c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%0.1f_%0.1f_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
-		c_params->SaveAs(Form("%s/param_signal_%s_%d_%0.1f_%0.1f_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
-		c_errors->SaveAs(Form("%s/error_signal_%s_%d_%0.1f_%0.1f_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
+		c_pull->SaveAs(Form("%s/pull_signal_%s_%0.1f_%0.1f_%d_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
+		c_params->SaveAs(Form("%s/param_signal_%s_%0.1f_%0.1f_%d_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
+		c_errors->SaveAs(Form("%s/error_signal_%s_%0.1f_%0.1f_%d_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
 		
 	}
 }
