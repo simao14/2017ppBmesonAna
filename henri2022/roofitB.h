@@ -367,12 +367,12 @@ if(npfit != "1" && variation=="" && pdf==""){
 		jpsipi = w.pdf("jpsipi");   
 		erfc = w.pdf(Form("erfc%d_%s",_count,""));   
 		RooRealVar* jpsipi_to_signal_ratio;
-		if ( variation== "background" && pdf == "jpsi_sig"){
+		if ( variation == "background" && pdf == "jpsi_sig"){
 			jpsipi_to_signal_ratio = new RooRealVar("jpsipi_to_signal_ratio","jpsipi_to_signal_ratio", 0.0517);    // from average of pT bins
 			jpsipi_to_signal_ratio->setConstant();}      
 		else { jpsipi_to_signal_ratio = w.var("jpsipi_to_signal_ratio"); }
 		nbkg_peaking = new RooProduct(Form("nbkg_peaking%d_%s",_count,pdf.Data()), "number of jpsi pi with fixed ratio to n_signal", RooArgList(nsig, *jpsipi_to_signal_ratio));
-				}
+	}
 	// B+ PEAKING AND PART. RECONSTRUCTED BACKGROUNDS
 /////////////////  BACKGROUND FUNCTIONS
 
@@ -587,7 +587,7 @@ if(tree == "ntphi"){
 
 
 // FIT TO BINED PAR_R_BKG
-void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, double bin_i, double bin_f, TString Var, bool includeSignal) {
+void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float bin_f, TString Var, bool includeSignal) {
 
 	RooDataSet* d_s = (RooDataSet*) w.data("jpsinp");
 	// Apply BDT selections
