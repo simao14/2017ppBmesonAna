@@ -625,9 +625,9 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float 
 		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
   		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
 	} else if (Var == "By" ){
-		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%0.1f-%0.1f_%s.pdf", (float) bin_i, (float) bin_f, Var.Data() );
-		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%0.1f-%0.1f_%s.pdf", (float)bin_i, (float)bin_f, Var.Data() );
-  		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%0.1f-%0.1f_%s.pdf", (float)bin_i, (float)bin_f, Var.Data() );
+		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
+		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
+  		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
 	} else if(Var == "nMult" ){
 		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%s.pdf", Var.Data());
 		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%s.pdf", Var.Data());

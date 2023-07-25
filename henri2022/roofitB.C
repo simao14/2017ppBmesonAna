@@ -418,128 +418,129 @@ cout << endl << endl;
 			hMean->SetBinContent(i+1,fitMean->getVal());
 			hMean->SetBinError(i+1,fitMean->getError());  
 		}
+
 	////////////////////////////
+	
+	//LABELS IN PLOTS
 
-		TLatex* tex_pt = new TLatex(0.5,0.5,"");
-		TLatex* tex_nMult = new TLatex(0.5,0.5,"");
-	  	TLatex* tex_y = new TLatex(0.5,0.5,"");
-		TLatex* tex_y1 = new TLatex(0.5,0.5,"");
-		TLatex* tex_y11 = new TLatex(0.5,0.5,"");
-		TLatex* tex_y2 = new TLatex(0.5,0.5,"");
-		TLatex* chi_square = new TLatex(0.5,0.5,"");
-		TLatex* chi_back = new TLatex(0.5,0.5,"");
-		TLatex* chi_sig = new TLatex(0.5,0.5,"");
+
+
+
+
+
+
+
+
+
+
+
+		TLatex* texB = new TLatex(0.5,0.5,"");
+		if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
+		if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{+}");}
+		texB->SetNDC();
+		texB->SetTextFont(62);
+		texB->SetTextSize(0.04);
+		texB->SetLineWidth(2);
+		texB->Draw();
+
 		TLatex* yield_val = new TLatex(0.5,0.5,"");
-		int yieldI = round(yield);
-		int yieldErrI = round(yieldErr);
-		
-	if(varExp=="Bpt"){
-      //for the paper run these
-      if (drawLegend) {
-        tex_pt = new TLatex(0.21,0.75,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
-		tex_y2 = new TLatex(0.21,0.7,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
-	    tex_y1 = new TLatex(0.21,0.7,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");     //should be optimized...... but works
-        tex_y11 =new TLatex(0.21,0.7,"p_{T} > 10 GeV/c : |y| < 2.4");
-        tex_y = new TLatex(0.21,0.65,"p_{T} > 10 GeV/c : |y| < 2.4");
-		double t_sub = 0;
-		if( (_ptBins[i]==7 && _ptBins[i+1]==50) || (_ptBins[i]==5 && _ptBins[i+1]==60)){t_sub = 0.05 ;}
-		yield_val = new TLatex(0.21,0.65-t_sub,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square = new TLatex(0.21,0.60-t_sub,Form("#chi^{2}/ndf = %.2f",Mychi2));
-      } else {
-        //for the AN run these
-        tex_pt = new TLatex(0.65,0.8,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_y = new TLatex(0.65,0.74,"p_{T} > 10 GeV/c : |y| < 2.4");
-        tex_y2 = new TLatex(0.65,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
-        tex_y1 = new TLatex(0.65,0.74,"1.5 < |y| < 2.4");
-        tex_y11 = new TLatex(0.65,0.74,"|y| < 2.4");
-		chi_square=new TLatex(0.21,0.68,Form("#chi^{2}/ndf = %.2f",Mychi2));
-      }
-		}
-
-if(varExp=="By"){
-      //for the paper run these
-      if (drawLegend) {
-        tex_y = new TLatex(0.55,0.34,Form("%.1f < y < %.1f ",(float)_ptBins[i],(float)_ptBins[i+1]));
-		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
-      } else {
-        //fr the AN run these
-        tex_y = new TLatex(0.65,0.8,Form("%.1f < y < %.1f ",(float)_ptBins[i],(float)_ptBins[i+1]));
-        tex_pt = new TLatex(0.65,0.74,Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
-		chi_square=new TLatex(0.21,0.68,Form("#chi^{2}/ndf = %.2f",Mychi2));
-      }
-		}
-if(varExp=="nMult"){ 
-	//for the paper run these
-      if (drawLegend) {
-      	tex_nMult = new TLatex(0.21,0.62,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_pt = new TLatex(0.55,0.4,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.34,"|y| < 2.4");
-		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
-      } else {
-        //fr the AN run these
-        tex_nMult = new TLatex(0.21,0.62,Form("%d < nTrks < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_pt = new TLatex(0.55,0.8,"0 < p_{T} < 100 GeV/c");
-        tex_y = new TLatex(0.55,0.74,"|y| < 2.4");
-		chi_square=new TLatex(0.21,0.62,Form("#chi^{2}/ndf = %.2f",Mychi2));
-      }
-	}
-		tex_pt->SetNDC();
-		tex_pt->SetTextFont(42);
-		tex_pt->SetTextSize(0.025);
-		tex_pt->SetLineWidth(2);
-		tex_pt->Draw();
-		tex_nMult->SetNDC();
-		tex_nMult->SetTextFont(42);
-		tex_nMult->SetTextSize(0.025);
-		tex_nMult->SetLineWidth(2);
-		tex_y->SetNDC();
-		tex_y->SetTextFont(42);
-		tex_y->SetTextSize(0.025);
-		tex_y->SetLineWidth(2);
-		chi_square->SetNDC();
-		chi_square->SetTextFont(42);
-		chi_square->SetTextSize(0.025);
-		chi_square->SetLineWidth(2);
-		chi_square->Draw();
 		yield_val->SetNDC();
 		yield_val->SetTextFont(42);
 		yield_val->SetTextSize(0.025);
 		yield_val->SetLineWidth(2);
-		yield_val->Draw();
 
-	if (varExp=="Bpt"){
-		tex_y1->SetNDC();
-		tex_y1->SetTextFont(42);
-		tex_y1->SetTextSize(0.025);
-		tex_y1->SetLineWidth(2);
-		tex_y11->SetNDC();
-		tex_y11->SetTextFont(42);
-		tex_y11->SetTextSize(0.025);
-		tex_y11->SetLineWidth(2);
-		tex_y2->SetNDC();
-		tex_y2->SetTextFont(42);
-		tex_y2->SetTextSize(0.025);
-		tex_y2->SetLineWidth(2);
+		TLatex* tex_BIN = new TLatex(0.5,0.5,"");
+		tex_BIN->SetNDC();
+		tex_BIN->SetTextFont(42);
+		tex_BIN->SetTextSize(0.025);
+		tex_BIN->SetLineWidth(2);
 
-		if(_ptBins[i] >= 10){tex_y11->Draw();}
-		else if(_ptBins[i+1]==50 || _ptBins[i+1]==60){
+		TLatex* tex_nMult = new TLatex(0.5,0.5,"");
+		tex_nMult->SetNDC();
+		tex_nMult->SetTextFont(42);
+		tex_nMult->SetTextSize(0.025);
+		tex_nMult->SetLineWidth(2);
+
+	  	TLatex* tex_y = new TLatex(0.5,0.5,"");
+		tex_y->SetNDC();
+		tex_y->SetTextFont(42);
+		tex_y->SetTextSize(0.025);
+		tex_y->SetLineWidth(2);
+
+		TLatex* tex_yCUT = new TLatex(0.5,0.5,"");
+		tex_yCUT->SetNDC();
+		tex_yCUT->SetTextFont(42);
+		tex_yCUT->SetTextSize(0.025);
+		tex_yCUT->SetLineWidth(2);
+
+		TLatex* tex_yCUT2 = new TLatex(0.5,0.5,"");
+		tex_yCUT2->SetNDC();
+		tex_yCUT2->SetTextFont(42);
+		tex_yCUT2->SetTextSize(0.025);
+		tex_yCUT2->SetLineWidth(2);
+
+		TLatex* chi_square = new TLatex(0.5,0.5,"");
+		chi_square->SetNDC();
+		chi_square->SetTextFont(42);
+		chi_square->SetTextSize(0.025);
+		chi_square->SetLineWidth(2);
+
+		TLatex* chi_back = new TLatex(0.5,0.5,"");
+		TLatex* chi_sig = new TLatex(0.5,0.5,"");
+
+		int yieldI = round(yield);
+		int yieldErrI = round(yieldErr);
+		double t_sub = 0;
+		
+	if(varExp=="Bpt"){
+        tex_BIN->SetText(0.21, 0.8, Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
+		
+		if( _nBins == 1 ){ //inclusive bin case
+			t_sub = 0.05 ; 
+			tex_yCUT->SetText(0.21,0.75,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+			tex_yCUT->Draw();
+			tex_y->SetText(0.21,0.70,"p_{T} > 10 GeV/c : |y| < 2.4");
 			tex_y->Draw();
-			tex_y2->Draw();
-			}
-		else{tex_y1->Draw();}
-	} 
-	else{tex_y->Draw();}
+		}
+		yield_val->SetText(0.21, 0.70 - t_sub ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
+		chi_square->SetText(0.21, 0.65 - t_sub ,Form("#chi^{2}/ndf = %.2f",Mychi2));
+
+		if (_ptBins[i] >= 10 && _nBins != 1) {
+			tex_y->SetText(0.21, 0.75, "|y| < 2.4");
+			tex_y->Draw();
+		}else if( _ptBins[i+1] <= 10){
+			tex_yCUT->SetText(0.21, 0.75, "1.5 < |y| < 2.4");
+			tex_yCUT->Draw();
+		} 
+
+	} else if(varExp=="By"){
+        tex_BIN->SetText(0.21, 0.8, Form("%0.1f < y < %0.1f ", _ptBins[i],_ptBins[i+1]));
+		yield_val ->SetText(0.21, 0.70 , Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
+		chi_square->SetText(0.21, 0.65 , Form("#chi^{2}/ndf = %.2f",Mychi2));
+		tex_yCUT->SetText(0.21, 0.75, "p_{T} > 10 GeV/c");
+
+		if(tree=="ntphi"){ tex_y->SetText(0.21, 0.75,"p_{T} > 7 GeV/c" );} 
+		else{tex_y->SetText(0.21, 0.75,"p_{T} > 5 GeV/c" );}
+
+		if( ( _ptBins[i] >= 1.5) || (_ptBins[i+1] <= -1.5) ){ tex_y->Draw();} 
+		else { tex_yCUT->Draw();}
+
+	} else if(varExp=="nMult"){ 
+        tex_BIN->SetText(0.21,0.8,Form("%d < Mult < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_y->SetText(0.21,0.75,"p_{T} > 10 GeV/c : |y| < 2.4");
+        tex_yCUT->SetText(0.21,0.70,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+		yield_val->SetText(0.21, 0.65 ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
+		chi_square->SetText(0.21,0.60,Form("#chi^{2}/ndf = %.2f",Mychi2));
+		tex_y->Draw();
+		tex_yCUT->Draw();
+	}
+
+	tex_BIN->Draw();
+	chi_square->Draw();
+	yield_val->Draw();
 
 	//CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
 	//c->Update();
-	TLatex* texB = new TLatex(0.5,0.5,"");
-	if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
-	if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{+}");}
-	texB->SetNDC();
-	texB->SetTextFont(62);
-	texB->SetTextSize(0.04);
-	texB->SetLineWidth(2);
-	texB->Draw();
 
 		/*TLatex *lat = new TLatex();
 		lat->SetNDC();
@@ -586,7 +587,7 @@ if(varExp=="nMult"){
 					chi2MC_vec_back[j][i] = frameMC_back->chiSquare();
 
 					texB->Draw();
-					tex_pt->Draw();
+					tex_BIN->Draw();
 					RooRealVar* fitYield_b_sys = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count, background[j].c_str()))));
 					yield_val  = new TLatex(0.21,0.65,Form("Y_{S} = %d #pm %d",int(round(fitYield_b_sys->getVal())), int(round(fitYield_b_sys->getError()))));
 					yield_val->SetNDC();
@@ -601,8 +602,8 @@ if(varExp=="nMult"){
 					chi_back->SetLineWidth(2);
 					chi_back->Draw();
 					if (varExp=="Bpt"){
-						if(_ptBins[i] >= 10){tex_y11->Draw();}
-						else{tex_y1->Draw();}
+						if(_ptBins[i] >= 10){tex_y->Draw();}
+						else{tex_yCUT->Draw();}
 					}else{tex_y->Draw();}
 					//CMS_lumi(c,19011,0);
 					//c->Update();
@@ -630,7 +631,7 @@ if(varExp=="nMult"){
 				chi2_vec_sig[j][i] = Mychi2_sig;
 				chi2MC_vec_sig[j][i] = frameMC_sig->chiSquare();
 				texB->Draw();
-				tex_pt->Draw();
+				tex_BIN->Draw();
 				RooRealVar* fitYield_b_sig = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count, signal[j].c_str()))));
 				yield_val  = new TLatex(0.21,0.65,Form("Y_{S} = %d #pm %d", int(round(fitYield_b_sig->getVal())), int(round(fitYield_b_sig->getError()))));
 				yield_val->SetNDC();
@@ -645,8 +646,8 @@ if(varExp=="nMult"){
 				chi_sig->SetLineWidth(2);
 				chi_sig->Draw();
 				if (varExp=="Bpt"){
-					if(_ptBins[i] >= 10){tex_y11->Draw();}
-					else{tex_y1->Draw();}
+					if(_ptBins[i] >= 10){tex_y->Draw();}
+					else{tex_yCUT->Draw();}
 				} else{tex_y->Draw();}
 				//CMS_lumi(c,19011,0);
 				//c->Update();
