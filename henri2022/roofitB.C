@@ -287,32 +287,15 @@ cout << endl << endl;
 		TCanvas* cMC= new TCanvas(Form("cMC%d",_count),"",700,700);
 		
 		RooDataSet* ds_cut ;
-		if(doubly==0) {
-			if(varExp == "Bpt"){
-				ds_cut = new RooDataSet(Form("ds_cut%d",_count), "", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("(Bpt>%f && Bpt < %f)&&((Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10))", _ptBins[i] , _ptBins[i+1]));
-				var_mean_av[i] = ds_cut->mean(*pt);}     	
-			
-			else if(varExp == "By"){
-				ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection), Form("By>%f && By< %f", _ptBins[i], _ptBins[i+1]));
-				var_mean_av[i] = ds_cut->mean(*y);}
-
-			else if(varExp == "nMult"){
-				ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds, RooArgSet(*mass, *pt, *y, *trackSelection, *nMult), Form("nMult>%f && nMult< %f", _ptBins[i], _ptBins[i+1]));
-				var_mean_av[i] = ds_cut->mean(*nMult);}
-  						}
-		
 		RooDataSet* dsMC_cut;
-		if(doubly==0) 	{		
-			if(varExp == "Bpt"){
-				dsMC_cut = new RooDataSet(Form("dsMC_cut%d",_count), "", dsMC,
-            	RooArgSet(*mass, *pt, *y, *trackSelection), Form("(%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f)&&((Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10))",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
-			
-			} else if(varExp=="By" || varExp=="nMult"){
-        		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form("%s>=%f&&%s<=%f&&Bmass>%f&&Bmass<%f",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));}
-   			}
-	
+		ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection),       Form(" (%s>=%f && %s<=%f) && ( (Bpt < 10 &&  abs(By) > 1.5) || (Bpt > 10) )",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
+		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form(" (%s>=%f && %s<=%f && Bmass>%f&&Bmass<%f) && ( (Bpt < 10 &&  abs(By) > 1.5) || (Bpt > 10) )",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
 		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
 		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
+
+		if(varExp == "Bpt"){var_mean_av[i] = ds_cut->mean(*pt);}     	
+		else if(varExp == "By"){var_mean_av[i] = ds_cut->mean(*y);}
+		else if(varExp == "nMult"){var_mean_av[i] = ds_cut->mean(*nMult);}
 		
 		ds_cut = (RooDataSet*) ds_cut->reduce(seldata);
 		dsMC_cut = (RooDataSet*) dsMC_cut->reduce(selmc);

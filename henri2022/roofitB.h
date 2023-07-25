@@ -49,10 +49,10 @@ double maxhisto=6.;
 int nbinsmasshisto=100;
 Int_t _count=0;
 
-RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, int binmin, int binmax, int isMC, TString npfit, RooWorkspace& w, TString which_var){
+RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, float binmin, float binmax, int isMC, TString npfit, RooWorkspace& w, TString which_var){
 	
 	//if (tree == "ntphi"){nbinsmasshisto = 50;} //100 bins is to much for bs case
-	if ( which_var == "Bpt" && (binmin == 50 & binmax == 60) ){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case
+	if ( which_var == "Bpt" && ( (int)binmin == 50 & (int)binmax == 60) ){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case
 
 	cout<<"total data: "<<ds->numEntries()<<endl;
 	TH1* h = dh->createHistogram("Bmass");
@@ -130,6 +130,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	if(variation =="" && pdf=="") modelMC = new RooAddPdf(Form("modelMC%d_%s",_count, pdf.Data()),"",RooArgList(*sigMC),RooArgList(nsigMC));
 
 //////////ROOFIT ROOFIT ROOFIT  MC MC MC MC 
+
 	double subt = 0.14;
 	if (tree == "ntphi") subt = .10;
 	mass->setRange("signal",init_mean-subt, init_mean+subt);  //focus the MC fit to the signal region to prevent statistical flutuations
@@ -161,8 +162,24 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	frameMC->GetXaxis()->SetRangeUser(init_mean-subt, init_mean+subt);
 	frameMC->Draw();
 	cMC->RedrawAxis();
-	TLatex* texB_pt= new TLatex(0.22,0.8, Form("%d < p_{T} <%d GeV",binmin, binmax));
+	
+	TLatex* texB_BINS = new TLatex(0.5,0.5,"");
+	if ( which_var == "Bpt"){texB_BINS = TLatex(0.22,0.8, Form("%d < p_{T} <%d GeV", (int) binmin, (int)binmax));}
+	else if( which_var == "By"){texB_BINS = TLatex(0.22,0.8, Form("%0.1f < y <%0.1f GeV",binmin, binmax));}
+	else if( which_var == "nMult"){texB_BINS = TLatex(0.22,0.8, Form("%d < Mult <%d GeV",(int)binmin, (int)binmax));}
+	texB_BINS->SetNDC();
+	texB_BINS->SetTextFont(42);
+	texB_BINS->SetTextSize(0.03);
+	texB_BINS->SetLineWidth(1);
+	texB_BINS->Draw();
+	
 	TLatex* texB_N_vs_count = new TLatex(0.22,0.75, Form("Bin Events: %i", int (w.var(Form("Events_in_MC_%d",_count))->getVal()) ));
+	texB_N_vs_count->SetNDC();
+	texB_N_vs_count->SetTextFont(42);
+	texB_N_vs_count->SetTextSize(0.03);
+	texB_N_vs_count->SetLineWidth(1);
+	texB_N_vs_count->Draw();
+	
 	TLatex* texB = new TLatex(0.5,0.5,"");
 	if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
 	if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{+}");}
@@ -171,18 +188,8 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	texB->SetTextSize(0.04);
 	texB->SetLineWidth(2);
 	texB->Draw();
-	texB_pt->SetNDC();
-	texB_pt->SetTextFont(42);
-	texB_pt->SetTextSize(0.03);
-	texB_pt->SetLineWidth(1);
-	texB_pt->Draw();
-	texB_N_vs_count->SetNDC();
-	texB_N_vs_count->SetTextFont(42);
-	texB_N_vs_count->SetTextSize(0.03);
-	texB_N_vs_count->SetLineWidth(1);
-	texB_N_vs_count->Draw();
-	//cMC->SetLogy();
 
+	//cMC->SetLogy();
 	TLegend *legMC = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
 	legMC = new TLegend(0.75,0.75,0.89,0.89,NULL,"brNDC");
 	legMC->SetBorderSize(0);
@@ -192,7 +199,6 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	legMC->AddEntry(frameMC->findObject(Form("dsMC_cut%d", _count)), " MC","lp");
 	legMC->AddEntry(frameMC->findObject(Form("modelMC%d_%s",_count,pdf.Data()))," Sig. PDF","f");
   	if (drawLegend) {legMC -> Draw();}
-
 
 //PLOT MC
 //PULL MC
@@ -266,8 +272,8 @@ if(npfit != "1" && variation=="" && pdf==""){
 	alpha_np = new RooRealVar(Form("alpha_np%d_%s", _count,""), "alpha_np",-0.6 , -10.0 , -0.1);
 	RooExponential COMB_jpsi(Form("COMB_jpsi%d_%s",_count,""), "COMB_jpsi", *mass, *alpha_np);
 		
-	if ( (which_var == "Bpt") && (binmin == 50 & binmax == 60)){
-		cout << "not enough data for bin " << binmin << "_" << binmax << " use last parameters instead" << endl;
+	if ( (which_var == "Bpt") && ((int)binmin == 50 && (int)binmax == 60)){
+		cout << "not enough data for bin " << (int)binmin << "_" << (int)binmax << " use last parameters instead" << endl;
 		alpha_np->setVal(w.var(Form("alpha_np%d_%s", _count-1,""))->getVal());
 		alpha_np->setConstant();
 		m_nonprompt_scale->setVal(w.var(Form("m_nonprompt_scale%d_%s",_count-1,""))->getVal());
@@ -576,8 +582,12 @@ if(tree == "ntphi"){
 
 
 
+
+
+
+
 // FIT TO BINED PAR_R_BKG
-void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float bin_f, TString Var, bool includeSignal) {
+void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, double bin_i, double bin_f, TString Var, bool includeSignal) {
 
 	RooDataSet* d_s = (RooDataSet*) w.data("jpsinp");
 	// Apply BDT selections
@@ -591,7 +601,7 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float 
 
 	} else if(Var == "By") { 		
 		cout << Var.Data() << " bins study of PART_R_BKG" << endl;  
-	  	d_s = (RooDataSet*) d_s->reduce(Form("(By > %0.1f && By < %0.1f)", bin_i , bin_f) );
+	  	d_s = (RooDataSet*) d_s->reduce(Form("By>%f && By< %f", bin_i , bin_f) );
 		
 	} else if(Var == "nMult"){ 
 		cout << Var.Data() << " bins study of PART_R_BKG" << endl;  
@@ -615,9 +625,9 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float 
 		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
   		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
 	} else if (Var == "By" ){
-		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
-		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
-  		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
+		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%0.1f-%0.1f_%s.pdf", (float) bin_i, (float) bin_f, Var.Data() );
+		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%0.1f-%0.1f_%s.pdf", (float)bin_i, (float)bin_f, Var.Data() );
+  		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%0.1f-%0.1f_%s.pdf", (float)bin_i, (float)bin_f, Var.Data() );
 	} else if(Var == "nMult" ){
 		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%s.pdf", Var.Data());
 		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%s.pdf", Var.Data());
@@ -678,6 +688,14 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float 
 	// TEST THE FIT TEST THE FIT
 }
 // FIT TO BINED PAR_R_BKG
+
+
+
+
+
+
+
+
 
 
 
@@ -880,7 +898,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	system(("open " + filename + "_check.pdf").c_str());
 }
 
-void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, int full, int binmin, int binmax, string Path)
+void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, int full, float binmin, float binmax, string Path)
 {
 	std::cout << "Performing Check on Fit" << std::endl;
 	RooRealVar Bmass = *(w->var("Bmass"));
@@ -1022,9 +1040,9 @@ void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, 
 		h2[i]->GetYaxis()->SetTitle("");
 		h2[i]->Draw("APsame");
 
-		c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
-		c_params->SaveAs(Form("%s/param_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
-		c_errors->SaveAs(Form("%s/error_signal_%s_%d_%d_%d_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
+		c_pull->SaveAs(Form("%s/pull_signal_%s_%d_%0.1f_%0.1f_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
+		c_params->SaveAs(Form("%s/param_signal_%s_%d_%0.1f_%0.1f_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
+		c_errors->SaveAs(Form("%s/error_signal_%s_%d_%0.1f_%0.1f_%s.pdf",Path.c_str(),variable.Data(),binmin,binmax,i,tree.Data()));
 		
 	}
 }

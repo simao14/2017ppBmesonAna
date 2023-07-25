@@ -92,6 +92,7 @@
         "CrossSectionAnaMult.C": "cpp",
         "bmesons_new.C": "cpp",
         "__verbose_abort": "cpp",
-        "bit": "cpp"
+        "bit": "cpp",
+        "SR_E_plot.C": "cpp"
     }
 }
