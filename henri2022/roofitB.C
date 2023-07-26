@@ -56,28 +56,15 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 		if(full == 1){
             if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptBins_full[c];}}
 			else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptBins_fullBP[c];}}
-	}else if(full == 0) {
-		if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvec[c];}}
-		//if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvec_test[c];}}
-		else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvecBP[c];}}
-		//else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvecBP_test[c];}}
-	                    }
-	} else if(varExp == "By"){
-		if(full == 0){
-			for(int c=0; c<_nBins+1; c++){_ptBins[c]=ybinsvec[c];}
-		}
-		else if(full == 1){
-			for(int c=0; c<_nBins+1; c++){_ptBins[c]=ybinsvec_full[c];}
-		}
-	}
-		else if(varExp == "nMult"){
-		if(full == 0){
-			for(int c=0; c<_nBins+1; c++){_ptBins[c]=nmbinsvec[c];}
-		}
-		else if(full == 1){
-			for(int c=0; c<_nBins+1; c++){_ptBins[c]=nmbinsvec_full[c];}
-		}
-	}
+		} else if(full == 0) {
+			if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvec[c];}}
+			//if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvec_test[c];}}
+			else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvecBP[c];}}
+			//else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvecBP_test[c];}}
+	    }
+	} 
+	else if(varExp == "By"){ for(int c=0; c<_nBins+1; c++){_ptBins[c]=ybinsvec[c];} }
+	else if(varExp == "nMult"){for(int c=0; c<_nBins+1; c++){_ptBins[c]=nmbinsvec[c];}}
 
 std::cout<<"Variable "<< varExp << endl;
 cout << "Systematics " << syst_study << endl;

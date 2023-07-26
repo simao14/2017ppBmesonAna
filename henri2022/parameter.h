@@ -12,7 +12,7 @@
 // 	7, 10, 15, 20, 50
 // };
 
-const int nBinshi=1;
+const int nBins_full=1;
 double ptBins_full[nBins_full+1] = {7,50}; 
 double ptBins_fullBP[nBins_full+1] = {5,60};
 
