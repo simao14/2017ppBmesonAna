@@ -165,7 +165,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	
 	TLatex* texB_BINS = new TLatex(0.5,0.5,"");
 	if ( which_var == "Bpt"){texB_BINS = new TLatex(0.22,0.8, Form("%d < p_{T} <%d GeV", (int) binmin, (int)binmax));}
-	else if( which_var == "By"){texB_BINS = new TLatex(0.22,0.8, Form("%0.1f < y <%0.1f GeV",binmin, binmax));}
+	else if( which_var == "By"){texB_BINS = new TLatex(0.22,0.8, Form("%0.1f < |y| <%0.1f GeV",binmin, binmax));}
 	else if( which_var == "nMult"){texB_BINS = new TLatex(0.22,0.8, Form("%d < Mult <%d GeV",(int)binmin, (int)binmax));}
 	texB_BINS->SetNDC();
 	texB_BINS->SetTextFont(42);
@@ -601,7 +601,7 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float 
 
 	} else if(Var == "By") { 		
 		cout << Var.Data() << " bins study of PART_R_BKG" << endl;  
-	  	d_s = (RooDataSet*) d_s->reduce(Form("By>%f && By< %f", bin_i , bin_f) );
+	  	d_s = (RooDataSet*) d_s->reduce(Form("abs(By)>%f && abs(By)< %f", bin_i , bin_f) );
 		
 	} else if(Var == "nMult"){ 
 		cout << Var.Data() << " bins study of PART_R_BKG" << endl;  

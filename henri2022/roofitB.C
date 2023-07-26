@@ -288,8 +288,10 @@ cout << endl << endl;
 		
 		RooDataSet* ds_cut ;
 		RooDataSet* dsMC_cut;
-		ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection),       Form(" (%s>=%f && %s<=%f) && ( (Bpt < 10 &&  abs(By) > 1.5) || (Bpt > 10) )",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
-		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form(" (%s>=%f && %s<=%f && Bmass>%f&&Bmass<%f) && ( (Bpt < 10 &&  abs(By) > 1.5) || (Bpt > 10) )",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
+		TString modBy = "";
+		if(varExp == "By") {modBy = "|";} //consider |y|  
+		ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection),       Form(" (%s%s%s>=%f && %s%s%s<=%f) && ( (Bpt < 10 &&  abs(By) > 1.5) || (Bpt > 10) )",modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i],modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i+1]));
+		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form(" (%s%s%s>=%f && %s%s%s<=%f && Bmass>%f&&Bmass<%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) )",modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i],modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i+1],minhisto, maxhisto));
 		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
 		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
 
@@ -514,7 +516,7 @@ cout << endl << endl;
 		} 
 
 	} else if(varExp=="By"){
-        tex_BIN->SetText(0.21, 0.8, Form("%0.1f < y < %0.1f ", _ptBins[i],_ptBins[i+1]));
+        tex_BIN->SetText(0.21, 0.8, Form("%0.1f < |y| < %0.1f ", _ptBins[i],_ptBins[i+1]));
 		yield_val ->SetText(0.21, 0.70 , Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
 		chi_square->SetText(0.21, 0.65 , Form("#chi^{2}/ndf = %.2f",Mychi2));
 		tex_yCUT->SetText(0.21, 0.75, "p_{T} > 10 GeV/c");

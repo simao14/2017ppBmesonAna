@@ -12,31 +12,24 @@
 // 	7, 10, 15, 20, 50
 // };
 
-
-//const unsigned nptBins = 1;
-//const std::array<double, nptBins + 1> ptbinsvec = {7, 10};
+const int nBinshi=1;
+double ptBins_full[nBins_full+1] = {7,50}; 
+double ptBins_fullBP[nBins_full+1] = {5,60};
 
 const unsigned nptBins = 4;
 const std::array<double, nptBins + 1> ptbinsvec = { 7, 10, 15, 20, 50};
 
-
 const unsigned nptBinsBP = 7;
 const std::array<double, nptBinsBP + 1> ptbinsvecBP = { 5, 7, 10, 15, 20, 30, 50, 60};
 
-//const unsigned nptBinsBP = 8;
-//const std::array<double, nptBinsBP + 1> ptbinsvecBP = { 3, 5, 7, 10, 15, 20, 30, 50, 60};
-
 const unsigned nptBinsBP_test  = 1;
-const std::array<double, nptBinsBP_test  + 1> ptbinsvecBP_test  = {7,10 };
+const std::array<double, nptBinsBP_test  + 1> ptbinsvecBP_test  = {7,10};
 
-const unsigned nyBins_both = 8;
-const std::array<double, nyBins_both + 1> ybinsvec = {-2.4,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,2.4};
+//const unsigned nyBins_both = 8;
+//const std::array<double, nyBins_both + 1> ybinsvec = {-2.4, -1.5, -1.0, -0.5, 0.0 ,0.5, 1.0, 1.5, 2.4};
 
-//const unsigned nyBins_both = 12;
-//const std::array<double, nyBins_both + 1> ybinsvec = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
-  
-//const unsigned nyBins_both = 2;
-//const std::array<double, nyBins_both + 1> ybinsvec = {0.5, 1.0,1.5};
+const unsigned nyBins_both = 5;
+const std::array<double, nyBins_both + 1> ybinsvec = {0.0 ,0.5, 1.0, 1.5, 2, 2.4};
 
 const unsigned nyBins_both_full = 1;
 const std::array<double, nyBins_both_full + 1> ybinsvec_full = {-2.4, 2.4};
@@ -47,8 +40,7 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 //const unsigned nmBins_both = 1;
 //const std::array<double, nmBins_both + 1> nmbinsvec = {20,30};
 
-const unsigned nmBins_both_full = 1;
-const std::array<double, nmBins_both_full + 1> nmbinsvec_full = {0,100};
+
 
 
 // 7 bins
