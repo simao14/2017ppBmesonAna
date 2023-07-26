@@ -55,16 +55,6 @@ double ptBinsFine[nBinsFine+1]={5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22
 const int nBins_Mult = 10;
 double MultBins[nBins_Mult + 1] = {0,15,25,30,35,40,50,65,80,100,130};
 
-const int nBins_full = 1;
-double nMults_full[nBins_full + 1] = {0,130};
-
-
-double Binshi[nBinshi+1] = {0.*2,90.*2};
-//const int nBins_full=1;
-double hiBins_full[nBins_full+1] = {0,90.*2};
-const int nBins_bp = 8;
-double ptBins_bp[nBins_bp+1] = {5,7,10,15,20,30,40,50,60};
-
 //const int nBinsReweight=8;
 //double ptBinsReweight[nBinsReweight+1] = {5,10,15,25,40,60,120,200,300};
 
