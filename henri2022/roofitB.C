@@ -41,13 +41,9 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 			else if(tree=="ntKp"){ _nBins = nptBinsBP;}
 			//else if(tree=="ntKp"){ _nBins = nptBinsBP_test;}
 		}
-	} else if(varExp == "By"){
-		if(full == 1){_nBins = 1;}
-		else if(full == 0){ _nBins = nyBins_both;}
-	} else if(varExp == "nMult"){
-		if(full == 1){_nBins = 1;}
-		else if(full == 0){_nBins = nmBins_both;}
-	}
+	} 
+	else if(varExp == "By"){ _nBins = nyBins_both;}
+	else if(varExp == "nMult"){_nBins = nmBins_both;}
 
 	cout << "number of bins: " << _nBins << endl;	
 	double _ptBins[_nBins+1];
@@ -69,7 +65,7 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 std::cout<<"Variable "<< varExp << endl;
 cout << "Systematics " << syst_study << endl;
 cout << tree << " BINS: ";
-for(int t; t< sizeof(_ptBins)/sizeof(_ptBins[0]);t++){cout <<"__"<<  _ptBins[t]<<"__";}
+for(int t; t< (int) sizeof(_ptBins)/sizeof(_ptBins[0]);t++){cout <<"__"<<  _ptBins[t]<<"__";}
 cout << endl << endl;
 	
 	if (!(usePbPb==1||usePbPb==0)) std::cout<<"ERROR!!, you are using a non valid isPbPb option"<<std::endl;
@@ -275,24 +271,31 @@ cout << endl << endl;
 		
 		RooDataSet* ds_cut ;
 		RooDataSet* dsMC_cut;
-
 		ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection),       Form(" (abs(%s)>=%f && abs(%s)<=%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) )",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
 		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form(" (abs(%s)>=%f && abs(%s)<=%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) ) && (Bmass>%f && Bmass<%f)",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
 		
-		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
-		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
+		std::cout << "data entries: " << ds_cut->numEntries() << "\n";
+		std::cout << "MC entries: " << dsMC_cut->numEntries() << "\n";
 
 		if(varExp == "Bpt"){var_mean_av[i] = ds_cut->mean(*pt);}     	
-		else if(varExp == "By"){var_mean_av[i] = ds_cut->mean(*y);}
+		else if(varExp == "By"){
+    		double sumAbs = 0.0;
+			// Loop over the dataset and compute the sum of absolute values
+			for (int iy = 0; iy < ds_cut->numEntries(); iy++) {
+				RooRealVar* y_abs = (RooRealVar*) ds_cut->get(iy)->find("By");
+				double abs_y = TMath::Abs(y_abs->getVal());
+				sumAbs += abs_y;
+			}
+			var_mean_av[i] = sumAbs / ds_cut->numEntries();
+		}
 		else if(varExp == "nMult"){var_mean_av[i] = ds_cut->mean(*nMult);}
-		
+
 		ds_cut = (RooDataSet*) ds_cut->reduce(seldata);
 		dsMC_cut = (RooDataSet*) dsMC_cut->reduce(selmc);
 		RooRealVar * Events_in_MC = new RooRealVar(Form("Events_in_MC_%d",_count),"Events_in_MC", dsMC_cut->sumEntries());
 		ws->import(*Events_in_MC);
 		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
 		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
-		std::cout << "MC entries: " << Events_in_MC->getVal() << "\n";
 
 		// create RooDataHist
 		h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
@@ -308,12 +311,10 @@ cout << endl << endl;
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 
-		
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function for VARIABLE " << varExp.Data() << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp.Data());
-		
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp.Data());		
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 		
@@ -324,7 +325,6 @@ cout << endl << endl;
 		//TGraphAsymmErrors* datagraph = static_cast<TGraphAsymmErrors*>(datahist);
 
 		RooRealVar* fitYield = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("nsig%d_%s",_count,""))));
-		//modelcurve = frame->getCurve(Form("model%d_%s",_count,""));   
 		yield = fitYield->getVal();
 		RooRealVar* BackGround = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("nbkg%d_%s",_count,""))));
 		MyBackground = BackGround->getVal();
@@ -342,9 +342,11 @@ cout << endl << endl;
 		yield_vec[i]=yield;
 		yield_vec_err_low[i]=yieldErr;
 		yield_vec_err_high[i]=yieldErr;
+		//divide by bin width
 		yield_vec[i]=yield_vec[i]/(_ptBins[i+1]-_ptBins[i]);
 		yield_vec_err_low[i]=yield_vec_err_low[i]/(_ptBins[i+1]-_ptBins[i]);
 		yield_vec_err_high[i]=yield_vec_err_high[i]/(_ptBins[i+1]-_ptBins[i]);
+		// for the bin range in the histograms
 		hori_av_low[i] = var_mean_av[i]-_ptBins[i];
 		hori_av_high[i] = _ptBins[i+1]-var_mean_av[i];
 
@@ -368,7 +370,6 @@ cout << endl << endl;
 //Resolution 
 		
 		//chi2
-
 		RooAbsPdf* model = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,""));
 		RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
 		RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d_%s",_count,"")), Bins(nbinsmasshisto));
@@ -382,7 +383,6 @@ cout << endl << endl;
 		std::cout << "Probability of Chi square value is " << XI_PROB << endl;
 		chi2_vec[i] = Mychi2;
 		chi2MC_vec[i] = frameMC_chi2->chiSquare();
-	
 		//chi2
 
 		std::vector<double> aa;
@@ -636,7 +636,7 @@ cout << endl << endl;
 					if( ( _ptBins[i] >= 1.5) || (_ptBins[i+1] <= -1.5) ){ tex_y->Draw();} 
 					else { tex_yCUT->Draw();}
 				} else{tex_y->Draw();}
-				
+
 				//CMS_lumi(c,19011,0);
 				//c->Update();
 
@@ -909,25 +909,25 @@ cout << endl << endl;
 	 mg->Add(gr_staterr);
 
 	 if(syst_study==1){
-		TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,nullptr,nullptr,yield_vec_systerr_low,yield_vec_systerr_high);
+		TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(_nBins, var_mean_av, yield_vec, nullptr, nullptr, yield_vec_systerr_low, yield_vec_systerr_high);
 		gr_systerr->SetLineColor(2);
 		mg->Add(gr_systerr,"syst");
 		leg_d->AddEntry(gr_systerr, "Systematic Uncertainty", "e");
 	}
 	 if(varExp == "By"){
 		 mg->GetXaxis()->SetTitle("Rapidity (y)");
-		 mg->GetYaxis()->SetTitle("dN_{S}/dy");
+		 mg->GetYaxis()->SetTitle("dY_{S}/dy");
 		 mg->GetXaxis()->SetLimits(0,2.4);
 	 }
 	 if(varExp == "Bpt"){
 		 mg->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
-		 mg->GetYaxis()->SetTitle("dN_{S}/dp_{T}");
+		 mg->GetYaxis()->SetTitle("dY_{S}/dp_{T}");
 		if (tree == "ntKp"){ mg->GetXaxis()->SetLimits(0 ,80); }
 		if (tree == "ntphi"){ mg->GetXaxis()->SetLimits(0 ,60); }
 	 }
 	 if(varExp == "nMult"){
 		 mg->GetXaxis()->SetTitle("Multiplicity (Mult)");
-		 mg->GetYaxis()->SetTitle("dN_{S}/dMult");
+		 mg->GetYaxis()->SetTitle("dY_{S}/dMult");
 		 mg->GetXaxis()->SetLimits(0, 110);
 	 }
 
@@ -988,18 +988,17 @@ cout << endl << endl;
 	for(int i = 0; i < _nBins; i++){
 		if(resol_vec[i] > resol_max){resol_max = resol_vec[i];}
 		if(resol_vec[i] < resol_min){resol_min = resol_vec[i];}
-									}
+								   }
 	 TCanvas c_resol;
 	 TMultiGraph* mg_resol = new TMultiGraph();
 
-	 TGraphAsymmErrors* gr_resol = new TGraphAsymmErrors(_nBins,var_mean_av,resol_vec,hori_av_low,hori_av_high,resol_vec_err_low,resol_vec_err_high);
+	 TGraphAsymmErrors* gr_resol = new TGraphAsymmErrors(_nBins, var_mean_av, resol_vec, hori_av_low, hori_av_high, resol_vec_err_low, resol_vec_err_high);
 	 gr_resol->SetLineColor(1); 
 	
 	 if(varExp == "By"){
 		 mg_resol->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg_resol->GetYaxis()->SetTitle("Resolution");
 		 mg_resol->GetXaxis()->SetLimits(0 ,2.4);
-
 	 }
 	 if(varExp == "Bpt"){
 		 mg_resol->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
