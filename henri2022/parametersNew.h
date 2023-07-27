@@ -75,25 +75,6 @@ double ptBinsReweight[nBinsReweight+1]={5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 
 
 
-//const int nBinsReweight=4;
-//double ptBinsReweight[nBinsReweight+1] = {5,10,15,20,50};
-
-
-
-//const int nBinsReweight=35;
-//double ptBinsReweight[nBinsReweight+1]={15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50};
-//const int nBinsReweight=43;
-//double ptBinsReweight[nBinsReweight+1]={7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50};
-//const int nBinsReweight=55;
-//double ptBinsReweight[nBinsReweight+1]={5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60};
-
-const int nBinsY=4;
-double ptBinsY[nBinsY+1] = {0.0,0.5, 1.0, 1.5, 2.4};
-
-//const int nBinsY=8;
-//double ptBinsY[nBinsY+1] = {-2.4,-1.5,-1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.4};
-
-
 
 TCut weightGpt_pp = "(0.675236 + 0.035587*Gpt + -0.000358*Gpt*Gpt)";
 TCut weightBgenpt_pp = "(0.675236 + 0.035587*Bgenpt + -0.000358*Bgenpt*Bgenpt)";

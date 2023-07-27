@@ -245,7 +245,7 @@ cout << endl << endl;
 		read_samples(*ws, jpsi_vars, jpsiFile.Data(), "ntKp", "jpsinp");
 		RooDataSet* full_data_MC = (RooDataSet*) ws->data("jpsinp");
 		full_data_MC = (RooDataSet*)full_data_MC->reduce("(BDT_pt_5_7 > 0.08 && Bpt >= 5 && Bpt < 7) || (BDT_pt_7_10 > 0.07 && Bpt >= 7 && Bpt < 10) || (BDT_pt_10_15 > 0.0 && Bpt >= 10 && Bpt < 15) || (BDT_pt_15_20 > 0.02 && Bpt >= 15 && Bpt < 20) || (BDT_pt_20_50 > 0.04 && Bpt >= 20 && Bpt < 50) || (Bpt >= 20 && Bpt < 50) ");
-		full_data_MC = (RooDataSet*)full_data_MC->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)");
+		full_data_MC = (RooDataSet*)full_data_MC->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)");  //FID REGION
 		
 		// FORM PEAKING Background BINS
 		RooDataSet* fullds_JPSI_shape_fix = (RooDataSet*)full_data_MC->reduce("Bgen == 23335");
@@ -275,10 +275,10 @@ cout << endl << endl;
 		
 		RooDataSet* ds_cut ;
 		RooDataSet* dsMC_cut;
-		TString modBy = "";
-		if(varExp == "By") {modBy = "|";} //consider |y|  
-		ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection),       Form(" (%s%s%s>=%f && %s%s%s<=%f) && ( (Bpt < 10 &&  abs(By) > 1.5) || (Bpt > 10) )",modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i],modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i+1]));
-		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form(" (%s%s%s>=%f && %s%s%s<=%f && Bmass>%f&&Bmass<%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) )",modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i],modBy.Data(),varExp.Data(),modBy.Data(),_ptBins[i+1],minhisto, maxhisto));
+
+		ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection),       Form(" (abs(%s)>=%f && abs(%s)<=%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) )",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
+		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form(" (abs(%s)>=%f && abs(%s)<=%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) ) && (Bmass>%f && Bmass<%f)",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
+		
 		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
 		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
 
@@ -298,10 +298,10 @@ cout << endl << endl;
 		h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 		hMC = new TH1D(Form("hMC%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 
-		if(isMC==1) skimtree_new->Project(Form("h%d",_count),"Bmass",Form("%s*(%s&&%s>%f&&%s<%f && BgenNew == 23333)*(1/%s)",weightmc.Data(),seldata.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightdata.Data()));
-		else        skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],weightdata.Data()));
-	
-		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass",Form("%s*(%s&&%s>%f&&%s<%f)",weightmc.Data(),Form("%s&&BgenNew==23333",selmc.Data()),varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));	
+		if(isMC==1) skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("%s*(%s&&%s>%f&&%s<%f && BgenNew == 23333)*(1/%s)",weightmc.Data(),seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],weightdata.Data()));
+		else        skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],weightdata.Data()));
+		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass",           Form("%s*(%s&&%s>%f&&%s<%f)",weightmc.Data(),Form("%s&&BgenNew==23333",selmc.Data()),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1]));	
+		
 		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
 		dhMC = new RooDataHist(Form("dhMC%d",_count),"",*mass,Import(*hMC));
 		h->SetAxisRange(0,h->GetMaximum()*1.4,"Y");
@@ -410,19 +410,7 @@ cout << endl << endl;
 
 	////////////////////////////
 	
-	//LABELS IN PLOTS
-
-
-
-
-
-
-
-
-
-
-
-
+	//////////////////////////////////////////////////////////LABELS IN PLOTS
 		TLatex* texB = new TLatex(0.5,0.5,"");
 		if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
 		if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{+}");}
@@ -527,6 +515,8 @@ cout << endl << endl;
 	tex_BIN->Draw();
 	chi_square->Draw();
 	yield_val->Draw();
+	//////////////////////////////////////////////////////////LABELS IN PLOTS
+
 
 	//CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
 	//c->Update();
@@ -541,8 +531,8 @@ cout << endl << endl;
 		lat->DrawLatex(0.64,0.70,Form("Significance: %.1f", real_significance));*/
 
 		if(varExp == "By"){
-			c->SaveAs(  Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(), (float)_ptBins[i],(float)_ptBins[i+1])+tree+".pdf");
-			cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (float)_ptBins[i], (float)_ptBins[i+1])+tree+".pdf");
+			c->SaveAs(  Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i],(float)_ptBins[i+1])+tree+".pdf");
+			cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1])+tree+".pdf");
 		}else{
 			c->SaveAs(  Form("%s%s/%s_%s_%s_%d_%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1])+tree+".pdf");
 			cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1])+tree+".pdf");
@@ -593,10 +583,15 @@ cout << endl << endl;
 					if (varExp=="Bpt"){
 						if(_ptBins[i] >= 10){tex_y->Draw();}
 						else{tex_yCUT->Draw();}
-					}else{tex_y->Draw();}
+					} else if (varExp == "By"){
+						if( ( _ptBins[i] >= 1.5) || (_ptBins[i+1] <= -1.5) ){ tex_y->Draw();} 
+						else { tex_yCUT->Draw();}
+					} else{tex_y->Draw();}
+
 					//CMS_lumi(c,19011,0);
 					//c->Update();
-					if(varExp == "By"){c->SaveAs(Form("%s/%s_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
+
+					if(varExp == "By"){c->SaveAs(Form("%s/%s_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
 					else { c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
 
 					modelcurve_back = frame->getCurve(Form("model%d_%s",_count,background[j].c_str()));
@@ -637,16 +632,20 @@ cout << endl << endl;
 				if (varExp=="Bpt"){
 					if(_ptBins[i] >= 10){tex_y->Draw();}
 					else{tex_yCUT->Draw();}
+				} else if (varExp == "By"){
+					if( ( _ptBins[i] >= 1.5) || (_ptBins[i+1] <= -1.5) ){ tex_y->Draw();} 
+					else { tex_yCUT->Draw();}
 				} else{tex_y->Draw();}
+				
 				//CMS_lumi(c,19011,0);
 				//c->Update();
 
 				if (signal[j] != "fixed") {
-					if(varExp == "By"){ cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+".pdf");} 
+					if(varExp == "By"){ cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+".pdf");} 
 					else { cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				}
 				
-				if(varExp == "By"){ c->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
+				if(varExp == "By"){ c->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				else{ c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				
 				modelcurve_signal = frame->getCurve(Form("model%d_%s",_count,signal[j].c_str()));
@@ -918,7 +917,7 @@ cout << endl << endl;
 	 if(varExp == "By"){
 		 mg->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg->GetYaxis()->SetTitle("dN_{S}/dy");
-		 mg->GetXaxis()->SetLimits(-2.4 ,2.4);
+		 mg->GetXaxis()->SetLimits(0,2.4);
 	 }
 	 if(varExp == "Bpt"){
 		 mg->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
@@ -962,7 +961,7 @@ cout << endl << endl;
 	 if(varExp == "By"){
 		 mg_par->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg_par->GetYaxis()->SetTitle("Mass resolution scale factor");
-		 mg_par->GetXaxis()->SetLimits(-2.4 ,2.4);
+		 mg_par->GetXaxis()->SetLimits(0 ,2.4);
 	 }
 	 if(varExp == "Bpt"){
 		 mg_par->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
@@ -999,7 +998,7 @@ cout << endl << endl;
 	 if(varExp == "By"){
 		 mg_resol->GetXaxis()->SetTitle("Rapidity (y)");
 		 mg_resol->GetYaxis()->SetTitle("Resolution");
-		 mg_resol->GetXaxis()->SetLimits(-2.4 ,2.4);
+		 mg_resol->GetXaxis()->SetLimits(0 ,2.4);
 
 	 }
 	 if(varExp == "Bpt"){
@@ -1052,7 +1051,7 @@ grMC_chi2->SetLineColor(2);
 if(varExp == "By"){
  mg_chi2->GetXaxis()->SetTitle("Rapidity (y)");
  mg_chi2->GetYaxis()->SetTitle("#chi^{2}/NDF");
- mg_chi2->GetXaxis()->SetLimits(-2.4 ,2.4);
+ mg_chi2->GetXaxis()->SetLimits(0 ,2.4);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 
 }
@@ -1115,7 +1114,7 @@ grMC_chi2_back->SetLineColor(2);
 if(varExp == "By"){
  mg_chi2_back->GetXaxis()->SetTitle("Rapidity (y)");
  mg_chi2_back->GetYaxis()->SetTitle("#chi^{2}/NDF");
- mg_chi2_back->GetXaxis()->SetLimits(-2.4 ,2.4);
+ mg_chi2_back->GetXaxis()->SetLimits(0 ,2.4);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
 if(varExp == "Bpt"){
@@ -1177,7 +1176,7 @@ grMC_chi2_sig->SetLineColor(2);
 if(varExp == "By"){
  mg_chi2_sig->GetXaxis()->SetTitle("Rapidity (y)");
  mg_chi2_sig->GetYaxis()->SetTitle("#chi^{2}/NDF");
- mg_chi2_sig->GetXaxis()->SetLimits(-2.4 ,2.4);
+ mg_chi2_sig->GetXaxis()->SetLimits(0 ,2.4);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
 if(varExp == "Bpt"){
@@ -1243,7 +1242,7 @@ leg_chi2_sigsum->AddEntry(gr_chi2_sigsum, Form("%s",signal[j].c_str()), "e");
 if(varExp == "By"){
  mg_chi2_sigsum->GetXaxis()->SetTitle("Rapidity (y)");
  mg_chi2_sigsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
- mg_chi2_sigsum->GetXaxis()->SetLimits(-2.4 ,2.4);
+ mg_chi2_sigsum->GetXaxis()->SetLimits(0 ,2.4);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
 if(varExp == "Bpt"){
