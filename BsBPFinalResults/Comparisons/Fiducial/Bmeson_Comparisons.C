@@ -926,7 +926,6 @@ int start2015;
 int color_mark =  kBlue + 2;
 int color_syst = kBlue -3;
 
-if (whichvar==0){
 
 //	gStyle->SetPadTickX(1);
 //	gStyle->SetPadTickY(1);
@@ -1107,7 +1106,8 @@ if (meson_n == 0){
 
  // Get ratio plots
 
-if (meson_n==0){NBinsLow2015=1;} else {NBinsLow2015=0;}
+if (meson_n==0){NBinsLow2015=1;} 
+else {NBinsLow2015=0;}
 
 for (int i=0;i<NBins;++i){
 	if( i<NBinsLow){
@@ -1133,16 +1133,10 @@ for (int i=0;i<NBins;++i){
 	}
 }
 
-if (meson_n==0){
-	for(auto i=0;i<NBins2015+1;++i){
-		ptBins2015[i]=vect_ptBins2015bp[i];
-	}
-}
-else {for(auto i=0;i<NBins2015+1;++i){
-		ptBins2015[i]=vect_ptBins2015bs[i];
-	}}
+if (meson_n==0){for(auto i=0;i<NBins2015+1;++i){ptBins2015[i]=vect_ptBins2015bp[i];}}
+else {for(auto i=0;i<NBins2015+1;++i){ptBins2015[i]=vect_ptBins2015bs[i];}}
+
 for (int i=0;i<NBins2015;++i){
-	
 	if( i<NBinsLow2015){
 		binlow_2015[i]=BXsecPPX2015[i];
 		bl_low_2015[i]=BXsecPPY2015[i];
@@ -1152,8 +1146,7 @@ for (int i=0;i<NBins2015;++i){
 		bl_low_2015_xErrH[i]=ptBins2015[i + 1]-BXsecPPX2015[i];
 		bl_low_2015_ySystL[i]=BXSecPPYSystDown2015[i];
 		bl_low_2015_ySystH[i]=BXSecPPYSystDown2015[i];	
-	} 
-	else {
+	} else {
 		binhigh_2015[i-NBinsLow2015]=BXsecPPX2015[i];
 		bl_high_2015[i-NBinsLow2015]=BXsecPPY2015[i];
 		bl_high_2015_yStatL[i-NBinsLow2015]=BXSecPPYErrDown2015[i];
@@ -1277,7 +1270,7 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
   	cr->SetLogy();   
 	if (whichvar==0){cr->SaveAs(Form("Plots/%s/CrossCompLog.pdf", B_m.Data()));}
 	//FONLL
-}
+
 
 
 
