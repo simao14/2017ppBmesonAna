@@ -45,7 +45,7 @@ const std::array<double, nptBinsBP_test  + 1> ptbinsvecBP_test  = {7,10};
 //const std::array<double, nyBins_both + 1> ybinsvec = {-2.4, -1.5, -1.0, -0.5, 0.0 ,0.5, 1.0, 1.5, 2.4};
 
 const int nyBins_both = 5;
-const std::array<double, nyBins_both + 1> ybinsvec = {0.0 ,0.5, 1.0, 1.5, 2, 2.4};
+const std::array< double, nyBins_both + 1> ybinsvec = {0.0 ,0.5, 1.0, 1.5, 2, 2.4};
 
 const int nyBins_both_full = 1;
 const std::array<double, nyBins_both_full + 1> ybinsvec_full = {-2.4, 2.4};

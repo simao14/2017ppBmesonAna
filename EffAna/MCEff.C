@@ -547,7 +547,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
   // create a vector of pT binning with specified regional widths
   auto createBins = [] (std::vector<double> edges,
                         std::vector<double> binWidth) {
-    std::vector<double> bins = {edges[0]};
+	std::vector<double> bins = {edges[0]};
     while (bins.back() < edges.back()) {
       auto iRegion = std::upper_bound(edges.begin(), edges.end(), bins.back())
         - edges.begin() - 1;
@@ -668,11 +668,11 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 	if (meson_n == 0){NPtBins1D = nptBinsBP;}
 	else {NPtBins1D = nptBins;}
-	if (meson_n == 0){for (int i=0;i<NPtBins1D+1;i++){PtBin1D[i] = PtBin1DBPvec[i];}}
+	if (meson_n == 0){for (int i=0;i<NPtBins1D+1;i++){PtBin1D[i] = ptbinsvecBP[i];}}
 	else{for (int i=0;i<NPtBins1D+1;i++){PtBin1D[i] = ptbinsvec[i];}}
 
 	//const int nyBins_both = 12;
-	//double  ybinsvec[nyBins_both + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
+	//double  ybinsvec.data()[nyBins_both + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
 
 //	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins,PtBin);
 	TH1D * Eff1DRECOHis = new TH1D("Eff1DRECOHis","",NPtBins1D,PtBin1D);
@@ -782,7 +782,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 
 
-	TH1D * Eff1DRECOHisTnPUpY = new TH1D("Eff1DRECOHisTnPUpY","",nyBins_both,ybinsvec);
+	TH1D * Eff1DRECOHisTnPUpY = new TH1D("Eff1DRECOHisTnPUpY","",nyBins_both,ybinsvec.data());
 
 	Eff1DRECOHisTnPUpY->GetXaxis()->SetTitle("rapidity");
 	Eff1DRECOHisTnPUpY->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -792,7 +792,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisTnPUpY->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DRECOHisTnPDownY = new TH1D("Eff1DRECOHisTnPDownY","",nyBins_both,ybinsvec);
+	TH1D * Eff1DRECOHisTnPDownY = new TH1D("Eff1DRECOHisTnPDownY","",nyBins_both,ybinsvec.data());
 
 	Eff1DRECOHisTnPDownY->GetXaxis()->SetTitle("rapidity");
 	Eff1DRECOHisTnPDownY->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -801,7 +801,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisTnPDownY->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOHisTnPDownY->GetYaxis()->SetTitleOffset(1.5);	
 
-	TH1D * Eff1DRECOHisBDTY = new TH1D("Eff1DRECOHisBDTY","",nyBins_both,ybinsvec);
+	TH1D * Eff1DRECOHisBDTY = new TH1D("Eff1DRECOHisBDTY","",nyBins_both,ybinsvec.data());
 
 	Eff1DRECOHisBDTY->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOHisBDTY->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -811,7 +811,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisBDTY->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DRECOHisBptY = new TH1D("Eff1DRECOHisBptY","",nyBins_both,ybinsvec);
+	TH1D * Eff1DRECOHisBptY = new TH1D("Eff1DRECOHisBptY","",nyBins_both,ybinsvec.data());
 
 	Eff1DRECOHisBptY->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOHisBptY->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -822,7 +822,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 	//Mult Stuffs
 
-	TH1D * Eff1DRECOHisTnPUpMult = new TH1D("Eff1DRECOHisTnPUp","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DRECOHisTnPUpMult = new TH1D("Eff1DRECOHisTnPUp","",nmBins_both,nmbinsvec.data());
 
 	Eff1DRECOHisTnPUpMult->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOHisTnPUpMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -832,7 +832,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisTnPUpMult->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DRECOHisTnPDownMult = new TH1D("Eff1DRECOHisTnPDownMult","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DRECOHisTnPDownMult = new TH1D("Eff1DRECOHisTnPDownMult","",nmBins_both,nmbinsvec.data());
 
 	Eff1DRECOHisTnPDownMult->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOHisTnPDownMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -842,7 +842,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisTnPDownMult->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DRECOHisBDTMult = new TH1D("Eff1DRECOHisBDTMult","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DRECOHisBDTMult = new TH1D("Eff1DRECOHisBDTMult","",nmBins_both,nmbinsvec.data());
 
 	Eff1DRECOHisBDTMult->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOHisBDTMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -852,7 +852,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOHisBDTMult->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DRECOHisBptMult = new TH1D("Eff1DRECOHisBptMult","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DRECOHisBptMult = new TH1D("Eff1DRECOHisBptMult","",nmBins_both,nmbinsvec.data());
 
 	Eff1DRECOHisBptMult->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOHisBptMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -887,7 +887,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	int BDTWeightBin;
 	float BDTWeight;
 
-	TH1D * Eff1DRECOMultHis = new TH1D("Eff1DRECOMultHis","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DRECOMultHis = new TH1D("Eff1DRECOMultHis","",nmBins_both,nmbinsvec.data());
 
 	Eff1DRECOMultHis->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOMultHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -897,7 +897,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOMultHis->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DRECOMultHisfid10 = new TH1D("Eff1DRECOMultHisfid10","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DRECOMultHisfid10 = new TH1D("Eff1DRECOMultHisfid10","",nmBins_both,nmbinsvec.data());
 
 	Eff1DRECOMultHisfid10->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOMultHisfid10->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -906,7 +906,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOMultHisfid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOMultHisfid10->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * TrkLoose1DRECOHisMult = new TH1D("TrkLoose1DRECOHisMult","",nmBins_both,nmbinsvec);
+	TH1D * TrkLoose1DRECOHisMult = new TH1D("TrkLoose1DRECOHisMult","",nmBins_both,nmbinsvec.data());
 
 	TrkLoose1DRECOHisMult->GetXaxis()->SetTitle("Multiplicity");
 	TrkLoose1DRECOHisMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -915,7 +915,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TrkLoose1DRECOHisMult->GetXaxis()->SetTitleOffset(1.2);	
 	TrkLoose1DRECOHisMult->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * TrkTight1DRECOHisMult = new TH1D("TrkTight1DRECOHisMult","",nmBins_both,nmbinsvec);
+	TH1D * TrkTight1DRECOHisMult = new TH1D("TrkTight1DRECOHisMult","",nmBins_both,nmbinsvec.data());
 
 	TrkTight1DRECOHisMult->GetXaxis()->SetTitle("Multiplicity");
 	TrkTight1DRECOHisMult->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -924,7 +924,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TrkTight1DRECOHisMult->GetXaxis()->SetTitleOffset(1.2);	
 	TrkTight1DRECOHisMult->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DRECOMultHisfid = new TH1D("Eff1DRECOMultHisfid","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DRECOMultHisfid = new TH1D("Eff1DRECOMultHisfid","",nmBins_both,nmbinsvec.data());
 
 	Eff1DRECOMultHisfid->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DRECOMultHisfid->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -934,7 +934,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOMultHisfid->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DRECOYHis = new TH1D("Eff1DRECOYHis","",nyBins_both,ybinsvec);
+	TH1D * Eff1DRECOYHis = new TH1D("Eff1DRECOYHis","",nyBins_both,ybinsvec.data());
 
 	Eff1DRECOYHis->GetXaxis()->SetTitle("Rapidity");
 	Eff1DRECOYHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -943,7 +943,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOYHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOYHis->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DRECOYHisfid10 = new TH1D("Eff1DRECOYHisfid10","",nyBins_both,ybinsvec);
+	TH1D * Eff1DRECOYHisfid10 = new TH1D("Eff1DRECOYHisfid10","",nyBins_both,ybinsvec.data());
 
 	Eff1DRECOYHisfid10->GetXaxis()->SetTitle("Rapidity");
 	Eff1DRECOYHisfid10->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -952,7 +952,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOYHisfid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOYHisfid10->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DRECOYHisfid = new TH1D("Eff1DRECOYHisfid","",nyBins_both,ybinsvec);
+	TH1D * Eff1DRECOYHisfid = new TH1D("Eff1DRECOYHisfid","",nyBins_both,ybinsvec.data());
 
 	Eff1DRECOYHisfid->GetXaxis()->SetTitle("Rapidity");
 	Eff1DRECOYHisfid->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -961,7 +961,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DRECOYHisfid->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DRECOYHisfid->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * TrkLoose1DRECOHisY = new TH1D("TrkLoose1DRECOHisY","",nyBins_both,ybinsvec);
+	TH1D * TrkLoose1DRECOHisY = new TH1D("TrkLoose1DRECOHisY","",nyBins_both,ybinsvec.data());
 
 	TrkLoose1DRECOHisY->GetXaxis()->SetTitle("Rapidity");
 	TrkLoose1DRECOHisY->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -970,7 +970,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TrkLoose1DRECOHisY->GetXaxis()->SetTitleOffset(1.2);	
 	TrkLoose1DRECOHisY->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * TrkTight1DRECOHisY = new TH1D("TrkTight1DRECOHisY","",nyBins_both,ybinsvec);
+	TH1D * TrkTight1DRECOHisY = new TH1D("TrkTight1DRECOHisY","",nyBins_both,ybinsvec.data());
 
 	TrkTight1DRECOHisY->GetXaxis()->SetTitle("Rapidity");
 	TrkTight1DRECOHisY->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1046,7 +1046,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENAccHisFid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccHisFid10->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENAccYHis = new TH1D("Eff1DGENAccYHis","",nyBins_both,ybinsvec);
+	TH1D * Eff1DGENAccYHis = new TH1D("Eff1DGENAccYHis","",nyBins_both,ybinsvec.data());
 	
 	Eff1DGENAccYHis->GetXaxis()->SetTitle("rapidity");
 	Eff1DGENAccYHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1055,7 +1055,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENAccYHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccYHis->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENAccYHisFid = new TH1D("Eff1DGENAccYHisFid","",nyBins_both,ybinsvec);
+	TH1D * Eff1DGENAccYHisFid = new TH1D("Eff1DGENAccYHisFid","",nyBins_both,ybinsvec.data());
 	
 	Eff1DGENAccYHisFid->GetXaxis()->SetTitle("rapidity");
 	Eff1DGENAccYHisFid->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1064,7 +1064,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENAccYHisFid->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccYHisFid->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENAccYHisFid10 = new TH1D("Eff1DGENAccYHisFid10","",nyBins_both,ybinsvec);
+	TH1D * Eff1DGENAccYHisFid10 = new TH1D("Eff1DGENAccYHisFid10","",nyBins_both,ybinsvec.data());
 	
 	Eff1DGENAccYHisFid10->GetXaxis()->SetTitle("rapidity");
 	Eff1DGENAccYHisFid10->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1073,7 +1073,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENAccYHisFid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccYHisFid10->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENMultHis = new TH1D("Eff1DGENMultHis","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DGENMultHis = new TH1D("Eff1DGENMultHis","",nmBins_both,nmbinsvec.data());
 
 	Eff1DGENMultHis->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENMultHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1082,7 +1082,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENMultHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENMultHis->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENMultHisFid = new TH1D("Eff1DGENMultHisFid","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DGENMultHisFid = new TH1D("Eff1DGENMultHisFid","",nmBins_both,nmbinsvec.data());
 
 	Eff1DGENMultHisFid->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENMultHisFid->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1091,7 +1091,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENMultHisFid->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENMultHisFid->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENMultHisFid10 = new TH1D("Eff1DGENMultHisFid10","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DGENMultHisFid10 = new TH1D("Eff1DGENMultHisFid10","",nmBins_both,nmbinsvec.data());
 
 	Eff1DGENMultHisFid10->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENMultHisFid10->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1100,7 +1100,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENMultHisFid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENMultHisFid10->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENYHis = new TH1D("Eff1DGENYHis","",nyBins_both,ybinsvec);
+	TH1D * Eff1DGENYHis = new TH1D("Eff1DGENYHis","",nyBins_both,ybinsvec.data());
 
 	Eff1DGENYHis->GetXaxis()->SetTitle("Rapidity");
 	Eff1DGENYHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1109,7 +1109,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENYHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENYHis->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENYHisFid = new TH1D("Eff1DGENYHisFid","",nyBins_both,ybinsvec);
+	TH1D * Eff1DGENYHisFid = new TH1D("Eff1DGENYHisFid","",nyBins_both,ybinsvec.data());
 
 	Eff1DGENYHisFid->GetXaxis()->SetTitle("Rapidity");
 	Eff1DGENYHisFid->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1118,7 +1118,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENYHisFid->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENYHisFid->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENYHisFid10 = new TH1D("Eff1DGENYHisFid10","",nyBins_both,ybinsvec);
+	TH1D * Eff1DGENYHisFid10 = new TH1D("Eff1DGENYHisFid10","",nyBins_both,ybinsvec.data());
 
 	Eff1DGENYHisFid10->GetXaxis()->SetTitle("Rapidity");
 	Eff1DGENYHisFid10->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1127,7 +1127,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENYHisFid10->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENYHisFid10->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENYHisGpt = new TH1D("Eff1DGENYHisGpt","",nyBins_both,ybinsvec);
+	TH1D * Eff1DGENYHisGpt = new TH1D("Eff1DGENYHisGpt","",nyBins_both,ybinsvec.data());
 
 	Eff1DGENYHisGpt->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENYHisGpt->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1136,7 +1136,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENYHisGpt->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENYHisGpt->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENMultHisGpt = new TH1D("Eff1DGENMultHisGpt","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DGENMultHisGpt = new TH1D("Eff1DGENMultHisGpt","",nmBins_both,nmbinsvec.data());
 
 	Eff1DGENMultHisGpt->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENMultHisGpt->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1146,7 +1146,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENMultHisGpt->GetYaxis()->SetTitleOffset(1.5);
 
 
-	TH1D * Eff1DGENAccMultHis = new TH1D("Eff1DGENAccMultHis","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DGENAccMultHis = new TH1D("Eff1DGENAccMultHis","",nmBins_both,nmbinsvec.data());
 
 	Eff1DGENAccMultHis->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENAccMultHis->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1155,7 +1155,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENAccMultHis->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccMultHis->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENAccMultHisFid = new TH1D("Eff1DGENAccMultHisFid","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DGENAccMultHisFid = new TH1D("Eff1DGENAccMultHisFid","",nmBins_both,nmbinsvec.data());
 
 	Eff1DGENAccMultHisFid->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENAccMultHisFid->GetYaxis()->SetTitle("#alpha #times #epsilon");
@@ -1164,7 +1164,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Eff1DGENAccMultHisFid->GetXaxis()->SetTitleOffset(1.2);	
 	Eff1DGENAccMultHisFid->GetYaxis()->SetTitleOffset(1.5);
 
-	TH1D * Eff1DGENAccMultHisFid10 = new TH1D("Eff1DGENAccMultHisFid10","",nmBins_both,nmbinsvec);
+	TH1D * Eff1DGENAccMultHisFid10 = new TH1D("Eff1DGENAccMultHisFid10","",nmBins_both,nmbinsvec.data());
 
 	Eff1DGENAccMultHisFid10->GetXaxis()->SetTitle("Multiplicity");
 	Eff1DGENAccMultHisFid10->GetYaxis()->SetTitle("#alpha #times #epsilon");
