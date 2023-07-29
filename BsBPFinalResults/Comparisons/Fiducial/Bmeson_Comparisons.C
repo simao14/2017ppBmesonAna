@@ -849,13 +849,12 @@ double XTempChange;
 double YTempChange;
 double YErrLowTemp;
 double YErrHighTemp;
-
+int NBinsLow2015;
 //Ratio
 float Ratio1Y[NBins2015];
 float Ratio1YErr[NBins2015];
 float Ratio2Y[NBins2015];
 float Ratio2YErr[NBins2015];
-
 
 	//These vectors are just for BP
   std::vector<float> RatioDataYLow(1);
@@ -903,7 +902,7 @@ float bl_high_2015_xErrL[NBins2015-NBinsLow2015];
 float bl_high_2015_xErrH[NBins2015-NBinsLow2015];
 float bl_high_2015_ySystL[NBins2015-NBinsLow2015];
 float bl_high_2015_ySystH[NBins2015-NBinsLow2015];
-int NBinsLow2015;
+
 double ptBins2015[NBins2015+1];
   vector<float> BXsec;
   vector<float> BXsecStat;
