@@ -140,7 +140,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	Int_t GenMult;
 
 	root->SetBranchAddress("EvtInfo.nMult",&nMult);
-	rootGen->SetBranchAddress("mult",&GenMult);
+	//rootGen->SetBranchAddress("mult",&GenMult);
 
 	
 
@@ -1759,7 +1759,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 			ntHi->GetEntry(i);
 			//CentWeightTree->GetEntry(i);
 			tree->GetEntry(i);
-			rootGen->GetEntry(i);
+			//rootGen->GetEntry(i);
 			root->GetEntry(i);
 
 			// PVzWeight = 1;

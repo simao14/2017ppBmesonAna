@@ -24,7 +24,6 @@ bptshape () {
 yield () {
     ## yield extraction
     pushd henri2022
-    # roofitB.C contains 2 By cuts
     bash bpdoRoofit.sh &
     bash bsdoRoofit.sh &
     wait
@@ -39,11 +38,10 @@ bpEff () {
     root -b -l -q MCEff.C'(1,0,0)' > effbp.log                                          
     wait
     root -b -l -q CrossSectionAnaMult.C'(1,1,0)'  #(TnPon =1 noTnP=0 , pT=0,y=1,mult=2 , data =0 mc = 1)
-    rm -r BP/EffFinal   
     root -b -l -q CrossSectionAnaMult.C'(1,0,0)'
-    root -b -l -q CrossSectionAnaY.C'(1,1,0)'
     popd
 }
+
 bsEff () {
     pushd EffAna
     echo "Takes Bsw.root as input"
@@ -52,9 +50,7 @@ bsEff () {
     root -b -l -q MCEff.C'(1,0,1)' > effbs.log                                          
     wait
     root -b -l -q CrossSectionAnaMult.C'(1,1,1)'  #(TnPon =1 noTnP=0 , pT=0,y=1,mult=2 , data =0 mc = 1)
-    rm -r Bs/EffFinal   
     root -b -l -q CrossSectionAnaMult.C'(1,0,1)'
-    root -b -l -q CrossSectionAnaY.C'(1,1,1)'
     popd
 }
 
@@ -102,6 +98,7 @@ comp () {
     # get pdf variation errors
     python master.py "Bpt"
     python master.py "By"
+    
     # Get pre-selection error
     python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
 
@@ -139,12 +136,15 @@ paperPlots () {
 #maketnp
 #bptshape
 
+
+
+
 #yield
 #wait
 
-bpEff &
-bsEff &
-wait
+#bpEff &
+#bsEff &
+#wait
 
 syst2D
 wait

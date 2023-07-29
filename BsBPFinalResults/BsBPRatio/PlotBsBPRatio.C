@@ -1,10 +1,8 @@
 #include "TROOT.h"
-#include "TH1.h"
 #include "TTree.h"
 #include "TH2.h"
 #include "TF1.h"
 #include "TFile.h"
-#include "TMath.h"
 #include "TSystem.h"
 #include "TVector2.h"
 #include "TLorentzVector.h"
@@ -14,7 +12,6 @@
 #include <fstream>
 
 #include "TCanvas.h"
-#include "TF1.h"
 #include "TFile.h"
 #include "TGraphAsymmErrors.h"
 #include "TGraphErrors.h"
@@ -34,7 +31,6 @@ void PlotBsBPRatio(int Opt){
 	gSystem->mkdir("Plots/2DMap", true);
 
 	TLatex* tex = new TLatex();
-
 	tex->SetTextFont(42);
 	tex->SetTextSize(0.03);
 	tex->SetLineWidth(2);
@@ -42,24 +38,18 @@ void PlotBsBPRatio(int Opt){
 	gStyle->SetOptStat(0);
 
 	TCanvas * c = new TCanvas("c","c",600,600);
-
 	c->cd();
-
 	c->SetLeftMargin(0.16);
 
 	TString InfileBP = "../../BP/EffAna/FinalFiles/BPPPCorrYieldMult.root";
 
 	TString FileName;
-
 	if(Opt == 0) FileName = "CorrDiffHisBin";
 	if(Opt == 1) FileName = "hPtSigma";
 
-
 	TString Method;
-
 	if(Opt == 0) Method = "Binned";
 	if(Opt == 1) Method = "2DMap";
-
 
 	TFile * FileBP = new TFile(InfileBP.Data());
 	TH1D * BPCross = (TH1D *) FileBP->Get(FileName.Data());
@@ -68,9 +58,7 @@ void PlotBsBPRatio(int Opt){
 	BPCross->SetMarkerColor(1);
 	BPCross->SetLineColor(1);
 
-
 	//B+ PP//
-
 	const int NBins = 10;
 	float BPXsecPPY[NBins];
 	float BPXsecPPX[NBins] = {7.5,20,27.5,32.5,37.5,45,57.5,72.5,90,115};
@@ -83,7 +71,6 @@ void PlotBsBPRatio(int Opt){
 
 
 	for(int i = 0; i < NBins; i++){
-
 		BPXsecPPY[i] = BPCross->GetBinContent(i+1);
 		BPXSecPPYErrUp[i] = BPCross->GetBinError(i+1);
 		BPXSecPPYErrDown[i] = BPCross->GetBinError(i+1);
@@ -91,11 +78,7 @@ void PlotBsBPRatio(int Opt){
 		BPXSecPPYErrDownPercent[i] = BPXSecPPYErrDown[i]/BPXsecPPY[i];
 
 		cout << "BPXsecPPY = " << BPXsecPPY[i] << endl;
-
 	}
-
-
-
 
 	TH2D * HisEmpty = new TH2D("HisEmpty","",100,0,130,100,20.0,600000);
 	HisEmpty->GetXaxis()->SetTitle("Event Multiplicity");
@@ -105,11 +88,7 @@ void PlotBsBPRatio(int Opt){
 	HisEmpty->GetYaxis()->SetTitleOffset(1.4);
 	HisEmpty->Draw();
 
-
-
 	TGraphAsymmErrors *BPPPCrossGraph = new TGraphAsymmErrors(NBins, BPXsecPPX, BPXsecPPY,BPXSecPPXErrDown, BPXSecPPXErrUp,BPXSecPPYErrDown,BPXSecPPYErrUp);
-
-
 	BPPPCrossGraph->SetLineColor(kBlue+2);
 	BPPPCrossGraph->SetMarkerStyle(21);
 	BPPPCrossGraph->SetMarkerSize(1);
@@ -117,17 +96,7 @@ void PlotBsBPRatio(int Opt){
 
 	BPPPCrossGraph->Draw("ep");
 
-//	tex = new TLatex(0.6,0.79,"|y| < 2.4 for 10 < p_{T} < 100 GeV/c");
-//	tex->Draw();
-	
-//	tex = new TLatex(0.6,1.2,"1.5 < |y| < 2.4 for p_{T} < 10 GeV/c");	
-//	tex->Draw();
-
-
 	c->SaveAs(Form("Plots/%s/BPPPCrossMult.png",Method.Data()));
-
-
-
 	c->SetLogy();
 
 	tex->DrawLatex(0.9,1.8,"p_{T} < 100 GeV/c");
@@ -136,20 +105,13 @@ void PlotBsBPRatio(int Opt){
 
 	//Bs PP
 
-
 	TString InfileBs = "../../Bs/EffAna/FinalFiles/BsPPCorrYieldMult.root";
-
-
 	TFile * FileBs = new TFile(InfileBs.Data());
 	TH1D * BsCross = (TH1D *) FileBs->Get(FileName.Data());
 	BsCross->SetMarkerStyle(20);
 	BsCross->SetMarkerSize(1);
 	BsCross->SetMarkerColor(1);
 	BsCross->SetLineColor(1);
-
-
-
-
 
 	float BsXsecPPY[NBins];
 	float BsXsecPPX[NBins] = {7.5,20,27.5,32.5,37.5,45,57.5,72.5,90,115};
@@ -162,24 +124,16 @@ void PlotBsBPRatio(int Opt){
 
 
 	for(int i = 0; i < NBins; i++){
-
 		BsXsecPPY[i] = BsCross->GetBinContent(i+1);
 		BsXSecPPYErrUp[i] = BsCross->GetBinError(i+1);
 		BsXSecPPYErrDown[i] = BsCross->GetBinError(i+1);
 		BsXSecPPYErrUpPercent[i] = BsXSecPPYErrUp[i]/BPXsecPPY[i];
 		BsXSecPPYErrDownPercent[i] = BsXSecPPYErrDown[i]/BPXsecPPY[i];
-
 		cout << "BsXsecPPY = " << BsXsecPPY[i] << endl;
-
 	}
 
 	TCanvas * c2 = new TCanvas("c","c",600,600);
-
 	c2->cd();
-
-
-
-
 	TH2D * HisEmpty2 = new TH2D("HisEmpty2","",100,0,130,100,20.0,50000);
 	HisEmpty2->GetXaxis()->SetTitle("Event Multiplicity");
 	HisEmpty2->GetYaxis()->SetTitle("#Delta #sigma (pb)");
@@ -188,43 +142,19 @@ void PlotBsBPRatio(int Opt){
 	HisEmpty2->GetYaxis()->SetTitleOffset(1.4);
 	HisEmpty2->Draw();
 
-
-
 	TGraphAsymmErrors *BsPPCrossGraph = new TGraphAsymmErrors(NBins, BsXsecPPX, BsXsecPPY,BsXSecPPXErrDown, BsXSecPPXErrUp,BsXSecPPYErrDown,BsXSecPPYErrUp);
-
-
 	BsPPCrossGraph->SetLineColor(kGreen+2);
 	BsPPCrossGraph->SetMarkerStyle(20);
 	BsPPCrossGraph->SetMarkerSize(1);
 	BsPPCrossGraph->SetMarkerColor(kGreen+2);
-
 	BsPPCrossGraph->Draw("ep");
 
-//	tex = new TLatex(0.6,0.79,"|y| < 2.4 for 10 < p_{T} < 100 GeV/c");
-//	tex->Draw();
-	
-//	tex = new TLatex(0.6,1.2,"1.5 < |y| < 2.4 for p_{T} < 10 GeV/c");	
-//	tex->Draw();
-
-
-
-
 	c2->SaveAs(Form("Plots/%s/BsPPCrossMult.png",Method.Data()));
-
-
-
 	c2->SetLogy();
-
-//	tex->DrawLatex(0.9,1.8,"p_{T} < 100 GeV/c");
-//	tex->DrawLatex(1.2,0.79,"|y| < 2.4 for 10 < p_{T} < 100 GeV/c");
 	c2->SaveAs(Form("Plots/%s/BsPPCrossMultLog.png",Method.Data()));
-
-//	c2->SaveAs("Plots/BsPPCrossMultLog.png");
-	
 
 	TCanvas * c3 = new TCanvas("c","c",600,600);
 	c3->cd();
-	
 	
 	TH2D * HisEmpty3 = new TH2D("HisEmpty3","",100,0,130,100,20.0,600000);
 	HisEmpty3->GetXaxis()->SetTitle("Event Multiplicity");
@@ -234,11 +164,9 @@ void PlotBsBPRatio(int Opt){
 	HisEmpty3->GetYaxis()->SetTitleOffset(1.4);
 	HisEmpty3->Draw();
 
-
 	BsPPCrossGraph->Draw("ep");
 	BPPPCrossGraph->Draw("epSAME");
 
-	
 	TLegend* leg = new TLegend(0.65,0.65,0.95,0.85,NULL,"brNDC");
 	leg->SetBorderSize(0);
 	leg->SetTextSize(0.040);
@@ -249,16 +177,9 @@ void PlotBsBPRatio(int Opt){
 	leg->AddEntry(BPPPCrossGraph,"B^{+}","PL");
 	leg->Draw("same");
 
-
 	c3->SaveAs(Form("Plots/%s/BsBPMult.png",Method.Data()));
-
-
-
 	c3->SetLogy();
-	leg->Draw("same");
-	
 	c3->SaveAs(Form("Plots/%s/BsBPMultLog.png",Method.Data()));
-
 
 
 	//Bs B+ Ratio PP//

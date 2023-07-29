@@ -170,14 +170,14 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	if (usemc==0){
 		if (meson_n==0){
-			FileName = Form("/data3/tasheng/presel/_%sData_nom.root",var_n.Data());
+			FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
 		} else {
 			FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
 		}
 	}
 	else {
 		if (meson_n==0){
-			FileName = Form("/data3/tasheng/presel/_%sMC_nom.root",var_n.Data());
+			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
 		} else {
 			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
 		}

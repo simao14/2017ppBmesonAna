@@ -1301,7 +1301,7 @@ leg_chi2_backsum->AddEntry(gr_chi2_backsum, Form("%s",background[j].c_str()), "e
 if(varExp == "By"){
  mg_chi2_backsum->GetXaxis()->SetTitle("Rapidity (y)");
  mg_chi2_backsum->GetYaxis()->SetTitle("#chi^{2}/NDF");
- mg_chi2_backsum->GetXaxis()->SetLimits(-2.4 ,2.4);
+ mg_chi2_backsum->GetXaxis()->SetLimits(0,2.4);
  //mg_par->GetYaxis()->SetLimits(0, 2.0);
 }
 if(varExp == "Bpt"){

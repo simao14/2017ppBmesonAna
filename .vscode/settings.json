@@ -93,6 +93,8 @@
         "bmesons_new.C": "cpp",
         "__verbose_abort": "cpp",
         "bit": "cpp",
-        "SR_E_plot.C": "cpp"
+        "SR_E_plot.C": "cpp",
+        "PlotBMult.C": "cpp",
+        "CrossSectionAnaY.C": "cpp"
     }
 }

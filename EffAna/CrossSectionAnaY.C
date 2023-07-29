@@ -172,19 +172,13 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TTree * root;
 
 	if (usemc==0){
-		if (meson_n==0){
-			FileName = Form("/data3/tasheng/presel/_%sData_nom.root",var_n.Data());
-		} else {
-			FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
-		}
+		if (meson_n==0){FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());} 
+		else {FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());}
 	}
+	
 	else {
-		if (meson_n==0){
-			FileName = Form("/data3/tasheng/presel/_%sMC_nom.root",var_n.Data());
-		} else {
-			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
-		}
-		
+		if (meson_n==0){FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());} 
+		else {FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());}
 	}
 	fin = new TFile(FileName.Data());
 
