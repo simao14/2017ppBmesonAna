@@ -54,6 +54,12 @@ bsEff () {
     popd
 }
 
+pdfVar_sys () {
+    # get pdf variation errors
+    python master.py "Bpt"
+    python master.py "By"
+}
+
 syst2D () {
     pushd 2DMapSyst
     root -b -l -q CalEffSystB.C'(0,0)'                      # >> outfiles/BPsyst2d.root
@@ -80,33 +86,12 @@ syst1D () {
     popd
 }
 
-## MC Stat Systematics
-bpStat () {
-    pushd MCStatSyst/BP
-    root -b -l -q Generate2DMaps.C
-    root -b -l -q MCStatCal.C > mcstat.log
-    popd
-}
-bsStat() {
-    cd MCStatSyst/Bs
-    root -b -l -q Generate2DMaps.C
-    root -b -l -q MCStatCal.C > mcstat.log
-    cd ../..
-}
-
 comp () {
-    # get pdf variation errors
-    python master.py "Bpt"
-    python master.py "By"
-    
+
     # Get pre-selection error
     python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
 
-    cd BsBPFinalResults/BsBPRatio/
-    root -b -l -q PlotBsBPRatio.C'(1)'
-    cd ..
-
-    cd Comparisons/Fiducial/
+    cd BsBPFinalResults/Comparisons/Fiducial/
     root -b -l -q Bmeson_Comparisons.C'(0,0)'
     root -b -l -q Bmeson_Comparisons.C'(1,0)'
     root -b -l -q Bmeson_Comparisons.C'(0,1)'
@@ -132,7 +117,6 @@ paperPlots () {
 
 #UNCOMMENT ACORDINGLY
 #(Run by THIS ORDER!)
-
 #maketnp
 #bptshape
 
@@ -146,14 +130,13 @@ paperPlots () {
 #bsEff &
 #wait
 
-syst2D
-wait
-syst1D
-wait
+#pdfVar_sys
+#wait
 
-bpStat&
-bsStat&
-wait
+#syst2D
+#wait
+#syst1D         // not needed for the analysis, just for testing
+#wait
 
 comp
 paperPlots

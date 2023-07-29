@@ -20,8 +20,8 @@ if opt.var == "Bpt":
     var_n = "pt"
     var_N = "PT"
 elif opt.var == "By":
-     binsBP=8
-     binsBs=8
+     binsBP=5
+     binsBs=5
      var_n = "y"
      var_N = "Y"
 elif opt.var == "nMult":
