@@ -1,16 +1,32 @@
 #include <vector>
 #include <array>
 
-// PbPb published binning
-/* const std::vector<double> ptbinsvec = { */
-/* 	/\* 5, 7, 10, 15, 20, 50, 60 *\/ */
-/* 	7, 10, 15, 20, 50 */
-/* }; */
 
-// const unsigned nptBins = 4;
-// const std::array<double, nptBins + 1> ptbinsvec = {
-// 	7, 10, 15, 20, 50
-// };
+///////////// FOR MCEFF.C
+
+enum Tracking{
+  loose = 0,
+  standard = 1,
+  tight = 2,
+};
+
+std::map<Tracking, double> ptErr{
+  {Tracking::standard, 0.1},
+  {Tracking::tight, 0.05},
+  {Tracking::loose, 0.15}
+};
+
+std::map<Tracking, double> chi2Nlayer{
+  {Tracking::standard, 0.18},
+  {Tracking::tight, 0.15},
+  {Tracking::loose, 0.18}
+};
+
+///////////// FOR MCEFF.C
+
+
+
+
 
 const int nBins_full=1;
 double ptBins_full[nBins_full+1] = {7,50}; 

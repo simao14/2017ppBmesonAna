@@ -131,7 +131,7 @@ paperPlots () {
 
 #syst2D
 #wait
-#syst1D         // not needed for the analysis, just for testing
+#syst1D         # not needed for the analysis, just for testing
 #wait
 
 XSEC_comp
