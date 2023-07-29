@@ -86,7 +86,7 @@ syst1D () {
     popd
 }
 
-comp () {
+XSEC_comp () {
 
     # Get pre-selection error
     python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
@@ -99,11 +99,7 @@ comp () {
 
     python syst_table.py                  #<----------------------- NOT RUNNING
     cd ../..
-
-    cd RAA/
-    root -b -l -q BPRAA.C                                 #UNIFY
-    root -b -l -q BsRAA.C                                 #UNIFY
-    cd ../..                                            
+                               
 }
 
 paperPlots () {
@@ -138,5 +134,5 @@ paperPlots () {
 #syst1D         // not needed for the analysis, just for testing
 #wait
 
-comp
+XSEC_comp
 paperPlots
