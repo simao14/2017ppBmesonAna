@@ -98,7 +98,7 @@ XSEC_comp () {
     root -b -l -q Bmeson_Comparisons.C'(1,1)'
 
     #python syst_table.py                  #<----------------------- NOT RUNNING
-    cd ../..
+    cd ../../..
                                
 }
 
@@ -135,4 +135,4 @@ paperPlots () {
 #wait
 
 XSEC_comp
-paperPlots
+#paperPlots
