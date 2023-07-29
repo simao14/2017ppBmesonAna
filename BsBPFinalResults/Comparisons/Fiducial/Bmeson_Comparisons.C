@@ -369,8 +369,8 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	if(meson_n == 0 && whichvar==0) {HisEmpty = new TH2D("HisEmpty","",100,5,60,100,300.0,2000000);} 
 	if(meson_n == 1 && whichvar==0) {HisEmpty = new TH2D("HisEmpty","",100,7,50,100,300.0,2000000);}
 
-	if(meson_n == 0 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,1250000.0,4200000);}
-	if(meson_n == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,220000.0,550000);}
+	if(meson_n == 0 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,1250000.0,5000000);}
+	if(meson_n == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,220000.0,600000);}
 
 	if(meson_n == 0 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,4200000);}   // need to adjust range for when we have nmult results
 	if(meson_n == 1 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,600000);}
@@ -845,87 +845,7 @@ if (whichvar==0){
 
 
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
-double XTempChange;
-double YTempChange;
-double YErrLowTemp;
-double YErrHighTemp;
-int NBinsLow2015;
-//Ratio
-float Ratio1Y[NBins2015];
-float Ratio1YErr[NBins2015];
-float Ratio2Y[NBins2015];
-float Ratio2YErr[NBins2015];
-
-	//These vectors are just for BP
-  std::vector<float> RatioDataYLow(1);
-  std::vector<float> RatioDataYLowErr(1);
-  	//These vectors are just for BP
-	//FONLL
-	double XTempFONLL;
-	double YTempFONLL;
-	float Ratio4Y[NBins];
-	float Ratio4YErr[NBins];
-	float FONLLY[NBins];
-	float FONLLYErr[NBins];
-
-float binlow[NBinsLow];
-float glbSystUp;
-float glbSystDown;
-float bl_low[NBinsLow];
-float bl_low_yStatL[NBinsLow];
-float bl_low_yStatH[NBinsLow];
-float bl_low_xErrL[NBinsLow];
-float bl_low_xErrH[NBinsLow];
-float bl_low_ySystL[NBinsLow];
-float bl_low_ySystH[NBinsLow];
-float binhigh[NBins-NBinsLow];
-float bl_high[NBins-NBinsLow];
-float bl_high_yStatL[NBins-NBinsLow];
-float bl_high_yStatH[NBins-NBinsLow];
-float bl_high_xErrL[NBins-NBinsLow];
-float bl_high_xErrH[NBins-NBinsLow];
-float bl_high_ySystL[NBins-NBinsLow];
-float bl_high_ySystH[NBins-NBinsLow];
-float binlow_2015[NBinsLow2015];
-float bl_low_2015[NBinsLow2015];
-float bl_low_2015_yStatL[NBinsLow2015];
-float bl_low_2015_yStatH[NBinsLow2015];
-float bl_low_2015_xErrL[NBinsLow2015];
-float bl_low_2015_xErrH[NBinsLow2015];
-float bl_low_2015_ySystL[NBinsLow2015];
-float bl_low_2015_ySystH[NBinsLow2015];
-float binhigh_2015[NBins2015-NBinsLow2015];
-float bl_high_2015[NBins2015-NBinsLow2015];
-float bl_high_2015_yStatL[NBins2015-NBinsLow2015];
-float bl_high_2015_yStatH[NBins2015-NBinsLow2015];
-float bl_high_2015_xErrL[NBins2015-NBinsLow2015];
-float bl_high_2015_xErrH[NBins2015-NBinsLow2015];
-float bl_high_2015_ySystL[NBins2015-NBinsLow2015];
-float bl_high_2015_ySystH[NBins2015-NBinsLow2015];
-
-double ptBins2015[NBins2015+1];
-  vector<float> BXsec;
-  vector<float> BXsecStat;
-  vector<float> BXsecSyst;
-  vector<float> BXsec2015;
-  vector<float> BXsecStat2015;
-  vector<float> BXsecSyst2015;
-  vector<float> FONLL;
-  vector<float> FONLLUp;
-  vector<float> FONLLDown;
-  float RatioBs[NBins];
-  float RatioBsStat[NBins];
-  float RatioBsSyst[NBins];
-  float RatioBsFonErrHigh[NBins];
-  float RatioBsFonErrLow[NBins];
-  float RatioBs2015[NBins2015];
-  float RatioBsStat2015[NBins2015];
-  float RatioBsSyst2015[NBins2015];
-std::vector<float> Unity(NBins, 1);
-int start2015;
-int color_mark =  kBlue + 2;
-int color_syst = kBlue -3;
-
+if (whichvar==0){
 
 //	gStyle->SetPadTickX(1);
 //	gStyle->SetPadTickY(1);
@@ -977,6 +897,16 @@ int color_syst = kBlue -3;
 		HisEmpty3->GetXaxis()->SetLabelSize(0.1);
 
 		HisEmpty2->GetXaxis()->SetTitleSize(0.035);
+	/*		 
+
+
+	pull_plotMC->GetXaxis()->SetTickLength(0.16);
+
+	frameMC->GetXaxis()->SetTitleOffset(1.2);
+	frameMC->GetXaxis()->SetTitleSize(0.035);
+	frameMC->GetXaxis()->SetTitleFont(42);
+	frameMC->GetXaxis()->CenterTitle();
+	frameMC->GetXaxis()->SetLabelSize(0.035); */
 
     TFile * finFONLL ;
 	if(meson_n == 0){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
@@ -1003,6 +933,12 @@ int color_syst = kBlue -3;
 	BFONLLLow->SetMarkerStyle(20);
 	BFONLLLow->SetMarkerSize(1);
 	BFONLLLow->SetMarkerColor(kRed-7);
+
+
+double XTempChange;
+double YTempChange;
+double YErrLowTemp;
+double YErrHighTemp;
 
 	for(int i = 0; i < NBinsLow; i ++){                      // STILL NEED TO CHANGE FOR OTHER VARIABLES
 		BFONLL2->GetPoint(i,XTempChange,YTempChange);
@@ -1048,11 +984,22 @@ int color_syst = kBlue -3;
 			leg3->Draw("same");
 			MyPadr->Update();
 
+
+	//Ratio
+	float Ratio1Y[NBins2015];
+	float Ratio1YErr[NBins2015];
+	float Ratio2Y[NBins2015];
+	float Ratio2YErr[NBins2015];
+
 	for(int i = 1; i < NBins2015; i++){
 		Ratio2Y[i] = BPXsecPPY2D[i+1]/BXsecPPY2015[i];
 		Ratio2YErr[i] = Ratio2Y[i] *TMath::Sqrt(BPXSecPPY2DErrDown[i+1]/BPXsecPPY2D[i+1] * BPXSecPPY2DErrDown[i+1]/BPXsecPPY2D[i+1] + BXSecPPYErrDown2015[i]/BXsecPPY2015[i] * BXSecPPYErrDown2015[i]/BXsecPPY2015[i] );
 			}
 
+	//These vectors are just for BP
+  std::vector<float> RatioDataYLow(1);
+  std::vector<float> RatioDataYLowErr(1);
+  	//These vectors are just for BP
 
 if (meson_n == 0){
 	Ratio2YErr[0] = 0.00001;
@@ -1096,6 +1043,13 @@ if (meson_n == 0){
 	HisEmpty3->Draw();
 	MyPadr2->Update();
 
+	//FONLL
+	double XTempFONLL;
+	double YTempFONLL;
+	float Ratio4Y[NBins];
+	float Ratio4YErr[NBins];
+	float FONLLY[NBins];
+	float FONLLYErr[NBins];
 	for(int i = 0; i < NBins; i++){
 		BPFONLL->GetPoint(i,XTempFONLL,YTempFONLL);
 		FONLLY[i] = YTempFONLL;
@@ -1106,10 +1060,46 @@ if (meson_n == 0){
 
  // Get ratio plots
 
-if (meson_n==0){NBinsLow2015=1;} 
-else {NBinsLow2015=0;}
+float binlow[NBinsLow];
+float glbSystUp;
+float glbSystDown;
+float bl_low[NBinsLow];
+float bl_low_yStatL[NBinsLow];
+float bl_low_yStatH[NBinsLow];
+float bl_low_xErrL[NBinsLow];
+float bl_low_xErrH[NBinsLow];
+float bl_low_ySystL[NBinsLow];
+float bl_low_ySystH[NBinsLow];
+float binhigh[NBins-NBinsLow];
+float bl_high[NBins-NBinsLow];
+float bl_high_yStatL[NBins-NBinsLow];
+float bl_high_yStatH[NBins-NBinsLow];
+float bl_high_xErrL[NBins-NBinsLow];
+float bl_high_xErrH[NBins-NBinsLow];
+float bl_high_ySystL[NBins-NBinsLow];
+float bl_high_ySystH[NBins-NBinsLow];
+int NBinsLow2015;
+if (meson_n==0){NBinsLow2015=1;} else {NBinsLow2015=0;}
+float binlow_2015[NBinsLow2015];
+float bl_low_2015[NBinsLow2015];
+float bl_low_2015_yStatL[NBinsLow2015];
+float bl_low_2015_yStatH[NBinsLow2015];
+float bl_low_2015_xErrL[NBinsLow2015];
+float bl_low_2015_xErrH[NBinsLow2015];
+float bl_low_2015_ySystL[NBinsLow2015];
+float bl_low_2015_ySystH[NBinsLow2015];
+float binhigh_2015[NBins2015-NBinsLow2015];
+float bl_high_2015[NBins2015-NBinsLow2015];
+float bl_high_2015_yStatL[NBins2015-NBinsLow2015];
+float bl_high_2015_yStatH[NBins2015-NBinsLow2015];
+float bl_high_2015_xErrL[NBins2015-NBinsLow2015];
+float bl_high_2015_xErrH[NBins2015-NBinsLow2015];
+float bl_high_2015_ySystL[NBins2015-NBinsLow2015];
+float bl_high_2015_ySystH[NBins2015-NBinsLow2015];
+
 
 for (int i=0;i<NBins;++i){
+	
 	if( i<NBinsLow){
 		binlow[i]=BPXsecPPX[i];
 		glbSystUp=globUncert[i]*100;
@@ -1121,7 +1111,8 @@ for (int i=0;i<NBins;++i){
 		bl_low_xErrH[i]=ptBins[i + 1]-BPXsecPPX[i];
 		bl_low_ySystL[i]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
 		bl_low_ySystH[i]=BP2DTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
-	} else {
+	} 
+	else {
 		binhigh[i-NBinsLow]=BPXsecPPX[i];
 		bl_high[i-NBinsLow]=BPXsecPPY2DScaled[i];
 		bl_high_yStatL[i-NBinsLow]=BPXSecPPY2DErrDownScaled[i];
@@ -1132,11 +1123,17 @@ for (int i=0;i<NBins;++i){
 		bl_high_ySystH[i-NBinsLow]=BP2DTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
 	}
 }
-
-if (meson_n==0){for(auto i=0;i<NBins2015+1;++i){ptBins2015[i]=vect_ptBins2015bp[i];}}
-else {for(auto i=0;i<NBins2015+1;++i){ptBins2015[i]=vect_ptBins2015bs[i];}}
-
+double ptBins2015[NBins2015+1];
+if (meson_n==0){
+	for(auto i=0;i<NBins2015+1;++i){
+		ptBins2015[i]=vect_ptBins2015bp[i];
+	}
+}
+else {for(auto i=0;i<NBins2015+1;++i){
+		ptBins2015[i]=vect_ptBins2015bs[i];
+	}}
 for (int i=0;i<NBins2015;++i){
+	
 	if( i<NBinsLow2015){
 		binlow_2015[i]=BXsecPPX2015[i];
 		bl_low_2015[i]=BXsecPPY2015[i];
@@ -1146,7 +1143,8 @@ for (int i=0;i<NBins2015;++i){
 		bl_low_2015_xErrH[i]=ptBins2015[i + 1]-BXsecPPX2015[i];
 		bl_low_2015_ySystL[i]=BXSecPPYSystDown2015[i];
 		bl_low_2015_ySystH[i]=BXSecPPYSystDown2015[i];	
-	} else {
+	} 
+	else {
 		binhigh_2015[i-NBinsLow2015]=BXsecPPX2015[i];
 		bl_high_2015[i-NBinsLow2015]=BXsecPPY2015[i];
 		bl_high_2015_yStatL[i-NBinsLow2015]=BXSecPPYErrDown2015[i];
@@ -1157,6 +1155,16 @@ for (int i=0;i<NBins2015;++i){
 		bl_high_2015_ySystH[i-NBinsLow2015]=BXSecPPYSystUp2015[i];
 	}
 }
+  vector<float> BXsec;
+  vector<float> BXsecStat;
+  vector<float> BXsecSyst;
+  vector<float> BXsec2015;
+  vector<float> BXsecStat2015;
+  vector<float> BXsecSyst2015;
+  vector<float> FONLL;
+  vector<float> FONLLUp;
+  vector<float> FONLLDown;
+
  
   for (auto i = 0; i < NBinsLow; ++i) {
     BXsec.push_back(bl_low[i]);
@@ -1179,6 +1187,17 @@ for (int i=0;i<NBins2015;++i){
     BXsecSyst2015.push_back(bl_high_2015_ySystL[i]);
   }
 
+  float RatioBs[NBins];
+  float RatioBsStat[NBins];
+  float RatioBsSyst[NBins];
+  float RatioBsFonErrHigh[NBins];
+  float RatioBsFonErrLow[NBins];
+  float RatioBs2015[NBins2015];
+  float RatioBsStat2015[NBins2015];
+  float RatioBsSyst2015[NBins2015];
+
+std::vector<float> Unity(NBins, 1);
+
 for (auto i = 0; i < NBins; ++i) {
   
     BPFONLL->GetPoint(i, XTempFONLL, YTempFONLL);
@@ -1193,7 +1212,7 @@ for (auto i = 0; i < NBins; ++i) {
     RatioBsFonErrLow[i] = FONLLDown[i] / FONLL[i];
   }
 
-
+int start2015;
 if(meson_n==0){start2015=0;} else {start2015=1;}
 
 for (auto i=start2015;i<NBins2015;i++){
@@ -1225,6 +1244,8 @@ for (auto i=start2015;i<NBins2015;i++){
   gRatioBs2015_high.SetMarkerStyle(20);
   gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
 
+int color_mark =  kBlue + 2;
+int color_syst = kBlue -3;
 if(meson_n==0){	
 color_mark = kGreen +2;
 color_syst = kGreen -7;
@@ -1270,6 +1291,16 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
   	cr->SetLogy();   
 	if (whichvar==0){cr->SaveAs(Form("Plots/%s/CrossCompLog.pdf", B_m.Data()));}
 	//FONLL
+}
+
+
+
+
+
+
+
+
+
 
 
 

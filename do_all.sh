@@ -89,7 +89,7 @@ syst1D () {
 XSEC_comp () {
 
     # Get pre-selection error
-    python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
+    #python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
 
     cd BsBPFinalResults/Comparisons/Fiducial/
     root -b -l -q Bmeson_Comparisons.C'(0,0)'
@@ -97,7 +97,7 @@ XSEC_comp () {
     root -b -l -q Bmeson_Comparisons.C'(0,1)'
     root -b -l -q Bmeson_Comparisons.C'(1,1)'
 
-    python syst_table.py                  #<----------------------- NOT RUNNING
+    #python syst_table.py                  #<----------------------- NOT RUNNING
     cd ../..
                                
 }
