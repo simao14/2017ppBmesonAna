@@ -369,8 +369,8 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	if(meson_n == 0 && whichvar==0) {HisEmpty = new TH2D("HisEmpty","",100,5,60,100,300.0,2000000);} 
 	if(meson_n == 1 && whichvar==0) {HisEmpty = new TH2D("HisEmpty","",100,7,50,100,300.0,2000000);}
 
-	if(meson_n == 0 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,1250000.0,5000000);}
-	if(meson_n == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,220000.0,600000);}
+	if(meson_n == 0 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,1250000.0,10000000);}
+	if(meson_n == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,220000.0,1000000);}
 
 	if(meson_n == 0 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,4200000);}   // need to adjust range for when we have nmult results
 	if(meson_n == 1 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,600000);}
@@ -552,8 +552,8 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	else {	lat->DrawLatex(0.6,0.7,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 
     TLegend* leged;
-	if (meson_n==0) {leged = new TLegend(0.65,0.67,0.9,0.75,NULL,"brNDC");}
-	else {leged = new TLegend(0.65,0.6,0.9,0.68,NULL,"brNDC");}
+	if (meson_n==0) {leged = new TLegend(0.65,0.6,0.9,0.7,NULL,"brNDC");}
+	else {leged = new TLegend(0.65,0.6,0.9,0.7,NULL,"brNDC");}
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
 	if (whichvar==0){
@@ -563,17 +563,14 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	} 
 	if (whichvar==1){
 		leged->AddEntry((TObject*)0, "p_{T} region:", "");
-		if (meson_n==0){
-			leged->AddEntry(BPRAAGraph,"5<p_{T}<60 GeV/c","P");
-		} else {
-			leged->AddEntry(BPRAAGraph,"7<p_{T}<50 GeV/c","P");
-		}
+		if (meson_n==0){leged->AddEntry(BPRAAGraph,"5<p_{T}<60 GeV/c","P");}
+		else {leged->AddEntry(BPRAAGraph,"7<p_{T}<50 GeV/c","P");}
 		leged->AddEntry(BPRAAGraph_low,"p_{T}>10 GeV/c","P");
 	} 
 	leged->SetTextSize(0.022);
 	leged->Draw("same");
 
-	c->SaveAs(Form("Plots/%s/CrossONLYLog_%s.pdf", B_m.Data(), var_n.Data()));
+	c->SaveAs(Form("Plots/%s_Xsection_%s.pdf", B_m.Data(), var_n.Data()));
 
 
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
@@ -624,7 +621,7 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	leged->SetTextSize(0.020);
 	leged->Draw("same");
 
-	c->SaveAs(Form("Plots/%s/Cross1D2Dcomp_%s.pdf", B_m.Data(), var_n.Data()));
+	c->SaveAs(Form("Plots/%s/Bmeson_1D2Dcomp_%s.pdf", B_m.Data(), var_n.Data()));
 
 // 	COMPARISON OF 1D vs 2D methods
 
@@ -768,7 +765,7 @@ if (whichvar==0){
 			leg1->SetTextSize(0.025);
 			leg1->Draw("same");
 
-			if (whichvar==0){c->SaveAs(Form("Plots/%s/PbPbPPCrossLog.pdf", B_m.Data()));}
+			c->SaveAs(Form("Plots/%s_Xsection_%s_vsPbPb.pdf", B_m.Data(),var_n.Data()));
 
 //  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
 //2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
@@ -836,7 +833,7 @@ if (whichvar==0){
 			lege->SetTextSize(0.025);
 			lege->Draw("same");
 
-			c->SaveAs(Form("Plots/%s/pp_2015_CrossLog.pdf", B_m.Data()));
+			c->SaveAs(Form("Plots/%s_Xsection_%s_vs2015.pdf", B_m.Data(),var_n.Data()));
 }
 //2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
 //  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
@@ -1289,7 +1286,7 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
 	MyPadr->Update();
   
   	cr->SetLogy();   
-	if (whichvar==0){cr->SaveAs(Form("Plots/%s/CrossCompLog.pdf", B_m.Data()));}
+	cr->SaveAs(Form("Plots/%s_Xsection_%s_vsFONL", B_m.Data(),var_n.Data()));
 	//FONLL
 }
 
