@@ -31,7 +31,7 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
     //TO BE USED IN Bmesons_Comparison.C 
 	//PbPb INFO
 	// Bins
-	double  BINS_PbPb[4]={7, 10, 15, 20, 50};	
+	double  BINS_PbPb[5]={7, 10, 15, 20, 50};	
 	double  XsecPbPb_X_BP[4]={8.73, 12.4, 17.2, 27.3};
 	double  XsecPbPb_X_Bs[4]={8.75, 12.6, 17.4, 27.3};
 	double  XsecPbPb_XL_BP[4]={0,0,0,0};
