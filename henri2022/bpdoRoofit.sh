@@ -36,8 +36,8 @@ mkdir -p ROOTfiles/
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_FULL="ROOTfiles/yields_Bp_full.root"
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y="ROOTfiles/yields_Bp_binned_y.root"
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Mult="ROOTfiles/yields_Bp_binned_Mult.root"
-OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT="ROOTfiles/yields_Bp_binned_pt_MC.root"
-OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT_trk="ROOTfiles/yields_Bp_binned_pt_trk_MC.root"
+OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT="ROOTfiles/yields_Bp_binned_pt.root"
+OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_PT_trk="ROOTfiles/yields_Bp_binned_pt_trk.root"
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Y_trk="ROOTfiles/yields_Bp_binned_y_trk.root"
 OUTPUTFILEPbPbSAVEHIST_ROOFIT_BP_BINNED_Mult_trk="ROOTfiles/yields_Bp_binned_Mult_trk.root"
 
