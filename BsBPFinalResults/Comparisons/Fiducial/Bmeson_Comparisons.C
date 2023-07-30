@@ -701,8 +701,27 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 //  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
 
 if (whichvar==0){
-		TGraphAsymmErrors *BPPbPbCrossGraph;
-  		TGraphAsymmErrors *BPPbPbCrossGraphSyst;
+	TGraphAsymmErrors *BPPbPbCrossGraph;
+  	TGraphAsymmErrors *BPPbPbCrossGraphSyst;
+
+	// get the values for the histograms (check parameter.h)
+	for(int i=0; i<4; i++) {
+
+		XsecPbPb_XL_BP[i] = XsecPbPb_X_BP[i] - BINS_PbPb[i];
+		XsecPbPb_XR_BP[i]= BINS_PbPb[i+1] - XsecPbPb_X_BP[i];
+		XsecPbPb_XL_Bs[i] = XsecPbPb_X_Bs[i] - BINS_PbPb[i];
+		XsecPbPb_XR_Bs[i]= BINS_PbPb[i+1] - XsecPbPb_X_Bs[i];
+
+		XSecPbPb_BP_Y_StatUpRatio[i]  = XSecPbPb_BP_Y_StatUpRatio[i]*XsecPbPb_Y_BP[i];
+		XSecPbPb_BP_Y_StatDownRatio[i]= XSecPbPb_BP_Y_StatDownRatio[i]*XsecPbPb_Y_BP[i];
+		XSecPbPb_BP_Y_SystUpRatio[i]  = XSecPbPb_BP_Y_SystUpRatio[i]*XsecPbPb_Y_BP[i];
+		XSecPbPb_BP_Y_SystDownRatio[i]= XSecPbPb_BP_Y_SystDownRatio[i]*XsecPbPb_Y_BP[i];
+		XSecPbPb_Bs_Y_StatUpRatio[i]  = XSecPbPb_Bs_Y_StatUpRatio[i]*XsecPbPb_Y_Bs[i];
+		XSecPbPb_Bs_Y_StatDownRatio[i]= XSecPbPb_Bs_Y_StatDownRatio[i]*XsecPbPb_Y_Bs[i];
+		XSecPbPb_Bs_Y_SystUpRatio[i]  = XSecPbPb_Bs_Y_SystUpRatio[i]*XsecPbPb_Y_Bs[i];
+		XSecPbPb_Bs_Y_SystDownRatio[i]= XSecPbPb_Bs_Y_SystDownRatio[i]*XsecPbPb_Y_Bs[i];
+	}
+	// get the value for the histograms (check parameter.h)
 
 		if (meson_n == 0){
 			BPPbPbCrossGraph      = new TGraphAsymmErrors(4, XsecPbPb_X_BP, XsecPbPb_Y_BP, XsecPbPb_XL_BP, XsecPbPb_XR_BP, XSecPbPb_BP_Y_StatDownRatio, XSecPbPb_BP_Y_StatUpRatio);

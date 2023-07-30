@@ -30,6 +30,7 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 
     //TO BE USED IN Bmesons_Comparison.C 
 	//PbPb INFO
+	// Bins
 	vector<float>  BINS_PbPb{7, 10, 15, 20, 50};	
 	vector<float>  XsecPbPb_X_BP{8.73, 12.4, 17.2, 27.3};
 	vector<float>  XsecPbPb_X_Bs{8.75, 12.6, 17.4, 27.3};
@@ -37,12 +38,8 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 	vector<float>  XsecPbPb_XR_BP{0,0,0,0};
 	vector<float>  XsecPbPb_XL_Bs{0,0,0,0};
 	vector<float>  XsecPbPb_XR_Bs{0,0,0,0};
-	for( int c=0; c < 4; c++){
-		XsecPbPb_XL_BP[c] = XsecPbPb_X_BP[c] - BINS_PbPb[c];
-		XsecPbPb_XR_BP[c]= BINS_PbPb[c+1] - XsecPbPb_X_BP[c];
-		XsecPbPb_XL_Bs[c] = XsecPbPb_X_Bs[c] - BINS_PbPb[c];
-		XsecPbPb_XR_Bs[c]= BINS_PbPb[c+1] - XsecPbPb_X_Bs[c];
-	}
+
+	// Bins
 
 	//BP_PbPb
 	vector<float>  XsecPbPb_Y_BP{311668, 270167, 64384.4, 7704};
@@ -58,19 +55,6 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 	vector<float>  XSecPbPb_Bs_Y_SystUpRatio{0.4564,0.1482,0.1218,0.1647};
 	vector<float>  XSecPbPb_Bs_Y_SystDownRatio{0.4564,0.1454,0.1210,0.1640};
 	//Bs_PbPb
-
-	// get the actual value for the histograms
-	for(int i=0; i<4; i++) {
-		XSecPbPb_BP_Y_StatUpRatio[i]  = XSecPbPb_BP_Y_StatUpRatio[i]*XsecPbPb_Y_BP[i];
-		XSecPbPb_BP_Y_StatDownRatio[i]= XSecPbPb_BP_Y_StatDownRatio[i]*XsecPbPb_Y_BP[i];
-		XSecPbPb_BP_Y_SystUpRatio[i]  = XSecPbPb_BP_Y_SystUpRatio[i]*XsecPbPb_Y_BP[i];
-		XSecPbPb_BP_Y_SystDownRatio[i]= XSecPbPb_BP_Y_SystDownRatio[i]*XsecPbPb_Y_BP[i];
-		XSecPbPb_Bs_Y_StatUpRatio[i]  = XSecPbPb_Bs_Y_StatUpRatio[i]*XsecPbPb_Y_Bs[i];
-		XSecPbPb_Bs_Y_StatDownRatio[i]= XSecPbPb_Bs_Y_StatDownRatio[i]*XsecPbPb_Y_Bs[i];
-		XSecPbPb_Bs_Y_SystUpRatio[i]  = XSecPbPb_Bs_Y_SystUpRatio[i]*XsecPbPb_Y_Bs[i];
-		XSecPbPb_Bs_Y_SystDownRatio[i]= XSecPbPb_Bs_Y_SystDownRatio[i]*XsecPbPb_Y_Bs[i];
-	}
-	// get the actual value for the histograms
 	//PbPb INFO
 
  	//2015 INFO
