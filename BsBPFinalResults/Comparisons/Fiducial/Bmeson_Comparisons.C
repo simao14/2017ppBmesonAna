@@ -20,6 +20,7 @@ using std::endl;
 // MOST OF THE VARIABLES SAY BP BUT ARE WORKING FOR Bs AS WELL 
 // THIS CODE CAN BE EASILY EXTENDED TO ACCOUNT FOR A FUTURE MESON... 
 // JUST FOLLOW THE LOGIC
+
 void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::string> col_name, std::vector<std::string> labels, 
 		std::vector<std::vector<double> > numbers , std::string caption, int ori){
 	
@@ -120,7 +121,8 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	TString var_n;
 	TString var_N;
 	TString var_l;
-	
+	TString Path_to_bin_Center = "../../../henri2022/ROOTfiles/" ;
+
 	if(meson_n == 0){t_tree = "ntKp"; B_m = "BP"; b_m = "bp";} 
 	if(meson_n == 1){t_tree = "ntphi"; 	B_m = "Bs"; b_m = "bs";}
 
@@ -134,6 +136,7 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 		NBinsLow = 2 ;
 		NBinsHigh = 5;
 		NBins2015 = 5;
+		Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_pt.root" ;
 	} 
 	if(meson_n == 1 && whichvar==0){
 		var_n="pt";
@@ -145,6 +148,7 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 		NBinsLow = 1 ;
 		NBinsHigh = 3;
 		NBins2015 = 3;
+		Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_pt.root" ;
 	}
 	if(whichvar==1){
 		NBins = nyBins_both;
@@ -155,6 +159,8 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 		lowend = 2;
 		NBinsLow = 3;
 		NBinsHigh = 2;
+		if(meson_n == 0) {	Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_y.root" ;} 
+		else if (meson_n == 1) {Path_to_bin_Center =  Path_to_bin_Center + "yields_Bs_binned_y.root";} 
 	}
 	if(whichvar==2){
 		NBins = nmBins_both;
@@ -165,6 +171,8 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 		lowend = -1;
 		NBinsLow = 0 ;         
 		NBinsHigh = 0;
+		if(meson_n == 0) {Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_Mult.root" ;} 
+		else if (meson_n == 1) {Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_Mult.root" ;} 
 	}
 
 	gSystem->mkdir("Plots/", true);
@@ -182,19 +190,34 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 		else if (whichvar==1){ ptBins[i] =  ybinsvec[i]; }          
 		else if (whichvar==2){ ptBins[i] =  nmbinsvec[i];}
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	//center of the bin and its left and right margins
-	//THIS NEED TO BE UPDATED, THIS IS WRONG! WE WANT THE MEAN OF THE BIN CENTER!
-	float BPXsecPPX[NBins];
-	float BXSecPPXErrUp[NBins] ;
-	float BXSecPPXErrDown[NBins] ;
+	TFile* fil_bins_center = TFile::Open(Path_to_bin_Center, "READ");
+    TH1D* hMean = dynamic_cast<TH1D*>(fil_bins_center->Get("hMean"));
+
+	float XsecPP_X[NBins];
+	float XsecPP_X_BinRight[NBins] ;
+	float XsecPP_X_BinLeft[NBins] ;
 
 	for( int c=0; c < NBins; c++){
-		BPXsecPPX[c]=(ptBins[c]+ptBins[c+1])/2;
-
-		BXSecPPXErrUp[c]=(abs(ptBins[c+1]-ptBins[c]))/2;
-		BXSecPPXErrDown[c]=(abs(ptBins[c+1]-ptBins[c]))/2;
+		XsecPP_X[c]= (float) hMean->GetBinContent(c+1);
+		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
+		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
 	}
-	//THIS NEED TO BE UPDATED, THIS IS WRONG! WE WANT THE MEAN OF THE BIN CENTER!
+    fil_bins_center->Close();
+	//center of the bin and its left and right margins
 
 
   // cross section with 2D Map eff correction
@@ -353,8 +376,6 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 		BPXSecPPY2DSystDown[i] = BPXsecPPY2D[i] * BP2DTotalSystDownRatio[i];
 		BPXSecPPY1DSystUp[i] = BPXsecPPY1D[i] * BP1DTotalSystUpRatio[i];
 		BPXSecPPY1DSystDown[i] = BPXsecPPY1D[i] * BP1DTotalSystDownRatio[i];
-    	
-
 		}
 
 // CREATE THE CANVAS and the pads
@@ -399,20 +420,22 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 // CREATE THE CANVAS and the pads
 
   // separate plots for different fiducial regions
-  	vector<float> BPXsecPPXLow ;
-  	vector<float> BPXsecPPXHigh ;
-	vector<float> BPXsecPPXErrLow ;
-	vector<float> BPXsecPPXErrHigh ;
+  	vector<float> XsecPP_X_Low ;
+	vector<float> BPXsecPPXHigh ;
+	vector<float> XsecPP_X_BinL_Low ;
+	vector<float> XsecPP_X_BinR_Low ;
+	vector<float> XsecPP_X_BinL_High ;
+	vector<float> XsecPP_X_BinR_High ;
 
-  	vector<float> BPXsecPPYLow ;
+  	vector<float> XsecPP_Y_Low ;
   	vector<float> BPXsecPPYHigh ;
-	vector<float> BPXsecPPYErrDownLow ;
+	vector<float> XsecPP_Y_StatDown_Low ;
 	vector<float> BPXsecPPYErrDownHigh ;
-	vector<float> BPXsecPPYErrUpLow ;
+	vector<float> XsecPP_Y_StatUp_Low ;
 	vector<float> BPXsecPPYErrUpHigh ;
-	vector<float> BPYSystDown_low ;
+	vector<float> XsecPP_Y_SystDown_Low ;
 	vector<float> BPYSystDown_high ;
-	vector<float> BPYSystUp_low ;
+	vector<float> XsecPP_Y_SystUp_Low ;
 	vector<float> BPYSystUp_high ;
 
 	vector<float> BP1DXsecPPYLow ;
@@ -428,22 +451,27 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 
 	for (int i=0 ; i<NBins; i++){
 		if (i >= lowstart && i <= lowend){
-			BPXsecPPXLow.push_back(BPXsecPPX[i]);
-			BPXsecPPXErrLow.push_back(BXSecPPXErrDown[i]);
-			BPXsecPPYLow.push_back(BPXsecPPY2D[i]);
-			BPXsecPPYErrDownLow.push_back(BPXSecPPY2DErrDown[i]);
-			BPXsecPPYErrUpLow.push_back(BPXSecPPY2DErrUp[i]);
-			BPYSystDown_low.push_back(BPXSecPPY2DSystDown[i]);
-			BPYSystUp_low.push_back(BPXSecPPY2DSystUp[i]);
+			XsecPP_X_Low.push_back(XsecPP_X[i]);
+			XsecPP_X_BinL_Low.push_back(XsecPP_X_BinLeft[i]);
+			XsecPP_X_BinR_Low.push_back(XsecPP_X_BinRight[i]);
+
+			XsecPP_Y_Low.push_back(BPXsecPPY2D[i]);
+			XsecPP_Y_StatDown_Low.push_back(BPXSecPPY2DErrDown[i]);
+			XsecPP_Y_StatUp_Low.push_back(BPXSecPPY2DErrUp[i]);
+			XsecPP_Y_SystDown_Low.push_back(BPXSecPPY2DSystDown[i]);
+			XsecPP_Y_SystUp_Low.push_back(BPXSecPPY2DSystUp[i]);
 
 			BP1DXsecPPYLow.push_back(BPXsecPPY1D[i]);
 			BP1DXsecPPYErrDownLow.push_back(BPXSecPPY1DErrDown[i]);
 			BP1DXsecPPYErrUpLow.push_back(BPXSecPPY1DErrUp[i]);
 			BP1DYSystDown_low.push_back(BPXSecPPY1DSystDown[i]);
 			BP1DYSystUp_low.push_back(BPXSecPPY1DSystUp[i]);
+
 		} else {
-			BPXsecPPXHigh.push_back(BPXsecPPX[i]);
-			BPXsecPPXErrHigh.push_back(BXSecPPXErrDown[i]);
+			BPXsecPPXHigh.push_back(XsecPP_X[i]);
+			XsecPP_X_BinL_High.push_back(XsecPP_X_BinLeft[i]);
+			XsecPP_X_BinR_High.push_back(XsecPP_X_BinRight[i]);
+
 			BPXsecPPYHigh.push_back(BPXsecPPY2D[i]);
 			BPXsecPPYErrDownHigh.push_back(BPXSecPPY2DErrDown[i]);
 			BPXsecPPYErrUpHigh.push_back(BPXSecPPY2DErrUp[i]);
@@ -461,18 +489,18 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	float zero[NBinsLow];
 	for (int i=0 ; i<NBinsLow; i++){zero[i]=0;}
 
-	TGraphAsymmErrors *BPRAAGraph_low_just_marker   = new TGraphAsymmErrors(NBinsLow, BPXsecPPXLow.data(), BPXsecPPYLow.data() ,zero, zero, zero, zero);
-	TGraphAsymmErrors *BP1DRAAGraph_low_just_marker = new TGraphAsymmErrors(NBinsLow, BPXsecPPXLow.data(), BP1DXsecPPYLow.data() ,zero, zero, zero, zero);
+	TGraphAsymmErrors *BPRAAGraph_low_just_marker   = new TGraphAsymmErrors(NBinsLow, XsecPP_X_Low.data(), XsecPP_Y_Low.data() ,zero, zero, zero, zero);
+	TGraphAsymmErrors *BP1DRAAGraph_low_just_marker = new TGraphAsymmErrors(NBinsLow, XsecPP_X_Low.data(), BP1DXsecPPYLow.data() ,zero, zero, zero, zero);
 
-	TGraphAsymmErrors *BPRAAGraph_low = new TGraphAsymmErrors(NBinsLow , BPXsecPPXLow.data() , BPXsecPPYLow.data() , BPXsecPPXErrLow.data() , BPXsecPPXErrLow.data() , BPXsecPPYErrDownLow.data() , BPXsecPPYErrUpLow.data());
-	TGraphAsymmErrors *BPRAAGraph     = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BPXsecPPYHigh.data(), BPXsecPPXErrHigh.data(), BPXsecPPXErrHigh.data(), BPXsecPPYErrDownHigh.data(), BPXsecPPYErrUpHigh.data());     
-	TGraphAsymmErrors *BPRAAGraphSyst_low  = new TGraphAsymmErrors(NBinsLow , BPXsecPPXLow.data() , BPXsecPPYLow.data() , BPXsecPPXErrLow.data() , BPXsecPPXErrLow.data() , BPYSystDown_low.data() , BPYSystUp_low.data());                 											
-	TGraphAsymmErrors *BPRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BPXsecPPYHigh.data(), BPXsecPPXErrHigh.data(), BPXsecPPXErrHigh.data(), BPYSystDown_high.data(), BPYSystUp_high.data());                 											
+	TGraphAsymmErrors *BPRAAGraph_low = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , XsecPP_Y_Low.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , XsecPP_Y_StatDown_Low.data() , XsecPP_Y_StatUp_Low.data());
+	TGraphAsymmErrors *BPRAAGraph     = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BPXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BPXsecPPYErrDownHigh.data(), BPXsecPPYErrUpHigh.data());     
+	TGraphAsymmErrors *BPRAAGraphSyst_low  = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , XsecPP_Y_Low.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , XsecPP_Y_SystDown_Low.data() , XsecPP_Y_SystUp_Low.data());                 											
+	TGraphAsymmErrors *BPRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BPXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BPYSystDown_high.data(), BPYSystUp_high.data());                 											
 	
-	TGraphAsymmErrors *BP1DRAAGraph_low = new TGraphAsymmErrors(NBinsLow , BPXsecPPXLow.data() , BP1DXsecPPYLow.data() , BPXsecPPXErrLow.data() , BPXsecPPXErrLow.data() , BP1DXsecPPYErrDownLow.data() , BP1DXsecPPYErrUpLow.data());
-	TGraphAsymmErrors *BP1DRAAGraph     = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BP1DXsecPPYHigh.data(), BPXsecPPXErrHigh.data(), BPXsecPPXErrHigh.data(), BP1DXsecPPYErrDownHigh.data(), BP1DXsecPPYErrUpHigh.data());     
-	TGraphAsymmErrors *BP1DRAAGraphSyst_low  = new TGraphAsymmErrors(NBinsLow , BPXsecPPXLow.data() , BP1DXsecPPYLow.data() , BPXsecPPXErrLow.data() , BPXsecPPXErrLow.data() , BP1DYSystDown_low.data() , BP1DYSystUp_low.data());                 											
-	TGraphAsymmErrors *BP1DRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BP1DXsecPPYHigh.data(), BPXsecPPXErrHigh.data(), BPXsecPPXErrHigh.data(), BP1DYSystDown_high.data(), BP1DYSystUp_high.data());
+	TGraphAsymmErrors *BP1DRAAGraph_low = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , BP1DXsecPPYLow.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , BP1DXsecPPYErrDownLow.data() , BP1DXsecPPYErrUpLow.data());
+	TGraphAsymmErrors *BP1DRAAGraph     = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BP1DXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BP1DXsecPPYErrDownHigh.data(), BP1DXsecPPYErrUpHigh.data());     
+	TGraphAsymmErrors *BP1DRAAGraphSyst_low  = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , BP1DXsecPPYLow.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , BP1DYSystDown_low.data() , BP1DYSystUp_low.data());                 											
+	TGraphAsymmErrors *BP1DRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, BPXsecPPXHigh.data(), BP1DXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BP1DYSystDown_high.data(), BP1DYSystUp_high.data());
   // separate plots for different fiducial regions
  
   	cout << endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
@@ -1004,7 +1032,7 @@ if (meson_n == 0){
 	Ratio1YErr[0] = 0.00001;
 	Ratio1Y[0] = -0.1;
 	// low pt bin
-  RatioDataYLow[0] = BPXsecPPYLow[1] / BXsecPPY2015[0];
+  RatioDataYLow[0] = XsecPP_Y_Low[1] / BXsecPPY2015[0];
   RatioDataYLowErr[0] = RatioDataYLow[0] * TMath::Sqrt(pow(BPXSecPPY2DErrDown[1]/BPXsecPPY2D[1], 2) + pow(BXSecPPYErrDown2015[0]/BXsecPPY2015[0], 2));
 }else{
 	Ratio1Y[0] = -1;
@@ -1022,7 +1050,7 @@ if (meson_n == 0){
 
   	TGraphAsymmErrors *RatioDataLow;
   	if (meson_n ==0){
-		RatioDataLow = new TGraphAsymmErrors(1, BPXsecPPXLow.data(), RatioDataYLow.data(), BPXsecPPXErrLow.data(), BPXsecPPXErrLow.data(), RatioDataYLowErr.data(), RatioDataYLowErr.data());
+		RatioDataLow = new TGraphAsymmErrors(1, XsecPP_X_Low.data(), RatioDataYLow.data(), XsecPP_X_BinL_Low.data(), XsecPP_X_BinR_Low.data(), RatioDataYLowErr.data(), RatioDataYLowErr.data());
 		RatioDataLow->SetLineColor(kOrange+1);
 		RatioDataLow->SetMarkerStyle(25);
 		RatioDataLow->SetMarkerSize(1);
@@ -1098,24 +1126,24 @@ float bl_high_2015_ySystH[NBins2015-NBinsLow2015];
 for (int i=0;i<NBins;++i){
 	
 	if( i<NBinsLow){
-		binlow[i]=BPXsecPPX[i];
+		binlow[i]=XsecPP_X[i];
 		glbSystUp=globUncert[i]*100;
 		glbSystDown=globUncert[i]*100;
 		bl_low[i]=BPXsecPPY2DScaled[i];
 		bl_low_yStatL[i]=BPXSecPPY2DErrDownScaled[i];
 		bl_low_yStatH[i]=BPXSecPPY2DErrUpScaled[i];
-		bl_low_xErrL[i]=BPXsecPPX[i]-ptBins[i];
-		bl_low_xErrH[i]=ptBins[i + 1]-BPXsecPPX[i];
+		bl_low_xErrL[i]=XsecPP_X[i]-ptBins[i];
+		bl_low_xErrH[i]=ptBins[i + 1]-XsecPP_X[i];
 		bl_low_ySystL[i]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
 		bl_low_ySystH[i]=BP2DTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
 	} 
 	else {
-		binhigh[i-NBinsLow]=BPXsecPPX[i];
+		binhigh[i-NBinsLow]=XsecPP_X[i];
 		bl_high[i-NBinsLow]=BPXsecPPY2DScaled[i];
 		bl_high_yStatL[i-NBinsLow]=BPXSecPPY2DErrDownScaled[i];
 		bl_high_yStatH[i-NBinsLow]=BPXSecPPY2DErrUpScaled[i];
-		bl_high_xErrL[i-NBinsLow]=BPXsecPPX[i]-ptBins[i];
-		bl_high_xErrH[i-NBinsLow]=ptBins[i + 1]-BPXsecPPX[i];
+		bl_high_xErrL[i-NBinsLow]=XsecPP_X[i]-ptBins[i];
+		bl_high_xErrH[i-NBinsLow]=ptBins[i + 1]-XsecPP_X[i];
 		bl_high_ySystL[i-NBinsLow]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
 		bl_high_ySystH[i-NBinsLow]=BP2DTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
 	}
@@ -1329,7 +1357,7 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
       BP2DTotalSystDownRatio[i] << std::setw(columnWidth) <<
       globUncert[i] << std::setw(columnWidth) <<
       globUncert[i] << std::setw(columnWidth) <<
-      setprecision(3) << BPXsecPPX[i] << "\n";
+      setprecision(3) << XsecPP_X[i] << "\n";
   }
   out.close();
 

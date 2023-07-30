@@ -112,11 +112,8 @@ cout << endl << endl;
 	TTree* skimtreeMC_new = (TTree*)infMC->Get(tree);
 	TH1D* h;
 	TH1D* hMC;
-	TH1D* hpull;
 	TH1D* hPt = new TH1D("hPt","",_nBins,_ptBins);
 	RooWorkspace* ws = new RooWorkspace("ws");
-	TH1D* hPtMC = new TH1D("hPtMC","",_nBins,_ptBins);
-	//TH1D* hPtGen = new TH1D("hPtGen","",_nBins,_ptBins);
 	TH1D* hMean = new TH1D("hMean","",_nBins,_ptBins);                       
 
 	std::cout<<"Histograms"<<std::endl;
@@ -184,7 +181,6 @@ cout << endl << endl;
 	std::vector<std::vector<double>> background_syst;
 	std::vector<std::vector<double>> signal_syst;
 	std::vector<std::vector<double>> general_syst;
-	std::vector<double> nominal_yields;
 	std::vector<std::vector<double>> back_syst_rel_values;
 	std::vector<std::vector<double>> sig_syst_rel_values;
 	std::vector<std::vector<double>> stat_error;
@@ -334,7 +330,6 @@ cout << endl << endl;
 		scale_vec[i] = Myscale;
 		scale_vec_err_low[i] = Myscale_err;
 		scale_vec_err_high[i] = Myscale_err;
-		nominal_yields.push_back(yield);
 		double yieldErr = fitYield->getError();
 		printf("yield: %f, yieldErr: %f\n", yield, yieldErr);
 		double _ErrCor=1;
@@ -350,7 +345,19 @@ cout << endl << endl;
 		hori_av_low[i] = var_mean_av[i]-_ptBins[i];
 		hori_av_high[i] = _ptBins[i+1]-var_mean_av[i];
 
+		std::vector<double> stat_un;
+		stat_un.push_back((double) yield_vec_err_low[i]/yield_vec[i]*100);
+
 ////////////////////////////	
+
+	//SAVE THE YIELDS/BIN_WIDTH ON A ROOT FILE for latter use
+	hPt->SetBinContent(i+1,yield/(_ptBins[i+1]-_ptBins[i]));
+	hPt->SetBinError(i+1,yieldErr/(_ptBins[i+1]-_ptBins[i]));
+	RooRealVar* fitMean = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("mean%d_",_count))));
+	hMean->SetBinContent(i+1,fitMean->getVal());
+	hMean->SetBinError(i+1,fitMean->getError());  
+	//SAVE THE YIELDS/BIN_WIDTH ON A ROOT FILE for latter use
+
 //Resolution MC
 		RooRealVar* sigma1 = static_cast<RooRealVar*>(f->constPars().at(f->constPars().index(Form("sigma1%d_", _count))));
 		double Mysigma1 = sigma1->getVal();
@@ -367,49 +374,25 @@ cout << endl << endl;
 		resol_vec[i] = resol;
 		resol_vec_err_low[i] = resol_err;
 		resol_vec_err_high[i] = resol_err;
-//Resolution 
+//Resolution MC
 		
-		//chi2
-		RooAbsPdf* model = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,""));
-		RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
-		RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d_%s",_count,"")), Bins(nbinsmasshisto));
-		dsMC_cut->plotOn(frameMC_chi2);
-		modelMC->plotOn(frameMC_chi2);
-		RooChi2Var chi2(Form("chi2%d",_count),"chi2",*model,*dh);
-		double Mychi2 = chi2.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
-		Double_t XI_PROB ;
-		XI_PROB = TMath::Prob(chi2.getVal(), (nbinsmasshisto - f->floatParsFinal().getSize()) ); // P(chi2)
-		std::cout << "normalised Chi square value is (number of free param. " << f->floatParsFinal().getSize() << " ): " << Mychi2 << endl;
-		std::cout << "Probability of Chi square value is " << XI_PROB << endl;
-		chi2_vec[i] = Mychi2;
-		chi2MC_vec[i] = frameMC_chi2->chiSquare();
-		//chi2
-
-		std::vector<double> aa;
-		double a=yield_vec_err_low[i]/yield_vec[i]*100;
-		aa.push_back(a);
-
-		if(fitOnSaved == 0){
-			TH1D* htest = new TH1D(Form("htest%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
-			TString sideband = "(abs(Bmass-5.367)>0.2&&abs(Bmass-5.367)<0.3";
-			std::cout<<"yield bkg sideband: "<<htest->GetEntries()<<std::endl;
-		}
-		if(varExp!="nMult"){
-			hPt->SetBinContent(i+1,yield/(_ptBins[i+1]-_ptBins[i]));
-			hPt->SetBinError(i+1,yieldErr/(_ptBins[i+1]-_ptBins[i]));
-		}
-		else{
-			hPt->SetBinContent(i+1,yield/(_ptBins[1] - _ptBins[0]));
-			hPt->SetBinError(i+1,yieldErr/(_ptBins[1] - _ptBins[0]));
-		}
-		if(f->floatParsFinal().index(Form("nsig%d_",_count)) != -1){
-			RooRealVar* fitMean = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("mean%d_",_count))));
-			hMean->SetBinContent(i+1,fitMean->getVal());
-			hMean->SetBinError(i+1,fitMean->getError());  
-		}
+	//chi2
+	RooAbsPdf* model = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,""));
+	RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
+	RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d_%s",_count,"")), Bins(nbinsmasshisto));
+	dsMC_cut->plotOn(frameMC_chi2);
+	modelMC->plotOn(frameMC_chi2);
+	RooChi2Var chi2(Form("chi2%d",_count),"chi2",*model,*dh);
+	double Mychi2 = chi2.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
+	Double_t XI_PROB ;
+	XI_PROB = TMath::Prob(chi2.getVal(), (nbinsmasshisto - f->floatParsFinal().getSize()) ); // P(chi2)
+	std::cout << "normalised Chi square value is (number of free param. " << f->floatParsFinal().getSize() << " ): " << Mychi2 << endl;
+	std::cout << "Probability of Chi square value is " << XI_PROB << endl;
+	chi2_vec[i] = Mychi2;
+	chi2MC_vec[i] = frameMC_chi2->chiSquare();
+	//chi2
 
 	////////////////////////////
-	
 	//////////////////////////////////////////////////////////LABELS IN PLOTS
 		TLatex* texB = new TLatex(0.5,0.5,"");
 		if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
@@ -538,10 +521,8 @@ cout << endl << endl;
 			cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1])+tree+".pdf");
 		}
 
-		RooCurve* modelcurve_back = new RooCurve();
 		std::vector<double> back_variation; 
 		std::vector<double> back_err;  
-		RooCurve* modelcurve_signal = new RooCurve();
 		std::vector<double> signal_variation; 
 		std::vector<double> signal_err;
 		std::vector<double> general_err;  
@@ -594,7 +575,6 @@ cout << endl << endl;
 					if(varExp == "By"){c->SaveAs(Form("%s/%s_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
 					else { c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
 
-					modelcurve_back = frame->getCurve(Form("model%d_%s",_count,background[j].c_str()));
 					RooRealVar* fitYield_back = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count,background[j].c_str()))));
 					back_variation.push_back(fitYield_back->getVal());
 					back_err.push_back(abs(((yield-fitYield_back->getVal())/yield)*100));
@@ -648,7 +628,6 @@ cout << endl << endl;
 				if(varExp == "By"){ c->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				else{ c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				
-				modelcurve_signal = frame->getCurve(Form("model%d_%s",_count,signal[j].c_str()));
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count,signal[j].c_str()))));
 				signal_variation.push_back(fitYield_signal->getVal());
 				signal_err.push_back(abs(((yield-fitYield_signal->getVal())/yield)*100));
@@ -658,7 +637,7 @@ cout << endl << endl;
 			general_err.push_back(max_signal);
 			full_err=sqrt(max_back*max_back+max_signal*max_signal);
 			general_err.push_back(full_err);
-			stat_error.push_back(aa);
+			stat_error.push_back(stat_un);
 			background_syst.push_back(back_variation);
 			signal_syst.push_back(signal_variation);
 			back_syst_rel_values.push_back(back_err);
@@ -677,7 +656,7 @@ cout << endl << endl;
 		//VALIDATION STUDIES
 	}
 
-
+	//Save the histogram Yields and Bin center (the VARIABLE mean) 
 	TFile* outf = new TFile(Form("%s",outputfile.Data()),"recreate");
 	outf->cd();
 	hMean->Write();		
@@ -706,12 +685,6 @@ cout << endl << endl;
 	}
 
 	myfile.close();
-
-	//TCanvas* cPt =  new TCanvas("cPt","",600,600);
-	//cPt->SetLogy();
-	//hPt->SetXTitle("B_{s} p_{T} [GeV/c]");
-	//hPt->SetYTitle("Uncorrected dN(B_{s})/dp_{T}");
-	//hPt->Draw();
 
 	std::vector<std::string> labels_back = {"1st Poly", "2nd Poly", "mass range", "jpsipi/JpsiK" };
 	std::vector<std::string> col_name_back;
@@ -758,12 +731,13 @@ cout << endl << endl;
 		for (int i=0;i<_nBins;i++){zero[i]=0.;}
 		double low_high_b[_nBins];
 
+		//These are only used to plot the systematics (PDF Var) in the same plot (it helps visualizing them!)
 		Double_t x[_nBins];
 		for (int i=0;i<_nBins;i++){ 
 			x[i]=(_ptBins[i]+_ptBins[i+1])/2 ;
 			low_high_b[i] = _ptBins[i+1] - x[i] ;
 		}
-		
+		//These are only used to plot the systematics (PDF Var) in the same plot (it helps visualizing them!)
 
 
 		TGraph *binning= new TGraphAsymmErrors (_nBins,x,zero,low_high_b,low_high_b,zero,zero);
@@ -1350,6 +1324,5 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
   RooDataSet* data_s = new RooDataSet(sample, sample, t1, arg_list);
   cout << "input filename = " << fName << "; entries: " << data_s->sumEntries() << endl;
   w.import(*data_s, Rename(sample));
-
   
 }
