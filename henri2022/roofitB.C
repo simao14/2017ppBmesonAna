@@ -112,11 +112,8 @@ cout << endl << endl;
 	TTree* skimtreeMC_new = (TTree*)infMC->Get(tree);
 	TH1D* h;
 	TH1D* hMC;
-	TH1D* hPt = new TH1D("hPt","",_nBins,_ptBins);
+	
 	RooWorkspace* ws = new RooWorkspace("ws");
-	TH1D* hMean = new TH1D("hMean","",_nBins,_ptBins);                       
-
-	std::cout<<"Histograms"<<std::endl;
 	RooRealVar* Bgen = new RooRealVar("Bgen", "Bgen", 0, 30000);
 	RooRealVar* mass = new RooRealVar("Bmass","Bmass",minhisto,maxhisto);
 	RooRealVar* pt = new RooRealVar("Bpt","Bpt",0,100);
@@ -348,17 +345,8 @@ cout << endl << endl;
 		std::vector<double> stat_un;
 		stat_un.push_back((double) yield_vec_err_low[i]/yield_vec[i]*100);
 
-////////////////////////////	
-
-	//SAVE THE YIELDS/BIN_WIDTH ON A ROOT FILE for latter use
-	hPt->SetBinContent(i+1,yield/(_ptBins[i+1]-_ptBins[i]));
-	hPt->SetBinError(i+1,yieldErr/(_ptBins[i+1]-_ptBins[i]));
-	RooRealVar* fitMean = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("mean%d_",_count))));
-	hMean->SetBinContent(i+1,fitMean->getVal());
-	hMean->SetBinError(i+1,fitMean->getError());  
-	//SAVE THE YIELDS/BIN_WIDTH ON A ROOT FILE for latter use
-
-//Resolution MC
+		////////////////////////////	
+		//Resolution MC
 		RooRealVar* sigma1 = static_cast<RooRealVar*>(f->constPars().at(f->constPars().index(Form("sigma1%d_", _count))));
 		double Mysigma1 = sigma1->getVal();
 		double Mysigma1_err = sigma1->getError();
@@ -374,25 +362,25 @@ cout << endl << endl;
 		resol_vec[i] = resol;
 		resol_vec_err_low[i] = resol_err;
 		resol_vec_err_high[i] = resol_err;
-//Resolution MC
+		//Resolution MC
 		
-	//chi2
-	RooAbsPdf* model = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,""));
-	RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
-	RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d_%s",_count,"")), Bins(nbinsmasshisto));
-	dsMC_cut->plotOn(frameMC_chi2);
-	modelMC->plotOn(frameMC_chi2);
-	RooChi2Var chi2(Form("chi2%d",_count),"chi2",*model,*dh);
-	double Mychi2 = chi2.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
-	Double_t XI_PROB ;
-	XI_PROB = TMath::Prob(chi2.getVal(), (nbinsmasshisto - f->floatParsFinal().getSize()) ); // P(chi2)
-	std::cout << "normalised Chi square value is (number of free param. " << f->floatParsFinal().getSize() << " ): " << Mychi2 << endl;
-	std::cout << "Probability of Chi square value is " << XI_PROB << endl;
-	chi2_vec[i] = Mychi2;
-	chi2MC_vec[i] = frameMC_chi2->chiSquare();
-	//chi2
+		//chi2
+		RooAbsPdf* model = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,""));
+		RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
+		RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d_%s",_count,"")), Bins(nbinsmasshisto));
+		dsMC_cut->plotOn(frameMC_chi2);
+		modelMC->plotOn(frameMC_chi2);
+		RooChi2Var chi2(Form("chi2%d",_count),"chi2",*model,*dh);
+		double Mychi2 = chi2.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
+		Double_t XI_PROB ;
+		XI_PROB = TMath::Prob(chi2.getVal(), (nbinsmasshisto - f->floatParsFinal().getSize()) ); // P(chi2)
+		std::cout << "normalised Chi square value is (number of free param. " << f->floatParsFinal().getSize() << " ): " << Mychi2 << endl;
+		std::cout << "Probability of Chi square value is " << XI_PROB << endl;
+		chi2_vec[i] = Mychi2;
+		chi2MC_vec[i] = frameMC_chi2->chiSquare();
+		//chi2
+		////////////////////////////
 
-	////////////////////////////
 	//////////////////////////////////////////////////////////LABELS IN PLOTS
 		TLatex* texB = new TLatex(0.5,0.5,"");
 		if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
@@ -501,7 +489,7 @@ cout << endl << endl;
 	//////////////////////////////////////////////////////////LABELS IN PLOTS
 
 
-	//CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
+	    //CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
 	//c->Update();
 
 		/*TLatex *lat = new TLatex();
@@ -655,14 +643,7 @@ cout << endl << endl;
 		}
 		//VALIDATION STUDIES
 	}
-
-	//Save the histogram Yields and Bin center (the VARIABLE mean) 
-	TFile* outf = new TFile(Form("%s",outputfile.Data()),"recreate");
-	outf->cd();
-	hMean->Write();		
-	hPt->Write();		
-	outf->Close();		
-
+	
 	string Path;
 	if(tree == "ntphi"){ Path = "./filesbs/";}
 	else if (tree == "ntKp"){Path = "./filesbp/";}
@@ -872,7 +853,7 @@ cout << endl << endl;
 
 // Differential plot part starts
 	gSystem->mkdir("./results/Graphs",true); 
-	TFile *ratio_f= new TFile(Form("./results/%s_%s_ratio.root",tree.Data(),varExp.Data()),"recreate");
+	TFile *ratio_f= new TFile(Form("%s",outputfile.Data()),"recreate");
 	ratio_f->cd();
 	
 	 TCanvas c_diff;

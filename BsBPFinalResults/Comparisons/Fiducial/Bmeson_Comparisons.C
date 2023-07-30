@@ -215,6 +215,8 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 		XsecPP_X[c]= (float) hMean->GetBinContent(c+1);
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
+
+		cout << "BIN Center: " << XsecPP_X[c] << "    BLeft: " << XsecPP_X_BinLeft[c] << "    Bright: " << XsecPP_X_BinRight[c] << endl;
 	}
     fil_bins_center->Close();
 	//center of the bin and its left and right margins
