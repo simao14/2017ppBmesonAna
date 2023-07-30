@@ -106,7 +106,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 
 
 
-void Bmeson_Comparisons(int meson_n, int whichvar){
+void Bmeson_XSections(int meson_n, int whichvar){
                           
     constexpr bool fidFONLL = true;
 	TString B_m ;

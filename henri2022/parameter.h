@@ -28,7 +28,7 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 
 
 
-    //TO BE USED IN Bmesons_Comparison.C 
+    //TO BE USED IN Bmeson_XSections.C 
 	//PbPb INFO
 	// Bins
 	double  BINS_PbPb[5]={7, 10, 15, 20, 50};	
@@ -82,7 +82,7 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 	//BP_2015_pp
  	//2015 INFO
 
-	//TO BE USED IN Bmesons_Comparison.C 
+	//TO BE USED IN Bmeson_XSections.C 
 
 
 
