@@ -95,6 +95,7 @@
         "bit": "cpp",
         "SR_E_plot.C": "cpp",
         "PlotBMult.C": "cpp",
-        "CrossSectionAnaY.C": "cpp"
+        "CrossSectionAnaY.C": "cpp",
+        "yield_ratio.C": "cpp"
     }
 }

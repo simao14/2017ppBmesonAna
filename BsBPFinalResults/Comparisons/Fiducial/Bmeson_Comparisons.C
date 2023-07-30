@@ -193,28 +193,20 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	}
 
 	//center of the bin and its left and right margins
-	TFile* file_bins_center = TFile::Open(Path_to_bin_Center, "READ");
-    TGraphAsymmErrors* Dif_plot = dynamic_cast<TGraphAsymmErrors*>(file_bins_center->Get("TG"));
-	if (!Dif_plot) {
-        cout << "error" << endl;
-        file->Close();
-        return;
-    }
+	TFile* Dif_Plot = TFile::Open(Path_to_bin_Center, "READ");
+	TMultiGraph* multiGraph = dynamic_cast<TMultiGraph*>(Dif_Plot->Get("TG"));
+    TGraphAsymmErrors* Agraph = dynamic_cast<TGraphAsymmErrors*>(multiGraph->GetListOfGraphs()->At(0));
 
-    // Get the x values
-    const double* xValues = Dif_plot->GetX();
 	float XsecPP_X[NBins];
 	float XsecPP_X_BinRight[NBins] ;
 	float XsecPP_X_BinLeft[NBins] ;
 
 	for( int c=0; c < NBins; c++){
-		XsecPP_X[c]= xValues[c];
+		XsecPP_X[c]= Agraph->GetX()[c];
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
-
-		cout << "BIN Center: " << XsecPP_X[c] << "    BLeft: " << XsecPP_X_BinLeft[c] << "    Bright: " << XsecPP_X_BinRight[c] << endl;
 	}
-    file_bins_center->Close();
+    Dif_Plot->Close();
 	//center of the bin and its left and right margins
 	// BINS
 
