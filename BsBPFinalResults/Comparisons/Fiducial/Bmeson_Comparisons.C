@@ -383,7 +383,7 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	if(meson_n == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,220000.0,1250000);}
 
 	if(meson_n == 0 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,4200000);}   // need to adjust range for when we have nmult results
-	if(meson_n == 1 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],0,600000);}
+	if(meson_n == 1 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,600000);}
 
 	HisEmpty->GetXaxis()->SetTitle(var_l.Data());
 	if (whichvar==0) {HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");}

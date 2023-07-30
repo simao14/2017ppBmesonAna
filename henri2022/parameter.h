@@ -31,29 +31,28 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
     //TO BE USED IN Bmesons_Comparison.C 
 	//PbPb INFO
 	// Bins
-	vector<float>  BINS_PbPb{7, 10, 15, 20, 50};	
-	vector<float>  XsecPbPb_X_BP{8.73, 12.4, 17.2, 27.3};
-	vector<float>  XsecPbPb_X_Bs{8.75, 12.6, 17.4, 27.3};
-	vector<float>  XsecPbPb_XL_BP{0,0,0,0};
-	vector<float>  XsecPbPb_XR_BP{0,0,0,0};
-	vector<float>  XsecPbPb_XL_Bs{0,0,0,0};
-	vector<float>  XsecPbPb_XR_Bs{0,0,0,0};
-
+	double  BINS_PbPb[4]={7, 10, 15, 20, 50};	
+	double  XsecPbPb_X_BP[4]={8.73, 12.4, 17.2, 27.3};
+	double  XsecPbPb_X_Bs[4]={8.75, 12.6, 17.4, 27.3};
+	double  XsecPbPb_XL_BP[4]={0,0,0,0};
+	double  XsecPbPb_XR_BP[4]={0,0,0,0};
+	double  XsecPbPb_XL_Bs[4]={0,0,0,0};
+	double  XsecPbPb_XR_Bs[4]={0,0,0,0};
 	// Bins
 
 	//BP_PbPb
-	vector<float>  XsecPbPb_Y_BP{311668, 270167, 64384.4, 7704};
-	vector<float>  XSecPbPb_BP_Y_StatUpRatio{0.159, 0.041, 0.0654, 0.0691};
-	vector<float>  XSecPbPb_BP_Y_StatDownRatio{0.145, 0.0795, 0.065, 0.0526};
-	vector<float>  XSecPbPb_BP_Y_SystUpRatio{0.1404, 0.1714, 0.0775, 0.0715};
-	vector<float>  XSecPbPb_BP_Y_SystDownRatio{0.1359, 0.1705, 0.0761, 0.0698};
+	double  XsecPbPb_Y_BP[4]={311668, 270167, 64384.4, 7704};
+	double  XSecPbPb_BP_Y_StatUpRatio[4]={0.159, 0.041, 0.0654, 0.0691};
+	double  XSecPbPb_BP_Y_StatDownRatio[4]={0.145, 0.0795, 0.065, 0.0526};
+	double  XSecPbPb_BP_Y_SystUpRatio[4]={0.1404, 0.1714, 0.0775, 0.0715};
+	double  XSecPbPb_BP_Y_SystDownRatio[4]={0.1359, 0.1705, 0.0761, 0.0698};
 	//BP_PbPb
 	//Bs_PbPb
-	vector<float>  XsecPbPb_Y_Bs{160432,75523.7,25354.5,2272.18};	
-	vector<float>  XSecPbPb_Bs_Y_StatUpRatio{0.513,0.224,0.216,0.216};
-	vector<float>  XSecPbPb_Bs_Y_StatDownRatio{0.483,0.256,0.207,0.163};
-	vector<float>  XSecPbPb_Bs_Y_SystUpRatio{0.4564,0.1482,0.1218,0.1647};
-	vector<float>  XSecPbPb_Bs_Y_SystDownRatio{0.4564,0.1454,0.1210,0.1640};
+	double  XsecPbPb_Y_Bs[4]={160432,75523.7,25354.5,2272.18};	
+	double  XSecPbPb_Bs_Y_StatUpRatio[4]={0.513,0.224,0.216,0.216};
+	double  XSecPbPb_Bs_Y_StatDownRatio[4]={0.483,0.256,0.207,0.163};
+	double  XSecPbPb_Bs_Y_SystUpRatio[4]={0.4564,0.1482,0.1218,0.1647};
+	double  XSecPbPb_Bs_Y_SystDownRatio[4]={0.4564,0.1454,0.1210,0.1640};
 	//Bs_PbPb
 	//PbPb INFO
 
