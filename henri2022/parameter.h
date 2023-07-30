@@ -38,10 +38,10 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 	vector<float>  XsecPbPb_XL_Bs{0,0,0,0};
 	vector<float>  XsecPbPb_XR_Bs{0,0,0,0};
 	for( int c=0; c < 4; c++){
-		XsecPbPb_XL_BP[c] = XsecPbPb_X_BP[c] - ptBins[c];
-		XsecPbPb_XR_BP[c]= ptBins[c+1] - XsecPbPb_X_BP[c];
-		XsecPbPb_XL_Bs[c] = XsecPbPb_X_Bs[c] - ptBins[c];
-		XsecPbPb_XR_Bs[c]= ptBins[c+1] - XsecPbPb_X_Bs[c];
+		XsecPbPb_XL_BP[c] = XsecPbPb_X_BP[c] - BINS_PbPb[c];
+		XsecPbPb_XR_BP[c]= BINS_PbPb[c+1] - XsecPbPb_X_BP[c];
+		XsecPbPb_XL_Bs[c] = XsecPbPb_X_Bs[c] - BINS_PbPb[c];
+		XsecPbPb_XR_Bs[c]= BINS_PbPb[c+1] - XsecPbPb_X_Bs[c];
 	}
 
 	//BP_PbPb
