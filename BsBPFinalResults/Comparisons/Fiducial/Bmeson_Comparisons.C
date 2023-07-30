@@ -727,8 +727,8 @@ if (whichvar==0){
 			BPPbPbCrossGraph      = new TGraphAsymmErrors(4, XsecPbPb_X_BP, XsecPbPb_Y_BP, XsecPbPb_XL_BP, XsecPbPb_XR_BP, XSecPbPb_BP_Y_StatDownRatio, XSecPbPb_BP_Y_StatUpRatio);
 			BPPbPbCrossGraphSyst  = new TGraphAsymmErrors(4, XsecPbPb_X_BP, XsecPbPb_Y_BP, XsecPbPb_XL_BP, XsecPbPb_XR_BP, XSecPbPb_BP_Y_SystDownRatio, XSecPbPb_BP_Y_SystUpRatio);
 		} else {
-			BPPbPbCrossGraph      = new TGraphAsymmErrors(4, XsecPbPb_X_Bs, XsecPbPb_Y_Bs, XsecPbPb_XL_Bs, XsecPbPb_XL_Bs, XSecPbPb_Bs_Y_StatDownRatio, XSecPbPb_Bs_Y_StatUpRatio);
-			BPPbPbCrossGraphSyst  = new TGraphAsymmErrors(4, XsecPbPb_X_Bs, XsecPbPb_Y_Bs, XsecPbPb_XL_Bs, XsecPbPb_XL_Bs, XSecPbPb_Bs_Y_SystDownRatio ,XSecPbPb_Bs_Y_SystUpRatio);
+			BPPbPbCrossGraph      = new TGraphAsymmErrors(4, XsecPbPb_X_Bs, XsecPbPb_Y_Bs, XsecPbPb_XL_Bs, XsecPbPb_XR_Bs, XSecPbPb_Bs_Y_StatDownRatio, XSecPbPb_Bs_Y_StatUpRatio);
+			BPPbPbCrossGraphSyst  = new TGraphAsymmErrors(4, XsecPbPb_X_Bs, XsecPbPb_Y_Bs, XsecPbPb_XL_Bs, XsecPbPb_XR_Bs, XSecPbPb_Bs_Y_SystDownRatio ,XSecPbPb_Bs_Y_SystUpRatio);
 		}
 
 			BPPbPbCrossGraph->SetLineColor(kOrange+1);
