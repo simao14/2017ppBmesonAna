@@ -888,7 +888,6 @@ cout << endl << endl;
 
 	 mg->Write("TG");
 	 mg->Draw("ap");
-	 //mg->SetTitle("Differential Signal Yield");  
 	 
 	 leg_d->AddEntry(gr_staterr, "Statistical Uncertainty", "e");
 	 //leg_d->AddEntry(grs, "Systematic Uncertainty", "e");
