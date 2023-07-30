@@ -201,7 +201,7 @@ void Bmeson_Comparisons(int meson_n, int whichvar){
 	float XsecPP_X_BinLeft[NBins] ;
 
 	for( int c=0; c < NBins; c++){
-		XsecPP_X[c]= (float) Dif_plot->GetX(c);
+		XsecPP_X[c]= (float) Dif_plot->GetX()[c];
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
 
