@@ -111,7 +111,6 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	int NBinsLow = 0  ;
   	int NBinsHigh = 0 ;
 	int NBins2015 = 0 ;
-	int lowstart  ;
 	int lowend    ;
 	TString var_n;
 	TString var_N;
@@ -126,7 +125,6 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		var_n="pt";
 		var_N="PT";
 		var_l="p_{T} [GeV/c]";
-		lowstart = 0;
 		lowend = 1;
 		NBinsLow = 2 ;
 		NBinsHigh = 5;
@@ -137,7 +135,6 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		var_n="pt";
 		var_N="PT";
 		var_l="p_{T} [GeV/c]";
-		lowstart = 0;
 		lowend = 0;
 		NBins = nptBins;
 		NBinsLow = 1 ;
@@ -150,7 +147,6 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		var_n="y";
 		var_N="Y";
 		var_l="|y|";
-		lowstart = 0;   //0-0.5-1-1.5
 		lowend = 2;
 		NBinsLow = 3;
 		NBinsHigh = 2;
@@ -162,10 +158,8 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		var_n="Mult";
 		var_N="Mult";
 		var_l="Mult";
-		lowstart = 100;
-		lowend = -1;
-		NBinsLow = 0 ;         
-		NBinsHigh = 0;
+		lowend = 100;
+		NBinsLow = nmBins_both;         
 		if(meson_n == 0) {Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_Mult.root" ;} 
 		else if (meson_n == 1) {Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_Mult.root" ;} 
 	}
@@ -418,7 +412,7 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	vector<float> BP1DYSystUp_high ;
 
 	for (int i=0 ; i<NBins; i++){
-		if (i >= lowstart && i <= lowend){
+		if ( i <= lowend){
 			XsecPP_X_Low.push_back(XsecPP_X[i]);
 			XsecPP_X_BinL_Low.push_back(XsecPP_X_BinLeft[i]);
 			XsecPP_X_BinR_Low.push_back(XsecPP_X_BinRight[i]);

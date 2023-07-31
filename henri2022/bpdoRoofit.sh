@@ -86,13 +86,13 @@ rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_TRK  -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_PT\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"','1')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_PT_trk\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"','1')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP  -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BP_MatchingBINS_PT_trk\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"','1')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BP_MatchingBINS_PT\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"','1')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
