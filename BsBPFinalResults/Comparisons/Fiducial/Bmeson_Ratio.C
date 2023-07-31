@@ -81,11 +81,6 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     TGraphAsymmErrors* Y_stat_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_stat"));
     TGraphAsymmErrors* Y_syst_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_syst"));
 
-    if (!Y_stat_B1 || !Y_syst_B1 || !Y_stat_B2 || !Y_syst_B2) {
-        std::cout << "Error: One or more TGraphAsymmErrors not found in the multi-graphs." << std::endl;
-        return;
-    }
-
     // Retrieve values
     // FOR NOW THERE IS NO BP with matching number of bins so i=0 i=1 i=2 (first 3 bins) are being considered only
     double X_POS[3] ;
