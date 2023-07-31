@@ -826,12 +826,14 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
 	 TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,hori_av_low,hori_av_high,yield_vec_err_low,yield_vec_err_high);
 	 gr_staterr->SetLineColor(1); 
-	 mg->Add(gr_staterr, "Y_stat");
+	 gr_staterr->SetName("Y_stat");
+	 mg->Add(gr_staterr, "stat");
 
 	 if(syst_study==1){
 		TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(_nBins, var_mean_av, yield_vec, nullptr, nullptr, yield_vec_systerr_low, yield_vec_systerr_high);
 		gr_systerr->SetLineColor(2);
-		mg->Add(gr_systerr,"Y_syst");
+	 	gr_staterr->SetName("Y_syst");
+		mg->Add(gr_systerr,"syst");
 		leg_d->AddEntry(gr_systerr, "Systematic Uncertainty", "e");
 	}
 	 if(varExp == "By"){

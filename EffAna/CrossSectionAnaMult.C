@@ -649,7 +649,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	TFile * RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");   
 	TMultiGraph * mg2 = (TMultiGraph*) RawYieldTight->Get("TG");
-	TGraphAsymmErrors* hPtTight = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject(""));
+	TGraphAsymmErrors* hPtTight = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_stat"));
 
 
 	double RawCount;
