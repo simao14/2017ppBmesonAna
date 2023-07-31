@@ -136,9 +136,9 @@ def get_tracking_syst(outfile, out_table):
     in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_n
     in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_n
     g_bp, t_bp = read_tracking_syst(in_file_bp, binsBP)
-    g_bp.SetName('bp_track_sel_error')
+    g_bp.SetName('BP_track_sel_error')
     g_bs, t_bs = read_tracking_syst(in_file_bs, binsBs)
-    g_bs.SetName('bs_track_sel_error')
+    g_bs.SetName('Bs_track_sel_error')
     fout = r.TFile(outfile, "recreate")
     g_bp.Write()
     g_bs.Write()
@@ -194,9 +194,9 @@ def get_tracking_syst1D(outfile, out_table):
     in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_n
     in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_n
     g_bp, t_bp = read_tracking_syst1D(in_file_bp, binsBP)
-    g_bp.SetName('bp_track_sel_error')
+    g_bp.SetName('BP_track_sel_error')
     g_bs, t_bs = read_tracking_syst1D(in_file_bs, binsBs)
-    g_bs.SetName('bs_track_sel_error')
+    g_bs.SetName('Bs_track_sel_error')
     fout = r.TFile(outfile, "recreate")
     g_bp.Write()
     g_bs.Write()
