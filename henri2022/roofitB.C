@@ -819,7 +819,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 // Differential plot part starts
 	gSystem->mkdir("./results/Graphs",true); 
 	TString Bsbpbins= "";
-	if(tree == "ntKp" && BsBPBins == 1){Bsbpbins = "BsBP_BINS_"}
+	if(tree == "ntKp" && BsBPBins == 1){Bsbpbins = "BsBP_BINS_";}
 	TFile *ratio_f= new TFile(Form("%s%s",Bsbpbins.Data(), outputfile.Data()),"recreate");
 	ratio_f->cd();
 	
