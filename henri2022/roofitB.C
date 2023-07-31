@@ -609,7 +609,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	
 	string Path;
 	if(tree == "ntphi"){ Path = "./filesbs/";}
-	else if (tree == "ntKp"){Path = "./filesbp/";}
+	else if (tree == "ntKp" && BsBPBins == 0){Path = "./filesbp/";}
+	else if (tree == "ntKp" && BsBPBins == 0){Path = "./filesbp/BsBPBINS_";}
+
 	std::ofstream myfile;
 	myfile.open (Path + "systematics_" + tree.Data() + ".txt");
 
@@ -816,7 +818,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 // Differential plot part starts
 	gSystem->mkdir("./results/Graphs",true); 
-	TFile *ratio_f= new TFile(Form("%s",outputfile.Data()),"recreate");
+	TString Bsbpbins= ""
+	if(tree == "ntKp" && BsBPBins == 1){Bsbpbins = "BsBP_BINS_"}
+	TFile *ratio_f= new TFile(Form("%s%s",Bsbpbins.Data(), outputfile.Data()),"recreate");
 	ratio_f->cd();
 	
 	 TCanvas c_diff;
@@ -858,7 +862,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 leg_d->SetTextSize(0);
 	 leg_d->Draw();
 
-	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.pdf",tree.Data(),varExp.Data());
+	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s%s.pdf",tree.Data(), Bsbpbins.Data(), varExp.Data());
 	 c_diff.SaveAs(pathc);
 	 ratio_f->Close();
 // Differential plot part ends
