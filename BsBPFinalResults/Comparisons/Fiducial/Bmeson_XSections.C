@@ -589,7 +589,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	leged->SetTextSize(0.022);
 	leged->Draw("same");
 
-	c->SaveAs(Form("Plots/%s_Xsection_%s%s.pdf", meson_n.Data(), whichvar.Data()),bsbpbins.Data());
+	c->SaveAs(Form("Plots/%s_Xsection_%s%s.pdf", meson_n.Data(), whichvar.Data(),bsbpbins.Data()));
 
 
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
