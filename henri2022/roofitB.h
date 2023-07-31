@@ -49,7 +49,7 @@ double maxhisto=6.;
 int nbinsmasshisto=100;
 Int_t _count=0;
 
-RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, float binmin, float binmax, TString npfit, RooWorkspace& w, TString which_var){
+RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, float binmin, float binmax, RooWorkspace& w, TString which_var){
 	
 	//if (tree == "ntphi"){nbinsmasshisto = 50;} //100 bins is to much for bs case
 	if ( which_var == "Bpt" && ( (int)binmin == 50 & (int)binmax == 60) ){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case
@@ -238,7 +238,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 //PLOT MC FIT
 
 // FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
-if(npfit != "1" && variation=="" && pdf==""){ 
+if(tree == "ntKp" && variation=="" && pdf==""){ 
 
 	// DEFINE MODEL to fit the non prompt background
 		//inclusive MC signal Model
@@ -363,7 +363,7 @@ if(npfit != "1" && variation=="" && pdf==""){
 	RooProduct *nbkg_peaking;
 	RooAbsPdf* jpsipi ;   
 	RooAbsPdf* erfc ;   
-	if(npfit != "1"){ 
+	if(tree== "ntKp"){ 
 		jpsipi = w.pdf("jpsipi");   
 		erfc = w.pdf(Form("erfc%d_%s",_count,""));   
 		RooRealVar* jpsipi_to_signal_ratio;
@@ -388,13 +388,15 @@ if(tree == "ntphi"){
 }
 
 /////////////////BP BP BP BP BP BP BP BP
-    if(npfit != "1" && (pdf=="jpsi_sig" || pdf=="")) model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg,*sig, *erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
-	if(npfit != "1" && pdf=="mass_range"){ model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig,bkg,*jpsipi),RooArgList(nsig,nbkg,*nbkg_peaking));}
-    if(npfit != "1" && variation=="background" && pdf=="1st") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg_1st,*sig,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
-	if(npfit != "1" && variation=="background" && pdf=="2nd") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg_2nd,*sig,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
-	if(npfit != "1" && variation=="background" && pdf=="3rd") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg_3rd,*sig,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
-	if(npfit != "1" && variation=="signal" && pdf=="1gauss") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg,sig1,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
-	if(npfit != "1" && (variation=="signal" && (pdf=="3gauss"|| pdf=="fixed"|| pdf=="gauss_cb" ))) model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig, bkg, *erfc, *jpsipi),RooArgList(nsig, nbkg, nbkg_part_r,*nbkg_peaking));
+if(tree == "ntKp"){
+    if((pdf=="jpsi_sig" || pdf=="")) model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg,*sig, *erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
+	if(pdf=="mass_range"){ model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig,bkg,*jpsipi),RooArgList(nsig,nbkg,*nbkg_peaking));}
+    if(variation=="background" && pdf=="1st") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg_1st,*sig,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
+	if(variation=="background" && pdf=="2nd") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg_2nd,*sig,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
+	if(variation=="background" && pdf=="3rd") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg_3rd,*sig,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
+	if(variation=="signal" && pdf=="1gauss") model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(bkg,sig1,*erfc,*jpsipi),RooArgList(nbkg,nsig,nbkg_part_r,*nbkg_peaking));
+	if((variation=="signal" && (pdf=="3gauss"|| pdf=="fixed"|| pdf=="gauss_cb" ))) model = new RooAddPdf(Form("model%d_%s",_count,pdf.Data()),"",RooArgList(*sig, bkg, *erfc, *jpsipi),RooArgList(nsig, nbkg, nbkg_part_r,*nbkg_peaking));
+}
 //////////////// MODEL MODEL MODEL MODEL
 
 //////////////// SET PARAMETERS FROM MC FITS
@@ -430,7 +432,7 @@ if(tree == "ntphi"){
   ds->plotOn(frame, Name(Form("ds_cut%d", _count)), Binning(nbinsmasshisto), MarkerSize(0.5), MarkerStyle(8), MarkerColor(1), LineColor(1), LineWidth(1)); 
   model->plotOn(frame, Name(Form("model%d_%s", _count, pdf.Data())), Range(fitRange), Precision(1e-6), DrawOption("L"), LineColor(2), LineWidth(1));
   model->plotOn(frame, Name(Form("sig%d_%s", _count, pdf.Data())),  Components(*sig), Range(fitRange), Precision(1e-6), DrawOption("LF"), FillStyle(3002), FillColor(kOrange-3), LineStyle(7), LineColor(kOrange-3), LineWidth(1)); 
-  if(npfit != "1")	{
+  if(tree== "ntKp")	{
 	//TString option = (pdf == "mass_range")? "L" : "LF";
     //RooCmdArg drawRange = (pdf == "mass_range")? Range(fitRange) : RooCmdArg();
     model->plotOn(frame, RooFit::Name(Form("erfc%d_%s",_count,"")) , Components(*erfc), Range(fitRange),  NormRange(fitRange), LineColor(kGreen+3), LineStyle(9), LineWidth(2), DrawOption("L"));
@@ -469,7 +471,7 @@ if(tree == "ntphi"){
 	leg->AddEntry(frame->findObject(Form("model%d_%s",_count,pdf.Data()))," Model","l");
 	leg->AddEntry(frame->findObject(Form("sig%d_%s",_count,pdf.Data()))," Signal","f");
 	leg->AddEntry(frame->findObject(Form("bkg%d_%s",_count,pdf.Data()))," Comb. Bkg.","l");
-	if(npfit != "1"){
+	if(tree= "ntKp"){
 		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B^{+} #rightarrow J/#psi #pi^{+}","f");
 		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
 	if(drawLegend){leg -> Draw();}
@@ -565,7 +567,7 @@ if(tree == "ntphi"){
 
 	Double_t yieldPrintErr = nsig.getError();
 	Double_t yieldPrintErrUp = nsig.getAsymErrorHi();
-	Double_t yieldPrintErrDown = -1 * nsig.getAsymErrorLo();
+	Double_t yieldPrintErrDown = nsig.getAsymErrorLo();
 
 	cout << "------------------------------------------------------------------------------------------------------------" << endl;
 	cout << "Signal Yield = " << nsig.getVal() << "     yield Error = " << yieldPrintErr << "     yield Error Up = " << yieldPrintErrUp << "     yieldPrintErrDown = " << yieldPrintErrDown << endl;

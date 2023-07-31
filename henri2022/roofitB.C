@@ -19,7 +19,7 @@ int syst_study=0;
 // VALIDATION STUDIES
 int val=0;
 
-void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString cut = "", TString outputfile = "", TString outplotf = "", TString npfit = "", TString jpsiFile = ""){
+void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString cut = "", TString outputfile = "", TString outplotf = "", TString jpsiFile = ""){
 
 	//Create the Folders
 	gSystem->mkdir("filesbp",true); 
@@ -175,7 +175,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	// FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
 	//Fit the J/psi pi MC sample
    	//The shapes of J/psi pi peak is determined
-	if(npfit != "1"){
+	if(tree=="ntKp"){
 
 		//PDF MODELS PDF MODELS PDF MODELS
 		//inclusive MC jpsipi Model
@@ -272,7 +272,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function for VARIABLE " << varExp.Data() << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], npfit, *ws, varExp.Data());		
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], *ws, varExp.Data());		
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 		
@@ -486,7 +486,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		if(syst_study==1){
 
 				for(int j=0; j<background.size(); j++){
-					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], npfit, *ws, varExp);
+					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], *ws, varExp);
 					RooAbsPdf* model_back = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,background[j].c_str()));
 					TString chi2_fitRange = (background[j] == "mass_range") ? "m_range" : "all";
 					cout << "chi2_fitRange " << chi2_fitRange << endl;
@@ -537,7 +537,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			general_err.push_back(max_back);
 
 			for(int j=0; j<signal.size(); j++){
-				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], npfit, *ws, varExp);
+				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], *ws, varExp);
 				RooAbsPdf* model_sig = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,signal[j].c_str()));
 				RooAbsPdf* modelMC_sig = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,signal[j].c_str()));
 				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);
