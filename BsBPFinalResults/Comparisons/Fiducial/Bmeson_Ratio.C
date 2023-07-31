@@ -94,7 +94,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     int dummy = 0;
     if (whichvar == "|y|")
     {
-        dummy = 1
+        dummy = 1;
     }
 
     for (int i = 0; i < 3; ++i) {
