@@ -293,6 +293,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",meson_n.Data()));
 	
 	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s%s.root",whichvar.Data(),bsbpbins.Data());
+	cout << "AQUI " << trackSelErrorFile << endl;
 	TFile fTrackSelError(trackSelErrorFile);
 	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", meson_n.Data()));
 

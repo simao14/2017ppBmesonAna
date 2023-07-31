@@ -651,7 +651,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TMultiGraph * mg2 = (TMultiGraph*) RawYieldTight->Get("TG");
 	TGraphAsymmErrors* hPtTight = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_stat"));
 
-
 	double RawCount;
 	double RawCountErr;
 	double RawCountTight;
