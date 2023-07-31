@@ -758,7 +758,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			m_back_sig->Add(g_sig);
 			legsig->AddEntry(g_sig,siglabel[j],"p");
 			legsigback->AddEntry(g_sig,siglabel[j],"p");
-
+		}
 			m_sig->Add(binning);
 			m_sig->GetXaxis()->SetTitle("p_{T}");
 			m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
@@ -801,21 +801,18 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			Double_t y[_nBins];
 			for (int i=0;i<_nBins;i++){y[i]=	stat_error[i][0];}
 			TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
-		}
-	m_gen->Add(binning);
-	g_gen->SetMarkerColor(9);
-	g_gen->SetMarkerStyle(21);
-	m_gen->Add(g_gen);
-	legen->AddEntry(g_gen,"Statistical","p");
-	m_gen->GetXaxis()->SetTitle("p_{T}");  //varExp.Data()
-	m_gen->GetYaxis()->SetTitle("Total Uncertainty(%)");
-	m_gen->GetYaxis()->SetRangeUser(0, y_max_gen*1.5);
-	m_gen->Draw("AE1*");
-	legen->Draw();
-	c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
-	}
-
-
+			m_gen->Add(binning);
+			g_gen->SetMarkerColor(9);
+			g_gen->SetMarkerStyle(21);
+			m_gen->Add(g_gen);
+			legen->AddEntry(g_gen,"Statistical","p");
+			m_gen->GetXaxis()->SetTitle("p_{T}");  //varExp.Data()
+			m_gen->GetYaxis()->SetTitle("Total Uncertainty(%)");
+			m_gen->GetYaxis()->SetRangeUser(0, y_max_gen*1.5);
+			m_gen->Draw("AE1*");
+			legen->Draw();
+			c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+			}
 
 // Differential plot part starts
 	gSystem->mkdir("./results/Graphs",true); 
