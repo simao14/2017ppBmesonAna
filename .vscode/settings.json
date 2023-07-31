@@ -97,6 +97,8 @@
         "PlotBMult.C": "cpp",
         "CrossSectionAnaY.C": "cpp",
         "yield_ratio.C": "cpp",
-        "Bmeson_XSections.C": "cpp"
+        "Bmeson_XSections.C": "cpp",
+        "CMS_lumi.C": "cpp",
+        "Bmeson_Ratio.C": "cpp"
     }
 }

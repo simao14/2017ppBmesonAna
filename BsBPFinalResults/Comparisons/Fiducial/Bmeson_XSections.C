@@ -7,7 +7,6 @@
 #include "TFile.h"
 #include "TGraphAsymmErrors.h"
 #include "TLegend.h"
-#include "scale.h"
 #include <iostream>
 #include <fstream>
 #include "../../../henri2022/parameter.h" 
@@ -16,10 +15,6 @@
 using namespace std;
 using std::cout;
 using std::endl;
-
-// MOST OF THE VARIABLES SAY BP BUT ARE WORKING FOR Bs AS WELL 
-// THIS CODE CAN BE EASILY EXTENDED TO ACCOUNT FOR A FUTURE MESON... 
-// JUST FOLLOW THE LOGIC
 
 void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::string> col_name, std::vector<std::string> labels, 
 		std::vector<std::vector<double> > numbers , std::string caption, int ori){
@@ -211,9 +206,9 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	// BINS
 
   // cross section with 2D Map eff correction
-	float BPXsecPPY2D[NBins];
-	float BPXSecPPY2DErrUp[NBins];
-	float BPXSecPPY2DErrDown[NBins];
+	float XsecPP_Y[NBins];
+	float XsecPP_Y_StatUp[NBins];
+	float XsecPP_Y_StatDown[NBins];
 	float BPXSecPPY2DErrUpRatio[NBins];
 	float BPXSecPPY2DErrDownRatio[NBins];
   
@@ -224,11 +219,11 @@ void Bmeson_XSections(int meson_n, int whichvar){
 
 	TH1D * BCross2D = (TH1D *) FileB->Get("hPtSigma");
 	for(int i = 0; i < NBins; i++){
-		BPXsecPPY2D[i] = BCross2D->GetBinContent(i+1);
-		BPXSecPPY2DErrUp[i] = BCross2D->GetBinError(i+1);
-		BPXSecPPY2DErrDown[i] = BCross2D->GetBinError(i+1);
-		BPXSecPPY2DErrUpRatio[i] = BPXSecPPY2DErrUp[i] / BPXsecPPY2D[i];
-		BPXSecPPY2DErrDownRatio[i] = BPXSecPPY2DErrDown[i] / BPXsecPPY2D[i];
+		XsecPP_Y[i] = BCross2D->GetBinContent(i+1);
+		XsecPP_Y_StatUp[i] = BCross2D->GetBinError(i+1);
+		XsecPP_Y_StatDown[i] = BCross2D->GetBinError(i+1);
+		BPXSecPPY2DErrUpRatio[i] = XsecPP_Y_StatUp[i] / XsecPP_Y[i];
+		BPXSecPPY2DErrDownRatio[i] = XsecPP_Y_StatDown[i] / XsecPP_Y[i];
 		
 		BPXsecPPY2DScaled[i] = BCross2D->GetBinContent(i+1);
 		BPXSecPPY2DErrUpScaled[i] = BCross2D->GetBinError(i+1);
@@ -280,8 +275,8 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	TFile fTrackSelError1D(trackSelErrorFile1D);
 	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error", b_m.Data()));
 
-	float BPXSecPPY2DSystUp[NBins];
-	float BPXSecPPY2DSystDown[NBins];
+	float XsecPP_Y_SystUp[NBins];
+	float XsecPP_Y_SystDown[NBins];
 	float BPXSecPPY1DSystUp[NBins];
 	float BPXSecPPY1DSystDown[NBins];
 	float BPXSecPPYSystUpScaled[NBins];
@@ -362,8 +357,8 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	else {numb = 0.077;}
   	vector<float> globUncert(NBins, numb);
 	for(int i = 0; i < NBins; i++){
-		BPXSecPPY2DSystUp[i] = BPXsecPPY2D[i] * BP2DTotalSystUpRatio[i];
-		BPXSecPPY2DSystDown[i] = BPXsecPPY2D[i] * BP2DTotalSystDownRatio[i];
+		XsecPP_Y_SystUp[i] = XsecPP_Y[i] * BP2DTotalSystUpRatio[i];
+		XsecPP_Y_SystDown[i] = XsecPP_Y[i] * BP2DTotalSystDownRatio[i];
 		BPXSecPPY1DSystUp[i] = BPXsecPPY1D[i] * BP1DTotalSystUpRatio[i];
 		BPXSecPPY1DSystDown[i] = BPXsecPPY1D[i] * BP1DTotalSystDownRatio[i];
 		}
@@ -390,7 +385,6 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	else {HisEmpty->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",var_n.Data()));}
 	HisEmpty->GetXaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->CenterTitle();
-
 // CREATE THE CANVAS and the pads
 
   // separate plots for different fiducial regions
@@ -429,11 +423,11 @@ void Bmeson_XSections(int meson_n, int whichvar){
 			XsecPP_X_BinL_Low.push_back(XsecPP_X_BinLeft[i]);
 			XsecPP_X_BinR_Low.push_back(XsecPP_X_BinRight[i]);
 
-			XsecPP_Y_Low.push_back(BPXsecPPY2D[i]);
-			XsecPP_Y_StatDown_Low.push_back(BPXSecPPY2DErrDown[i]);
-			XsecPP_Y_StatUp_Low.push_back(BPXSecPPY2DErrUp[i]);
-			XsecPP_Y_SystDown_Low.push_back(BPXSecPPY2DSystDown[i]);
-			XsecPP_Y_SystUp_Low.push_back(BPXSecPPY2DSystUp[i]);
+			XsecPP_Y_Low.push_back(XsecPP_Y[i]);
+			XsecPP_Y_StatDown_Low.push_back(XsecPP_Y_StatDown[i]);
+			XsecPP_Y_StatUp_Low.push_back(XsecPP_Y_StatUp[i]);
+			XsecPP_Y_SystDown_Low.push_back(XsecPP_Y_SystDown[i]);
+			XsecPP_Y_SystUp_Low.push_back(XsecPP_Y_SystUp[i]);
 
 			BP1DXsecPPYLow.push_back(BPXsecPPY1D[i]);
 			BP1DXsecPPYErrDownLow.push_back(BPXSecPPY1DErrDown[i]);
@@ -446,11 +440,11 @@ void Bmeson_XSections(int meson_n, int whichvar){
 			XsecPP_X_BinL_High.push_back(XsecPP_X_BinLeft[i]);
 			XsecPP_X_BinR_High.push_back(XsecPP_X_BinRight[i]);
 
-			XsecPP_Y_High.push_back(BPXsecPPY2D[i]);
-			XsecPP_Y_StatDown_High.push_back(BPXSecPPY2DErrDown[i]);
-			XsecPP_Y_StatUp_High.push_back(BPXSecPPY2DErrUp[i]);
-			XsecPP_Y_SystDown_High.push_back(BPXSecPPY2DSystDown[i]);
-			XsecPP_Y_SystUp_High.push_back(BPXSecPPY2DSystUp[i]);
+			XsecPP_Y_High.push_back(XsecPP_Y[i]);
+			XsecPP_Y_StatDown_High.push_back(XsecPP_Y_StatDown[i]);
+			XsecPP_Y_StatUp_High.push_back(XsecPP_Y_StatUp[i]);
+			XsecPP_Y_SystDown_High.push_back(XsecPP_Y_SystDown[i]);
+			XsecPP_Y_SystUp_High.push_back(XsecPP_Y_SystUp[i]);
 
 			BP1DXsecPPYHigh.push_back(BPXsecPPY1D[i]);
 			BP1DXsecPPYErrDownHigh.push_back(BPXSecPPY1DErrDown[i]);
@@ -480,8 +474,8 @@ void Bmeson_XSections(int meson_n, int whichvar){
   	cout << endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
 
 	for(int i=0;i<NBins;i++){		
-		cout << "BIN " <<              Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.0f #pm (SYSTup) %.0f #pm (STATdown) %.0f #pm (SYSTdown) %.0f ",BPXsecPPY2D[i], BPXSecPPY2DErrUp[i], BPXSecPPY2DSystUp[i], BPXSecPPY2DErrDown[i], BPXSecPPY2DSystDown[i]) << endl;
-		cout << "(normalized) BIN " << Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.1f #pm (SYSTup) %.1f #pm (STATdown) %.1f #pm (SYSTdown) %.1f ",BPXsecPPY2D[i], 100*BPXSecPPY2DErrUp[i]/BPXsecPPY2D[i], 100*BPXSecPPY2DSystUp[i]/BPXsecPPY2D[i], 100*BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i], 100*BPXSecPPY2DSystDown[i]/BPXsecPPY2D[i]) << endl;
+		cout << "BIN " <<              Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.0f #pm (SYSTup) %.0f #pm (STATdown) %.0f #pm (SYSTdown) %.0f ",XsecPP_Y[i], XsecPP_Y_StatUp[i], XsecPP_Y_SystUp[i], XsecPP_Y_StatDown[i], XsecPP_Y_SystDown[i]) << endl;
+		cout << "(normalized) BIN " << Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.1f #pm (SYSTup) %.1f #pm (STATdown) %.1f #pm (SYSTdown) %.1f ",XsecPP_Y[i], 100*XsecPP_Y_StatUp[i]/XsecPP_Y[i], 100*XsecPP_Y_SystUp[i]/XsecPP_Y[i], 100*XsecPP_Y_StatDown[i]/XsecPP_Y[i], 100*XsecPP_Y_SystDown[i]/XsecPP_Y[i]) << endl;
 	}
  
  	cout<< endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
@@ -569,6 +563,7 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		else {leged->AddEntry(BPRAAGraph,"7<p_{T}<50 GeV/c","P");}
 		leged->AddEntry(BPRAAGraph_low,"p_{T}>10 GeV/c","P");
 	} 
+
 	leged->SetTextSize(0.022);
 	leged->Draw("same");
 
@@ -658,11 +653,11 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		val1D.push_back(BPXsecPPY1D[i]);
 		stat1D.push_back(BPXSecPPY1DErrDown[i]/BPXsecPPY1D[i]);
 		syst1D.push_back(BPXSecPPY1DSystDown[i]/BPXsecPPY1D[i]);
-		val2D.push_back(BPXsecPPY2D[i]);
-		stat2D.push_back(BPXSecPPY2DErrUp[i]/BPXsecPPY2D[i]);
-		syst2D.push_back(BPXSecPPY2DSystDown[i]/BPXsecPPY2D[i]);
+		val2D.push_back(XsecPP_Y[i]);
+		stat2D.push_back(XsecPP_Y_StatUp[i]/XsecPP_Y[i]);
+		syst2D.push_back(XsecPP_Y_SystDown[i]/XsecPP_Y[i]);
 
-		xdiff.push_back(abs(BPXsecPPY2D[i]-BPXsecPPY1D[i])/BPXsecPPY2D[i]*100);
+		xdiff.push_back(abs(XsecPP_Y[i]-BPXsecPPY1D[i])/XsecPP_Y[i]*100);
 	}
 
 	xsec_values.push_back(val1D);
@@ -840,18 +835,10 @@ if (whichvar==0){
 //////////////////////////////////////////////////////////////////////////////////
 
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
+// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 if (whichvar==0){
 
-//	gStyle->SetPadTickX(1);
-//	gStyle->SetPadTickY(1);
-//	gStyle->SetTitleColor(1, "XYZ");
-//	gStyle->SetTitleFont(42, "XYZ");
-//	gStyle->SetTitleSize(0.15, "XYZ");
  	gStyle->SetTickLength(0.04, "XYZ");
-//  gStyle->SetNdivisions(305, "XYZ");
-//	gStyle->SetHatchesLineWidth(5);
-// 	gStyle->SetHatchesSpacing(0.05);
-
 	TCanvas * cr = new TCanvas("cr","cr",600,600);
 	cr->cd();    
 	cr->SetLeftMargin(0.15);
@@ -873,10 +860,10 @@ if (whichvar==0){
 
 	TH2D * HisEmpty3;
 	if (meson_n == 0){
-		HisEmpty3 = new TH2D("HisEmpty3","",100,5,60,100,0.5,1.5);
+		HisEmpty3 = new TH2D("HisEmpty3","",100,ptBins[0],ptBins[NBins],100,0.5,1.5);
 		HisEmpty3->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	} else {
-		HisEmpty3 = new TH2D("HisEmpty3","",100,7,50,100,0.5,1.5);
+		HisEmpty3 = new TH2D("HisEmpty3","",100,ptBins[0],ptBins[NBins],100,0.5,1.5);
 		HisEmpty3->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	}
 		HisEmpty3->GetYaxis()->SetTitle("Data/FONLL");
@@ -884,29 +871,17 @@ if (whichvar==0){
 		HisEmpty3->GetYaxis()->CenterTitle();
 		HisEmpty3->GetYaxis()->SetNdivisions(305);
 		HisEmpty3->GetYaxis()->SetTitleSize(0.1);
-		//HisEmpty3->GetXaxis()->SetLabelSize(0.1);
 		HisEmpty3->GetYaxis()->SetLabelSize(0.1);
 		HisEmpty3->GetXaxis()->SetTitleSize(0.1);
 		HisEmpty3->GetYaxis()->SetTitleOffset(0.4);
 		HisEmpty3->GetXaxis()->SetTitleOffset(1.0);
 		HisEmpty3->GetXaxis()->SetLabelSize(0.1);
 
-		//HisEmpty->GetXaxis()->SetTitleSize(0.035);
-	/*		 
-
-
-	pull_plotMC->GetXaxis()->SetTickLength(0.16);
-
-	frameMC->GetXaxis()->SetTitleOffset(1.2);
-	frameMC->GetXaxis()->SetTitleSize(0.035);
-	frameMC->GetXaxis()->SetTitleFont(42);
-	frameMC->GetXaxis()->CenterTitle();
-	frameMC->GetXaxis()->SetLabelSize(0.035); */
-
     TFile * finFONLL ;
 	if(meson_n == 0){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
 	else{ finFONLL = new TFile("FONLLs/BsFONLL.root");}
 	finFONLL->cd();
+
 	TGraphAsymmErrors *BPFONLL = (TGraphAsymmErrors*) finFONLL->Get("gaeSigmaBplus");
 	BPFONLL->SetLineWidth(2);
 	BPFONLL->SetLineColor(kRed+2);
@@ -929,13 +904,12 @@ if (whichvar==0){
 	BFONLLLow->SetMarkerSize(1);
 	BFONLLLow->SetMarkerColor(kRed-7);
 
+	double XTempChange;
+	double YTempChange;
+	double YErrLowTemp;
+	double YErrHighTemp;
 
-double XTempChange;
-double YTempChange;
-double YErrLowTemp;
-double YErrHighTemp;
-
-	for(int i = 0; i < NBinsLow; i ++){                      // STILL NEED TO CHANGE FOR OTHER VARIABLES
+	for(int i = 0; i < NBinsLow; i ++){                   
 		BFONLL2->GetPoint(i,XTempChange,YTempChange);
 		YErrLowTemp = BFONLL2->GetErrorYlow(i);
 		YErrHighTemp = BFONLL2->GetErrorYhigh(i);
@@ -947,9 +921,8 @@ double YErrHighTemp;
 		BFONLLLow->SetPointEYlow(i,YErrLowTemp);
 		BFONLLLow->SetPointEXhigh(i,BPFONLL->GetErrorXhigh(i));
 		BFONLLLow->SetPointEXlow(i,BPFONLL->GetErrorXlow(i));
-}
-	//BPPPCrossGraph2015Syst->Draw("5same");	
-	//BPPPCrossGraph2015->Draw("epSAME");
+	}
+
 	MyPadr->cd();
 	HisEmpty->Draw();
 	BPRAAGraphSyst_low->Draw("5same");
@@ -959,7 +932,6 @@ double YErrHighTemp;
 	BPRAAGraph_low_just_marker->Draw("epSAME");
 	BPFONLL->Draw("5");
 	BFONLLLow->Draw("5");
-
 
 	lat->SetTextSize(0.035); 
 	lat->DrawLatex(0.1,0.91 , "CMS work in progress");
@@ -973,59 +945,10 @@ double YErrHighTemp;
 			else {leg3->AddEntry((TObject*)0, "B^{0}_{s}", "");}
 			leg3->AddEntry(BPRAAGraph,"2017 pp ","P");
 			leg3->AddEntry(BPRAAGraph_low,"2017 pp (|y|>1.5)","P");
-			//leg3->AddEntry(BPPPCrossGraph2015,"2018 PbPb","P");
 			leg3->AddEntry(BPFONLL,"FONLL","f");
 			leg3->AddEntry(BFONLLLow,"FONLL (|y| > 1.5)","f");
 			leg3->Draw("same");
 			MyPadr->Update();
-
-
-	//Ratio
-	float Ratio1Y[NBins2015];
-	float Ratio1YErr[NBins2015];
-	float Ratio2Y[NBins2015];
-	float Ratio2YErr[NBins2015];
-
-	for(int i = 1; i < NBins2015; i++){
-		Ratio2Y[i] = BPXsecPPY2D[i+1]/BXsecPPY2015[i];
-		Ratio2YErr[i] = Ratio2Y[i] *TMath::Sqrt(BPXSecPPY2DErrDown[i+1]/BPXsecPPY2D[i+1] * BPXSecPPY2DErrDown[i+1]/BPXsecPPY2D[i+1] + BXSecPPYErrDown2015[i]/BXsecPPY2015[i] * BXSecPPYErrDown2015[i]/BXsecPPY2015[i] );
-			}
-
-	//These vectors are just for BP
-  std::vector<float> RatioDataYLow(1);
-  std::vector<float> RatioDataYLowErr(1);
-  	//These vectors are just for BP
-
-if (meson_n == 0){
-	Ratio2YErr[0] = 0.00001;
-	Ratio2Y[0] = -0.1;
-	Ratio1YErr[0] = 0.00001;
-	Ratio1Y[0] = -0.1;
-	// low pt bin
-  RatioDataYLow[0] = XsecPP_Y_Low[1] / BXsecPPY2015[0];
-  RatioDataYLowErr[0] = RatioDataYLow[0] * TMath::Sqrt(pow(BPXSecPPY2DErrDown[1]/BPXsecPPY2D[1], 2) + pow(BXSecPPYErrDown2015[0]/BXsecPPY2015[0], 2));
-}else{
-	Ratio1Y[0] = -1;
-	Ratio1YErr[0] = 0.001;
-	Ratio2Y[0] = -1;
-	Ratio2YErr[0] = 0.001;
-}
-
-	TGraphAsymmErrors *Ratio2 = new TGraphAsymmErrors(NBins2015, BXsecPPX2015, Ratio2Y,BXSecPPXErrDown2015, BXSecPPXErrUp2015,Ratio2YErr,Ratio2YErr);
-		Ratio2->SetLineColor(kOrange+1);
-		Ratio2->SetMarkerStyle(21);
-		Ratio2->SetMarkerSize(1);
-		Ratio2->SetMarkerColor(kOrange+1);
-
-
-  	TGraphAsymmErrors *RatioDataLow;
-  	if (meson_n ==0){
-		RatioDataLow = new TGraphAsymmErrors(1, XsecPP_X_Low.data(), RatioDataYLow.data(), XsecPP_X_BinL_Low.data(), XsecPP_X_BinR_Low.data(), RatioDataYLowErr.data(), RatioDataYLowErr.data());
-		RatioDataLow->SetLineColor(kOrange+1);
-		RatioDataLow->SetMarkerStyle(25);
-		RatioDataLow->SetMarkerSize(1);
-		RatioDataLow->SetMarkerColor(kOrange+1);
-		}
 
 	MyPadr2->cd();
 	TLine * Unity2 = new TLine(0,0,0,0);
@@ -1038,128 +961,44 @@ if (meson_n == 0){
 	HisEmpty3->Draw();
 	MyPadr2->Update();
 
-	//FONLL
-	double XTempFONLL;
-	double YTempFONLL;
-	float Ratio4Y[NBins];
-	float Ratio4YErr[NBins];
-	float FONLLY[NBins];
-	float FONLLYErr[NBins];
-	for(int i = 0; i < NBins; i++){
-		BPFONLL->GetPoint(i,XTempFONLL,YTempFONLL);
-		FONLLY[i] = YTempFONLL;
-		FONLLYErr[i] = BPFONLL->GetErrorYhigh (i);
-		Ratio4Y[i] = BPXsecPPY2DScaled[i]/FONLLY[i];
-		Ratio4YErr[i] = Ratio4Y[i] *TMath::Sqrt(BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i] * BPXSecPPY2DErrDown[i]/BPXsecPPY2D[i] + FONLLYErr[i]/FONLLY[i] * FONLLYErr[i]/FONLLY[i] );
-		}
 
  // Get ratio plots
-
 float binlow[NBinsLow];
-float glbSystUp;
-float glbSystDown;
 float bl_low[NBinsLow];
 float bl_low_yStatL[NBinsLow];
-float bl_low_yStatH[NBinsLow];
 float bl_low_xErrL[NBinsLow];
 float bl_low_xErrH[NBinsLow];
 float bl_low_ySystL[NBinsLow];
-float bl_low_ySystH[NBinsLow];
 float binhigh[NBins-NBinsLow];
 float bl_high[NBins-NBinsLow];
 float bl_high_yStatL[NBins-NBinsLow];
-float bl_high_yStatH[NBins-NBinsLow];
 float bl_high_xErrL[NBins-NBinsLow];
 float bl_high_xErrH[NBins-NBinsLow];
 float bl_high_ySystL[NBins-NBinsLow];
-float bl_high_ySystH[NBins-NBinsLow];
-int NBinsLow2015;
-if (meson_n==0){NBinsLow2015=1;} else {NBinsLow2015=0;}
-float binlow_2015[NBinsLow2015];
-float bl_low_2015[NBinsLow2015];
-float bl_low_2015_yStatL[NBinsLow2015];
-float bl_low_2015_yStatH[NBinsLow2015];
-float bl_low_2015_xErrL[NBinsLow2015];
-float bl_low_2015_xErrH[NBinsLow2015];
-float bl_low_2015_ySystL[NBinsLow2015];
-float bl_low_2015_ySystH[NBinsLow2015];
-float binhigh_2015[NBins2015-NBinsLow2015];
-float bl_high_2015[NBins2015-NBinsLow2015];
-float bl_high_2015_yStatL[NBins2015-NBinsLow2015];
-float bl_high_2015_yStatH[NBins2015-NBinsLow2015];
-float bl_high_2015_xErrL[NBins2015-NBinsLow2015];
-float bl_high_2015_xErrH[NBins2015-NBinsLow2015];
-float bl_high_2015_ySystL[NBins2015-NBinsLow2015];
-float bl_high_2015_ySystH[NBins2015-NBinsLow2015];
-
 
 for (int i=0;i<NBins;++i){
 	
 	if( i<NBinsLow){
 		binlow[i]=XsecPP_X[i];
-		glbSystUp=globUncert[i]*100;
-		glbSystDown=globUncert[i]*100;
 		bl_low[i]=BPXsecPPY2DScaled[i];
 		bl_low_yStatL[i]=BPXSecPPY2DErrDownScaled[i];
-		bl_low_yStatH[i]=BPXSecPPY2DErrUpScaled[i];
 		bl_low_xErrL[i]=XsecPP_X[i]-ptBins[i];
 		bl_low_xErrH[i]=ptBins[i + 1]-XsecPP_X[i];
 		bl_low_ySystL[i]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
-		bl_low_ySystH[i]=BP2DTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
 	} 
 	else {
 		binhigh[i-NBinsLow]=XsecPP_X[i];
 		bl_high[i-NBinsLow]=BPXsecPPY2DScaled[i];
 		bl_high_yStatL[i-NBinsLow]=BPXSecPPY2DErrDownScaled[i];
-		bl_high_yStatH[i-NBinsLow]=BPXSecPPY2DErrUpScaled[i];
 		bl_high_xErrL[i-NBinsLow]=XsecPP_X[i]-ptBins[i];
 		bl_high_xErrH[i-NBinsLow]=ptBins[i + 1]-XsecPP_X[i];
 		bl_high_ySystL[i-NBinsLow]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
-		bl_high_ySystH[i-NBinsLow]=BP2DTotalSystUpRatio[i]*BPXsecPPY2DScaled[i];
 	}
 }
-double ptBins2015[NBins2015+1];
-if (meson_n==0){
-	for(auto i=0;i<NBins2015+1;++i){
-		ptBins2015[i]=vect_ptBins2015bp[i];
-	}
-}
-else {for(auto i=0;i<NBins2015+1;++i){
-		ptBins2015[i]=vect_ptBins2015bs[i];
-	}}
-for (int i=0;i<NBins2015;++i){
-	
-	if( i<NBinsLow2015){
-		binlow_2015[i]=BXsecPPX2015[i];
-		bl_low_2015[i]=BXsecPPY2015[i];
-		bl_low_2015_yStatL[i]=BXSecPPYErrDown2015[i];
-		bl_low_2015_yStatH[i]=BXSecPPYErrUp2015[i];
-		bl_low_2015_xErrL[i]=BXsecPPX2015[i]-ptBins2015[i];
-		bl_low_2015_xErrH[i]=ptBins2015[i + 1]-BXsecPPX2015[i];
-		bl_low_2015_ySystL[i]=BXSecPPYSystDown2015[i];
-		bl_low_2015_ySystH[i]=BXSecPPYSystDown2015[i];	
-	} 
-	else {
-		binhigh_2015[i-NBinsLow2015]=BXsecPPX2015[i];
-		bl_high_2015[i-NBinsLow2015]=BXsecPPY2015[i];
-		bl_high_2015_yStatL[i-NBinsLow2015]=BXSecPPYErrDown2015[i];
-		bl_high_2015_yStatH[i-NBinsLow2015]=BXSecPPYErrUp2015[i];
-		bl_high_2015_xErrL[i-NBinsLow2015]=BXsecPPX2015[i]-ptBins2015[i];
-		bl_high_2015_xErrH[i-NBinsLow2015]=ptBins2015[i + 1]-BXsecPPX2015[i];
-		bl_high_2015_ySystL[i-NBinsLow2015]=BXSecPPYSystDown2015[i];
-		bl_high_2015_ySystH[i-NBinsLow2015]=BXSecPPYSystUp2015[i];
-	}
-}
+
   vector<float> BXsec;
   vector<float> BXsecStat;
   vector<float> BXsecSyst;
-  vector<float> BXsec2015;
-  vector<float> BXsecStat2015;
-  vector<float> BXsecSyst2015;
-  vector<float> FONLL;
-  vector<float> FONLLUp;
-  vector<float> FONLLDown;
-
  
   for (auto i = 0; i < NBinsLow; ++i) {
     BXsec.push_back(bl_low[i]);
@@ -1171,113 +1010,82 @@ for (int i=0;i<NBins2015;++i){
     BXsecStat.push_back(bl_high_yStatL[i]);
     BXsecSyst.push_back(bl_high_ySystL[i]);
   }
-  for (auto i = 0; i < NBinsLow2015; ++i) {
-    BXsec2015.push_back(bl_low_2015[i]);
-    BXsecStat2015.push_back(bl_low_2015_yStatL[i]);
-    BXsecSyst2015.push_back(bl_low_2015_ySystL[i]);
-  }
-  for (auto i = 0; i < NBins2015-NBinsLow2015; ++i) {
-    BXsec2015.push_back(bl_high_2015[i]);
-    BXsecStat2015.push_back(bl_high_2015_yStatL[i]);
-    BXsecSyst2015.push_back(bl_high_2015_ySystL[i]);
-  }
 
-  float RatioBs[NBins];
-  float RatioBsStat[NBins];
-  float RatioBsSyst[NBins];
-  float RatioBsFonErrHigh[NBins];
-  float RatioBsFonErrLow[NBins];
-  float RatioBs2015[NBins2015];
-  float RatioBsStat2015[NBins2015];
-  float RatioBsSyst2015[NBins2015];
+  	std::vector<float> Unity(NBins, 1);
 
-std::vector<float> Unity(NBins, 1);
+	//FONLL
+  	vector<float> FONLL;
+  	vector<float> FONLLUp;
+  	vector<float> FONLLDown;
+	double XTempFONLL;
+	double YTempFONLL;
+ 	float FONLL_Norm_ratio[NBins];
+  	float RatioBsStat[NBins];
+  	float RatioBsSyst[NBins];
+  	float RatioBsFonErrHigh[NBins];
+  	float RatioBsFonErrLow[NBins];
 
-for (auto i = 0; i < NBins; ++i) {
-  
-    BPFONLL->GetPoint(i, XTempFONLL, YTempFONLL);
-    FONLL.push_back(YTempFONLL);
-    FONLLUp.push_back(BPFONLL->GetErrorYhigh(i));
-    FONLLDown.push_back(BPFONLL->GetErrorYlow(i));
+	//BINS AND RESPECTIVE CONTENT NORMALIZED BY FONLL
+	for (auto i = 0; i < NBins; ++i) {
+		BPFONLL->GetPoint(i, XTempFONLL, YTempFONLL);
+		FONLL.push_back(YTempFONLL);
+		FONLLUp.push_back(BPFONLL->GetErrorYhigh(i));
+		FONLLDown.push_back(BPFONLL->GetErrorYlow(i));
+		FONLL_Norm_ratio[i] = BXsec[i] / FONLL[i];
+		RatioBsStat[i] = BXsecStat[i] / FONLL[i];
+		RatioBsSyst[i] = BXsecSyst[i] / FONLL[i];
+		RatioBsFonErrHigh[i] = FONLLUp[i] / FONLL[i];
+		RatioBsFonErrLow[i] = FONLLDown[i] / FONLL[i];
+	}
 
-    RatioBs[i] = BXsec[i] / FONLL[i];
-    RatioBsStat[i] = BXsecStat[i] / FONLL[i];
-    RatioBsSyst[i] = BXsecSyst[i] / FONLL[i];
-    RatioBsFonErrHigh[i] = FONLLUp[i] / FONLL[i];
-    RatioBsFonErrLow[i] = FONLLDown[i] / FONLL[i];
-  }
+	//DATA
+	TGraphAsymmErrors gRatioBs_low(NBinsLow, binlow, FONLL_Norm_ratio, bl_low_xErrL, bl_low_xErrH, RatioBsStat, RatioBsStat);
+	TGraphAsymmErrors gRatioBs_syst_low(NBinsLow,binlow,FONLL_Norm_ratio,bl_low_xErrL, bl_low_xErrH,RatioBsSyst, RatioBsSyst);
+	TGraphAsymmErrors *BPRAAGraph_low_just_m = new TGraphAsymmErrors(NBinsLow, binlow, FONLL_Norm_ratio ,zero, zero, zero, zero);
+	TGraphAsymmErrors gRatioBs_high(NBinsHigh,binhigh,FONLL_Norm_ratio + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsStat + NBinsLow, RatioBsStat + NBinsLow);
+	TGraphAsymmErrors gRatioBs_syst_high(NBinsHigh,binhigh,FONLL_Norm_ratio + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsSyst + NBinsLow, RatioBsSyst + NBinsLow);
+	
+	//FONLL
+	TGraphAsymmErrors gRatioBs_Fon_low(NBinsLow,binlow,Unity.data(),bl_low_xErrL, bl_low_xErrH,RatioBsFonErrLow, RatioBsFonErrHigh);
+	TGraphAsymmErrors gRatioBs_Fon_high(NBinsHigh,binhigh,Unity.data(),bl_high_xErrL, bl_high_xErrH,RatioBsFonErrLow + NBinsLow,RatioBsFonErrHigh + NBinsLow);
 
-int start2015;
-if(meson_n==0){start2015=0;} else {start2015=1;}
+	int color_mark =  kBlue + 2;
+	int color_syst = kBlue -3;
+	if(meson_n==0){	
+		color_mark = kGreen +2;
+		color_syst = kGreen -7;
+	}
 
-for (auto i=start2015;i<NBins2015;i++){
-  	
-	RatioBs2015[i] = BXsec2015[i] / BXsec[i+1];
-    RatioBsStat2015[i] = BXsecStat2015[i] / BXsec[i+1];
-    RatioBsSyst2015[i] = BXsecSyst2015[i] / BXsec[i+1];
-}
-  if(meson_n==0){for (int i=0; i<NBinsLow; ++i){BPFONLL->RemovePoint(0);}}
+	BPRAAGraph_low_just_m ->SetMarkerStyle(20);
+	BPRAAGraph_low_just_m ->SetMarkerSize(0.9);
+	BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
 
-  //DATA
-  TGraphAsymmErrors gRatioBs_low(NBinsLow, binlow, RatioBs, bl_low_xErrL, bl_low_xErrH, RatioBsStat, RatioBsStat);
+	gRatioBs_syst_low.SetFillColorAlpha(color_syst, 0.5);
+	gRatioBs_syst_low.SetLineColor(color_syst);
+	gRatioBs_low.SetMarkerStyle(24);
+	gRatioBs_low.SetMarkerColor(color_mark);
+	gRatioBs_low.SetLineColor(color_mark);
+	gRatioBs_syst_high.SetFillColorAlpha(color_syst, 0.5);
+	gRatioBs_syst_high.SetLineColor(color_syst);
+	gRatioBs_high.SetMarkerStyle(20);
+	gRatioBs_high.SetMarkerColor(color_mark);
+	gRatioBs_high.SetLineColor(color_mark);
 
-  TGraphAsymmErrors *BPRAAGraph_low_just_m = new TGraphAsymmErrors(NBinsLow, binlow, RatioBs ,zero, zero, zero, zero);
+	gRatioBs_Fon_low.SetLineColor(kRed-7); 
+	gRatioBs_Fon_low.SetFillStyle(0);
+	gRatioBs_Fon_low.SetLineWidth(2);
+	gRatioBs_Fon_high.SetLineColor(kRed+2);
+	gRatioBs_Fon_high.SetFillStyle(0);
+	gRatioBs_Fon_high.SetLineWidth(2);
 
-  TGraphAsymmErrors gRatioBs_high(NBinsHigh,binhigh,RatioBs + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsStat + NBinsLow, RatioBsStat + NBinsLow);
-  TGraphAsymmErrors gRatioBs_syst_low(NBinsLow,binlow,RatioBs,bl_low_xErrL, bl_low_xErrH,RatioBsSyst, RatioBsSyst);
-  TGraphAsymmErrors gRatioBs_syst_high(NBinsHigh,binhigh,RatioBs + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsSyst + NBinsLow, RatioBsSyst + NBinsLow);
-  
-  //FONLL
-  TGraphAsymmErrors gRatioBs_Fon_low(NBinsLow,binlow,Unity.data(),bl_low_xErrL, bl_low_xErrH,RatioBsFonErrLow, RatioBsFonErrHigh);
-  TGraphAsymmErrors gRatioBs_Fon_high(NBinsHigh,binhigh,Unity.data(),bl_high_xErrL, bl_high_xErrH,RatioBsFonErrLow + NBinsLow,RatioBsFonErrHigh + NBinsLow);
-
-  //2015 currently not being ploted
-  TGraphAsymmErrors gRatioBs2015_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsStat2015 + NBinsLow2015, RatioBsStat2015 + NBinsLow2015);
-  TGraphAsymmErrors gRatioBs2015_syst_high(NBins2015-NBinsLow2015,binhigh_2015,RatioBs2015 + NBinsLow2015,bl_high_2015_xErrL, bl_high_2015_xErrH,RatioBsSyst2015 + NBinsLow2015, RatioBsSyst2015 + NBinsLow2015);
-  gRatioBs2015_high.SetMarkerColor(kOrange+2);
-  gRatioBs2015_high.SetLineColor(kOrange+2);
-  gRatioBs2015_high.SetMarkerStyle(20);
-  gRatioBs2015_syst_high.SetFillColorAlpha(kOrange+1, 0.5);
-
-int color_mark =  kBlue + 2;
-int color_syst = kBlue -3;
-if(meson_n==0){	
-color_mark = kGreen +2;
-color_syst = kGreen -7;
-}
-
-BPRAAGraph_low_just_m ->SetMarkerStyle(20);
-BPRAAGraph_low_just_m ->SetMarkerSize(0.9);
-BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
-
-  gRatioBs_syst_low.SetFillColorAlpha(color_syst, 0.5);
-  gRatioBs_syst_low.SetLineColor(color_syst);
-  gRatioBs_low.SetMarkerStyle(24);
-  gRatioBs_low.SetMarkerColor(color_mark);
-  gRatioBs_low.SetLineColor(color_mark);
-  gRatioBs_syst_high.SetFillColorAlpha(color_syst, 0.5);
-  gRatioBs_syst_high.SetLineColor(color_syst);
-  gRatioBs_high.SetMarkerStyle(20);
-  gRatioBs_high.SetMarkerColor(color_mark);
-  gRatioBs_high.SetLineColor(color_mark);
-
-
-  gRatioBs_Fon_low.SetLineColor(kRed-7); 
-  gRatioBs_Fon_low.SetFillStyle(0);
-  gRatioBs_Fon_low.SetLineWidth(2);
-  gRatioBs_Fon_high.SetLineColor(kRed+2);
-  gRatioBs_Fon_high.SetFillStyle(0);
-  gRatioBs_Fon_high.SetLineWidth(2);
-
-
-  gRatioBs_syst_low.Draw("5");
-  gRatioBs_syst_high.Draw("5");
-  BPRAAGraph_low_just_m->Draw("p");
-  gRatioBs_low.Draw("ep");
-  gRatioBs_high.Draw("ep");
-  gRatioBs_Fon_high.Draw("5");
-  gRatioBs_Fon_low.Draw("5");
-  Unity2->Draw("SAME");
+	gRatioBs_syst_low.Draw("5");
+	gRatioBs_syst_high.Draw("5");
+	BPRAAGraph_low_just_m->Draw("p");
+	gRatioBs_low.Draw("ep");
+	gRatioBs_high.Draw("ep");
+	gRatioBs_Fon_high.Draw("5");
+	gRatioBs_Fon_low.Draw("5");
+	Unity2->Draw("SAME");
 
 	MyPadr2->Update();
 	//CMS_lumi(MyPadr,19011,0);
@@ -1287,12 +1095,48 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
 	cr->SaveAs(Form("Plots/%s_Xsection_%s_vsFONL.pdf", B_m.Data(),var_n.Data()));
 	//FONLL
 }
-
+// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 
 
 
+// Save Histogram for the Ratio of Bmesons
+	gSystem->mkdir("./ROOTFiles",true); 
+	TFile *ratio_f= new TFile(Form("./ROOTFiles/%s_Xsection_%s.root", B_m.Data(), var_n.Data()),"recreate");
+	ratio_f->cd();
 
+	TMultiGraph* mg = new TMultiGraph();
+	TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(NBins, XsecPP_X, XsecPP_Y, XsecPP_X_BinLeft, XsecPP_X_BinRight, XsecPP_Y_StatDown, XsecPP_Y_StatUp);
+	gr_staterr->SetName("Y_stat");
+	gr_staterr->SetLineColor(1); 
+	mg->Add(gr_staterr, "stat");
+
+	TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(NBins, XsecPP_X, XsecPP_Y, nullptr, nullptr, XsecPP_Y_SystDown, XsecPP_Y_SystUp);
+	gr_systerr->SetName("Y_syst");
+	gr_systerr->SetLineColor(2);
+	mg->Add(gr_systerr,"syst");
+
+	 if(whichvar==1){
+		mg->GetXaxis()->SetTitle("Rapidity (y)");
+		mg->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",var_n.Data()));
+		mg->GetXaxis()->SetLimits(0,2.4);
+	 }
+	 else if(whichvar==0){
+		mg->GetXaxis()->SetTitle("p_{T}");
+		mg->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
+		if (meson_n == 0){ mg->GetXaxis()->SetLimits(0 ,80); }
+		if (meson_n == 1){ mg->GetXaxis()->SetLimits(0 ,60); }
+	 }
+	 else if(whichvar==2){
+		 mg->GetXaxis()->SetTitle("Multiplicity (Mult)");
+		 mg->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",var_n.Data()));
+		 mg->GetXaxis()->SetLimits(0, 100);
+	 }
+
+	 mg->Write(Form("%s_Xsection_%s", B_m.Data(), var_n.Data()));
+	 
+	 ratio_f->Close();
+// Save Histogram for the Ratio of Bmesons
 
 
 
@@ -1319,7 +1163,7 @@ BPRAAGraph_low_just_m ->SetMarkerColor(kWhite);
   for (auto i = 0; i < NBins; ++i ) {
     out << std::setw(columnWidth) <<
       ptBins[i] << std::setw(columnWidth) << ptBins[i + 1] << std::setw(columnWidth) <<
-      setprecision(0) << std::fixed << BPXsecPPY2D[i] << std::setw(columnWidth) <<
+      setprecision(0) << std::fixed << XsecPP_Y[i] << std::setw(columnWidth) <<
       setprecision(2) << std::defaultfloat <<
       BPXSecPPY2DErrUpRatio[i] << std::setw(columnWidth) <<
       BPXSecPPY2DErrDownRatio[i] << std::setw(columnWidth) <<

@@ -870,13 +870,13 @@ cout << endl << endl;
 		leg_d->AddEntry(gr_systerr, "Systematic Uncertainty", "e");
 	}
 	 if(varExp == "By"){
-		 mg->GetXaxis()->SetTitle("Rapidity (y)");
-		 mg->GetYaxis()->SetTitle("dY_{S}/dy");
-		 mg->GetXaxis()->SetLimits(0,2.4);
+		mg->GetXaxis()->SetTitle("Rapidity (y)");
+		mg->GetYaxis()->SetTitle("dY_{S}/dy");
+		mg->GetXaxis()->SetLimits(0,2.4);
 	 }
 	 if(varExp == "Bpt"){
-		 mg->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
-		 mg->GetYaxis()->SetTitle("dY_{S}/dp_{T}");
+		mg->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
+		mg->GetYaxis()->SetTitle("dY_{S}/dp_{T}");
 		if (tree == "ntKp"){ mg->GetXaxis()->SetLimits(0 ,80); }
 		if (tree == "ntphi"){ mg->GetXaxis()->SetLimits(0 ,60); }
 	 }
@@ -890,7 +890,6 @@ cout << endl << endl;
 	 mg->Draw("ap");
 	 
 	 leg_d->AddEntry(gr_staterr, "Statistical Uncertainty", "e");
-	 //leg_d->AddEntry(grs, "Systematic Uncertainty", "e");
 	 leg_d->SetBorderSize(0);
 	 leg_d->SetFillStyle(0);
 	 leg_d->SetTextSize(0);

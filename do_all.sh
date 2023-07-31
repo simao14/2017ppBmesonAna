@@ -96,6 +96,8 @@ XSEC_comp () {
     root -b -l -q Bmeson_XSections.C'(1,0)'
     root -b -l -q Bmeson_XSections.C'(0,1)'
     root -b -l -q Bmeson_XSections.C'(1,1)'
+    
+    root -b -l -q Bmeson_Ratio.C
 
     #python syst_table.py                  #<----------------------- NOT RUNNING
     cd ../../..
