@@ -173,7 +173,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	leg3->AddEntry((TObject*)0, "B^{0}_{s}/B^{+}", "");
 	leg3->AddEntry(FragRatio_stat,"2017 pp ","P");
 	//leg3->AddEntry(,"2017 pp (|y|>1.5)","P");
-	leged->SetTextSize(0.022);
+	leg3->SetTextSize(0.022);
 	leg3->Draw("same");
 
     gSystem->mkdir("./Plots/Fragmentation",true); 
