@@ -725,7 +725,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			m_back_sig->Add(g_back);
 			legback->AddEntry(g_back,backlabel[j],"p");
 			legsigback->AddEntry(g_back,backlabel[j],"p");
-	}
+		}
 		m_back->Add(binning);
 		m_back->GetXaxis()->SetTitle("p_{T}");
 		m_back->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
@@ -751,56 +751,57 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 				y[i]=	sig_syst_rel_values[i][j];
 				if (y[i]>y_max_sig){y_max_sig=y[i];}
 			}
-		TGraph *g_sig= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
-		g_sig->SetMarkerColor(j+5);
-		g_sig->SetMarkerStyle(21);
-		m_sig->Add(g_sig);
-		m_back_sig->Add(g_sig);
-		legsig->AddEntry(g_sig,siglabel[j],"p");
-		legsigback->AddEntry(g_sig,siglabel[j],"p");
+			TGraph *g_sig= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
+			g_sig->SetMarkerColor(j+5);
+			g_sig->SetMarkerStyle(21);
+			m_sig->Add(g_sig);
+			m_back_sig->Add(g_sig);
+			legsig->AddEntry(g_sig,siglabel[j],"p");
+			legsigback->AddEntry(g_sig,siglabel[j],"p");
 
-	m_sig->Add(binning);
-	m_sig->GetXaxis()->SetTitle("p_{T}");
-	m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
-	m_sig->GetYaxis()->SetRangeUser(0, y_max_sig*1.5);
-	m_sig->Draw("AE1*");
-	legsig->Draw();
-	c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+			m_sig->Add(binning);
+			m_sig->GetXaxis()->SetTitle("p_{T}");
+			m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
+			m_sig->GetYaxis()->SetRangeUser(0, y_max_sig*1.5);
+			m_sig->Draw("AE1*");
+			legsig->Draw();
+			c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
-		TCanvas *c_sig_back= new TCanvas("c_sig_back","",700,700);
-		m_back_sig->GetYaxis()->SetRangeUser(0, 3.6);
-		m_back_sig->GetXaxis()->SetTitle("p_{T}");
-		m_back_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
-		m_back_sig->Draw("AE1*");
-		legsigback->Draw();
-		c_sig_back->SaveAs(Form("./results/tables/background_signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+			TCanvas *c_sig_back= new TCanvas("c_sig_back","",700,700);
+			m_back_sig->GetYaxis()->SetRangeUser(0, 3.6);
+			m_back_sig->GetXaxis()->SetTitle("p_{T}");
+			m_back_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
+			m_back_sig->Draw("AE1*");
+			legsigback->Draw();
+			c_sig_back->SaveAs(Form("./results/tables/background_signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
-	TCanvas* c_gen= new TCanvas("c_gen","",700,700);
-	TLegend *legen = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
-	if (tree == "ntphi"){legen = new TLegend(0.80,0.77,0.89,0.89,NULL,"brNDC");}
-	else{legen = new TLegend(0.8,0.77,0.89,0.89,NULL,"brNDC");}
-	legen->SetBorderSize(0);
-	legen->SetTextSize(0.025);
-	legen->SetTextFont(42);
-	legen->SetFillStyle(0);	
-	TMultiGraph* m_gen= new TMultiGraph();
-	const char* genlabel[3]={"Background", "Signal", "Total"};
-	double y_max_gen=0;
-	for (int j=0;j<(int)(labels_general.size());j++){
-		Double_t y[_nBins];
-		for (int i=0;i<_nBins;i++){
-			y[i]=	general_syst[i][j];
-			if (y[i]>y_max_gen){y_max_gen=y[i];}
+			TCanvas* c_gen= new TCanvas("c_gen","",700,700);
+			TLegend *legen = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
+			if (tree == "ntphi"){legen = new TLegend(0.80,0.77,0.89,0.89,NULL,"brNDC");}
+			else{legen = new TLegend(0.8,0.77,0.89,0.89,NULL,"brNDC");}
+			legen->SetBorderSize(0);
+			legen->SetTextSize(0.025);
+			legen->SetTextFont(42);
+			legen->SetFillStyle(0);	
+			TMultiGraph* m_gen= new TMultiGraph();
+			const char* genlabel[3]={"Background", "Signal", "Total"};
+			double y_max_gen=0;
+			for (int j=0;j<(int)(labels_general.size());j++){
+				Double_t y[_nBins];
+				for (int i=0;i<_nBins;i++){
+					y[i]=	general_syst[i][j];
+					if (y[i]>y_max_gen){y_max_gen=y[i];}
+				}
+				TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
+				g_gen->SetMarkerColor(j+1);
+				g_gen->SetMarkerStyle(21);
+				m_gen->Add(g_gen);
+				legen->AddEntry(g_gen,genlabel[j],"p");
+			}
+			Double_t y[_nBins];
+			for (int i=0;i<_nBins;i++){y[i]=	stat_error[i][0];}
+			TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 		}
-		TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
-		g_gen->SetMarkerColor(j+1);
-		g_gen->SetMarkerStyle(21);
-		m_gen->Add(g_gen);
-		legen->AddEntry(g_gen,genlabel[j],"p");
-}
-	Double_t y[_nBins];
-	for (int i=0;i<_nBins;i++){y[i]=	stat_error[i][0];}
-	TGraph *g_gen= new TGraphAsymmErrors (_nBins,x,y,zero,zero,zero,zero);
 	m_gen->Add(binning);
 	g_gen->SetMarkerColor(9);
 	g_gen->SetMarkerStyle(21);
