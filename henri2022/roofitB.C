@@ -89,6 +89,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	TTree* skimtreeMC_new = (TTree*)infMC->Get(tree);
 	TH1D* h;
 	TH1D* hMC;
+	TH1D* hPt = new TH1D("hPt","",_nBins,_ptBins);   //NEEDED FOR MASTER.PY FILE 
+
 	
 	RooWorkspace* ws = new RooWorkspace("ws");
 	RooRealVar* Bgen = new RooRealVar("Bgen", "Bgen", 0, 30000);
@@ -343,6 +345,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		chi2MC_vec[i] = frameMC_chi2->chiSquare();
 		//chi2
 		////////////////////////////
+
+		hPt->SetBinContent(i+1,yield/(_ptBins[i+1]-_ptBins[i]));
+		hPt->SetBinError(i+1,yieldErr/(_ptBins[i+1]-_ptBins[i]));
 
 	//////////////////////////////////////////////////////////LABELS IN PLOTS
 		TLatex* texB = new TLatex(0.5,0.5,"");
@@ -609,6 +614,12 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	//BIN ANALYSIS END
 	//BIN ANALYSIS END
 	
+	TFile* outf = new TFile(Form("%s",outputfile.Data()),"recreate");
+	outf->cd();
+	hPt->Write();		
+	outf->Close();	
+
+
 	string Path;
 	if(tree == "ntphi"){ Path = "./filesbs/";}
 	else if (tree == "ntKp" && BsBPBins == 0){Path = "./filesbp/";}
@@ -818,7 +829,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	gSystem->mkdir("./results/Graphs",true); 
 	TString Bsbpbins= "";
 	if(tree == "ntKp" && BsBPBins == 1){Bsbpbins = "_BsBPBINS";}
-	TFile *ratio_f= new TFile(Form("%s%s.root", outputfile.Data(), Bsbpbins.Data()),"recreate");
+	TFile *ratio_f= new TFile(Form("%s%s_multipurpose.root", outputfile.Data(), Bsbpbins.Data()),"recreate");
 	ratio_f->cd();
 	
 	 TCanvas c_diff;

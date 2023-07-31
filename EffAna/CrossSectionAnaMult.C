@@ -388,6 +388,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	if(DoTnP == 0) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineNoTnP.root",var_n.Data()));
 	if(DoTnP == 1) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineBDT.root",var_n.Data()));	
 
+
 	fin1DEff->cd();
 
 
@@ -640,16 +641,17 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 
 	
+
 	//TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_file.Data()));
 	TString fYield = Form("../henri2022/ROOTfiles/yields_%s_binned_%s.root",var_n2.Data(),var_file.Data());
-	
 	TFile * RawYield = new TFile(fYield);
-	TMultiGraph *mg1= (TMultiGraph*) RawYield->Get("TG");
-    TGraphAsymmErrors* Y_RAW = dynamic_cast<TGraphAsymmErrors*>(mg1->GetListOfGraphs()->FindObject("Y_stat"));
+	RawYield->cd();
+	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 
-	TFile * RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");   
-	TMultiGraph * mg2 = (TMultiGraph*) RawYieldTight->Get("TG");
-	TGraphAsymmErrors* hPtTight = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_stat"));
+	TFile * RawYieldTight;
+	TH1D * hPtTight;
+	RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");
+	hPtTight = (TH1D *) RawYieldTight->Get("hPt");
 
 	double RawCount;
 	double RawCountErr;
@@ -662,8 +664,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	for(int i = 0; i < NBins;i++){
 
-		RawCount = Y_RAW->GetY()[i];
-		RawCountErr = Y_RAW->GetY()[i];
+		RawCount = hPt->GetBinContent(i+1);
+		RawCountErr = hPt->GetBinError(i+1);
 
 		cout << "RawCount = " << RawCount << "  RawCountErr = " << RawCountErr << " NewEff[i] =   " << NewEff[i] << "  NewEffErr[i] =  " << NewEffErr[i] << endl; 
 
@@ -698,14 +700,14 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TH1D * CorrDiffHisTight = (TH1D*) CorrDiffHis->Clone("hPtSigma_tight");
 
 	for(int i = 0; i < NBins;i++){
-		RawCount = Y_RAW->GetY()[i];
-		RawCountErr = Y_RAW->GetY()[i];
+		RawCount = hPt->GetBinContent(i+1);
+		RawCountErr = hPt->GetBinError(i+1);
 		CorrYieldDiff[i] = (RawCount *  NewEff[i])/(BRchain*2* lumi);
 		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr *  NewEff[i]) *(RawCountErr  *  NewEff[i]) + (RawCount *  NewEffErr[i]) * (RawCount  *  NewEffErr[i]))/(BRchain*2* lumi);
 		CorrDiffHis->SetBinContent(i+1,CorrYieldDiff[i]);
 		CorrDiffHis->SetBinError(i+1,CorrYieldDiffErr[i]);
 
-		RawCountTight = hPtTight->GetY()[i];
+		RawCountTight = hPtTight->GetBinContent(i+1);
 		CorrDiffHisTight->SetBinContent(i+1, (RawCountTight *  NewEffTight[i]) / (BRchain*2* lumi) );
 		CorrDiffHisTight->SetBinError(i+1, epsilon);
 	}
@@ -744,8 +746,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 
 	for(int i = 0; i < NBins;i++){
-		RawCount = Y_RAW->GetY()[i];
-		RawCountErr = Y_RAW->GetY()[i];
+		RawCount = hPt->GetBinContent(i+1);
+		RawCountErr = hPt->GetBinError(i+1);
 		CorrYieldDiff[i] = (RawCount /  NewEffReal[i])/(BRchain*2* lumi);
 		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr /  NewEffReal[i]) *(RawCountErr  /  NewEffReal[i]) + (RawCount /NewEffReal[i] *  NewEffRealErr[i]) * (RawCount/NewEffReal[i]  *  NewEffRealErr[i]))/(BRchain*2* lumi);
 		CorrDiffHisReal->SetBinContent(i+1,CorrYieldDiff[i]);
@@ -869,8 +871,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	double YTemp;
 
 	for(int i = 0; i < NBins;i++){
-		RawCount = Y_RAW->GetY()[i];
-		RawCountErr = Y_RAW->GetY()[i];
+		RawCount = hPt->GetBinContent(i+1);
+		RawCountErr = hPt->GetBinError(i+1);
 		Eff1D[i] = Eff1DHisvar->GetBinContent(i+1);
 		Eff1DErr[i] = Eff1DHisvar->GetBinError(i+1);
 
@@ -1123,7 +1125,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	InvEff1DHisvar->Write();
 	InvEff1DHisTight->Write();
 	InvEff1DHisLoose->Write();
-	Y_RAW->Write();
+	hPt->Write();
 	foutCorr->Close();
 
 }
