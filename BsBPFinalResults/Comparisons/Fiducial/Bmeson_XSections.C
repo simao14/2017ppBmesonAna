@@ -209,7 +209,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	for(int i = 0; i < NBins + 1; i++){
 		if (whichvar=="pt"){
 			if (meson_n=="BP" && BsBPBins==0){ ptBins[i] =  ptbinsvecBP[i];} 
-			else if (meson_n=="Bs" || BsBPBins=1){ptBins[i] =  ptbinsvec[i];}
+			else if (meson_n=="Bs" || BsBPBins==1){ptBins[i] =  ptbinsvec[i];}
 		}
 		else if (whichvar=="y"){ ptBins[i] =  ybinsvec[i]; }          
 		else if (whichvar=="Mult"){ ptBins[i] =  nmbinsvec[i];}
@@ -273,7 +273,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	}
 
 	//Syst Add Up PP//
-  	TString errorFile = Form("../../../2DMapSyst/OutFiles/%sError2D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins);
+  	TString errorFile = Form("../../../2DMapSyst/OutFiles/%sError2D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins.Data());
   	TFile fError(errorFile);
 
 	TH1D * TnPSyst = (TH1D *) fError.Get("TnPSyst");
@@ -281,22 +281,22 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	TH1D * MCDataSyst = (TH1D *) fError.Get("MCDataSyst");
   	if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
 
-	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins);
+	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins.Data());
   	TFile fError1D(errorFile1D);
 
 	TH1D * TnPSyst1D = (TH1D *) fError1D.Get("TnPSyst");
 	TH1D * BptSyst1D = (TH1D *) fError1D.Get("BptSyst");
 	TH1D * MCDataSyst1D = (TH1D *) fError1D.Get("BDTSyst");
 
-	TString pdfErrorFile = Form("../../../syst_error/%s_pdf_%s%s.root",meson_n.Data(),whichvar.Data(),bsbpbins);
+	TString pdfErrorFile = Form("../../../syst_error/%s_pdf_%s%s.root",meson_n.Data(),whichvar.Data(),bsbpbins.Data());
 	TFile fPdfError(pdfErrorFile);
 	TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",meson_n.Data()));
 	
-	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s%s.root",whichvar.Data(),bsbpbins);
+	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s%s.root",whichvar.Data(),bsbpbins.Data());
 	TFile fTrackSelError(trackSelErrorFile);
-	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error%s", meson_n.Data()));
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", meson_n.Data()));
 
-	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s%s_1D.root",whichvar.Data(), bsbpbins);
+	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s%s_1D.root",whichvar.Data(), bsbpbins.Data());
 	TFile fTrackSelError1D(trackSelErrorFile1D);
 	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error", meson_n.Data()));
 
@@ -589,7 +589,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	leged->SetTextSize(0.022);
 	leged->Draw("same");
 
-	c->SaveAs(Form("Plots/%s_Xsection_%s%s.pdf", meson_n.Data(), whichvar.Data()),bsbpbins);
+	c->SaveAs(Form("Plots/%s_Xsection_%s%s.pdf", meson_n.Data(), whichvar.Data()),bsbpbins.Data());
 
 
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
