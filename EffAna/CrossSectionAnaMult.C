@@ -237,7 +237,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	if (whichvar==1){
 		var_M="y";
-		var_file="Y";
+		var_file="y";
 		NBins= nyBins_both;} 
 	if (whichvar==2){
 		var_M="Mult";
