@@ -91,7 +91,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
     Double_t B_X1, B_Y1, B_X2, B_Y2, Y1_stat, Y1_syst, Y2_stat, Y2_syst ;
 
-    int dummy = 0
+    int dummy = 0;
     if (whichvar == "|y|")
     {
         dummy = 1
