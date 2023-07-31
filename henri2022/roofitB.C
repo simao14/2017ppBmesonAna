@@ -260,8 +260,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 		hMC = new TH1D(Form("hMC%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 
-		if(isMC==1) skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("%s*(%s&&%s>%f&&%s<%f && BgenNew == 23333)*(1/%s)","1",seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],"1"));
-		else        skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],"1"));
+		skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],"1"));
 		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass",           Form("%s*(%s&&%s>%f&&%s<%f)","1",Form("%s&&BgenNew==23333",selmc.Data()),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1]));	
 		
 		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
