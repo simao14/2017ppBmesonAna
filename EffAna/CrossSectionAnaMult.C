@@ -642,14 +642,15 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	
 	//TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_file.Data()));
 	TString fYield = Form("../henri2022/ROOTfiles/yields_%s_binned_%s.root",var_n2.Data(),var_file.Data());
+	
 	TFile * RawYield = new TFile(fYield);
 	TMultiGraph *mg1= (TMultiGraph*) RawYield->Get("TG");
     TGraphAsymmErrors* Y_RAW = dynamic_cast<TGraphAsymmErrors*>(mg1->GetListOfGraphs()->FindObject("Y_stat"));
 
-	TFile * RawYieldTight;   
-	TMultiGraph * hPtTight;
-	RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");
-	hPtTight = (TMultiGraph *) RawYieldTight->Get("TG")->GetListOfGraphs()->At(0);
+	TFile * RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");   
+	TMultiGraph * mg2 = (TMultiGraph*) RawYieldTight->Get("TG");
+	TGraphAsymmErrors* hPtTight = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject(""));
+
 
 	double RawCount;
 	double RawCountErr;
@@ -705,7 +706,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 		CorrDiffHis->SetBinContent(i+1,CorrYieldDiff[i]);
 		CorrDiffHis->SetBinError(i+1,CorrYieldDiffErr[i]);
 
-		RawCountTight = hPtTight->GetY(i);
+		RawCountTight = hPtTight->GetY()[i];
 		CorrDiffHisTight->SetBinContent(i+1, (RawCountTight *  NewEffTight[i]) / (BRchain*2* lumi) );
 		CorrDiffHisTight->SetBinError(i+1, epsilon);
 	}
