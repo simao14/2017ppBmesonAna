@@ -91,15 +91,21 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
     Double_t B_X1, B_Y1, B_X2, B_Y2, Y1_stat, Y1_syst, Y2_stat, Y2_syst ;
 
-    for (int i = 1; i < 4; ++i) {
+    int dummy = 0
+    if (whichvar == "|y|")
+    {
+        dummy = 1
+    }
+
+    for (int i = 0; i < 3; ++i) {
 
         Y_stat_B1->GetPoint(i, B_X1, B_Y1);           // X and Yield values of NUMERATOR Bmeson
         Y1_stat = Y_stat_B1->GetErrorYhigh(i);   // Yield Statistical Unc. of NUMERATOR Bmeson
         Y1_syst = Y_syst_B1->GetErrorYhigh(i);   // Yield Systematic Unc. of NUMERATOR Bmeson
        
-        Y_stat_B2->GetPoint(i+1, B_X2, B_Y2);           // X and Yield values of DENOMINATOR Bmeson
-        Y2_stat = Y_stat_B2->GetErrorYhigh(i+1);   // Yield Statistical Unc. of DENOMINATOR Bmeson
-        Y2_syst = Y_syst_B2->GetErrorYhigh(i+1);   // Yield Systematic Unc. of DENOMINATOR Bmeson
+        Y_stat_B2->GetPoint(i+1-dummy, B_X2, B_Y2);           // X and Yield values of DENOMINATOR Bmeson
+        Y2_stat = Y_stat_B2->GetErrorYhigh(i+1-dummy);   // Yield Statistical Unc. of DENOMINATOR Bmeson
+        Y2_syst = Y_syst_B2->GetErrorYhigh(i+1-dummy);   // Yield Systematic Unc. of DENOMINATOR Bmeson
 
         X_POS[i] = (B_X1+B_X2)/2;
         Frag_f[i] = B_Y1 / B_Y2;
@@ -107,6 +113,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         Frag_f_Syst_U[i] = fabs(Frag_f[i]) * sqrt(pow(Y1_syst / B_Y1, 2) + pow(Y2_syst / B_Y2, 2));  //Propagate SYST. UNC.
 
         cout << i << "-th BIN FRAGratio: " <<  Frag_f[i] << " +/- " << Frag_f_Stat_U[i] << " +/- " << Frag_f_Syst_U[i] << endl;
+        cout << "Bin Xposition " << B_X1 <<"   " <<B_X2 << "  --->  "<< X_POS[i] << endl;
         //graph1->GetErrorXlow(i)
     }
 
