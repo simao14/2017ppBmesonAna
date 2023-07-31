@@ -220,10 +220,7 @@ TString weightgen_PbPb = "pthatweightNew*"+TString(weightGpt_PbPb);
 //TString weightmc_PbPb = "(HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v1)*pthatweightNew*"+TString(weightBgenpt_PbPb)+"*"+TString(weightHiBin_PbPb)+"*"+TString(weightPVz_PbPb);
 TString weightmc_PbPb = "pthatweightNew*"+TString(weightBgenpt_PbPb)+"*"+TString(weightHiBin_PbPb)+"*"+TString(weightPVz_PbPb);
 
-TString weightgen="1";
 TString weightmc="1";
-TString weightdata="1";
-//TString weightdata = "(1/0.144708+TMath::Exp(-1.035696*(BptNew-15.321432))+TMath::Exp(-0.204131*(BptNew-30.289313)))";
 
 TString weightGtk1eta="(1.08472 + -0.282757*abs(Gtk1eta) + 0.146944*abs(Gtk1eta)*abs(Gtk1eta))";
 TString weightGtk2eta="(0.953683 + 0.127024*abs(Gtk2eta) + -0.0581856*abs(Gtk2eta)*abs(Gtk2eta))";

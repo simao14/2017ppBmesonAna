@@ -49,7 +49,7 @@ double maxhisto=6.;
 int nbinsmasshisto=100;
 Int_t _count=0;
 
-RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, float binmin, float binmax, int isMC, TString npfit, RooWorkspace& w, TString which_var){
+RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, float binmin, float binmax, TString npfit, RooWorkspace& w, TString which_var){
 	
 	//if (tree == "ntphi"){nbinsmasshisto = 50;} //100 bins is to much for bs case
 	if ( which_var == "Bpt" && ( (int)binmin == 50 & (int)binmax == 60) ){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case

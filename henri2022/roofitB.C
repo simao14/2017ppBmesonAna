@@ -19,7 +19,7 @@ int syst_study=0;
 // VALIDATION STUDIES
 int val=0;
 
-void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb = 0, int fitOnSaved = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString trgselection = "",  TString cut = "", TString cutmcgen = "", int isMC = 0, Double_t luminosity = 1., int doweight = 1, TString outputfile = "", TString outplotf = "", TString npfit = "", int doDataCor = 0, TString scale_file = "", TString jpsiFile = ""){
+void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString cut = "", TString outputfile = "", TString outplotf = "", TString npfit = "", TString jpsiFile = ""){
 
 	//Create the Folders
 	gSystem->mkdir("filesbp",true); 
@@ -29,9 +29,6 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 	double MyBackground;
 	double yield;
 	int _nBins = 1;
-	TString seldata;
-	TString selmc;
-	TString selmcgen;
 
 	if(varExp == "Bpt"){ 
 		if(full == 1){ _nBins = 1 ;}
@@ -62,38 +59,20 @@ void roofitB(int doubly = 0, TString tree = "ntphi", int full = 0, int usePbPb =
 	else if(varExp == "By"){ for(int c=0; c<_nBins+1; c++){_ptBins[c]=ybinsvec[c];} }
 	else if(varExp == "nMult"){for(int c=0; c<_nBins+1; c++){_ptBins[c]=nmbinsvec[c];}}
 
-std::cout<<"Variable "<< varExp << endl;
-cout << "Systematics " << syst_study << endl;
-cout << tree << " BINS: ";
-for(int t; t< (int) sizeof(_ptBins)/sizeof(_ptBins[0]);t++){cout <<"__"<<  _ptBins[t]<<"__";}
-cout << endl << endl;
-	
-	if (!(usePbPb==1||usePbPb==0)) std::cout<<"ERROR!!, you are using a non valid isPbPb option"<<std::endl;
-	bool isPbPb=(bool)(usePbPb);
+	std::cout<<"Variable "<< varExp << endl;
+	cout << "Systematics " << syst_study << endl;
+	cout << tree << " BINS: ";
+	for(int t; t< (int) sizeof(_ptBins)/sizeof(_ptBins[0]);t++){cout <<"__"<<  _ptBins[t]<<"__";}
+	cout << endl << endl;
+		
+	TString seldata;
+	TString selmc;
+	seldata = Form("(Bpt>0)&&%s",cut.Data());
+	selmc = Form("%s",cut.Data());
 
-	if(!isPbPb)
-	{
-		std::cout<<"DEBUG 4 !PbPb"<<std::endl;
-		seldata = Form("%s",trgselection.Data());
-		std::cout<<"DEBUG 5"<<std::endl;
-		selmc = Form("%s",cut.Data());
-		std::cout<<"DEBUG 6"<<std::endl;
-		selmcgen = Form("%s",cutmcgen.Data());
-		std::cout<<"DEBUG 7"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"DEBUG 4 else"<<std::endl;
-		seldata = Form("%s&&%s",trgselection.Data(),cut.Data());
-		std::cout<<"DEBUG 5"<<std::endl;
-		selmc = Form("%s",cut.Data());
-		std::cout<<"DEBUG 6"<<std::endl;
-		selmcgen = Form("%s",cutmcgen.Data());
-		std::cout<<"DEBUG 7"<<std::endl;
-		std::cout<<"cut = "<<cut<<std::endl;
-		std::cout<<"seldata= "<<seldata<<std::endl;
-		std::cout<<"selmc= "<<selmc<<std::endl;
-	}
+	std::cout<<"DEBUG"<<std::endl;
+	std::cout<<"seldata= "<<seldata<<std::endl;
+	std::cout<<"selmc= "<<selmc<<std::endl;
 
 	gStyle->SetTextSize(0.05);
 	gStyle->SetTextFont(42);
@@ -147,23 +126,10 @@ cout << endl << endl;
 	RooPlot* frame = new RooPlot();
 	RooHist* datahist = new RooHist();
 
-	//weightgen = weightgen_pp;
-	weightmc  = weightmc_pp;
-	if(usePbPb){
-		weightgen = weightgen_PbPb;
-		//weightmc = weightmc_PbPb;
-		if(doweight == 0 ) weightmc = "1"; 
-		if(doweight == 1) weightmc = "pthatweightNew";
-	    weightmc = "1"; 
-		std::cout<<"weights defined"<<std::endl;	
-				}
-
 	TString _prefix = "";
 	TString _isMC = "data";
-	if(isMC) _isMC = "mcAsData";
 	TString _isPbPb = "pp";
 
-	
 	dsMC = new RooDataSet(Form("dsMC%d",_count),"",skimtreeMC_new,RooArgSet(*mass, *pt, *y, *nMult, *trackSelection));
 	ds = new RooDataSet(Form("ds%d",_count),"",skimtree_new,RooArgSet(*mass, *pt, *y, *nMult, *trackSelection));
 	
@@ -294,9 +260,9 @@ cout << endl << endl;
 		h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 		hMC = new TH1D(Form("hMC%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 
-		if(isMC==1) skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("%s*(%s&&%s>%f&&%s<%f && BgenNew == 23333)*(1/%s)",weightmc.Data(),seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],weightdata.Data()));
-		else        skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],weightdata.Data()));
-		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass",           Form("%s*(%s&&%s>%f&&%s<%f)",weightmc.Data(),Form("%s&&BgenNew==23333",selmc.Data()),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1]));	
+		if(isMC==1) skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("%s*(%s&&%s>%f&&%s<%f && BgenNew == 23333)*(1/%s)","1",seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],"1"));
+		else        skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],"1"));
+		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass",           Form("%s*(%s&&%s>%f&&%s<%f)","1",Form("%s&&BgenNew==23333",selmc.Data()),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1]));	
 		
 		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
 		dhMC = new RooDataHist(Form("dhMC%d",_count),"",*mass,Import(*hMC));
@@ -307,7 +273,7 @@ cout << endl << endl;
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function for VARIABLE " << varExp.Data() << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp.Data());		
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], npfit, *ws, varExp.Data());		
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 		
@@ -521,7 +487,7 @@ cout << endl << endl;
 		if(syst_study==1){
 
 				for(int j=0; j<background.size(); j++){
-					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp);
+					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], npfit, *ws, varExp);
 					RooAbsPdf* model_back = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,background[j].c_str()));
 					TString chi2_fitRange = (background[j] == "mass_range") ? "m_range" : "all";
 					cout << "chi2_fitRange " << chi2_fitRange << endl;
@@ -572,7 +538,7 @@ cout << endl << endl;
 			general_err.push_back(max_back);
 
 			for(int j=0; j<signal.size(); j++){
-				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], isMC, npfit, *ws, varExp);
+				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], npfit, *ws, varExp);
 				RooAbsPdf* model_sig = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,signal[j].c_str()));
 				RooAbsPdf* modelMC_sig = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,signal[j].c_str()));
 				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);
