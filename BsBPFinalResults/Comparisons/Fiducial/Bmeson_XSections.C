@@ -101,95 +101,127 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 
 
 
-void Bmeson_XSections(int meson_n, int whichvar){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
                           
-    constexpr bool fidFONLL = true;
-	TString B_m ;
-	TString t_tree ;
-	TString b_m;
 	int NBins = 7;
 	int NBinsLow = 0  ;
   	int NBinsHigh = 0 ;
 	int NBins2015 = 0 ;
 	int lowend    ;
-	TString var_n;
-	TString var_N;
 	TString var_l;
 	TString Path_to_bin_Center = "../../../henri2022/ROOTfiles/" ;
+	TString bsbpbins = "";
 
-	if(meson_n == 0){t_tree = "ntKp"; B_m = "BP"; b_m = "bp";} 
-	if(meson_n == 1){t_tree = "ntphi"; 	B_m = "Bs"; b_m = "bs";}
-
-	if(meson_n == 0 && whichvar==0){
-		NBins = nptBinsBP;
-		var_n="pt";
-		var_N="PT";
+	if(whichvar == "pt"){
+	
+		if (meson_n=="BP" && BsBPBins==0){
+			NBins = nptBinsBP;
+			lowend = 1;
+			NBinsLow = 2 ;
+			NBinsHigh = 5;
+			NBins2015 = 5;
+			Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_pt.root" ;
+		} 
+		else if (BsBPBins==1 || meson_n == "Bs"){
+			NBins = nptBins;
+			lowend = 0;
+			NBinsLow = 1 ;
+			NBinsHigh = 3;
+			NBins2015 = 3;
+			
+			if (meson_n == "BP" ){
+				bsbpbins="_BsBPBINS";
+				Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_MatchingBINS_pt_BsBPBINS.root" ;
+			} else {
+				Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_pt.root" ;
+			}
+		}
 		var_l="p_{T} [GeV/c]";
-		lowend = 1;
-		NBinsLow = 2 ;
-		NBinsHigh = 5;
-		NBins2015 = 5;
-		Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_pt.root" ;
-	} 
-	if(meson_n == 1 && whichvar==0){
-		var_n="pt";
-		var_N="PT";
-		var_l="p_{T} [GeV/c]";
-		lowend = 0;
-		NBins = nptBins;
-		NBinsLow = 1 ;
-		NBinsHigh = 3;
-		NBins2015 = 3;
-		Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_pt.root" ;
-	}
-	if(whichvar==1){
+	
+	} if(whichvar=="y"){
 		NBins = nyBins_both;
-		var_n="y";
-		var_N="Y";
 		var_l="|y|";
 		lowend = 2;
 		NBinsLow = 3;
 		NBinsHigh = 2;
-		if(meson_n == 0) {	Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_y.root" ;} 
-		else if (meson_n == 1) {Path_to_bin_Center =  Path_to_bin_Center + "yields_Bs_binned_y.root";} 
-	}
-	if(whichvar==2){
+		if(meson_n == "BP"){Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_y.root" ;} 
+		else if (meson_n == "Bs") {Path_to_bin_Center =  Path_to_bin_Center + "yields_Bs_binned_y.root";} 
+	
+	} if(whichvar=="Mult"){
 		NBins = nmBins_both;
-		var_n="Mult";
-		var_N="Mult";
 		var_l="Mult";
 		lowend = 100;
 		NBinsLow = nmBins_both;         
-		if(meson_n == 0) {Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_Mult.root" ;} 
-		else if (meson_n == 1) {Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_Mult.root" ;} 
+		if(meson_n == "BP") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_Mult.root" ;} 
+		else if (meson_n == "Bs") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_Mult.root" ;} 
 	}
 
 	gSystem->mkdir("Plots/", true);
-	gSystem->mkdir(Form("Plots/%s",B_m.Data()), true);
+	gSystem->mkdir(Form("Plots/%s",meson_n.Data()), true);
 	
-	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYield%s.root",B_m.Data(),B_m.Data(),var_N.Data());
+	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYield%s.root",meson_n.Data(),meson_n.Data(),whichvar.Data());
 	TFile * FileB= new TFile(InfileB.Data());
 	
 	// BINS
 	double ptBins[NBins+1];
 	for(int i = 0; i < NBins + 1; i++){
-		if (whichvar==0){
-			if (meson_n==0){ ptBins[i] =  ptbinsvecBP[i];} 
-			else if (meson_n == 1){ptBins[i] =  ptbinsvec[i];}
+		if (whichvar=="pt"){
+			if (meson_n=="BP" && BsBPBins==0){ ptBins[i] =  ptbinsvecBP[i];} 
+			else if (meson_n=="Bs" || BsBPBins=1){ptBins[i] =  ptbinsvec[i];}
 		}
-		else if (whichvar==1){ ptBins[i] =  ybinsvec[i]; }          
-		else if (whichvar==2){ ptBins[i] =  nmbinsvec[i];}
+		else if (whichvar=="y"){ ptBins[i] =  ybinsvec[i]; }          
+		else if (whichvar=="Mult"){ ptBins[i] =  nmbinsvec[i];}
 	}
 
 	//center of the bin and its left and right margins
 	TFile* Dif_Plot = TFile::Open(Path_to_bin_Center, "READ");
 	TMultiGraph* multiGraph = dynamic_cast<TMultiGraph*>(Dif_Plot->Get("TG"));
     TGraphAsymmErrors* Agraph = dynamic_cast<TGraphAsymmErrors*>(multiGraph->GetListOfGraphs()->At(0));
-
 	float XsecPP_X[NBins];
 	float XsecPP_X_BinRight[NBins] ;
 	float XsecPP_X_BinLeft[NBins] ;
-
 	for( int c=0; c < NBins; c++){
 		XsecPP_X[c]= Agraph->GetX()[c];
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
@@ -206,7 +238,6 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	float BPXSecPPY2DErrUpRatio[NBins];
 	float BPXSecPPY2DErrDownRatio[NBins];
   
-  // cross section with pT < 10 scaled to full y
 	float BPXsecPPY2DScaled[NBins];
 	float BPXSecPPY2DErrUpScaled[NBins];
 	float BPXSecPPY2DErrDownScaled[NBins];
@@ -242,7 +273,7 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	}
 
 	//Syst Add Up PP//
-  	TString errorFile = Form("../../../2DMapSyst/OutFiles/%sError2D_%s.root", B_m.Data(),var_n.Data());
+  	TString errorFile = Form("../../../2DMapSyst/OutFiles/%sError2D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins);
   	TFile fError(errorFile);
 
 	TH1D * TnPSyst = (TH1D *) fError.Get("TnPSyst");
@@ -250,24 +281,24 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	TH1D * MCDataSyst = (TH1D *) fError.Get("MCDataSyst");
   	if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
 
-	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s.root", B_m.Data(),var_n.Data());
+	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins);
   	TFile fError1D(errorFile1D);
 
 	TH1D * TnPSyst1D = (TH1D *) fError1D.Get("TnPSyst");
 	TH1D * BptSyst1D = (TH1D *) fError1D.Get("BptSyst");
 	TH1D * MCDataSyst1D = (TH1D *) fError1D.Get("BDTSyst");
 
-	TString pdfErrorFile = Form("../../../syst_error/%s_pdf_%s.root",b_m.Data(),var_n.Data());
+	TString pdfErrorFile = Form("../../../syst_error/%s_pdf_%s%s.root",meson_n.Data(),whichvar.Data(),bsbpbins);
 	TFile fPdfError(pdfErrorFile);
-	TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",b_m.Data()));
+	TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",meson_n.Data()));
 	
-	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s.root",var_n.Data());
+	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s%s.root",whichvar.Data(),bsbpbins);
 	TFile fTrackSelError(trackSelErrorFile);
-	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", b_m.Data()));
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error%s", meson_n.Data()));
 
-	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s_1D.root",var_n.Data());
+	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s%s_1D.root",whichvar.Data(), bsbpbins);
 	TFile fTrackSelError1D(trackSelErrorFile1D);
-	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error", b_m.Data()));
+	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error", meson_n.Data()));
 
 	float XsecPP_Y_SystUp[NBins];
 	float XsecPP_Y_SystDown[NBins];
@@ -279,7 +310,7 @@ void Bmeson_XSections(int meson_n, int whichvar){
   // percent error
 
   	double B_nu;
-  	if (meson_n == 0){ B_nu = 2.4 ;}
+  	if (meson_n=="BP"){ B_nu = 2.4 ;}
   	else { B_nu = 4.8;}
 	double BPTrackingSyst[NBins];
 	for( int c=0; c < NBins; c++){ BPTrackingSyst[c]= B_nu ;}
@@ -347,7 +378,7 @@ void Bmeson_XSections(int meson_n, int whichvar){
   // Fixed, copied from the paper draft
 
 	double numb;
-	if(meson_n == 0){numb = 0.035;}
+	if(meson_n=="BP"){numb = 0.035;}
 	else {numb = 0.077;}
   	vector<float> globUncert(NBins, numb);
 	for(int i = 0; i < NBins; i++){
@@ -361,22 +392,22 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	gStyle->SetOptStat(0);
 	TCanvas * c = new TCanvas("c","c",600,600);
 	c->cd(); 
-	if (whichvar==0){c->SetLogy();}
+	if (whichvar=="pt"){c->SetLogy();}
 	c->SetLeftMargin(0.15);
 
 	//Setup histograms for different purposs
 	TH2D * HisEmpty;
-	if(whichvar==0) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,300.0,3000000);} 
+	if(whichvar=="pt") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,300.0,3000000);} 
 
-	if(meson_n == 0 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,1250000.0,10000000);}
-	if(meson_n == 1 && whichvar==1) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,220000.0,1250000);}
+	if(meson_n=="BP" && whichvar=="y") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,1250000.0,10000000);}
+	if(meson_n=="Bs" && whichvar=="y") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,220000.0,1250000);}
 
-	if(meson_n == 0 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,4200000);}   // need to adjust range for when we have nmult results
-	if(meson_n == 1 && whichvar==2) {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,600000);}
+	if(meson_n=="BP" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,4200000);}   // need to adjust range for when we have nmult results
+	if(meson_n=="Bs" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,600000);}
 
 	HisEmpty->GetXaxis()->SetTitle(var_l.Data());
-	if (whichvar==0) {HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");}
-	else {HisEmpty->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",var_n.Data()));}
+	if (whichvar=="pt") {HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");}
+	else {HisEmpty->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",whichvar.Data()));}
 	HisEmpty->GetXaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->CenterTitle();
 // CREATE THE CANVAS and the pads
@@ -465,17 +496,14 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	TGraphAsymmErrors *BP1DRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, XsecPP_X_High.data(), BP1DXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BP1DYSystDown_high.data(), BP1DYSystUp_high.data());
   // separate plots for different fiducial regions
  
-  	cout << endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
+  	cout << endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", meson_n.Data()) <<"  -------------------------------------------------------" << endl;
 
 	for(int i=0;i<NBins;i++){		
 		cout << "BIN " <<              Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.0f #pm (SYSTup) %.0f #pm (STATdown) %.0f #pm (SYSTdown) %.0f ",XsecPP_Y[i], XsecPP_Y_StatUp[i], XsecPP_Y_SystUp[i], XsecPP_Y_StatDown[i], XsecPP_Y_SystDown[i]) << endl;
 		cout << "(normalized) BIN " << Form("[%.1f,%.1f]  ",ptBins[i],ptBins[i+1]) << Form("%.0f #pm (STATup) %.1f #pm (SYSTup) %.1f #pm (STATdown) %.1f #pm (SYSTdown) %.1f ",XsecPP_Y[i], 100*XsecPP_Y_StatUp[i]/XsecPP_Y[i], 100*XsecPP_Y_SystUp[i]/XsecPP_Y[i], 100*XsecPP_Y_StatDown[i]/XsecPP_Y[i], 100*XsecPP_Y_SystDown[i]/XsecPP_Y[i]) << endl;
 	}
  
- 	cout<< endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", B_m.Data()) <<"  -------------------------------------------------------" << endl;
-
-
-
+ 	cout<< endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", meson_n.Data()) <<"  -------------------------------------------------------" << endl;
 
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
@@ -488,7 +516,7 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	BPRAAGraph_low ->SetMarkerStyle(24);
 	BPRAAGraph_low ->SetMarkerSize(1);
 
-	if (meson_n==0){
+	if (meson_n=="BP"){
 		BPRAAGraph_low ->SetMarkerColor(kGreen+2);
 		BPRAAGraph_low ->SetLineColor(kGreen+2);
 		BPRAAGraphSyst_low ->SetFillColorAlpha(kGreen-7,0.5);
@@ -538,22 +566,22 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	lat->SetTextFont(42);
 
 	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
-	if (meson_n == 0) {lat->DrawLatex(0.6,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
+	if (meson_n=="BP") {lat->DrawLatex(0.6,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
 	else {	lat->DrawLatex(0.6,0.7,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 
     TLegend* leged;
-	if (meson_n==0) {leged = new TLegend(0.65,0.6,0.9,0.7,NULL,"brNDC");}
+	if (meson_n=="BP") {leged = new TLegend(0.65,0.6,0.9,0.7,NULL,"brNDC");}
 	else {leged = new TLegend(0.65,0.6,0.9,0.7,NULL,"brNDC");}
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
-	if (whichvar==0){
+	if (whichvar=="pt"){
 		leged->AddEntry((TObject*)0, "y region:", "");
 		leged->AddEntry(BPRAAGraph,"|y|<2.4","P");
 		leged->AddEntry(BPRAAGraph_low,"|y|>1.5","P");
 	} 
-	if (whichvar==1){
+	if (whichvar=="y"){
 		leged->AddEntry((TObject*)0, "p_{T} region:", "");
-		if (meson_n==0){leged->AddEntry(BPRAAGraph,"5<p_{T}<60 GeV/c","P");}
+		if (meson_n=="BP"){leged->AddEntry(BPRAAGraph,"5<p_{T}<60 GeV/c","P");}
 		else {leged->AddEntry(BPRAAGraph,"7<p_{T}<50 GeV/c","P");}
 		leged->AddEntry(BPRAAGraph_low,"p_{T}>10 GeV/c","P");
 	} 
@@ -561,7 +589,7 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	leged->SetTextSize(0.022);
 	leged->Draw("same");
 
-	c->SaveAs(Form("Plots/%s_Xsection_%s.pdf", B_m.Data(), var_n.Data()));
+	c->SaveAs(Form("Plots/%s_Xsection_%s%s.pdf", meson_n.Data(), whichvar.Data()),bsbpbins);
 
 
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
@@ -570,7 +598,8 @@ void Bmeson_XSections(int meson_n, int whichvar){
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // 	COMPARISON OF 1D vs 2D methods
-	if (meson_n == 0) {lat->DrawLatex(0.65,0.6 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
+	if(BsBPBins==0){
+	if (meson_n=="BP") {lat->DrawLatex(0.65,0.6 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
 	else {	lat->DrawLatex(0.65,0.52,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 
 	BP1DRAAGraph->SetMarkerSize(0.8);
@@ -594,17 +623,17 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	BPRAAGraph_low->Draw("epSAME");
 	BPRAAGraph_low_just_marker->Draw("epSAME");
 
-	if (meson_n==0) {leged = new TLegend(0.65,0.67,0.9,0.75,NULL,"brNDC");}
+	if (meson_n=="BP") {leged = new TLegend(0.65,0.67,0.9,0.75,NULL,"brNDC");}
 	else {leged = new TLegend(0.65,0.6,0.9,0.68,NULL,"brNDC");}
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
-	if (whichvar==0){
+	if (whichvar=="pt"){
 		leged->AddEntry(BPRAAGraph,"2D","P");
 		leged->AddEntry(BPRAAGraph_low,"2D (|y|>1.5)","P");
 		leged->AddEntry(BP1DRAAGraph,"1D","P");
 		leged->AddEntry(BP1DRAAGraph_low,"1D (|y|>1.5)","P");
 	} 
-	if (whichvar==1){
+	if (whichvar=="y"){
 		leged->AddEntry(BPRAAGraph,"2D","P");
 		leged->AddEntry(BP1DRAAGraph,"1D","P");
 		leged->AddEntry(BPRAAGraph_low,"2D (p_{T}>10 GeV/c)","P");
@@ -613,14 +642,14 @@ void Bmeson_XSections(int meson_n, int whichvar){
 	leged->SetTextSize(0.020);
 	leged->Draw("same");
 
-	c->SaveAs(Form("Plots/%s/Bmeson_1D2Dcomp_%s.pdf", B_m.Data(), var_n.Data()));
+	c->SaveAs(Form("Plots/%s/Bmeson_1D2Dcomp_%s.pdf", meson_n.Data(), whichvar.Data()));
 // 	COMPARISON OF 1D vs 2D methods
 
 	string name;
 	TString whichvarname;
-	if(whichvar==0){name="$<p_T<$"; whichvarname="pt";} 
-	else if(whichvar==1){name="$<y<$"; whichvarname="y";} 
-	else if(whichvar==2){name="$<nTrks<$"; whichvarname="nMult";}
+	if(whichvar=="pt"){name="$<p_T<$"; whichvarname="pt";} 
+	else if(whichvar=="y"){name="$<y<$"; whichvarname="y";} 
+	else if(whichvar=="Mult"){name="$<nTrks<$"; whichvarname="nMult";}
 	
 	std::vector<std::string> col_name;
 	std::vector<std::string> col_name_diff;
@@ -671,10 +700,10 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		rename(("1D2DXseccomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/1D2DXseccomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 		rename(("1D2DXsecdiff_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/1D2DXsecdiff_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 	}
-	rename(("1D2DXseccomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (B_m.Data())+"/1D2DXseccomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
-	rename(("1D2DXsecdiff_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (B_m.Data())+"/1D2DXsecdiff_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
+	rename(("1D2DXseccomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (meson_n.Data())+"/1D2DXseccomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
+	rename(("1D2DXsecdiff_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (meson_n.Data())+"/1D2DXsecdiff_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
-
+	}
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -687,9 +716,10 @@ void Bmeson_XSections(int meson_n, int whichvar){
 		float BXSecPPYSystDown2015[NBins2015] ;
 		float BXSecPPYSystUp2015[NBins2015] ;
 
+
+if (whichvar=="pt" && BsBPBins == 0){
 //  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
 
-if (whichvar==0){
 	TGraphAsymmErrors *BPPbPbCrossGraph;
   	TGraphAsymmErrors *BPPbPbCrossGraphSyst;
 
@@ -712,7 +742,7 @@ if (whichvar==0){
 	}
 	// get the value for the histograms (check parameter.h)
 
-		if (meson_n == 0){
+		if (meson_n=="BP"){
 			BPPbPbCrossGraph      = new TGraphAsymmErrors(4, XsecPbPb_X_BP, XsecPbPb_Y_BP, XsecPbPb_XL_BP, XsecPbPb_XR_BP, XSecPbPb_BP_Y_StatDownRatio, XSecPbPb_BP_Y_StatUpRatio);
 			BPPbPbCrossGraphSyst  = new TGraphAsymmErrors(4, XsecPbPb_X_BP, XsecPbPb_Y_BP, XsecPbPb_XL_BP, XsecPbPb_XR_BP, XSecPbPb_BP_Y_SystDownRatio, XSecPbPb_BP_Y_SystUpRatio);
 		} else {
@@ -737,7 +767,7 @@ if (whichvar==0){
 			BPRAAGraph_low_just_marker->Draw("epSAME");
 
 			lat->DrawLatex(0.15,0.91 , "CMS work in progress");
-				if (meson_n == 0) {
+				if (meson_n=="BP") {
 					lat->DrawLatex(0.6,0.65 ,Form("2018 PbPb global Unc. #pm %.1f%%",3.9));
 					lat->DrawLatex(0.6,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;
 				} else {
@@ -748,7 +778,7 @@ if (whichvar==0){
 			TLegend* leg1 = new TLegend(0.65,0.74,0.9,0.85,NULL,"brNDC");
 			leg1->SetBorderSize(0);
 			leg1->SetFillStyle(0);
-			if(meson_n == 0) { leg1->AddEntry((TObject*)0, "B^{+}", "");}
+			if(meson_n=="BP") { leg1->AddEntry((TObject*)0, "B^{+}", "");}
 			else {leg1->AddEntry((TObject*)0, "B^{0}_{s}", "");}
 			leg1->AddEntry(BPRAAGraph,"2017 pp ","P");
 			leg1->AddEntry(BPRAAGraph_low,"2017 pp (|y|>1.5)","P");
@@ -756,12 +786,12 @@ if (whichvar==0){
 			leg1->SetTextSize(0.025);
 			leg1->Draw("same");
 
-			c->SaveAs(Form("Plots/%s_Xsection_%s_vsPbPb.pdf", B_m.Data(),var_n.Data()));
+			c->SaveAs(Form("Plots/%s_Xsection_%s_vsPbPb.pdf", meson_n.Data(),whichvar.Data()));
 
-//  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
-//2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
+	//  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
+	//2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
 
-		if(meson_n == 0) { 
+		if(meson_n=="BP") { 
 			for( int c=0; c <NBins2015; c++){ 
 				BXsecPPX2015[c]= vect_BPXsecPPX2015[c] ;
 				BXSecPPXErrDown2015[c]= vect_BPXSecPPXErrDown2015[c];
@@ -804,7 +834,7 @@ if (whichvar==0){
 	BPRAAGraph_low_just_marker->Draw("epSAME");
 
 	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
-				if (meson_n == 0) {
+				if (meson_n=="BP") {
 					lat->DrawLatex(0.62,0.65 ,Form("2015 pp global Unc. #pm %.1f%%",3.8));
 					lat->DrawLatex(0.62,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;
 				} else {
@@ -815,7 +845,7 @@ if (whichvar==0){
 			TLegend* lege = new TLegend(0.65,0.74,0.9,0.85,NULL,"brNDC");
 				lege->SetBorderSize(0);
 				lege->SetFillStyle(0);
-			if(meson_n == 0) { lege->AddEntry((TObject*)0, "B^{+}", "");}
+			if(meson_n=="BP") { lege->AddEntry((TObject*)0, "B^{+}", "");}
 			else {lege->AddEntry((TObject*)0, "B^{0}_{s}", "");}
 			lege->AddEntry(BPRAAGraph,"2017 pp ","P");
 			lege->AddEntry(BPRAAGraph_low,"2017 pp (|y|>1.5)","P");
@@ -823,14 +853,13 @@ if (whichvar==0){
 			lege->SetTextSize(0.025);
 			lege->Draw("same");
 
-			c->SaveAs(Form("Plots/%s_Xsection_%s_vs2015.pdf", B_m.Data(),var_n.Data()));
-}
-//2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
-//////////////////////////////////////////////////////////////////////////////////
+			c->SaveAs(Form("Plots/%s_Xsection_%s_vs2015.pdf", meson_n.Data(),whichvar.Data()));
 
-// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
-// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
-if (whichvar==0){
+	//2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
+	//////////////////////////////////////////////////////////////////////////////////
+
+	// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
+	// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 
  	gStyle->SetTickLength(0.04, "XYZ");
 	TCanvas * cr = new TCanvas("cr","cr",600,600);
@@ -853,7 +882,7 @@ if (whichvar==0){
 	MyPadr2->Draw();
 
 	TH2D * HisEmpty3;
-	if (meson_n == 0){
+	if (meson_n=="BP"){
 		HisEmpty3 = new TH2D("HisEmpty3","",100,ptBins[0],ptBins[NBins],100,0.5,1.5);
 		HisEmpty3->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	} else {
@@ -872,7 +901,7 @@ if (whichvar==0){
 		HisEmpty3->GetXaxis()->SetLabelSize(0.1);
 
     TFile * finFONLL ;
-	if(meson_n == 0){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
+	if(meson_n=="BP"){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
 	else{ finFONLL = new TFile("FONLLs/BsFONLL.root");}
 	finFONLL->cd();
 
@@ -885,7 +914,7 @@ if (whichvar==0){
 	BPFONLL->SetMarkerColor(kRed+2);
 
 	TFile * finFONLL2 ;
-	if(meson_n == 0){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
+	if(meson_n=="BP"){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
 	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
     finFONLL2->cd();
 	TGraphAsymmErrors *BFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
@@ -929,13 +958,13 @@ if (whichvar==0){
 
 	lat->SetTextSize(0.035); 
 	lat->DrawLatex(0.1,0.91 , "CMS work in progress");
-    if (meson_n == 0) {lat->DrawLatex(0.57,0.62 ,Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;}
+    if (meson_n=="BP") {lat->DrawLatex(0.57,0.62 ,Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;}
 	else {lat->DrawLatex(0.6,0.62,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 
 			TLegend* leg3 = new TLegend(0.6,0.68,0.9,0.85,NULL,"brNDC");
 				leg3->SetBorderSize(0);
 				leg3->SetFillStyle(0);
-			if(meson_n == 0) { leg3->AddEntry((TObject*)0, "B^{+}", "");}
+			if(meson_n=="BP") { leg3->AddEntry((TObject*)0, "B^{+}", "");}
 			else {leg3->AddEntry((TObject*)0, "B^{0}_{s}", "");}
 			leg3->AddEntry(BPRAAGraph,"2017 pp ","P");
 			leg3->AddEntry(BPRAAGraph_low,"2017 pp (|y|>1.5)","P");
@@ -946,7 +975,7 @@ if (whichvar==0){
 
 	MyPadr2->cd();
 	TLine * Unity2 = new TLine(0,0,0,0);
-	if (meson_n == 0){Unity2 = new TLine(5,1,60,1);}
+	if (meson_n=="BP"){Unity2 = new TLine(5,1,60,1);}
 	else {Unity2 = new TLine(7,1,50,1);}
 	Unity2->SetLineWidth(2);
 	Unity2->SetLineStyle(2);
@@ -1045,7 +1074,7 @@ for (int i=0;i<NBins;++i){
 
 	int color_mark =  kBlue + 2;
 	int color_syst = kBlue -3;
-	if(meson_n==0){	
+	if(meson_n=="BP"){	
 		color_mark = kGreen +2;
 		color_syst = kGreen -7;
 	}
@@ -1086,17 +1115,17 @@ for (int i=0;i<NBins;++i){
 	MyPadr->Update();
   
   	cr->SetLogy();   
-	cr->SaveAs(Form("Plots/%s_Xsection_%s_vsFONL.pdf", B_m.Data(),var_n.Data()));
+	cr->SaveAs(Form("Plots/%s_Xsection_%s_vsFONL.pdf", meson_n.Data(),whichvar.Data()));
 	//FONLL
 }
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 
 
-
+if(meson_n=="Bs" || BsBPBins == 1){}
 // Save Histogram for the Ratio of Bmesons
 	gSystem->mkdir("./ROOTFiles",true); 
-	TFile *ratio_f= new TFile(Form("./ROOTFiles/%s_Xsection_%s.root", B_m.Data(), var_n.Data()),"recreate");
+	TFile *ratio_f= new TFile(Form("./ROOTFiles/%s_Xsection_%s.root", meson_n.Data(), whichvar.Data()),"recreate");
 	ratio_f->cd();
 
 	TMultiGraph* mg = new TMultiGraph();
@@ -1110,24 +1139,24 @@ for (int i=0;i<NBins;++i){
 	gr_systerr->SetLineColor(2);
 	mg->Add(gr_systerr,"syst");
 
-	 if(whichvar==1){
+	 if(whichvar=="y"){
 		mg->GetXaxis()->SetTitle("Rapidity (y)");
-		mg->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",var_n.Data()));
+		mg->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",whichvar.Data()));
 		mg->GetXaxis()->SetLimits(0,2.4);
 	 }
-	 else if(whichvar==0){
+	 else if(whichvar=="pt"){
 		mg->GetXaxis()->SetTitle("p_{T}");
 		mg->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
-		if (meson_n == 0){ mg->GetXaxis()->SetLimits(0 ,80); }
-		if (meson_n == 1){ mg->GetXaxis()->SetLimits(0 ,60); }
+		if (meson_n=="BP"){ mg->GetXaxis()->SetLimits(0 ,80); }
+		if (meson_n=="Bs"){ mg->GetXaxis()->SetLimits(0 ,60); }
 	 }
-	 else if(whichvar==2){
+	 else if(whichvar=="Mult"){
 		 mg->GetXaxis()->SetTitle("Multiplicity (Mult)");
-		 mg->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",var_n.Data()));
+		 mg->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",whichvar.Data()));
 		 mg->GetXaxis()->SetLimits(0, 100);
 	 }
 
-	 mg->Write(Form("%s_Xsection_%s", B_m.Data(), var_n.Data()));
+	 mg->Write(Form("%s_Xsection_%s", meson_n.Data(), whichvar.Data()));
 	 
 	 ratio_f->Close();
 // Save Histogram for the Ratio of Bmesons
@@ -1137,12 +1166,11 @@ for (int i=0;i<NBins;++i){
 
 
 
-
-
+if(BsBPBins==0){
   // summary of errors (in ratio, not percent)
   gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,true );
   string outFile;
-  if(meson_n == 0){ outFile = "../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/corryield_pt_Bp_New.txt";}
+  if(meson_n=="BP"){ outFile = "../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/corryield_pt_Bp_New.txt";}
   else {outFile = "../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/corryield_pt_Bs_New.txt";}
   ofstream out;
   out.open(outFile);
@@ -1168,8 +1196,10 @@ for (int i=0;i<NBins;++i){
       setprecision(3) << XsecPP_X[i] << "\n";
   }
   out.close();
-
 }
+
+
+ }
 
 
 						

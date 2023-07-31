@@ -18,17 +18,14 @@ if opt.var == "Bpt":
     binsBP=7
     binsBs=4
     var_n = "pt"
-    var_N = "PT"
 elif opt.var == "By":
      binsBP=5
      binsBs=5
      var_n = "y"
-     var_N = "Y"
 elif opt.var == "nMult":
      binsBP=8
      binsBs=8
      var_n = "Mult"
-     var_N = "Mult"
 else:
     print("Invalid Input")
 
@@ -85,8 +82,8 @@ def get_pdf_syst(inFileList, outfile, hname, nbins, nshape):
     fout.Close()
     return
 
-get_pdf_syst(bp_pdf_list, "syst_error/bp_pdf_%s.root" % var_n, "bp_error", binsBP, [3, 4])
-get_pdf_syst(bs_pdf_list, "syst_error/bs_pdf_%s.root" % var_n, "bs_error", binsBs, [3, 3])
+get_pdf_syst(bp_pdf_list, "syst_error/BP_pdf_%s.root" % var_n, "BP_error", binsBP, [3, 4])
+get_pdf_syst(bs_pdf_list, "syst_error/Bs_pdf_%s.root" % var_n, "Bs_error", binsBs, [3, 3])
 
 def make_line(item, array, suf = '', form = '{:.2f}'):
     entry = [item.ljust(22)] + [form.format(num) + suf for num in array]
@@ -136,8 +133,8 @@ def read_tracking_syst(inYield, nbins):
     return g, out_table
 
 def get_tracking_syst(outfile, out_table):
-    in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_N
-    in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_N
+    in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_n
+    in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_n
     g_bp, t_bp = read_tracking_syst(in_file_bp, binsBP)
     g_bp.SetName('bp_track_sel_error')
     g_bs, t_bs = read_tracking_syst(in_file_bs, binsBs)
@@ -194,8 +191,8 @@ def read_tracking_syst1D(inYield, nbins):
     return g, out_table
 
 def get_tracking_syst1D(outfile, out_table):
-    in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_N
-    in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_N
+    in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % var_n
+    in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % var_n
     g_bp, t_bp = read_tracking_syst1D(in_file_bp, binsBP)
     g_bp.SetName('bp_track_sel_error')
     g_bs, t_bs = read_tracking_syst1D(in_file_bs, binsBs)

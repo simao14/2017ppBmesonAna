@@ -22,17 +22,9 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
 void Bmeson_Ratio(){
 
-//First Retrive the BP Xsection with matching bins
+    //First Retrive the BP Xsection with matching bins
 
-TString InfileBsBPBINS = Form("../../../EffAna/BP/FinalFiles/BPPPCorrYield_BsBPBINS_PT.root"); 
-TString Path_to_bin_Center = "../../../henri2022/ROOTfiles/" ;
-
-
-
-
-
-
-//First Retrive the BP Xsection with matching bins
+    //First Retrive the BP Xsection with matching bins
 
 // fs/fu 
 // pT Fragmentation Fraction

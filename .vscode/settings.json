@@ -99,6 +99,7 @@
         "yield_ratio.C": "cpp",
         "Bmeson_XSections.C": "cpp",
         "CMS_lumi.C": "cpp",
-        "Bmeson_Ratio.C": "cpp"
+        "Bmeson_Ratio.C": "cpp",
+        "yield_cs_ratio.C": "cpp"
     }
 }

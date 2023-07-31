@@ -92,10 +92,11 @@ XSEC_comp () {
     #python comppre.py                     #<----------------------- NOT RUNNING (FILE FROM CODE MISSING)
 
     cd BsBPFinalResults/Comparisons/Fiducial/
-    root -b -l -q Bmeson_XSections.C'(0,0)'
-    root -b -l -q Bmeson_XSections.C'(1,0)'
-    root -b -l -q Bmeson_XSections.C'(0,1)'
-    root -b -l -q Bmeson_XSections.C'(1,1)'
+    root -b -l -q Bmeson_XSections.C'("BP","pt")'
+    root -b -l -q Bmeson_XSections.C'("Bs","pt")'
+    root -b -l -q Bmeson_XSections.C'("BP","y")'
+    root -b -l -q Bmeson_XSections.C'("Bs","y")'
+    #root -b -l -q Bmeson_XSections.C'("BP","pt",1)'
     
     root -b -l -q Bmeson_Ratio.C
 
