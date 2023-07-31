@@ -614,7 +614,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	//BIN ANALYSIS END
 	//BIN ANALYSIS END
 	
-	TFile* outf = new TFile(Form("%s",outputfile.Data()),"recreate");
+	TFile* outf = new TFile(Form("%s.root",outputfile.Data()),"recreate");
 	outf->cd();
 	hPt->Write();		
 	outf->Close();	
