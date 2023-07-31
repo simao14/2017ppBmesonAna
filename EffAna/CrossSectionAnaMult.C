@@ -662,8 +662,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	for(int i = 0; i < NBins;i++){
 
-		RawCount = Y_RAW->GetY(i);
-		RawCountErr = Y_RAW->GetY(i);
+		RawCount = Y_RAW->GetY()[i];
+		RawCountErr = Y_RAW->GetY()[i];
 
 		cout << "RawCount = " << RawCount << "  RawCountErr = " << RawCountErr << " NewEff[i] =   " << NewEff[i] << "  NewEffErr[i] =  " << NewEffErr[i] << endl; 
 
@@ -698,8 +698,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TH1D * CorrDiffHisTight = (TH1D*) CorrDiffHis->Clone("hPtSigma_tight");
 
 	for(int i = 0; i < NBins;i++){
-		RawCount = Y_RAW->GetY(i);
-		RawCountErr = Y_RAW->GetY(i);
+		RawCount = Y_RAW->GetY()[i];
+		RawCountErr = Y_RAW->GetY()[i];
 		CorrYieldDiff[i] = (RawCount *  NewEff[i])/(BRchain*2* lumi);
 		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr *  NewEff[i]) *(RawCountErr  *  NewEff[i]) + (RawCount *  NewEffErr[i]) * (RawCount  *  NewEffErr[i]))/(BRchain*2* lumi);
 		CorrDiffHis->SetBinContent(i+1,CorrYieldDiff[i]);
@@ -744,8 +744,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 
 	for(int i = 0; i < NBins;i++){
-		RawCount = Y_RAW->GetY(i);
-		RawCountErr = Y_RAW->GetY(i);
+		RawCount = Y_RAW->GetY()[i];
+		RawCountErr = Y_RAW->GetY()[i];
 		CorrYieldDiff[i] = (RawCount /  NewEffReal[i])/(BRchain*2* lumi);
 		CorrYieldDiffErr[i] = TMath::Sqrt((RawCountErr /  NewEffReal[i]) *(RawCountErr  /  NewEffReal[i]) + (RawCount /NewEffReal[i] *  NewEffRealErr[i]) * (RawCount/NewEffReal[i]  *  NewEffRealErr[i]))/(BRchain*2* lumi);
 		CorrDiffHisReal->SetBinContent(i+1,CorrYieldDiff[i]);
@@ -869,8 +869,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	double YTemp;
 
 	for(int i = 0; i < NBins;i++){
-		RawCount = Y_RAW->GetY(i);
-		RawCountErr = Y_RAW->GetY(i);
+		RawCount = Y_RAW->GetY()[i];
+		RawCountErr = Y_RAW->GetY()[i];
 		Eff1D[i] = Eff1DHisvar->GetBinContent(i+1);
 		Eff1DErr[i] = Eff1DHisvar->GetBinError(i+1);
 
