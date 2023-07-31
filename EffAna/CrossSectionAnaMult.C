@@ -649,7 +649,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n,int usemc=0){
 	TFile * RawYieldTight;   
 	TMultiGraph * hPtTight;
 	RawYieldTight = new TFile(TString(fYield(0, fYield.Length() - 5)) + "_trk.root");
-	hPtTight = (TH1D *) RawYieldTight->Get("TG");
+	hPtTight = (TMultiGraph *) RawYieldTight->Get("TG")->GetListOfGraphs()->At(0);
 
 	double RawCount;
 	double RawCountErr;
