@@ -471,7 +471,7 @@ if(tree == "ntKp"){
 	leg->AddEntry(frame->findObject(Form("model%d_%s",_count,pdf.Data()))," Model","l");
 	leg->AddEntry(frame->findObject(Form("sig%d_%s",_count,pdf.Data()))," Signal","f");
 	leg->AddEntry(frame->findObject(Form("bkg%d_%s",_count,pdf.Data()))," Comb. Bkg.","l");
-	if(tree= "ntKp"){
+	if(tree== "ntKp"){
 		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B^{+} #rightarrow J/#psi #pi^{+}","f");
 		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
 	if(drawLegend){leg -> Draw();}

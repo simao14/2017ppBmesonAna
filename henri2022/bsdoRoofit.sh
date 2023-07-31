@@ -2,7 +2,8 @@ DOANALYSISPbPb_FULL_BS=0
 DOANALYSISPbPb_BINNED_PT_BS=0
 DOANALYSISPbPb_BINNED_Y_BS=0
 DOANALYSISPbPb_BINNED_MULT_BS=0
-DOANALYSISPbPb_BINNED_PT_BS_TRK=1
+
+DOANALYSISPbPb_BINNED_PT_BS_TRK=0
 DOANALYSISPbPb_BINNED_Y_BS_TRK=0
 DOANALYSISPbPb_BINNED_MULT_BS_TRK=0
 
@@ -26,6 +27,14 @@ OutputFile_BS_BINNED_PT="ROOTfiles/yields_Bs_binned_pt.root"
 OutputFile_BS_BINNED_PT_trk="ROOTfiles/yields_Bs_binned_pt_trk.root"
 OutputFile_BS_BINNED_MULT="ROOTfiles/yields_Bs_binned_Mult.root"
 OutputFile_BS_BINNED_MULT_trk="ROOTfiles/yields_Bs_binned_Mult_trk.root"
+
+
+#The Function to be called:
+#
+#void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString cut = "", TString outputfile = "", TString outplotf = "", TString jpsiFile = "", int BsBPBins = 0){
+#
+
+
 
 if [ $DOANALYSISPbPb_FULL_BS  -eq 1  ]; then
 root -b  -q 'roofitB.C+('\"ntphi\"','1','\"$Data_Bs\"','\"$MC_Bs\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BS_FULL\"','\"results/Bs/Bpt\"')'

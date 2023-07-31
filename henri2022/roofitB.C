@@ -19,7 +19,7 @@ int syst_study=0;
 // VALIDATION STUDIES
 int val=0;
 
-void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString cut = "", TString outputfile = "", TString outplotf = "", TString jpsiFile = ""){
+void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString cut = "", TString outputfile = "", TString outplotf = "", TString jpsiFile = "", int BsBPBins = 0){
 
 	//Create the Folders
 	gSystem->mkdir("filesbp",true); 
@@ -34,9 +34,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		if(full == 1){ _nBins = 1 ;}
 		else if(full == 0) {
 			if(tree=="ntphi"){ _nBins = nptBins;}
-			//if(tree=="ntphi"){ _nBins = nptBins_test;}
-			else if(tree=="ntKp"){ _nBins = nptBinsBP;}
-			//else if(tree=="ntKp"){ _nBins = nptBinsBP_test;}
+			else if(tree=="ntKp" && BsBPBins == 0){ _nBins = nptBinsBP;}
+			else if(tree=="ntKp" && BsBPBins == 1){ _nBins = nptBins;}
 		}
 	} 
 	else if(varExp == "By"){ _nBins = nyBins_both;}
@@ -51,9 +50,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptBins_fullBP[c];}}
 		} else if(full == 0) {
 			if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvec[c];}}
-			//if(tree=="ntphi"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvec_test[c];}}
-			else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvecBP[c];}}
-			//else if(tree=="ntKp"){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvecBP_test[c];}}
+			else if(tree=="ntKp" && BsBPBins == 0){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvecBP[c];}}
+			else if(tree=="ntKp" && BsBPBins == 1){for( int c=0; c<_nBins+1; c++){_ptBins[c]=ptbinsvec[c];}}
 	    }
 	} 
 	else if(varExp == "By"){ for(int c=0; c<_nBins+1; c++){_ptBins[c]=ybinsvec[c];} }
