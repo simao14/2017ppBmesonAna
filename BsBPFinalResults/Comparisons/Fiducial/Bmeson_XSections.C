@@ -143,7 +143,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 
 
 
-void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
+void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
                           
 	int NBins = 7;
 	int NBinsLow = 0  ;
@@ -156,7 +156,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 
 	if(whichvar == "pt"){
 	
-		if (meson_n=="BP" && BsBPBins==0){
+		if (meson_n=="BP" && BsBP==0){
 			NBins = nptBinsBP;
 			lowend = 1;
 			NBinsLow = 2 ;
@@ -164,7 +164,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 			NBins2015 = 5;
 			Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_pt.root" ;
 		} 
-		else if (BsBPBins==1 || meson_n == "Bs"){
+		else if (BsBP==1 || meson_n == "Bs"){
 			NBins = nptBins;
 			lowend = 0;
 			NBinsLow = 1 ;
@@ -208,8 +208,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	double ptBins[NBins+1];
 	for(int i = 0; i < NBins + 1; i++){
 		if (whichvar=="pt"){
-			if (meson_n=="BP" && BsBPBins==0){ ptBins[i] =  ptbinsvecBP[i];} 
-			else if (meson_n=="Bs" || BsBPBins==1){ptBins[i] =  ptbinsvec[i];}
+			if (meson_n=="BP" && BsBP==0){ ptBins[i] =  ptbinsvecBP[i];} 
+			else if (meson_n=="Bs" || BsBP==1){ptBins[i] =  ptbinsvec[i];}
 		}
 		else if (whichvar=="y"){ ptBins[i] =  ybinsvec[i]; }          
 		else if (whichvar=="Mult"){ ptBins[i] =  nmbinsvec[i];}
@@ -293,7 +293,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 	TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",meson_n.Data()));
 	
 	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s%s.root",whichvar.Data(),bsbpbins.Data());
-	cout << "AQUI " << trackSelErrorFile << endl;
+	cout << "AQUI " << trackSelErrorFile.Data() << endl;
 	TFile fTrackSelError(trackSelErrorFile);
 	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", meson_n.Data()));
 
@@ -599,7 +599,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 // 	COMPARISON OF 1D vs 2D methods
-	if(BsBPBins==0){
+	if(BsBP==0){
 	if (meson_n=="BP") {lat->DrawLatex(0.65,0.6 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
 	else {	lat->DrawLatex(0.65,0.52,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 
@@ -718,7 +718,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBPBins = 0){
 		float BXSecPPYSystUp2015[NBins2015] ;
 
 
-if (whichvar=="pt" && BsBPBins == 0){
+if (whichvar=="pt" && BsBP == 0){
 //  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
 
 	TGraphAsymmErrors *BPPbPbCrossGraph;
@@ -1123,7 +1123,7 @@ for (int i=0;i<NBins;++i){
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 
 
-if(meson_n=="Bs" || BsBPBins == 1){}
+if(meson_n=="Bs" || BsBP == 1){}
 // Save Histogram for the Ratio of Bmesons
 	gSystem->mkdir("./ROOTFiles",true); 
 	TFile *ratio_f= new TFile(Form("./ROOTFiles/%s_Xsection_%s.root", meson_n.Data(), whichvar.Data()),"recreate");
@@ -1167,7 +1167,7 @@ if(meson_n=="Bs" || BsBPBins == 1){}
 
 
 
-if(BsBPBins==0){
+if(BsBP==0){
   // summary of errors (in ratio, not percent)
   gSystem->mkdir("../../../MakeFinalPlots/NominalPlots/CrossSection/dataSource/" ,true );
   string outFile;
