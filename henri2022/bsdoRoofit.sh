@@ -20,13 +20,13 @@ CUTPbPb="Bpt>0"
 cut_trk_tight="(track>1)"
 
 mkdir -p ROOTfiles/
-OutputFile_BS_FULL="ROOTfiles/yields_Bs_full.root"
-OutputFile_BS_BINNED_Y="ROOTfiles/yields_Bs_binned_y.root"
-OutputFile_BS_BINNED_Y_trk="ROOTfiles/yields_Bs_binned_y_trk.root"
-OutputFile_BS_BINNED_PT="ROOTfiles/yields_Bs_binned_pt.root"
-OutputFile_BS_BINNED_PT_trk="ROOTfiles/yields_Bs_binned_pt_trk.root"
-OutputFile_BS_BINNED_MULT="ROOTfiles/yields_Bs_binned_Mult.root"
-OutputFile_BS_BINNED_MULT_trk="ROOTfiles/yields_Bs_binned_Mult_trk.root"
+OutputFile_BS_FULL="ROOTfiles/yields_Bs_full"
+OutputFile_BS_BINNED_Y="ROOTfiles/yields_Bs_binned_y"
+OutputFile_BS_BINNED_Y_trk="ROOTfiles/yields_Bs_binned_y_trk"
+OutputFile_BS_BINNED_PT="ROOTfiles/yields_Bs_binned_pt"
+OutputFile_BS_BINNED_PT_trk="ROOTfiles/yields_Bs_binned_pt_trk"
+OutputFile_BS_BINNED_MULT="ROOTfiles/yields_Bs_binned_Mult"
+OutputFile_BS_BINNED_MULT_trk="ROOTfiles/yields_Bs_binned_Mult_trk"
 
 
 #The Function to be called:

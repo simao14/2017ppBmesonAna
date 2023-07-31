@@ -606,11 +606,13 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		}
 		//VALIDATION STUDIES
 	}
+	//BIN ANALYSIS END
+	//BIN ANALYSIS END
 	
 	string Path;
 	if(tree == "ntphi"){ Path = "./filesbs/";}
 	else if (tree == "ntKp" && BsBPBins == 0){Path = "./filesbp/";}
-	else if (tree == "ntKp" && BsBPBins == 0){Path = "./filesbp/BsBPBINS_";}
+	else if (tree == "ntKp" && BsBPBins == 1){Path = "./filesbp/BsBPBINS_";}
 
 	std::ofstream myfile;
 	myfile.open (Path + "systematics_" + tree.Data() + ".txt");
@@ -685,7 +687,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		}
 		//These are only used to plot the systematics (PDF Var) in the same plot (it helps visualizing them!)
 
-
 		TGraph *binning= new TGraphAsymmErrors (_nBins,x,zero,low_high_b,low_high_b,zero,zero);
 		binning->SetMarkerColorAlpha(kBlack, 0); //transparent
 		binning->SetLineWidth(6);
@@ -699,7 +700,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		m_back_sig->Add(binning);
 		m_back_sig->GetXaxis()->SetTitle("p_{T}");
 		m_back_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
-
 
 		TCanvas* c_back= new TCanvas("c_back","",700,700);
 		TLegend *legback = new TLegend(0.62,0.77,0.89,0.89,NULL,"brNDC"); 
@@ -734,7 +734,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		legback->Draw();
 		c_back->SaveAs(Form("./results/tables/background_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
-
 		TCanvas* c_sig= new TCanvas("c_sig","",700,700);
 		TLegend *legsig = new TLegend(0.62,0.8,0.89,0.75,NULL,"brNDC"); 
 		if (tree == "ntphi"){legsig = new TLegend(0.75,0.8,0.89,0.89,NULL,"brNDC");}
@@ -760,7 +759,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		legsig->AddEntry(g_sig,siglabel[j],"p");
 		legsigback->AddEntry(g_sig,siglabel[j],"p");
 
-}
 	m_sig->Add(binning);
 	m_sig->GetXaxis()->SetTitle("p_{T}");
 	m_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
@@ -816,11 +814,13 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 	}
 
+
+
 // Differential plot part starts
 	gSystem->mkdir("./results/Graphs",true); 
 	TString Bsbpbins= "";
-	if(tree == "ntKp" && BsBPBins == 1){Bsbpbins = "BsBP_BINS_";}
-	TFile *ratio_f= new TFile(Form("%s%s",Bsbpbins.Data(), outputfile.Data()),"recreate");
+	if(tree == "ntKp" && BsBPBins == 1){Bsbpbins = "_BsBPBINS";}
+	TFile *ratio_f= new TFile(Form("%s%s.root", outputfile.Data(), Bsbpbins.Data(),),"recreate");
 	ratio_f->cd();
 	
 	 TCanvas c_diff;
