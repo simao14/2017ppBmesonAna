@@ -35,7 +35,7 @@ bpEff () {
     echo "Takes BPw.root as input"
     ls -l BDTWeights/BPw.root
 
-    root -b -l -q MCEff.C'(1,0,0)' > effbp.log
+    #root -b -l -q MCEff.C'(1,0,"BP")' > effbp.log
     wait
     root -b -l -q CrossSectionAnaMult.C'(1,1,0)'  #(TnPon =1 noTnP=0 , pT=0,y=1,mult=2 , data =0 mc = 1)
     root -b -l -q CrossSectionAnaMult.C'(1,0,0)'
@@ -47,7 +47,7 @@ bsEff () {
     echo "Takes Bsw.root as input"
     ls -l BDTWeights/Bsw.root
 
-    root -b -l -q MCEff.C'(1,0,1)' > effbs.log
+    #root -b -l -q MCEff.C'(1,0,"Bs")' > effbs.log
     wait
     root -b -l -q CrossSectionAnaMult.C'(1,1,1)'  #(TnPon =1 noTnP=0 , pT=0,y=1,mult=2 , data =0 mc = 1)
     root -b -l -q CrossSectionAnaMult.C'(1,0,1)'
@@ -101,7 +101,7 @@ XSEC_comp () {
     root -b -l -q Bmeson_XSections.C'("Bs","y")'
     #root -b -l -q Bmeson_XSections.C'("BP","pt",1)'
     
-    root -b -l -q Bmeson_Ratio.C
+    #root -b -l -q Bmeson_Ratio.C
 
     #python syst_table.py                  #<----------------------- NOT RUNNING
     cd ../../..

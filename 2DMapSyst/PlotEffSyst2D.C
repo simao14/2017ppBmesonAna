@@ -80,7 +80,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	system(("open " + filename + "_check.pdf").c_str());
 }
 
-void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0,, int usemc=0){
+void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 
 	TString var_l;
 	int NBins = 7;

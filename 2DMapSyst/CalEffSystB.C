@@ -39,7 +39,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		} else if(meson_n == "Bs" || BsBP==1){
 			NBins = nptBins;
 			var_l="p_{T} [GeV/c]";
-			if (meson_n == "BP"){bsbpbins == "_BsBPBINS";}
+			if (meson_n == "BP"){bsbpbins = "_BsBPBINS";}
 		}
 	
 	} else if(whichvar =="y"){

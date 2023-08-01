@@ -29,33 +29,30 @@ using std::endl;
 bool reweightPtOnY = true;
 
 
-void  MCEff(int DoTnP, int Rescale, int meson_n){
+void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	
 	int NCand;
-	TString var_n;
 	TString var_N;
-	if (meson_n == 0){
-		var_n="BP";
+	if (meson_n == "BP"){
 		var_N="B^{+}";
 		NCand = 13000;
 	}
 	else {
-		var_n="Bs";
 		var_N="B^{0}_{s}";
 		NCand = 8000;
 	}
 
-	gSystem->mkdir( var_n.Data() , true);
-	gSystem->mkdir( Form("%s/Syst",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/NewEff2DMaps",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/1DEffPlots",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/TnPHis",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/MuonInfoPlots",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/Eff2DMapTnP",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/Plot1DEfficiency",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/Plot1DEfficiency/Pt",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/Plot1DEfficiency/Mult",var_n.Data()) , true);
-	gSystem->mkdir( Form("%s/Plot1DEfficiency/By",var_n.Data()) , true);
+	gSystem->mkdir( meson_n.Data() , true);
+	gSystem->mkdir( Form("%s/Syst",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/NewEff2DMaps",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/1DEffPlots",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/TnPHis",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/MuonInfoPlots",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Eff2DMapTnP",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency/Pt",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency/Mult",meson_n.Data()) , true);
+	gSystem->mkdir( Form("%s/Plot1DEfficiency/By",meson_n.Data()) , true);
 
 	gStyle->SetOptStat(0);
 
@@ -64,11 +61,11 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 	TString infile;
 	TString infile2;
-	if (meson_n==0){
-		infile = Form("/data3/tasheng/presel/output/_%s_MC_BDTs_nom_tnp.root",var_n.Data());
+	if (meson_n == "BP"){
+		infile = Form("/data3/tasheng/presel/output/_%s_MC_BDTs_nom_tnp.root",meson_n.Data());
 	}
-	if (meson_n==1){
-		infile = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",var_n.Data());
+	if (meson_n == "Bs"){
+		infile = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",meson_n.Data());
 	}
 
 	TFile * fin = new TFile(infile.Data());
@@ -76,7 +73,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	fin->cd();
 
 	TTree * tree;
-	if (meson_n == 0){tree = (TTree * ) fin->Get("Bfinder/ntKp");}
+	if (meson_n == "BP"){tree = (TTree * ) fin->Get("Bfinder/ntKp");}
 	else {tree = (TTree * ) fin->Get("Bfinder/ntphi");}
 
 	//	TTree * BDT = (TTree * ) fin->Get("BDT");
@@ -118,7 +115,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TTree * BDT4 = (TTree *) fin->Get(BDT4Name.Data());
 	TTree * BDT5 = (TTree *) fin->Get(BDT5Name.Data());
 	TTree * BDT6 ;
-	if (meson_n==0){
+	if (meson_n == "BP"){
 		BDT2 = (TTree *) fin->Get(BDT2Name.Data());
 		BDT6 = (TTree *) fin->Get(BDT6Name.Data());
 	}
@@ -131,7 +128,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TTree * root = (TTree * ) fin->Get("Bfinder/root");  //reconstructed variable
 	rootGen = (TTree * ) fin->Get("Bfinder/root");
 
-	//if (meson_n==0){rootGen = (TTree * ) fin2->Get("Bfinder/hi");} //gen variable
+	//if (meson_n == "BP"){rootGen = (TTree * ) fin2->Get("Bfinder/hi");} //gen variable
 	//else {rootGen = (TTree * ) fin->Get("Bfinder/root");}
 
 	TTree * TnPInfo = (TTree *) fin->Get("TnPInfo");
@@ -330,7 +327,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	BDT4->SetBranchAddress("BDT_pt_10_15",BDT_pt_10_15);
 	BDT5->SetBranchAddress("BDT_pt_15_20",BDT_pt_15_20);
 	
-	if (meson_n==0){
+	if (meson_n == "BP"){
 		BDT2->SetBranchAddress("BDT_pt_5_7",BDT_pt_5_7);
 		BDT6->SetBranchAddress("BDT_pt_20_50",BDT_pt_20_50);
 	}
@@ -348,7 +345,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	BDT4->SetBranchAddress("BDT_pt_New_10_15",BDT_pt_10_15);
 	BDT5->SetBranchAddress("BDT_pt_New_15_20",BDT_pt_15_20);
 	
-	if (meson_n==0){
+	if (meson_n == "BP"){
 		BDT2->SetBranchAddress("BDT_pt_New_5_7",BDT_pt_5_7);
 		BDT6->SetBranchAddress("BDT_pt_New_20_50",BDT_pt_20_50);
 	}
@@ -557,7 +554,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
   };
   	
   std::vector<double> bptBinVec;
-  if (meson_n == 0){bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});}
+  if (meson_n == "BP"){bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});}
   else {bptBinVec = createBins({0, 10, 40, 50}, {1/8., 1/4., 1/2.});}
   auto BptBinning = bptBinVec.data();
   const int BptBin = bptBinVec.size() - 1;
@@ -666,9 +663,9 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	int NPtBins1D =0 ;
 	double  PtBin1D[NPtBins1D + 1];
 
-	if (meson_n == 0){NPtBins1D = nptBinsBP;}
+	if (meson_n == "BP"){NPtBins1D = nptBinsBP;}
 	else {NPtBins1D = nptBins;}
-	if (meson_n == 0){for (int i=0;i<NPtBins1D+1;i++){PtBin1D[i] = ptbinsvecBP[i];}}
+	if (meson_n == "BP"){for (int i=0;i<NPtBins1D+1;i++){PtBin1D[i] = ptbinsvecBP[i];}}
 	else{for (int i=0;i<NPtBins1D+1;i++){PtBin1D[i] = ptbinsvec[i];}}
 
 	//const int nyBins_both = 12;
@@ -756,7 +753,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	
 
 
-	TFile * finBDTWeight = new TFile(Form("BDTWeights/%sw.root",var_n.Data()));
+	TFile * finBDTWeight = new TFile(Form("BDTWeights/%sw.root",meson_n.Data()));
 
 	TH1D * weights_BDT_pt_5_7 ;
 	TH1D * weights_BDT_pt_7_10 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_7_10");
@@ -764,7 +761,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TH1D * weights_BDT_pt_15_20 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_15_20");
 	TH1D * weights_BDT_pt_20_50 ;
 
-	if (meson_n==0){
+	if (meson_n == "BP"){
 		weights_BDT_pt_5_7 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_5_7");
 		weights_BDT_pt_20_50 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_20_50");
 	}
@@ -873,10 +870,10 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.000000/(x*x) +0.435893*TMath::Log(x) - 0.116910",0,100);
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.070585/x**(8.245110) + 0.833796 + 0.016723 * x",0,100);
 	TF1 * BptWFunc;
-	if (meson_n==0){BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);}
+	if (meson_n == "BP"){BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);}
 	else {BptWFunc = new TF1("BptWFunc","10.120482/x**(1.847846) + 0.634875 + 0.013032 * x",0,100);}
 
-  TFile fBptWeight(Form("../NewBptStudies/ResultFile/BptWeight_%s.root",var_n.Data()));
+  TFile fBptWeight(Form("../NewBptStudies/ResultFile/BptWeight_%s.root",meson_n.Data()));
   std::map<int, TF1*> BptWtF;
   if (reweightPtOnY) {
     for (auto iy = 0; iy < nyBins_both; ++iy) {
@@ -1294,13 +1291,13 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	TString outfileName;
 
 	if(Rescale == 0){
-		if(DoTnP == 0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP.root",var_n.Data());
-		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDT.root",var_n.Data());
+		if(DoTnP == 0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP.root",meson_n.Data());
+		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDT.root",meson_n.Data());
 	}
 	
 	if(Rescale == 1){
 
-		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew.root",var_n.Data());
+		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew.root",meson_n.Data());
 	}
 
 	TFile * fout = new TFile(outfileName.Data(),"RECREATE");
@@ -1316,7 +1313,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	bool passTrackingLoose;
 
 	double ptlow;
-	if (meson_n==0){ptlow=5;}
+	if (meson_n == "BP"){ptlow=5;}
 	else {ptlow=7;}
 
 	for(int i = 0; i < NEvents; i++){
@@ -1340,7 +1337,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		BDT4->GetEntry(i);
 		BDT5->GetEntry(i);
 		
-		if (meson_n==0){
+		if (meson_n == "BP"){
 			BDT2->GetEntry(i);
 			BDT6->GetEntry(i);
 		}
@@ -1355,7 +1352,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		
 
 		for(int j = 0; j < Bsize; j++){
-		if (meson_n==0){
+		if (meson_n == "BP"){
       	 	passBDT = ((Bpt[j] > 5 && Bpt[j] < 7 && BDT_pt_5_7[j] > 0.08)
                       || (Bpt[j] > 7 && Bpt[j] < 10 && BDT_pt_7_10[j] > 0.07)
                       || (Bpt[j] > 10 && Bpt[j] < 15 && BDT_pt_10_15[j] > 0)
@@ -1411,7 +1408,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
                   < chi2Nlayer[cut]);
         };
 
-	  if (meson_n==0){
+	  if (meson_n == "BP"){
 		passTracking = passTrackingBP(Tracking::standard);
 		passTrackingLoose = passTrackingBP(Tracking::loose);
 		passTrackingTight = passTrackingBP(Tracking::tight);
@@ -1651,7 +1648,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 	
 				BDTWeight = 1;
 
-				if(Bpt[j] < 7 && Bpt[j] > 5 && meson_n==0){
+				if(Bpt[j] < 7 && Bpt[j] > 5 && meson_n == "BP"){
 					BDTWeightBin = weights_BDT_pt_5_7->GetXaxis()->FindBin(BDT_pt_5_7[j]);
 					BDTWeight = weights_BDT_pt_5_7->GetBinContent(BDTWeightBin);
 				}	
@@ -1671,12 +1668,12 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 					BDTWeight = weights_BDT_pt_15_20->GetBinContent(BDTWeightBin);	
 				}
 				
-				if(Bpt[j] < 50 && Bpt[j] > 20 && meson_n==0){
+				if(Bpt[j] < 50 && Bpt[j] > 20 && meson_n == "BP"){
 					BDTWeightBin = weights_BDT_pt_20_50->GetXaxis()->FindBin(BDT_pt_20_50[j]);
 					BDTWeight = weights_BDT_pt_20_50->GetBinContent(BDTWeightBin);
 				}
 
-				if(Bpt[j] < 60 && Bpt[j] > 50 && meson_n==0) BDTWeight = 1;
+				if(Bpt[j] < 60 && Bpt[j] > 50 && meson_n == "BP") BDTWeight = 1;
 
 				BDTWeightHisSyst->Fill(Bpt[j],abs(By[j]),TotalWeight * BDTWeight);
 
@@ -1736,7 +1733,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 			//	PVzWeight = (0.163562 * TMath::Exp(- 0.021039 * (PVz - 0.426587)*(PVz - 0.426587)))/(0.159629 * TMath::Exp(- 0.020014 * (PVz - 0.589381)*(PVz - 0.589381)));
 
 			//	PVzWeight = (TMath::Gaus(PVz,0.432315,4.874300)/(sqrt(2*3.14159)*4.874300))/(TMath::Gaus(PVz,0.909938,4.970989)/(sqrt(2*3.14159)*4.970989));
-      if (meson_n==0){
+      if (meson_n == "BP"){
 	  	PVzWeight = (0.013245 * TMath::Exp(-(PVz-0.753876)*(PVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(PVz-0.608178)*(PVz-0.608178)/(2 * 5.785230 * 5.785230)));
 	  }
 	  else{
@@ -1754,7 +1751,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		
 			//	EventWeight = PVzWeight * BptWeight * weight;
 
-				if (meson_n==0){ 
+				if (meson_n == "BP"){ 
 					genselect = TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0;
 					genselect2 = TMath::Abs(Gtk1eta[j])<2.4;
 				}
@@ -2161,7 +2158,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		leg->AddEntry(Eff1DHisTnPDown,"T&P Variation Down","PL");
 		leg->Draw("same");
 
-		cSyst->SaveAs(Form("%s/Syst/TnPSyst.png",var_n.Data()));
+		cSyst->SaveAs(Form("%s/Syst/TnPSyst.png",meson_n.Data()));
 
 
 
@@ -2184,7 +2181,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		leg2->Draw("same");
 
 
-		cSyst->SaveAs(Form("%s/Syst/BDTWeighted.png",var_n.Data()));
+		cSyst->SaveAs(Form("%s/Syst/BDTWeighted.png",meson_n.Data()));
 
 
 
@@ -2209,7 +2206,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		leg3->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 		leg3->Draw("same");
 
-		cSyst->SaveAs(Form("%s/Syst/BptWeighted.png",var_n.Data()));
+		cSyst->SaveAs(Form("%s/Syst/BptWeighted.png",meson_n.Data()));
 
 
 
@@ -2551,7 +2548,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		legMult->AddEntry(Eff1DHisTnPDownMult,"T&P Variation Down","PL");
 		legMult->Draw("same");
 
-		cSyst->SaveAs(Form("%s/Syst/TnPSystMult.png",var_n.Data()));
+		cSyst->SaveAs(Form("%s/Syst/TnPSystMult.png",meson_n.Data()));
 
 
 
@@ -2574,7 +2571,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		leg2Mult->Draw("same");
 
 
-		cSyst->SaveAs(Form("%s/Syst/BDTWeightedMult.png",var_n.Data()));
+		cSyst->SaveAs(Form("%s/Syst/BDTWeightedMult.png",meson_n.Data()));
 
 
 
@@ -2599,7 +2596,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		leg3Mult->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 		leg3Mult->Draw("same");
 
-		cSyst->SaveAs(Form("%s/Syst/BptWeightedMult.png",var_n.Data()));
+		cSyst->SaveAs(Form("%s/Syst/BptWeightedMult.png",meson_n.Data()));
 
 		TCanvas * cSyst_y  = new TCanvas("cSyst_y","cSyst_y",600,600);
 		cSyst_y->cd();
@@ -2629,7 +2626,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		legY->AddEntry(Eff1DHisTnPDownY,"T&P Variation Down","PL");
 		legY->Draw("same");
 
-		cSyst_y->SaveAs(Form("%s/Syst/TnPSystY.png",var_n.Data()));
+		cSyst_y->SaveAs(Form("%s/Syst/TnPSystY.png",meson_n.Data()));
 
 		//2D shits
 
@@ -2874,14 +2871,14 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEff2DBDTSyst->Write();
 		invEff2DBptSyst->Write();
 
-		TFile * fout2 = new TFile(Form("%s/%sMuonInfoPlots_%d_%d.root",var_n.Data(),var_n.Data(),ptmin,ptmax),"RECREATE");
+		TFile * fout2 = new TFile(Form("%s/%sMuonInfoPlots_%d_%d.root",meson_n.Data(),meson_n.Data(),ptmin,ptmax),"RECREATE");
 		fout2->cd();
 
 		TCanvas *c = new TCanvas("c","c",600,600);
 		c->cd();
 
 		Eff1DHis->Draw("ep");
-		c->SaveAs(Form("%s/1DEffPlots/Eff1DHis.png",var_n.Data()));
+		c->SaveAs(Form("%s/1DEffPlots/Eff1DHis.png",meson_n.Data()));
 
 		for(int i = 0; i < NPtBins; i ++){
 
@@ -2893,34 +2890,34 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 
 		TnPSFHis->Draw();
-		c->SaveAs(Form("%s/TnPHis/TnPSFHis.png",var_n.Data()));
+		c->SaveAs(Form("%s/TnPHis/TnPSFHis.png",meson_n.Data()));
 
 		TnPSFHisMu1->Draw();
-		c->SaveAs(Form("%s/TnPHis/TnPSFHisMu1.png",var_n.Data()));
+		c->SaveAs(Form("%s/TnPHis/TnPSFHisMu1.png",meson_n.Data()));
 
 		TnPSFHisMu2->Draw();
-		c->SaveAs(Form("%s/TnPHis/TnPSFHisMu2.png",var_n.Data()));
+		c->SaveAs(Form("%s/TnPHis/TnPSFHisMu2.png",meson_n.Data()));
 
 
 
 		Bmu1ptHis->Draw();
-		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1ptHis.png",var_n.Data()));
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1ptHis.png",meson_n.Data()));
 
 		Bmu2ptHis->Draw();
-		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2ptHis.png",var_n.Data()));
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2ptHis.png",meson_n.Data()));
 
 
 		Bmu1etaHis->Draw();
-		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1etaHis.png",var_n.Data()));
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1etaHis.png",meson_n.Data()));
 
 		Bmu2etaHis->Draw();
-		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2etaHis.png",var_n.Data()));
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2etaHis.png",meson_n.Data()));
 
 		Bmu1TrgSF->Draw();
-		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1TrgSF.png",var_n.Data()));
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu1TrgSF.png",meson_n.Data()));
 
 		Bmu2TrgSF->Draw();
-		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2TrgSF.png",var_n.Data()));
+		c->SaveAs(Form("%s/MuonInfoPlots/Bmu2TrgSF.png",meson_n.Data()));
 
 		Bmu1ptHis->Write();
 		Bmu2ptHis->Write();
@@ -2944,7 +2941,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEff2DTnPSystUp->SetTitle("");
 
 		invEff2DTnPSystUp->Draw("COLZ");
-		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Up.png",var_n.Data()));
+		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Up.png",meson_n.Data()));
 
 
 
@@ -2957,7 +2954,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		invEff2DTnPSystDown->SetTitle("");
 
 		invEff2DTnPSystDown->Draw("COLZ");
-		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Down.png",var_n.Data()));
+		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Down.png",meson_n.Data()));
 
 
 		TCanvas * c1DSave = new TCanvas("c1DSave","c1DSave",600,600);
@@ -2965,87 +2962,87 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 		
 
 		Acc1DHis->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHis.png",meson_n.Data()));
 	
 		Sel1DHis->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHis.png",meson_n.Data()));
 
 		Eff1DHis->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHis.png",meson_n.Data()));
 
 		Acc1DHisFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHisFid.png",meson_n.Data()));
 	
 		Sel1DHisFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHisFid.png",meson_n.Data()));
 
 		Eff1DHisFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHisFid.png",meson_n.Data()));
 
 		Acc1DHisFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHisFid10.png",meson_n.Data()));
 	
 		Sel1DHisFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Sel1DHisFid10.png",meson_n.Data()));
 
 		Eff1DHisFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Eff1DHisFid10.png",meson_n.Data()));
 
 		Acc1DHisMult->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHis.png",meson_n.Data()));
 	
 		Sel1DHisMult->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHis.png",meson_n.Data()));
 
 		Eff1DHisMult->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHis.png",meson_n.Data()));
 
 		Acc1DHisMultFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHisFid.png",meson_n.Data()));
 	
 		Sel1DHisMultFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHisFid.png",meson_n.Data()));
 
 		Eff1DHisMultFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHisFid.png",meson_n.Data()));
 
 		Acc1DHisMultFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Acc1DHisFid10.png",meson_n.Data()));
 	
 		Sel1DHisMultFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Sel1DHisFid10.png",meson_n.Data()));
 
 		Eff1DHisMultFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Mult/Eff1DHisFid10.png",meson_n.Data()));
 
 		Acc1DHisY->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHis.png",meson_n.Data()));
 	
 		Sel1DHisY->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHis.png",meson_n.Data()));
 
 		Eff1DHisY->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHis.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHis.png",meson_n.Data()));
 
 		Acc1DHisYFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHisFid.png",meson_n.Data()));
 	
 		Sel1DHisYFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHisFid.png",meson_n.Data()));
 
 		Acc1DHisYFid->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid.png",meson_n.Data()));
 
 		Acc1DHisYFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Acc1DHisFid10.png",meson_n.Data()));
 	
 		Sel1DHisYFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Sel1DHisFid10.png",meson_n.Data()));
 
 		Eff1DHisYFid10->Draw("ep");
-		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid10.png",var_n.Data()));
+		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid10.png",meson_n.Data()));
 
-		TFile * foutSyst = new TFile(Form("%s/NewEff2DMaps/%sSyst.root",var_n.Data(),var_n.Data()),"RECREATE");
+		TFile * foutSyst = new TFile(Form("%s/NewEff2DMaps/%sSyst.root",meson_n.Data(),meson_n.Data()),"RECREATE");
 		foutSyst->cd();
 		
 		Eff1DHisTnPUp->Write();
@@ -3081,7 +3078,7 @@ void  MCEff(int DoTnP, int Rescale, int meson_n){
 
 
 
-		TFile * foutSyst2D = new TFile(Form("%s/NewEff2DMaps/%sSyst2D.root",var_n.Data(),var_n.Data()),"RECREATE");
+		TFile * foutSyst2D = new TFile(Form("%s/NewEff2DMaps/%sSyst2D.root",meson_n.Data(),meson_n.Data()),"RECREATE");
 
 		invEff2D->Write();
 		invEff2DTnPSystUp->Write();
