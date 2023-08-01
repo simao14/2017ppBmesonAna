@@ -751,7 +751,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	TFile * foutCorr;
 	TString bsbp_str = "";
-	if(BsBP==1) {bsbp_str = "_bsbpbins_"}
+	if(BsBP==1) {bsbp_str = "_bsbpbins_";}
 	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("%s/FinalFiles/%s%sPPCorrYield%sNoTnP.root",var_n.Data(),bsbp_str.Data(),var_n.Data(),var_file.Data()),"RECREATE");
 	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("%s/FinalFiles/%s%sPPCorrYield%s.root",var_n.Data(),bsbp_str.Data(),var_n.Data(),var_file.Data()),"RECREATE");
 	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("%s/FinalFiles/%s%sPPCorrYield%sNoTnPMC.root",var_n.Data(),bsbp_str.Data(),var_n.Data(),var_file.Data()),"RECREATE");
