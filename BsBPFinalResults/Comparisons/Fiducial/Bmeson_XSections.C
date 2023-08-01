@@ -268,7 +268,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	TH1D * MCDataSyst = (TH1D *) fError.Get("MCDataSyst");
   	if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
 
-	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s%s.root", meson_n.Data(),whichvar.Data());
+	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s.root", meson_n.Data(),whichvar.Data());
   	TFile fError1D(errorFile1D);
 
 	TH1D * TnPSyst1D = (TH1D *) fError1D.Get("TnPSyst");
@@ -285,7 +285,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 
 	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s_1D.root",whichvar.Data());
 	TFile fTrackSelError1D(trackSelErrorFile1D);
-	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error%s", meson_n.Data()));
+	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error", meson_n.Data()));
 
 	float XsecPP_Y_SystUp[NBins];
 	float XsecPP_Y_SystDown[NBins];
