@@ -144,19 +144,17 @@ void PlotEffSyst1D(int Opt, int whichvar){
 
 	TString infile;
   	TString outFile;
-
+	TString BmesonName;
 	if(Opt == 0) {
+	BmesonName =  "BP" ;
     infile =  Form("OutFiles/BPSyst1D_%s.root",var_n.Data());
     outFile =  Form("OutFiles/BPError1D_%s.root",var_n.Data());
   } else if(Opt == 1) {
+	BmesonName =  "Bs";
     infile =  Form("OutFiles/BsSyst1D_%s.root",var_n.Data());
     outFile =  Form("OutFiles/BsError1D_%s.root",var_n.Data());
   }
 
-	TString BmesonName;
-
-	if(Opt == 0) BmesonName =  "BP" ;
-	if(Opt == 1) BmesonName =  "Bs";
 	gSystem->mkdir("EffSystPlots", true);
 	gSystem->mkdir(Form("EffSystPlots/%s",BmesonName.Data()), true);
 
@@ -331,15 +329,15 @@ void PlotEffSyst1D(int Opt, int whichvar){
   	TFile fError(errorFile);
 
 	TString trackSelErrorFile = Form("../syst_error/syst_track_sel_%s.root",var_n.Data());
-	TFile fTrackSelError(trackSelErrorFile);
+	TFile *fTrackSelError(trackSelErrorFile);
 
 	TH1D * Eff2DHis = (TH1D *) FileB->Get("hInvEff");
 	TH1D * TnPSyst2D = (TH1D *) fError.Get("TnPSyst");
 	TH1D * BptSyst2D = (TH1D *) fError.Get("BptSyst");
 	TH1D * MCDataSyst2D = (TH1D *) fError.Get("BDTSyst");
 
-	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", BmesonName.Data()));
-	TGraph* trackSelSystMC = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", BmesonName.Data()));
+	TGraphAsymmErrors* trackSelSyst =  dynamic_cast<TGraphAsymmErrors*>( fTrackSelError->Get( Form("%s_track_sel_error", BmesonName.Data()) ) );
+	TGraphAsymmErrors* trackSelSystMC= dynamic_cast<TGraphAsymmErrors*>( fTrackSelError->Get( Form("%s_track_sel_error", BmesonName.Data()) ) );
 
 	float BP1DEffX[NBins];
 	float B1DEffXErrUp[NBins] ;
