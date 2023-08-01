@@ -27,21 +27,21 @@ else:
     print("Invalid Input")
 
 bp_pdf_list = [
-    "henri2022/filesbp/signal_systematics_table_%s_ntKp.tex" % opt.var,
-    "henri2022/filesbp/background_systematics_table_%s_ntKp.tex" % opt.var,
+    "henri2022/filesbp/signal_systematics_table_B%s_ntKp.tex" % opt.var,
+    "henri2022/filesbp/background_systematics_table_B%s_ntKp.tex" % opt.var,
     # "BP/RawYieldFits/signal_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/background_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
     ]
 
 bsbpbins_pdf_list = [ 
-    "henri2022/filesbp/BsBPBINS_signal_systematics_table_%s_ntKp.tex" % opt.var,
-    "henri2022/filesbp/BsBPBINS_background_systematics_table_%s_ntKp.tex" % opt.var,
+    "henri2022/filesbp/BsBPBINS_signal_systematics_table_B%s_ntKp.tex" % opt.var,
+    "henri2022/filesbp/BsBPBINS_background_systematics_table_B%s_ntKp.tex" % opt.var,
 ]
 
 bs_pdf_list = [
-    "henri2022/filesbs/signal_systematics_table_%s_ntphi.tex" % opt.var,
-    "henri2022/filesbs/background_systematics_table_%s_ntphi.tex" % opt.var,
+    "henri2022/filesbs/signal_systematics_table_B%s_ntphi.tex" % opt.var,
+    "henri2022/filesbs/background_systematics_table_B%s_ntphi.tex" % opt.var,
     # "Bs/RawYieldFits/signal_systematics_table_Bpt_ntphi.tex",
     # "Bs/RawYieldFits/background_systematics_table_Bpt_ntphi.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
@@ -84,8 +84,8 @@ def get_pdf_syst(inFileList, outfile, hname, nbins, nshape):
     fout.Close()
     return
 
-get_pdf_syst(bp_pdf_list, "syst_error/BP_pdf_B%s.root" % opt.var, "BP_error", binsBP, [3, 4])
-get_pdf_syst(bs_pdf_list, "syst_error/Bs_pdf_B%s.root" % opt.var, "Bs_error", binsBs, [3, 3])
+get_pdf_syst(bp_pdf_list, "syst_error/BP_pdf_%s.root" % opt.var, "BP_error", binsBP, [3, 4])
+get_pdf_syst(bs_pdf_list, "syst_error/Bs_pdf_%s.root" % opt.var, "Bs_error", binsBs, [3, 3])
 
 if opt.var == "pt":
     get_pdf_syst(bsbpbins_pdf_list, "syst_error/BP_pdf_pt_BsBPBINS.root", "BP_error", binsBs, [3, 4])
