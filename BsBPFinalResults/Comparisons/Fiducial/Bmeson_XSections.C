@@ -162,7 +162,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 			NBinsLow = 2 ;
 			NBinsHigh = 5;
 			NBins2015 = 5;
-			Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_pt.root" ;
+			Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_pt_multipurpose.root" ;
 		} 
 		else if (BsBP==1 || meson_n == "Bs"){
 			NBins = nptBins;
@@ -173,9 +173,9 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 			
 			if (meson_n == "BP" ){
 				bsbpbins="_BsBPBINS";
-				Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_MatchingBINS_pt_BsBPBINS.root" ;
+				Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_MatchingBINS_pt_multipurpose.root" ;
 			} else {
-				Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_pt.root" ;
+				Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_pt_multipurpose.root" ;
 			}
 		}
 		var_l="p_{T} [GeV/c]";
@@ -186,16 +186,16 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		lowend = 2;
 		NBinsLow = 3;
 		NBinsHigh = 2;
-		if(meson_n == "BP"){Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_y.root" ;} 
-		else if (meson_n == "Bs") {Path_to_bin_Center =  Path_to_bin_Center + "yields_Bs_binned_y.root";} 
+		if(meson_n == "BP"){Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_y_multipurpose.root" ;} 
+		else if (meson_n == "Bs") {Path_to_bin_Center =  Path_to_bin_Center + "yields_Bs_binned_y_multipurpose.root";} 
 	
 	} if(whichvar=="Mult"){
 		NBins = nmBins_both;
 		var_l="Mult";
 		lowend = 100;
 		NBinsLow = nmBins_both;         
-		if(meson_n == "BP") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_Mult.root" ;} 
-		else if (meson_n == "Bs") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_Mult.root" ;} 
+		if(meson_n == "BP") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_Mult_multipurpose.root" ;} 
+		else if (meson_n == "Bs") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_Mult_multipurpose.root" ;} 
 	}
 
 	gSystem->mkdir("Plots/", true);

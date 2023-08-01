@@ -154,10 +154,9 @@ void PlotEffSyst1D(int Opt, int whichvar){
   }
 
 	TString BmesonName;
-	TString bmesonName;
 
-	if(Opt == 0) BmesonName =  "BP"; bmesonName =  "bp";
-	if(Opt == 1) BmesonName =  "Bs"; bmesonName =  "bs";
+	if(Opt == 0) BmesonName =  "BP" ;
+	if(Opt == 1) BmesonName =  "Bs";
 	gSystem->mkdir("EffSystPlots", true);
 	gSystem->mkdir(Form("EffSystPlots/%s",BmesonName.Data()), true);
 
@@ -339,8 +338,8 @@ void PlotEffSyst1D(int Opt, int whichvar){
 	TH1D * BptSyst2D = (TH1D *) fError.Get("BptSyst");
 	TH1D * MCDataSyst2D = (TH1D *) fError.Get("BDTSyst");
 
-	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", bmesonName.Data()));
-	TGraph* trackSelSystMC = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", bmesonName.Data()));
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", BmesonName.Data()));
+	TGraph* trackSelSystMC = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", BmesonName.Data()));
 
 	float BP1DEffX[NBins];
 	float B1DEffXErrUp[NBins] ;
