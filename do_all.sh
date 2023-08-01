@@ -56,8 +56,8 @@ bsEff () {
 
 pdfVar_sys () {
     # get pdf variation errors
-    python master.py "Bpt"
-    python master.py "By"
+    python master.py "pt"
+    python master.py "y"
 }
 
 syst2D () {
