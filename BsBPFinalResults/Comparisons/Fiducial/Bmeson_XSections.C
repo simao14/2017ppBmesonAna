@@ -268,20 +268,12 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	TH1D * MCDataSyst = (TH1D *) fError.Get("MCDataSyst");
   	if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
 
-	TH1D * TnPSyst1D ;
-	TH1D * BptSyst1D ;
-	TH1D * MCDataSyst1D ;
-	if (BsBP==0){
-		TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s.root", meson_n.Data(),whichvar.Data());
-  		TFile fError1D(errorFile1D);
+	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s%s.root", meson_n.Data(),whichvar.Data());
+  	TFile fError1D(errorFile1D);
 
-		TnPSyst1D = (TH1D *) fError1D.Get("TnPSyst");
-		BptSyst1D = (TH1D *) fError1D.Get("BptSyst");
-		MCDataSyst1D = (TH1D *) fError1D.Get("BDTSyst");
-	}
-
-
-
+	TH1D * TnPSyst1D = (TH1D *) fError1D.Get("TnPSyst");
+	TH1D * BptSyst1D = (TH1D *) fError1D.Get("BptSyst");
+	TH1D * MCDataSyst1D = (TH1D *) fError1D.Get("BDTSyst");
 
 	TString pdfErrorFile = Form("../../../syst_error/%s_pdf_%s%s.root",meson_n.Data(),whichvar.Data(),bsbpbins.Data());
 	TFile fPdfError(pdfErrorFile);
@@ -291,13 +283,9 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	TFile fTrackSelError(trackSelErrorFile);
 	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error%s", meson_n.Data(),bsbpbins.Data()));
 
-	TGraph* trackSelSyst1D;
-	if (BsBP==0){
-		TFile fTrackSelError1D(Form("../../../syst_error/syst_track_sel_%s_1D.root",whichvar.Data()));
-		trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error%s", meson_n.Data(),bsbpbins.Data()));
-
-	}
-	
+	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s_1D.root",whichvar.Data());
+	TFile fTrackSelError1D(trackSelErrorFile1D);
+	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error%s", meson_n.Data()));
 
 	float XsecPP_Y_SystUp[NBins];
 	float XsecPP_Y_SystDown[NBins];
@@ -340,10 +328,11 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		BPTnPSystUp[ibin] = BPTnPSystDown[ibin];
 		BPPDFSyst[ibin] = pdfSyst->GetY()[ibin];
 		BPTrackSelSyst[ibin] = trackSelSyst->GetY()[ibin];
-		if(BsBP==0){ BP1DTrackSelSyst[ibin] = trackSelSyst1D->GetY()[ibin]; }
+		BP1DTrackSelSyst[ibin] = trackSelSyst1D->GetY()[ibin];
 
 		BP1DTnPSystUp[ibin] = BP1DTnPSystDown[ibin];
 		BP1DPDFSyst[ibin] = pdfSyst->GetY()[ibin];
+		//BP1DTrackSelSyst[ibin] = trackSelSyst->GetY()[ibin];
   	}
 
   // RMS of all the errors
@@ -361,7 +350,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
     	BP2DTotalSystUpRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst[i], 2) +
                                         TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
                                         TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystUp[i], 2)) / 100;
-		if(BsBP==0){
+		
 		BP1DTotalSystDownRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BP1DMCDataSyst[i], 2) +
                                           TMath::Power(BP1DPDFSyst[i], 2) + TMath::Power(BP1DTrackSelSyst[i], 2) +
                                           TMath::Power(BP1DPtShapeSyst[i], 2) + TMath::Power(BP1DTnPSystDown[i], 2)) / 100;
@@ -369,7 +358,6 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
     	BP1DTotalSystUpRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BP1DMCDataSyst[i], 2) +
                                         TMath::Power(BP1DPDFSyst[i], 2) + TMath::Power(BP1DTrackSelSyst[i], 2) +
                                         TMath::Power(BP1DPtShapeSyst[i], 2) + TMath::Power(BP1DTnPSystUp[i], 2)) / 100;
-		}
 	}
 
   // global uncertainty from branching ratio and luminosity
