@@ -143,7 +143,7 @@ def get_tracking_syst(outfile, out_table):
     if opt.var == "pt":
         in_file_bp_bsbpbin = "EffAna/BP/FinalFiles/BPPPCorrYieldpt_BsBPBINS.root"
         g_bsbpbins, t_bsbpbins = read_tracking_syst(in_file_bp_bsbpbin, binsBs)
-        g_bsbpbins.SetName('BP_track_sel_error_bsbpbins')
+        g_bsbpbins.SetName('BP_track_sel_error_BsBPBINS')
 
     g_bp, t_bp = read_tracking_syst(in_file_bp, binsBP)
     g_bp.SetName('BP_track_sel_error')
@@ -207,10 +207,6 @@ def read_tracking_syst1D(inYield, nbins):
 def get_tracking_syst1D(outfile, out_table):
     in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % opt.var
     in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % opt.var
-    if opt.var == "pt":
-        in_file_bp_bsbpbin = "EffAna/BP/FinalFiles/BPPPCorrYieldpt_BsBPBINS.root"
-        g_bsbpbins, t_bsbpbins = read_tracking_syst1D(in_file_bp_bsbpbin, binsBs)
-        g_bsbpbins.SetName('BP_track_sel_error_bsbpbins')
 
     g_bp, t_bp = read_tracking_syst1D(in_file_bp, binsBP)
     g_bp.SetName('BP_track_sel_error')
@@ -219,8 +215,6 @@ def get_tracking_syst1D(outfile, out_table):
     fout = r.TFile(outfile, "recreate")
     g_bp.Write()
     g_bs.Write()
-    if opt.var == "pt":
-        g_bsbpbins.Write()
     fout.Close()
     with open(out_table, 'w') as fout:
         fout.write('\\PBp track selection systematics\n')
