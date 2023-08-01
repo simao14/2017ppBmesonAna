@@ -32,8 +32,8 @@ OutputFile_BP_BINNED_PT="ROOTfiles/yields_Bp_binned_pt"
 OutputFile_BP_BINNED_PT_trk="ROOTfiles/yields_Bp_binned_pt_trk"
 OutputFile_BP_BINNED_Y_trk="ROOTfiles/yields_Bp_binned_y_trk"
 OutputFile_BP_BINNED_Mult_trk="ROOTfiles/yields_Bp_binned_Mult_trk"
-OutputFile_BP_MatchingBINS_PT="ROOTfiles/yields_Bp_pt_BsBPBINS"
-OutputFile_BP_MatchingBINS_PT_trk="ROOTfiles/yields_Bp_pt_trk_BsBPBINS"
+OutputFile_BP_MatchingBINS_PT="ROOTfiles/yields_Bp_binned_pt_BsBPBINS"
+OutputFile_BP_MatchingBINS_PT_trk="ROOTfiles/yields_Bp_binned_pt_trk_BsBPBINS"
 
 
 #The Function to be called:
