@@ -128,7 +128,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	TString var_n2;
 	TString var_N;
 	TString bsbpbins = "";
-	if(BsBP==1 && meson_n==0 && whichvar == 0) {bsbpbins = "_bsbpbins";}
+	if(BsBP==1 && meson_n==0 && whichvar == 0) {bsbpbins = "_BsBPBINS";}
 
 	double BRchain;
 	int NCand;
