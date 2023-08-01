@@ -84,8 +84,8 @@ def get_pdf_syst(inFileList, outfile, hname, nbins, nshape):
     fout.Close()
     return
 
-get_pdf_syst(bp_pdf_list, "syst_error/BP_pdf_%s.root" % opt.var, "BP_error", binsBP, [3, 4])
-get_pdf_syst(bs_pdf_list, "syst_error/Bs_pdf_%s.root" % opt.var, "Bs_error", binsBs, [3, 3])
+get_pdf_syst(bp_pdf_list, "syst_error/BP_pdf_B%s.root" % opt.var, "BP_error", binsBP, [3, 4])
+get_pdf_syst(bs_pdf_list, "syst_error/Bs_pdf_B%s.root" % opt.var, "Bs_error", binsBs, [3, 3])
 
 if opt.var == "pt":
     get_pdf_syst(bsbpbins_pdf_list, "syst_error/BP_pdf_pt_BsBPBINS.root", "BP_error", binsBs, [3, 4])
