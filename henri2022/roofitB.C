@@ -41,7 +41,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	else if(varExp == "By"){ _nBins = nyBins_both;}
 	else if(varExp == "nMult"){_nBins = nmBins_both;}
 
-	cout << "number of bins: " << _nBins << endl;	
 	double _ptBins[_nBins+1];
 
 	if(varExp == "Bpt"){ 
@@ -59,8 +58,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	std::cout<<"Variable "<< varExp << endl;
 	cout << "Systematics " << syst_study << endl;
+	cout << "number of bins: " << _nBins << endl;	
 	cout << tree << " BINS: ";
-	for(int t; t< (int) sizeof(_ptBins)/sizeof(_ptBins[0]);t++){cout <<"__"<<  _ptBins[t]<<"__";}
+	for(int t; t < _nBins+1 ;t++){cout <<"__"<<  _ptBins[t]<<"__";}
 	cout << endl << endl;
 		
 	TString seldata;
