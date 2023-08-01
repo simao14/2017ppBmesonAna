@@ -336,7 +336,7 @@ void PlotEffSyst1D(int Opt, int whichvar){
 	TH1D * BptSyst2D = (TH1D *) fError.Get("BptSyst");
 	TH1D * MCDataSyst2D = (TH1D *) fError.Get("BDTSyst");
 
-	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", meson_n.Data()));
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError->Get(Form("%s_track_sel_error", BmesonName.Data()));
 
 
 	float BP1DEffX[NBins];
