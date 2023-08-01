@@ -29,7 +29,7 @@ using std::endl;
 bool reweightPtOnY = true;
 
 
-void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
+void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP == 0){
 	
 	int NCand;
 	TString var_N;
@@ -649,10 +649,10 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
 	int NPtBins1D = 0;
 	double  PtBin1D[NPtBins1D + 1];
 
-	if (meson_n == "BP" && BsBP==0){NPtBins1D = nptBinsBP;}
+	if (meson_n == "BP" && BsBP == 0){NPtBins1D = nptBinsBP;}
 	else {NPtBins1D = nptBins;}
 
-	if (meson_n == "BP" && BsBP==0){for (int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvecBP[i];}}
+	if (meson_n == "BP" && BsBP == 0){for (int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvecBP[i];}}
 	else{ for(int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvec[i];}}
 
 	//const int nyBins_both = 12;
@@ -2134,7 +2134,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
 		leg->AddEntry(Eff1DHisTnPDown,"T&P Variation Down","PL");
 		leg->Draw("same");
 
-		if(BsBP==0){
+		if(BsBP == 0){
 		cSyst->SaveAs(Form("%s/Syst/TnPSyst.png",meson_n.Data()));
 
 
@@ -2520,7 +2520,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
 		legMult->AddEntry(Eff1DHisTnPDownMult,"T&P Variation Down","PL");
 		legMult->Draw("same");
 
-		IF(BsBP==0){
+		IF(BsBP == 0){
 		cSyst->SaveAs(Form("%s/Syst/TnPSystMult.png",meson_n.Data()));
 
 		Eff1DHisBDTMult->SetMarkerStyle(20);
@@ -2844,7 +2844,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
 		TCanvas *c = new TCanvas("c","c",600,600);
 		c->cd();
 
-		if (BsBP==0){
+		if (BsBP == 0){
 		Eff1DHis->Draw("ep");
 		c->SaveAs(Form("%s/1DEffPlots/Eff1DHis.png",meson_n.Data()));
 
@@ -2896,7 +2896,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
 		invEff2DTnPSystUp->GetYaxis()->SetTitleOffset(1.2);
 		invEff2DTnPSystUp->SetTitle("");
 
-		if(BsBP==0){
+		if(BsBP == 0){
 		invEff2DTnPSystUp->Draw("COLZ");
 		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Up.png",meson_n.Data()));
 		}
@@ -2908,7 +2908,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
 		invEff2DTnPSystDown->GetYaxis()->SetTitleOffset(1.2);
 		invEff2DTnPSystDown->SetTitle("");
 
-		if(BsBP==0){
+		if(BsBP == 0){
 		invEff2DTnPSystDown->Draw("COLZ");
 		c->SaveAs(Form("%s/Eff2DMapTnP/Eff2D_Down.png",meson_n.Data()));
 		}
@@ -2916,7 +2916,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP==0){
 		TCanvas * c1DSave = new TCanvas("c1DSave","c1DSave",600,600);
 		c1DSave->cd();
 		
-		if(BsBP==0){
+		if(BsBP == 0){
 		Acc1DHis->Draw("ep");
 		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/Pt/Acc1DHis.png",meson_n.Data()));
 	

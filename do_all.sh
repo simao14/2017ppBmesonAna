@@ -36,6 +36,7 @@ bpEff () {
     ls -l BDTWeights/BPw.root
 
     #root -b -l -q MCEff.C'(1,0,"BP")' > effbp.log
+    root -b -l -q MCEff.C'(1,0,"BP", 1)'     ##FOR THE BsBP ratios and RAAs
     wait
     root -b -l -q CrossSectionAnaMult.C'(1,1,0)'  #(TnPon =1 noTnP=0 , pT=0,y=1,mult=2 , data =0 mc = 1)
     root -b -l -q CrossSectionAnaMult.C'(1,0,0)'
