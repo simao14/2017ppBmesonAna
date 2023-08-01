@@ -128,6 +128,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	TString var_n;
 	TString var_n2;
 	TString var_N;
+	TString bsbp_str = "";
+	if(BsBP==1 && meson_n==0 && whichvar == 0) {bsbp_str = "_bsbpbins_";}
+
 	double BRchain;
 	int NCand;
 	if (meson_n == 0){
@@ -423,8 +426,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	if (meson_n==0){BMass=5.27932;ptlow=5;}
 	else {BMass=5.3663;ptlow=7;}
 
-	
-	
 	for( int i = 0; i < NEvents; i++){
 
 		EffInfoTree->GetEntry(i);
@@ -480,9 +481,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 			}
 		}
 	}
-
-	
-		
 
 
 	TH1D * hInvEff = new TH1D("hInvEff","",NBins,ptBins);
@@ -565,7 +563,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	for(int i = 0; i < NBins; i++){
 
-
 		NewEff[i] = SumCounts[i]/Counts[i];
 		NewEffErr[i] = TMath::Sqrt(SumCountsErr[i])/Counts[i];
 		NewEffUp[i] = SumCountsUp[i]/Counts[i];
@@ -596,15 +593,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		NewEffSyst[i] = SumCountsSyst[i]/Counts[i];
 		NewEffSystErr[i] = TMath::Sqrt(SumCountsSystErr[i])/Counts[i];
 
-
 		hInvEffSyst->SetBinContent(i+1,	NewEffSyst[i]);
 		hInvEffSyst->SetBinError(i+1, NewEffSystErr[i]);
 
-
-
 		hInvEffUp->SetBinContent(i+1,NewEffUp[i]);
 		hInvEffUp->SetBinError(i+1,NewEffErrUp[i]);
-
 
 		hInvEffDown->SetBinContent(i+1,NewEffDown[i]);
 		hInvEffDown->SetBinError(i+1,NewEffErrDown[i]);
@@ -620,8 +613,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 		cout << "   NewEff = " << NewEff[i] << "     NewEffErr = " << NewEffErr[i] << "  Fractional = " << NewEffErr[i]/NewEff[i] << endl;
 		//	cout << "   NewEff = " << NewEffUp[i] << "     NewEffErr = " << NewEffErrUp[i] << "  Fractional = " << NewEffErrUp[i]/NewEffUp[i] << endl;
-
-
 
 		//NewEffErr[i] = 0; //Remove Error on Efficiency Correction//
 	}
@@ -699,7 +690,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		CorrDiffHisTight->SetBinError(i+1, epsilon);
 	}
 
-	
 	//CorrDiffHis->SetTitle("(Preliminary) %s #rightarrow J/#psi K^{+} p_{T} Differential Cross Section in pp");
 
 	int startLow;
@@ -750,12 +740,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	CorrDiffHisReal->SetMarkerStyle(20);
 
 	TFile * foutCorr;
-	TString bsbp_str = "";
-	if(BsBP==1) {bsbp_str = "_bsbpbins_";}
-	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("%s/FinalFiles/%s%sPPCorrYield%sNoTnP.root",var_n.Data(),bsbp_str.Data(),var_n.Data(),var_file.Data()),"RECREATE");
-	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("%s/FinalFiles/%s%sPPCorrYield%s.root",var_n.Data(),bsbp_str.Data(),var_n.Data(),var_file.Data()),"RECREATE");
-	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("%s/FinalFiles/%s%sPPCorrYield%sNoTnPMC.root",var_n.Data(),bsbp_str.Data(),var_n.Data(),var_file.Data()),"RECREATE");
-	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("%s/FinalFiles/%s%sPPCorrYield%sMC.root",var_n.Data(),bsbp_str.Data(),var_n.Data(),var_file.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnP%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbp_str.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%s%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbp_str.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnPMC%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbp_str.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%sMC%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbp_str.Data()),"RECREATE");
 
 	TH1D * Eff1DHisvar;
 	TH1D * InvEff1DHisvarTight;

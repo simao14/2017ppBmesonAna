@@ -201,7 +201,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	gSystem->mkdir("Plots/", true);
 	gSystem->mkdir(Form("Plots/%s",meson_n.Data()), true);
 	
-	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYield%s.root",meson_n.Data(),meson_n.Data(),whichvar.Data());
+	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYield%s%s.root",meson_n.Data(),meson_n.Data(),whichvar.Data(),bsbpbins.Data());
 	TFile * FileB= new TFile(InfileB.Data());
 	
 	// BINS
@@ -292,13 +292,13 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	TFile fPdfError(pdfErrorFile);
 	TGraph* pdfSyst = (TGraph *) fPdfError.Get(Form("%s_error",meson_n.Data()));
 	
-	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s%s.root",whichvar.Data(),bsbpbins.Data());
+	TString trackSelErrorFile = Form("../../../syst_error/syst_track_sel_%s.root",whichvar.Data());
 	TFile fTrackSelError(trackSelErrorFile);
-	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", meson_n.Data()));
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error%s", meson_n.Data(),bsbpbins.Data()));
 
-	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s%s_1D.root",whichvar.Data(), bsbpbins.Data());
+	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s_1D.root",whichvar.Data());
 	TFile fTrackSelError1D(trackSelErrorFile1D);
-	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error", meson_n.Data()));
+	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error%s", meson_n.Data(),bsbpbins.Data()));
 
 	float XsecPP_Y_SystUp[NBins];
 	float XsecPP_Y_SystDown[NBins];

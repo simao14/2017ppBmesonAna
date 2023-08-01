@@ -130,13 +130,12 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		SumCountsBptSyst[i] = 0;
 	}
 
-	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D.root",meson_n.Data(), meson_n.Data()));
+	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D%s.root",meson_n.Data(), meson_n.Data(),bsbpbins.Data()));
 	TH2D * invEff2D = (TH2D *) finSyst2D->Get("invEff2D");
 	TH2D * invEff2DTnPSystUp = (TH2D *) finSyst2D->Get("invEff2DTnPSystUp");
 	TH2D * invEff2DTnPSystDown = (TH2D *) finSyst2D->Get("invEff2DTnPSystDown");
 	TH2D * invEff2DBDTSyst = (TH2D *) finSyst2D->Get("invEff2DBDTSyst");
 	TH2D * invEff2DBptSyst = (TH2D *) finSyst2D->Get("invEff2DBptSyst");
-
 
 	Float_t var;
 	int XBin;
