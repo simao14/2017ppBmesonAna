@@ -205,7 +205,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	}
 
 	//center of the bin and its left and right margins
-	TFile * RawYield = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s%s.root", meson_n.Data(), whichvar.Data(), bsbpbins.Data()));
+	TFile * RawYield = new TFile(Form("../../../henri2022/ROOTfiles/yields_%s_binned_%s%s.root", meson_n.Data(), whichvar.Data(), bsbpbins.Data()));
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 	float XsecPP_X[NBins];
 	float XsecPP_X_BinRight[NBins] ;
