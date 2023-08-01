@@ -89,9 +89,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	TTree* skimtreeMC_new = (TTree*)infMC->Get(tree);
 	TH1D* h;
 	TH1D* hMC;
-	TH1D* hPt = new TH1D("hPt","",_nBins,_ptBins);   //NEEDED FOR MASTER.PY FILE 
+	TH1D* hPt = new TH1D("hPt","",_nBins,_ptBins);  
 
-	
 	RooWorkspace* ws = new RooWorkspace("ws");
 	RooRealVar* Bgen = new RooRealVar("Bgen", "Bgen", 0, 30000);
 	RooRealVar* mass = new RooRealVar("Bmass","Bmass",minhisto,maxhisto);
@@ -661,7 +660,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	col_name_general.push_back("Systematic Source");
 	col_name_general_stat.push_back(" ");
 
-	if(varExp=="Bpt"){name="$<p_T<$";} else if(varExp=="By"){name="$<y<$";} else if(varExp=="nMult"){name="$<nTrks<$";}
+	if(varExp=="Bpt"){name="$<p_T<$";} 
+	else if(varExp=="By"){name="$<y<$";} 
+	else if(varExp=="nMult"){name="$<nTrks<$";}
 	for(int i=0;i<m;i++){
 		std::ostringstream clabel;
 		clabel<<_ptBins[i]<<name<<_ptBins[i+1];
@@ -828,9 +829,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 // Differential plot part starts
 	gSystem->mkdir("./results/Graphs",true); 
 
-	TFile *ratio_f= new TFile(Form("%s_multipurpose.root", outputfile.Data()),"recreate");
-	ratio_f->cd();
-	
 	 TCanvas c_diff;
 	 TMultiGraph* mg = new TMultiGraph();
 	 TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
@@ -863,7 +861,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		 mg->GetXaxis()->SetLimits(0, 110);
 	 }
 
-	 mg->Write("TG");
 	 mg->Draw("ap");
 	 
 	 leg_d->AddEntry(gr_staterr, "Statistical Uncertainty", "e");
@@ -874,7 +871,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.pdf",tree.Data(), varExp.Data());
 	 if(BsBPBins==1){c_diff.SaveAs(pathc);}
-	 ratio_f->Close();
 // Differential plot part ends
 
 // Parameters vs variables part starts

@@ -151,18 +151,15 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	int NBins2015 = 0 ;
 	int lowend    ;
 	TString var_l;
-	TString Path_to_bin_Center = "../../../henri2022/ROOTfiles/" ;
 	TString bsbpbins = "";
 
 	if(whichvar == "pt"){
-	
 		if (meson_n=="BP" && BsBP==0){
 			NBins = nptBinsBP;
 			lowend = 1;
 			NBinsLow = 2 ;
 			NBinsHigh = 5;
 			NBins2015 = 5;
-			Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_pt_multipurpose.root" ;
 		} 
 		else if (BsBP==1 || meson_n == "Bs"){
 			NBins = nptBins;
@@ -170,13 +167,9 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 			NBinsLow = 1 ;
 			NBinsHigh = 3;
 			NBins2015 = 3;
-			
 			if (meson_n == "BP" ){
-				bsbpbins="_BsBPBINS";
-				Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_MatchingBINS_pt_multipurpose.root" ;
-			} else {
-				Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_pt_multipurpose.root" ;
-			}
+				NBins2015 = 5;
+				bsbpbins="_BsBPBINS";}
 		}
 		var_l="p_{T} [GeV/c]";
 	
@@ -186,16 +179,12 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		lowend = 2;
 		NBinsLow = 3;
 		NBinsHigh = 2;
-		if(meson_n == "BP"){Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_y_multipurpose.root" ;} 
-		else if (meson_n == "Bs") {Path_to_bin_Center =  Path_to_bin_Center + "yields_Bs_binned_y_multipurpose.root";} 
-	
+
 	} if(whichvar=="Mult"){
 		NBins = nmBins_both;
 		var_l="Mult";
 		lowend = 100;
 		NBinsLow = nmBins_both;         
-		if(meson_n == "BP") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bp_binned_Mult_multipurpose.root" ;} 
-		else if (meson_n == "Bs") {Path_to_bin_Center = Path_to_bin_Center + "yields_Bs_binned_Mult_multipurpose.root" ;} 
 	}
 
 	gSystem->mkdir("Plots/", true);
@@ -208,22 +197,21 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	double ptBins[NBins+1];
 	for(int i = 0; i < NBins + 1; i++){
 		if (whichvar=="pt"){
-			if (meson_n=="BP" && BsBP==0){ ptBins[i] =  ptbinsvecBP[i];} 
-			else if (meson_n=="Bs" || BsBP==1){ptBins[i] =  ptbinsvec[i];}
+			if (meson_n=="BP" && BsBP==0){ ptBins[i] = ptbinsvecBP[i];} 
+			else if (meson_n=="Bs" || BsBP==1){ ptBins[i] = ptbinsvec[i];}
 		}
-		else if (whichvar=="y"){ ptBins[i] =  ybinsvec[i]; }          
-		else if (whichvar=="Mult"){ ptBins[i] =  nmbinsvec[i];}
+		else if (whichvar=="y"){ ptBins[i] = ybinsvec[i]; }          
+		else if (whichvar=="Mult"){ ptBins[i] = nmbinsvec[i];}
 	}
 
 	//center of the bin and its left and right margins
-	TFile* Dif_Plot = TFile::Open(Path_to_bin_Center, "READ");
-	TMultiGraph* multiGraph = dynamic_cast<TMultiGraph*>(Dif_Plot->Get("TG"));
-    TGraphAsymmErrors* Agraph = dynamic_cast<TGraphAsymmErrors*>(multiGraph->GetListOfGraphs()->At(0));
+	TFile * RawYield = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s%s.root", meson_n.Data(), whichvar.Data(), bsbpbins.Data()));
+	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 	float XsecPP_X[NBins];
 	float XsecPP_X_BinRight[NBins] ;
 	float XsecPP_X_BinLeft[NBins] ;
 	for( int c=0; c < NBins; c++){
-		XsecPP_X[c]= Agraph->GetX()[c];
+		XsecPP_X[c]= hPt->GetXaxis()->GetBinCenter(c+1);  
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
 	}
@@ -308,7 +296,6 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	float BPXSecPPYSystDownScaled[NBins];
 
   // percent error
-
   	double B_nu;
   	if (meson_n=="BP"){ B_nu = 2.4 ;}
   	else { B_nu = 4.8;}
@@ -1122,10 +1109,10 @@ for (int i=0;i<NBins;++i){
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 
 
-if(meson_n=="Bs" || BsBP == 1){}
+
 // Save Histogram for the Ratio of Bmesons
 	gSystem->mkdir("./ROOTFiles",true); 
-	TFile *ratio_f= new TFile(Form("./ROOTFiles/%s_Xsection_%s.root", meson_n.Data(), whichvar.Data()),"recreate");
+	TFile *ratio_f= new TFile(Form("./ROOTFiles/%s_Xsection_%s%s.root", meson_n.Data(), whichvar.Data(), bsbpbins.Data()),"recreate");
 	ratio_f->cd();
 
 	TMultiGraph* mg = new TMultiGraph();
@@ -1147,7 +1134,7 @@ if(meson_n=="Bs" || BsBP == 1){}
 	 else if(whichvar=="pt"){
 		mg->GetXaxis()->SetTitle("p_{T}");
 		mg->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");
-		if (meson_n=="BP"){ mg->GetXaxis()->SetLimits(0 ,80); }
+		if (meson_n=="BP"){ mg->GetXaxis()->SetLimits(0 ,70); }
 		if (meson_n=="Bs"){ mg->GetXaxis()->SetLimits(0 ,60); }
 	 }
 	 else if(whichvar=="Mult"){
