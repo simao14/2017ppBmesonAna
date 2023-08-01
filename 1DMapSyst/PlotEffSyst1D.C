@@ -329,15 +329,15 @@ void PlotEffSyst1D(int Opt, int whichvar){
   	TFile fError(errorFile);
 
 	TString trackSelErrorFile = Form("../syst_error/syst_track_sel_%s.root",var_n.Data());
-	TFile *fTrackSelError(trackSelErrorFile);
+	TFile *fTrackSelError= TFile::Open(trackSelErrorFile,"READ");
 
 	TH1D * Eff2DHis = (TH1D *) FileB->Get("hInvEff");
 	TH1D * TnPSyst2D = (TH1D *) fError.Get("TnPSyst");
 	TH1D * BptSyst2D = (TH1D *) fError.Get("BptSyst");
 	TH1D * MCDataSyst2D = (TH1D *) fError.Get("BDTSyst");
 
-	TGraphAsymmErrors* trackSelSyst =  dynamic_cast<TGraphAsymmErrors*>( fTrackSelError->Get( Form("%s_track_sel_error", BmesonName.Data()) ) );
-	TGraphAsymmErrors* trackSelSystMC= dynamic_cast<TGraphAsymmErrors*>( fTrackSelError->Get( Form("%s_track_sel_error", BmesonName.Data()) ) );
+	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error", meson_n.Data()));
+
 
 	float BP1DEffX[NBins];
 	float B1DEffXErrUp[NBins] ;
@@ -381,7 +381,6 @@ void PlotEffSyst1D(int Opt, int whichvar){
 	float BPTnPSystDown2D[NBins];
 	float BPTnPSystUp2D[NBins];
 	float BPTrackSelSyst[NBins];
-	float BPTrackSelSystMC[NBins];
 
   // Get systematics from input files
     for (auto ibin = 0; ibin < NBins; ++ibin){
@@ -395,7 +394,6 @@ void PlotEffSyst1D(int Opt, int whichvar){
 		BPTnPSystDown2D[ibin] = TnPSyst2D->GetBinContent(ibin + 1);
 		BPTnPSystUp2D[ibin] = BPTnPSystDown2D[ibin];
 		BPTrackSelSyst[ibin] = trackSelSyst->GetY()[ibin];
-		BPTrackSelSystMC[ibin] = trackSelSystMC->GetY()[ibin];
   	}
 
   // RMS of all the errors
@@ -409,9 +407,6 @@ void PlotEffSyst1D(int Opt, int whichvar){
 
 		BPTotalSystDownRatio1D[i] = TMath::Sqrt(TMath::Power(BPMCDataSyst1D[i], 2) + TMath::Power(BPPtShapeSyst1D[i], 2) + TMath::Power(BPTnPSystDown1D[i], 2)) / 100;
     	BPTotalSystUpRatio1D[i] = TMath::Sqrt(TMath::Power(BPMCDataSyst1D[i], 2) + TMath::Power(BPPtShapeSyst1D[i], 2) + TMath::Power(BPTnPSystUp1D[i], 2)) / 100;
-
-		//BPTotalSystDownRatio1D[i] = TMath::Sqrt(TMath::Power(TMath::Power(BPTrackingSyst[i], 2) + BPMCDataSyst1D[i], 2) + TMath::Power(BPTrackSelSystMC[i], 2) + TMath::Power(BPPtShapeSyst1D[i], 2) + TMath::Power(BPTnPSystDown1D[i], 2)) / 100;
-    	//BPTotalSystUpRatio1D[i] = TMath::Sqrt(TMath::Power(TMath::Power(BPTrackingSyst[i], 2) + BPMCDataSyst1D[i], 2) + TMath::Power(BPTrackSelSystMC[i], 2) + TMath::Power(BPPtShapeSyst1D[i], 2) + TMath::Power(BPTnPSystUp1D[i], 2)) / 100;
 
 		//BPTotalSystDownRatio2D[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst2D[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) + TMath::Power(BPPtShapeSyst2D[i], 2) + TMath::Power(BPTnPSystDown2D[i], 2)) / 100;
     	//BPTotalSystUpRatio2D[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst2D[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) + TMath::Power(BPPtShapeSyst2D[i], 2) + TMath::Power(BPTnPSystUp2D[i], 2)) / 100;
