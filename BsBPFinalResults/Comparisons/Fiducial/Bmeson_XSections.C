@@ -268,12 +268,20 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	TH1D * MCDataSyst = (TH1D *) fError.Get("MCDataSyst");
   	if (!MCDataSyst) MCDataSyst = (TH1D *) fError.Get("BDTSyst");
 
-	TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins.Data());
-  	TFile fError1D(errorFile1D);
+	TH1D * TnPSyst1D ;
+	TH1D * BptSyst1D ;
+	TH1D * MCDataSyst1D ;
+	if (BsBP==0){
+		TString errorFile1D = Form("../../../1DMapSyst/OutFiles/%sError1D_%s.root", meson_n.Data(),whichvar.Data());
+  		TFile fError1D(errorFile1D);
 
-	TH1D * TnPSyst1D = (TH1D *) fError1D.Get("TnPSyst");
-	TH1D * BptSyst1D = (TH1D *) fError1D.Get("BptSyst");
-	TH1D * MCDataSyst1D = (TH1D *) fError1D.Get("BDTSyst");
+		TnPSyst1D = (TH1D *) fError1D.Get("TnPSyst");
+		BptSyst1D = (TH1D *) fError1D.Get("BptSyst");
+		MCDataSyst1D = (TH1D *) fError1D.Get("BDTSyst");
+	}
+
+
+
 
 	TString pdfErrorFile = Form("../../../syst_error/%s_pdf_%s%s.root",meson_n.Data(),whichvar.Data(),bsbpbins.Data());
 	TFile fPdfError(pdfErrorFile);
