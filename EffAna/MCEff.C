@@ -29,7 +29,7 @@ using std::endl;
 bool reweightPtOnY = true;
 
 
-void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP == 0){
+void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP = 0){
 	
 	int NCand;
 	TString var_N;
@@ -648,12 +648,16 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP == 0){
 	
 	int NPtBins1D = 0;
 	double  PtBin1D[NPtBins1D + 1];
+	TString bsbpbins = "";
 
 	if (meson_n == "BP" && BsBP == 0){NPtBins1D = nptBinsBP;}
 	else {NPtBins1D = nptBins;}
 
-	if (meson_n == "BP" && BsBP == 0){for (int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvecBP[i];}}
-	else{ for(int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvec[i];}}
+	if (meson_n == "BP" && BsBP == 0){ for(int i=0; i<NPtBins1D+1; i++){ PtBin1D[i] = ptbinsvecBP[i];}}
+	else{ 
+		for(int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvec[i];}
+		if (meson_n == "BP") {bsbpbins = "_BsBPBINS";}
+		}
 
 	//const int nyBins_both = 12;
 	//double  ybinsvec.data()[nyBins_both + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
@@ -2520,7 +2524,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP == 0){
 		legMult->AddEntry(Eff1DHisTnPDownMult,"T&P Variation Down","PL");
 		legMult->Draw("same");
 
-		IF(BsBP == 0){
+		if(BsBP == 0){
 		cSyst->SaveAs(Form("%s/Syst/TnPSystMult.png",meson_n.Data()));
 
 		Eff1DHisBDTMult->SetMarkerStyle(20);
