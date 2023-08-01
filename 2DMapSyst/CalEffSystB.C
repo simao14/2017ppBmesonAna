@@ -10,72 +10,65 @@ using namespace std;
 
 // 0 for B+ 
 // 1 for B_s
-void CalEffSystB(int meson_n, int whichvar, int usemc=0){
+void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 
-	TString B_m ;
 	int NBins;
 	TString t_tree ;
 	int NCand = 10 ;
 	double b_m_mass ;
-	TString var_n;
 	TString var_l;
+	TString bsbpbins = "";
 
-	if(meson_n == 0){
-		B_m = "BP";
+	if(meson_n == "BP"){
 		t_tree = "ntKp";
 		NCand = 10;
 		b_m_mass = 5.27932 ;
 	} 
-	if(meson_n == 1){
-		B_m = "Bs";
+	if(meson_n == "Bs"){
 		t_tree = "ntphi";
 		NCand = 15;
 		b_m_mass = 5.3663 ;
 	}
 
-
-	if(meson_n == 0 && whichvar==0){
-		NBins = nptBinsBP;
-		var_n="pt";
-		var_l="p_{T} [GeV/c]";
+	if (whichvar =="pt" ){
 		
-	}
-	if(meson_n == 1 && whichvar==0){
-		NBins = nptBins;
-		var_n="pt";
-		var_l="p_{T} [GeV/c]";
-	}
-	if(whichvar==1){
+		if(meson_n == "BP" && BsBP==0){
+			NBins = nptBinsBP;
+			var_l="p_{T} [GeV/c]";
+		
+		} else if(meson_n == "Bs" || BsBP==1){
+			NBins = nptBins;
+			var_l="p_{T} [GeV/c]";
+			if (meson_n == "BP"){bsbpbins == "_BsBPBINS";}
+		}
+	
+	} else if(whichvar =="y"){
 		NBins = nyBins_both;
-		var_n="y";
 		var_l="Rapidity";
 		
-	}
-	if(whichvar==2){
+	} else if(whichvar =="Mult"){
 		NBins = nmBins_both;
-		var_n="Mult";
 		var_l="Multiplicity";
-		
 	}
 
 	// BINS
 	double ptBins[NBins + 1];
-	if (whichvar==1){
+	if (whichvar =="y"){
 	for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  ybinsvec[i];             
 		}
 	} 
-	if (whichvar==2){
+	if (whichvar =="Mult"){
 		for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  nmbinsvec[i];             
 		}
 	}
-	if (whichvar==0 && meson_n==0){
+	if (whichvar =="pt" && meson_n =="BP" && BsBP==0){
 		for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  ptbinsvecBP[i];             
 		}
 	}
-	if (whichvar==0 && meson_n!=0){
+	if ((whichvar =="pt" && meson_n == "Bs")||BsBP==1){
 		for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  ptbinsvec[i];             
 		}
@@ -86,10 +79,10 @@ void CalEffSystB(int meson_n, int whichvar, int usemc=0){
 
 	TString FileName;
 	if (usemc==0){
-	FileName = Form("/data3/tasheng/presel/%sData_nom.root",B_m.Data());
+	FileName = Form("/data3/tasheng/presel/%sData_nom.root",meson_n.Data());
 	}
 	else {
-	FileName = Form("/data3/tasheng/presel/%sMC_nom.root",B_m.Data());
+	FileName = Form("/data3/tasheng/presel/%sMC_nom.root",meson_n.Data());
 	}
 	TFile * fin = new TFile(FileName.Data());
 	fin->cd();
@@ -137,7 +130,7 @@ void CalEffSystB(int meson_n, int whichvar, int usemc=0){
 		SumCountsBptSyst[i] = 0;
 	}
 
-	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D.root",B_m.Data(), B_m.Data()));
+	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D.root",meson_n.Data(), meson_n.Data()));
 	TH2D * invEff2D = (TH2D *) finSyst2D->Get("invEff2D");
 	TH2D * invEff2DTnPSystUp = (TH2D *) finSyst2D->Get("invEff2DTnPSystUp");
 	TH2D * invEff2DTnPSystDown = (TH2D *) finSyst2D->Get("invEff2DTnPSystDown");
@@ -151,9 +144,9 @@ void CalEffSystB(int meson_n, int whichvar, int usemc=0){
 	for( int i = 0; i < NEvents; i++){
 		EffInfoTree->GetEntry(i);
 		for(int j = 0; j < BsizeNew; j++){
-			if (whichvar==1){var=ByNew[j];}
-			if (whichvar==2){var=nMult;}
-			if (whichvar==0){var=BptNew[j];}
+			if (whichvar =="y"){var=ByNew[j];}
+			if (whichvar =="Mult"){var=nMult;}
+			if (whichvar =="pt"){var=BptNew[j];}
 			for(int k = 0; k < NBins; k++){
 				
 				if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - b_m_mass) < 0.08 && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5)||(BptNew[j] > 10))){
@@ -255,10 +248,10 @@ void CalEffSystB(int meson_n, int whichvar, int usemc=0){
 	TFile * fout;
 
 	if (usemc==0){
-		fout = new TFile(Form("OutFiles/%sSyst2D_%s.root",B_m.Data(),var_n.Data()),"RECREATE");
+		fout = new TFile(Form("OutFiles/%sSyst2D_%s%s.root",meson_n.Data(),whichvar.Data(),bsbpbins.Data()),"RECREATE");
 	}
 	else {
-		fout= new TFile(Form("OutFiles/%sSyst2D_%s_MC.root",B_m.Data(),var_n.Data()),"RECREATE");
+		fout= new TFile(Form("OutFiles/%sSyst2D_%s%s_MC.root",meson_n.Data(),whichvar.Data(),bsbpbins.Data()),"RECREATE");
 	} 
 
 	fout->cd();

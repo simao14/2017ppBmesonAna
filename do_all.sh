@@ -62,14 +62,17 @@ pdfVar_sys () {
 
 syst2D () {
     pushd 2DMapSyst
-    root -b -l -q CalEffSystB.C'(0,0)'                      # >> outfiles/BPsyst2d.root
-    root -b -l -q CalEffSystB.C'(0,1)'
-    root -b -l -q CalEffSystB.C'(1,0)'                      # >> outfiles/Bssyst2d.root
-    root -b -l -q CalEffSystB.C'(1,1)'             
-    root -b -l -q PlotEffSyst2D.C'(0,0)'                                                          # << outfiles/BPsyst2d.root
-    root -b -l -q PlotEffSyst2D.C'(0,1)'
-    root -b -l -q PlotEffSyst2D.C'(1,0)'                                                          # << outfiles/BPsyst2d.root
-    root -b -l -q PlotEffSyst2D.C'(1,1)'
+    root -b -l -q CalEffSystB.C'("BP","pt")'                      # >> outfiles/BPsyst2d.root
+    root -b -l -q CalEffSystB.C'("BP","y")'
+    root -b -l -q CalEffSystB.C'("Bs","pt")'                      # >> outfiles/Bssyst2d.root
+    root -b -l -q CalEffSystB.C'("Bs","y")'             
+    root -b -l -q PlotEffSyst2D.C'("BP","pt")'                                                          # << outfiles/BPsyst2d.root
+    root -b -l -q PlotEffSyst2D.C'("BP","y")'
+    root -b -l -q PlotEffSyst2D.C'("Bs","pt")'                                                          # << outfiles/BPsyst2d.root
+    root -b -l -q PlotEffSyst2D.C'("Bs","y")'
+
+    #root -b -l -q CalEffSystB.C'("BP","pt",1)'
+    #root -b -l -q PlotEffSyst2D.C'("BP","pt",1)'
     popd
 }
 
