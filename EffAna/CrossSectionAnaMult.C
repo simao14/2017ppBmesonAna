@@ -122,20 +122,6 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int usemc=0){
 
 	TString var_n;
@@ -259,11 +245,11 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		var_M="Mult";
 		var_file="Mult";
 		NBins=nmBins_both;}
-	if (whichvar==0 && meson_n==0){
+	if (whichvar==0 && meson_n==0 && BsBP==0){
 		var_M="p_{T}";
 		var_file="pt";
 		NBins=nptBinsBP;}
-	if (whichvar==0 && meson_n==1){
+	if ((whichvar==0 && meson_n==1)|| BsBP==1){
 		var_M="p_{T}";
 		var_file="pt";
 		NBins=nptBins;}

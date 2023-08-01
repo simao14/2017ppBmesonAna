@@ -215,7 +215,6 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
 	}
-    Dif_Plot->Close();
 	//center of the bin and its left and right margins
 	// BINS
 
