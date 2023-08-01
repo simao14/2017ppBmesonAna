@@ -1281,7 +1281,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP = 0){
 		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDT%s.root",meson_n.Data(),bsbpbins.Data());
 	}
 	if(Rescale == 1){
-		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew%s%s.root",meson_n.Data(),bsbpbins.Data());
+		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew%s.root",meson_n.Data(),bsbpbins.Data());
 	}
 
 	TFile * fout = new TFile(outfileName.Data(),"RECREATE");
