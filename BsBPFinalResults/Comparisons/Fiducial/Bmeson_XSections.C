@@ -336,7 +336,6 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 
 		BP1DTnPSystUp[ibin] = BP1DTnPSystDown[ibin];
 		BP1DPDFSyst[ibin] = pdfSyst->GetY()[ibin];
-		//BP1DTrackSelSyst[ibin] = trackSelSyst->GetY()[ibin];
   	}
 
   // RMS of all the errors
@@ -354,7 +353,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
     	BP2DTotalSystUpRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst[i], 2) +
                                         TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
                                         TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystUp[i], 2)) / 100;
-		
+		if(BsBP==0){
 		BP1DTotalSystDownRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BP1DMCDataSyst[i], 2) +
                                           TMath::Power(BP1DPDFSyst[i], 2) + TMath::Power(BP1DTrackSelSyst[i], 2) +
                                           TMath::Power(BP1DPtShapeSyst[i], 2) + TMath::Power(BP1DTnPSystDown[i], 2)) / 100;
@@ -362,6 +361,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
     	BP1DTotalSystUpRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BP1DMCDataSyst[i], 2) +
                                         TMath::Power(BP1DPDFSyst[i], 2) + TMath::Power(BP1DTrackSelSyst[i], 2) +
                                         TMath::Power(BP1DPtShapeSyst[i], 2) + TMath::Power(BP1DTnPSystUp[i], 2)) / 100;
+		}
 	}
 
   // global uncertainty from branching ratio and luminosity
