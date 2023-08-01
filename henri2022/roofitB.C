@@ -60,7 +60,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	cout << "Systematics " << syst_study << endl;
 	cout << "number of bins: " << _nBins << endl;	
 	cout << tree << " BINS: ";
-	for(int t; t < _nBins+1 ;t++){cout <<"__"<<  _ptBins[t]<<"__";}
+	for(int t=0; t < _nBins+1 ;t++){cout <<"__"<<  _ptBins[t]<<"__";}
 	cout << endl << endl;
 		
 	TString seldata;
