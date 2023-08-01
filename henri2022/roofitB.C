@@ -872,8 +872,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 leg_d->SetTextSize(0);
 	 leg_d->Draw();
 
-	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s%s.pdf",tree.Data(), Bsbpbins.Data(), varExp.Data());
-	 c_diff.SaveAs(pathc);
+	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.pdf",tree.Data(), varExp.Data());
+	 if(BsBPBins==1){c_diff.SaveAs(pathc);}
 	 ratio_f->Close();
 // Differential plot part ends
 
