@@ -125,7 +125,6 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int usemc=0){
 
 	TString var_n;
-	TString var_n2;
 	TString var_N;
 	TString bsbpbins = "";
 	if(BsBP==1 && meson_n==0 && whichvar == 0) {bsbpbins = "_BsBPBINS";}
@@ -134,14 +133,12 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	int NCand;
 	if (meson_n == 0){
 		var_n="BP";
-		var_n2="Bp";
 		var_N="B^{+}";
 		NCand = 10;
 		BRchain = 6.02061e-5;
 	}
 	else {
 		var_n="Bs";
-		var_n2="Bs";
 		var_N="B^{0}_{s}";
 		NCand = 15;
 		BRchain = 3.1189e-5;
@@ -619,13 +616,13 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	//TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_file.Data()));
 
-	TFile * RawYield = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s%s.root",var_n2.Data(),var_file.Data(), bsbpbins.Data()));
+	TFile * RawYield = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s%s.root",var_n.Data(),var_file.Data(), bsbpbins.Data()));
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 
 	TFile * RawYieldTight;
 	TH1D * hPtTight;
-	RawYieldTight = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s_trk%s.root",var_n2.Data(),var_file.Data(), bsbpbins.Data()));
+	RawYieldTight = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s_trk%s.root",var_n.Data(),var_file.Data(), bsbpbins.Data()));
 	hPtTight = (TH1D *) RawYieldTight->Get("hPt");
 
 	double RawCount;
