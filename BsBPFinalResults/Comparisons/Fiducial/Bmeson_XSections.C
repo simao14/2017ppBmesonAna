@@ -283,9 +283,13 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	TFile fTrackSelError(trackSelErrorFile);
 	TGraph* trackSelSyst = (TGraph *) fTrackSelError.Get(Form("%s_track_sel_error%s", meson_n.Data(),bsbpbins.Data()));
 
-	TString trackSelErrorFile1D = Form("../../../syst_error/syst_track_sel_%s_1D.root",whichvar.Data());
-	TFile fTrackSelError1D(trackSelErrorFile1D);
-	TGraph* trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error%s", meson_n.Data(),bsbpbins.Data()));
+	TGraph* trackSelSyst1D;
+	if (BsBP==0){
+		TFile fTrackSelError1D(Form("../../../syst_error/syst_track_sel_%s_1D.root",whichvar.Data()));
+		trackSelSyst1D = (TGraph *) fTrackSelError1D.Get(Form("%s_track_sel_error%s", meson_n.Data(),bsbpbins.Data()));
+
+	}
+	
 
 	float XsecPP_Y_SystUp[NBins];
 	float XsecPP_Y_SystDown[NBins];
@@ -328,7 +332,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		BPTnPSystUp[ibin] = BPTnPSystDown[ibin];
 		BPPDFSyst[ibin] = pdfSyst->GetY()[ibin];
 		BPTrackSelSyst[ibin] = trackSelSyst->GetY()[ibin];
-		BP1DTrackSelSyst[ibin] = trackSelSyst1D->GetY()[ibin];
+		if(BsBP==0){ BP1DTrackSelSyst[ibin] = trackSelSyst1D->GetY()[ibin]; }
 
 		BP1DTnPSystUp[ibin] = BP1DTnPSystDown[ibin];
 		BP1DPDFSyst[ibin] = pdfSyst->GetY()[ibin];
