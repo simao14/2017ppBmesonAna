@@ -222,8 +222,5 @@ def get_tracking_syst1D(outfile, out_table):
         fout.write('\n')
         fout.write('\\PBs track selection systematics\n')
         fout.write(t_bs)
-        if opt.var == "pt":
-            fout.write('\\PBp track selection systematics bsbpbins\n')
-            fout.write(t_bsbpbins)
 
 get_tracking_syst1D("syst_error/syst_track_sel_%s_1D.root" % opt.var, "syst_error/syst_track_sel_%s_1D.txt" % opt.var)
