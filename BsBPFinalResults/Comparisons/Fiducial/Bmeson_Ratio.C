@@ -82,7 +82,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         Y1_stat = Y_stat_B1->GetErrorYhigh(i);   // Yield Statistical Unc. of NUMERATOR Bmeson
         Y1_syst = Y_syst_B1->GetErrorYhigh(i);   // Yield Systematic Unc. of NUMERATOR Bmeson
 
-        Y_stat_B2->GetPoint(i+1, B_X2, B_Y2);    // X and Yield values of DENOMINATOR Bmeson
+        Y_stat_B2->GetPoint(i, B_X2, B_Y2);    // X and Yield values of DENOMINATOR Bmeson
         Y2_stat = Y_stat_B2->GetErrorYhigh(i);   // Yield Statistical Unc. of DENOMINATOR Bmeson
         Y2_syst = Y_syst_B2->GetErrorYhigh(i);   // Yield Systematic Unc. of DENOMINATOR Bmeson
 
