@@ -43,13 +43,13 @@ OutputFile_BP_MatchingBINS_PT_trk="ROOTfiles/yields_BP_binned_pt_trk_BsBPBINS"
 
 
 
-if [ $DOANALYSISPbPb_FULL_BP  -eq 1  ]; then
+if [ $DOANALYSISPbPb_FULL_BP -eq 1  ]; then
 root -b  -q 'roofitB.C('\"ntKp\"','1','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BP_FULL\"','\"results/BP\"','\"$INPUTJPSI\"')'
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
-if [ $DOANALYSISPbPb_BINNED_PT_BP  -eq 1  ]; then
+if [ $DOANALYSISPbPb_BINNED_PT_BP -eq 1  ]; then
 root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BP_BINNED_PT\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"')'
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so

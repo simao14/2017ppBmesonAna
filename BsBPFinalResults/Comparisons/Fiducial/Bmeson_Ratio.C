@@ -21,15 +21,13 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
 
 void Bmeson_Ratio(){
-
-    //First Retrive the BP Xsection with matching bins
-
-    //First Retrive the BP Xsection with matching bins
+//First Retrive the BP Xsection with matching bins
+//First Retrive the BP Xsection with matching bins
 
 // fs/fu 
 // pT Fragmentation Fraction
 
-TString BP_FILE_pt = "./ROOTFiles/BP_Xsection_pt.root";
+TString BP_FILE_pt = "./ROOTFiles/BP_Xsection_pt_BsBPBINS.root";
 TString Bs_FILE_pt = "./ROOTFiles/Bs_Xsection_pt.root";
 divideTGraphsInFiles(Bs_FILE_pt, BP_FILE_pt, "p_{T}") ;
 
@@ -43,32 +41,23 @@ divideTGraphsInFiles(Bs_FILE_y, BP_FILE_y, "|y|") ;
 // y Fragmentation Fraction
 // fs/fu 
 
-
 }
-
-
-
-
-
-
-
-
-
-
-
 
 void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichvar) {
     //inputFile1 SHOULD BE Bmeson NUMERATOR
     //inputFile2 SHOULD BE Bmeson DENOMINATOR      
     TString Name1= "";
     TString Name2= "";
+    int NumberBin =0 ;
 
     if (whichvar == "p_{T}"){
         Name2= "BP_Xsection_pt";
         Name1= "Bs_Xsection_pt";
+        NumberBin = nptBins;
     } else {
         Name2= "BP_Xsection_y";
         Name1= "Bs_Xsection_y";
+        NumberBin = nyBins_both;
     }
 
     TFile* file1 = TFile::Open(inputFile1, "READ");
@@ -81,30 +70,21 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     TGraphAsymmErrors* Y_stat_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_stat"));
     TGraphAsymmErrors* Y_syst_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_syst"));
 
-    // Retrieve values
-    // FOR NOW THERE IS NO BP with matching number of bins so i=0 i=1 i=2 (first 3 bins) are being considered only
-    double X_POS[3] ;
-    double Frag_f[3];
-    double Frag_f_Stat_U[3];
-    double Frag_f_Syst_U[3];
+    double X_POS[nptBins+1] ;
+    double Frag_f[nptBins+1];
+    double Frag_f_Stat_U[nptBins+1];
+    double Frag_f_Syst_U[nptBins+1];
 
     Double_t B_X1, B_Y1, B_X2, B_Y2, Y1_stat, Y1_syst, Y2_stat, Y2_syst ;
+    for (int i = 0; i < nptBins+1; ++i) {
 
-    int dummy = 0;
-    if (whichvar == "|y|")
-    {
-        dummy = 1;
-    }
-
-    for (int i = 0; i < 3; ++i) {
-
-        Y_stat_B1->GetPoint(i, B_X1, B_Y1);           // X and Yield values of NUMERATOR Bmeson
+        Y_stat_B1->GetPoint(i, B_X1, B_Y1);      // X and Yield values of NUMERATOR Bmeson
         Y1_stat = Y_stat_B1->GetErrorYhigh(i);   // Yield Statistical Unc. of NUMERATOR Bmeson
         Y1_syst = Y_syst_B1->GetErrorYhigh(i);   // Yield Systematic Unc. of NUMERATOR Bmeson
-       
-        Y_stat_B2->GetPoint(i+1-dummy, B_X2, B_Y2);           // X and Yield values of DENOMINATOR Bmeson
-        Y2_stat = Y_stat_B2->GetErrorYhigh(i+1-dummy);   // Yield Statistical Unc. of DENOMINATOR Bmeson
-        Y2_syst = Y_syst_B2->GetErrorYhigh(i+1-dummy);   // Yield Systematic Unc. of DENOMINATOR Bmeson
+
+        Y_stat_B2->GetPoint(i+1, B_X2, B_Y2);    // X and Yield values of DENOMINATOR Bmeson
+        Y2_stat = Y_stat_B2->GetErrorYhigh(i);   // Yield Statistical Unc. of DENOMINATOR Bmeson
+        Y2_syst = Y_syst_B2->GetErrorYhigh(i);   // Yield Systematic Unc. of DENOMINATOR Bmeson
 
         X_POS[i] = (B_X1+B_X2)/2;
         Frag_f[i] = B_Y1 / B_Y2;
@@ -117,9 +97,9 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     }
 
 	//center of the bin and its left and right margins
-	double ptBins[3];
-	double XsecPP_X_BinLeft[3] ;
-    double XsecPP_X_BinRight[3] ;
+	double ptBins[nptBins+1];
+	double XsecPP_X_BinLeft[nptBins+1] ;
+    double XsecPP_X_BinRight[nptBins+1] ;
 
 	for(int i = 0; i < 3 + 1; i++){
 		if (whichvar=="p_{T}"){ ptBins[i] = ptbinsvec[i];}
@@ -131,11 +111,6 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 		XsecPP_X_BinRight[c]= ptBins[c+1] - X_POS[c];
 	}
 	//center of the bin and its left and right margins
-
-
-
-
-
 
     // Clean up
     file1->Close();
@@ -153,7 +128,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	HisEmpty->GetYaxis()->CenterTitle();
     HisEmpty->SetStats(0);
 
-    TCanvas* canvas = new TCanvas("canvas", "Result of Division", 600, 600);
+    TCanvas* canvas = new TCanvas("canvas", "Result of Division", 700, 700);
     canvas->cd();
 
     // Create a new TGraphAsymmErrors for the result of the division
