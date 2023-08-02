@@ -70,13 +70,13 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     TGraphAsymmErrors* Y_stat_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_stat"));
     TGraphAsymmErrors* Y_syst_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_syst"));
 
-    double X_POS[nptBins+1] ;
-    double Frag_f[nptBins+1];
-    double Frag_f_Stat_U[nptBins+1];
-    double Frag_f_Syst_U[nptBins+1];
+    double X_POS[NumberBin+1] ;
+    double Frag_f[NumberBin+1];
+    double Frag_f_Stat_U[NumberBin+1];
+    double Frag_f_Syst_U[NumberBin+1];
 
     Double_t B_X1, B_Y1, B_X2, B_Y2, Y1_stat, Y1_syst, Y2_stat, Y2_syst ;
-    for (int i = 0; i < nptBins+1; ++i) {
+    for (int i = 0; i < NumberBin+1; ++i) {
 
         Y_stat_B1->GetPoint(i, B_X1, B_Y1);      // X and Yield values of NUMERATOR Bmeson
         Y1_stat = Y_stat_B1->GetErrorYhigh(i);   // Yield Statistical Unc. of NUMERATOR Bmeson
@@ -97,16 +97,16 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     }
 
 	//center of the bin and its left and right margins
-	double ptBins[nptBins+1];
-	double XsecPP_X_BinLeft[nptBins+1] ;
-    double XsecPP_X_BinRight[nptBins+1] ;
+	double ptBins[NumberBin+1];
+	double XsecPP_X_BinLeft[NumberBin+1] ;
+    double XsecPP_X_BinRight[NumberBin+1] ;
 
-	for(int i = 0; i < nptBins + 1; i++){
+	for(int i = 0; i < NumberBin + 1; i++){
 		if (whichvar=="p_{T}"){ ptBins[i] = ptbinsvec[i];}
 		else if (whichvar=="|y|"){ ptBins[i] =  ybinsvec[i];}          
 		else if (whichvar=="BMult"){ ptBins[i] =  nmbinsvec[i];}
 	}
-	for( int c=0; c < nptBins+1; c++){
+	for( int c=0; c < NumberBin+1; c++){
 		XsecPP_X_BinLeft[c] = X_POS[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - X_POS[c];
 	}
@@ -132,9 +132,9 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     canvas->cd();
 
     // Create a new TGraphAsymmErrors for the result of the division
-    TGraphAsymmErrors* FragRatio_stat = new TGraphAsymmErrors(nptBins, X_POS, Frag_f, XsecPP_X_BinLeft, XsecPP_X_BinRight, Frag_f_Stat_U, Frag_f_Stat_U);     
+    TGraphAsymmErrors* FragRatio_stat = new TGraphAsymmErrors(NumberBin, X_POS, Frag_f, XsecPP_X_BinLeft, XsecPP_X_BinRight, Frag_f_Stat_U, Frag_f_Stat_U);     
 	FragRatio_stat->SetLineColor(1); 
-    TGraphAsymmErrors* FragRatio_syst = new TGraphAsymmErrors(nptBins, X_POS, Frag_f, nullptr, nullptr, Frag_f_Syst_U, Frag_f_Syst_U);     
+    TGraphAsymmErrors* FragRatio_syst = new TGraphAsymmErrors(NumberBin, X_POS, Frag_f, nullptr, nullptr, Frag_f_Syst_U, Frag_f_Syst_U);     
 	FragRatio_syst->SetLineColor(2); 
 
 	HisEmpty->Draw();
