@@ -101,12 +101,12 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	double XsecPP_X_BinLeft[nptBins+1] ;
     double XsecPP_X_BinRight[nptBins+1] ;
 
-	for(int i = 0; i < 3 + 1; i++){
+	for(int i = 0; i < nptBins + 1; i++){
 		if (whichvar=="p_{T}"){ ptBins[i] = ptbinsvec[i];}
 		else if (whichvar=="|y|"){ ptBins[i] =  ybinsvec[i];}          
 		else if (whichvar=="BMult"){ ptBins[i] =  nmbinsvec[i];}
 	}
-	for( int c=0; c < 3; c++){
+	for( int c=0; c < nptBins+1; c++){
 		XsecPP_X_BinLeft[c] = X_POS[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - X_POS[c];
 	}
@@ -132,9 +132,9 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     canvas->cd();
 
     // Create a new TGraphAsymmErrors for the result of the division
-    TGraphAsymmErrors* FragRatio_stat = new TGraphAsymmErrors(3, X_POS, Frag_f, XsecPP_X_BinLeft, XsecPP_X_BinRight, Frag_f_Stat_U, Frag_f_Stat_U);     
+    TGraphAsymmErrors* FragRatio_stat = new TGraphAsymmErrors(nptBins, X_POS, Frag_f, XsecPP_X_BinLeft, XsecPP_X_BinRight, Frag_f_Stat_U, Frag_f_Stat_U);     
 	FragRatio_stat->SetLineColor(1); 
-    TGraphAsymmErrors* FragRatio_syst = new TGraphAsymmErrors(3, X_POS, Frag_f, nullptr, nullptr, Frag_f_Syst_U, Frag_f_Syst_U);     
+    TGraphAsymmErrors* FragRatio_syst = new TGraphAsymmErrors(nptBins, X_POS, Frag_f, nullptr, nullptr, Frag_f_Syst_U, Frag_f_Syst_U);     
 	FragRatio_syst->SetLineColor(2); 
 
 	HisEmpty->Draw();
