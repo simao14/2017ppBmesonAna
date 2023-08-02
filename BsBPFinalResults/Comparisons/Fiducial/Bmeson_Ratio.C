@@ -117,11 +117,11 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     file2->Close();
 
     // Plot the result
-	TH2D * HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,0,0.8); 
+	TH2D * HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,0,0.5); 
     TString units = "";
     if( whichvar == "p_{T}"){ 
         units = "[GeV/c]" ;
-        HisEmpty = new TH2D("HisEmpty","",100,7,50,100,0,0.8); }
+        HisEmpty = new TH2D("HisEmpty","",100,7,50,100,0,0.5); }
 	HisEmpty->GetXaxis()->SetTitle(Form("%s %s",whichvar.Data(), units.Data()));
 	HisEmpty->GetYaxis()->SetTitle("B^{0}_{s}/B^{+}");
 	HisEmpty->GetXaxis()->CenterTitle();
