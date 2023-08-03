@@ -11,7 +11,7 @@
 #include "TGraphErrors.h"
 #include <stdio.h>
 
-void read_samples(RooWorkspace& w, std::vector<TString>, TString fName, TString treeName, TString sample);
+void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TString treeName, TString sample, TString variable, int bsbp);
 
 // PDF VARIATION FOR SYST STUDIES
 int syst_study=0;
@@ -21,13 +21,15 @@ int val=0;
 
 void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TString inputmc = "", TString varExp = "", TString cut = "", TString outputfile = "", TString outplotf = "", TString jpsiFile = "", int BsBPBins = 0){
 
+	TString _isPbPb = "pp";
+	TString bsbpbins = "";
+	if ( BsBPBins ==1 ){ bsbpbins = "_BsBPBINS";}
+	
 	//Create the Folders
 	gSystem->mkdir("filesbp",true); 
 	gSystem->mkdir("filesbs",true); 
 	gSystem->mkdir(Form("%s", outplotf.Data()),true); 
 
-	double MyBackground;
-	double yield;
 	int _nBins = 1;
 
 	if(varExp == "Bpt"){ 
@@ -62,13 +64,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	cout << tree << " BINS: ";
 	for(int t=0; t < _nBins+1 ;t++){cout <<"__"<<  _ptBins[t]<<"__";}
 	cout << endl << endl;
-		
-	TString seldata;
-	TString selmc;
-	seldata = Form("(Bpt>0)&&%s",cut.Data());
-	selmc = Form("%s",cut.Data());
-
-	std::cout<<"DEBUG"<<std::endl;
+	
+	TString seldata = Form("(Bpt>0)&&%s",cut.Data());
+	TString selmc = Form("%s",cut.Data());
 	std::cout<<"seldata= "<<seldata<<std::endl;
 	std::cout<<"selmc= "<<selmc<<std::endl;
 
@@ -80,16 +78,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	gStyle->SetPadBottomMargin(cBottomMargin);
 	gStyle->SetPadBottomMargin(0.45);
 	gStyle->SetTitleX(.0f);
-
-	TFile* inf = new TFile(inputdata.Data());
-	TTree* skimtree_new = (TTree*)inf->Get(tree);
-	TFile* infMC = new TFile(inputmc.Data());
-	cout << inputdata.Data() << endl;
-	cout << inputmc.Data() << endl;
-	TTree* skimtreeMC_new = (TTree*)infMC->Get(tree);
-	TH1D* h;
-	TH1D* hMC;
-	TH1D* hPt = new TH1D("hPt","",_nBins,_ptBins);  
 
 	RooWorkspace* ws = new RooWorkspace("ws");
 	RooRealVar* Bgen = new RooRealVar("Bgen", "Bgen", 0, 30000);
@@ -105,48 +93,46 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	RooRealVar BDT_pt_50_60("BDT_pt_50_60", "BDT_pt_50_60", -1, 1);
 	RooRealVar* trackSelection = new RooRealVar("track", "track", 0, 5);
 
-		ws->import(*mass);
-		ws->import(*y);
-		ws->import(*pt);
-		ws->import(*Bgen);
-		ws->import(BDT_pt_5_7);
-    	ws->import(BDT_pt_7_10);
-    	ws->import(BDT_pt_10_15);
-    	ws->import(BDT_pt_15_20);
-    	ws->import(BDT_pt_20_50);
-		ws->import(BDT_pt_50_60);
+	ws->import(*mass);
+	ws->import(*y);
+	ws->import(*pt);
+	ws->import(*Bgen);
+	ws->import(*nMult);
+	ws->import(*trackSelection);
+	ws->import(BDT_pt_5_7);
+    ws->import(BDT_pt_7_10);
+    ws->import(BDT_pt_10_15);
+    ws->import(BDT_pt_15_20);
+    ws->import(BDT_pt_20_50);
+	ws->import(BDT_pt_50_60);
 
-	RooDataSet* ds = new RooDataSet();
-	RooDataSet* dsMC = new RooDataSet();   
-	std::cout<<"Created dataset"<<std::endl;
-	RooDataHist* dh = new RooDataHist();   
-	RooDataHist* dhMC = new RooDataHist();   
-	std::cout<<"Created roodatahists"<<std::endl;
-	RooPlot* frame = new RooPlot();
-	RooHist* datahist = new RooHist();
+	//DATA and MC SAMPLES
+	std::vector<TString> ANA_vars = {"Bpt", "By", "nMult", "track"};
+	read_samples(*ws, ANA_vars , inputdata.Data(), tree.Data(), "ds_cut", varExp.Data(), BsBPBins);
+	read_samples(*ws, ANA_vars , inputmc.Data(), tree.Data(), "dsMC_cut", varExp.Data(), BsBPBins);
+	RooDataSet* ds_cut = (RooDataSet*) ws->data("ds_cut");
+	RooDataSet* dsMC_cut = (RooDataSet*) ws->data("dsMC_cut");
+	ds_cut = (RooDataSet*) ds_cut->reduce(seldata);
+	dsMC_cut = (RooDataSet*) dsMC_cut->reduce(selmc);
 
-	TString _prefix = "";
-	TString _isMC = "data";
-	TString _isPbPb = "pp";
-
-	dsMC = new RooDataSet(Form("dsMC%d",_count),"",skimtreeMC_new,RooArgSet(*mass, *pt, *y, *nMult, *trackSelection));
-	ds = new RooDataSet(Form("ds%d",_count),"",skimtree_new,RooArgSet(*mass, *pt, *y, *nMult, *trackSelection));
-	
+	std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
+	std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
+	//DATA and MC SAMPLES
 
 	//MODELS for syst studies
 	std::vector<std::string> background;
 	if (tree == "ntKp"){background = {"1st", "2nd", "mass_range", "jpsi_sig"};} 
 	else if (tree == "ntphi"){background = {"1st", "2nd", "mass_range"};}
 	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb"};
-	//MODELS for syst studies
-
 	std::vector<std::vector<double>> background_syst;
 	std::vector<std::vector<double>> signal_syst;
 	std::vector<std::vector<double>> general_syst;
 	std::vector<std::vector<double>> back_syst_rel_values;
 	std::vector<std::vector<double>> sig_syst_rel_values;
 	std::vector<std::vector<double>> stat_error;
+	//MODELS for syst studies
 
+	// FIT INFO
 	double yield_vec[_nBins];
 	double yield_vec_err_low[_nBins];
 	double yield_vec_err_high[_nBins];
@@ -161,6 +147,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	double var_mean_av[_nBins];
 	double hori_av_low[_nBins];
 	double hori_av_high[_nBins];
+	// FIT INFO
 
 	//chi2
 	double chi2_vec[_nBins];
@@ -170,6 +157,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	double chi2MC_vec_sig[signal.size()][_nBins];
 	double chi2MC_vec_back[background.size()][_nBins];
 	//chi2
+
+		TH1D* hPt = new TH1D("hPt","",_nBins,_ptBins);  
 
 	// FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
 	//Fit the J/psi pi MC sample
@@ -196,11 +185,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 		// PREPARE DATA SETS
 		std::vector<TString> jpsi_vars = {"By", "Bpt", "Bgen","BDT_pt_5_7", "BDT_pt_7_10", "BDT_pt_10_15","BDT_pt_15_20", "BDT_pt_20_50"};
-		read_samples(*ws, jpsi_vars, jpsiFile.Data(), "ntKp", "jpsinp");
+		read_samples(*ws, jpsi_vars, jpsiFile.Data(), "ntKp", "jpsinp", varExp.Data(), BsBPBins);
 		RooDataSet* full_data_MC = (RooDataSet*) ws->data("jpsinp");
-		full_data_MC = (RooDataSet*)full_data_MC->reduce("(BDT_pt_5_7 > 0.08 && Bpt >= 5 && Bpt < 7) || (BDT_pt_7_10 > 0.07 && Bpt >= 7 && Bpt < 10) || (BDT_pt_10_15 > 0.0 && Bpt >= 10 && Bpt < 15) || (BDT_pt_15_20 > 0.02 && Bpt >= 15 && Bpt < 20) || (BDT_pt_20_50 > 0.04 && Bpt >= 20 && Bpt < 50) || (Bpt >= 20 && Bpt < 50) ");
-		full_data_MC = (RooDataSet*)full_data_MC->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)");  //FID REGION
-		
+
 		// FORM PEAKING Background BINS
 		RooDataSet* fullds_JPSI_shape_fix = (RooDataSet*)full_data_MC->reduce("Bgen == 23335");
 		// FORM PEAKING Background BINS
@@ -213,11 +200,10 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		mass->setRange("bjpsipi", 5.2, 5.9);
 		auto jpsipi_result = jpsipi_ext.fitTo(*fullds_JPSI_shape_fix, Range("bjpsipi"), Save(), Extended());
 		// FIT
-		plot_mcfit(*ws, &jpsipi_ext, fullds_JPSI_shape_fix, "./results/BP/InclusiveMC_JPsipi_fit.pdf", NormRange("bjpsipi"), DrawOption("LF"), FillStyle(3008), FillColor(kMagenta+1), LineStyle(1), LineColor(kMagenta+1), LineWidth(1)); 
+		plot_mcfit(*ws, &jpsipi_ext, fullds_JPSI_shape_fix, Form("./results/BP/InclusiveMC_JPsipi_fit%s.pdf", bsbpbins.Data()), NormRange("bjpsipi"), DrawOption("LF"), FillStyle(3008), FillColor(kMagenta+1), LineStyle(1), LineColor(kMagenta+1), LineWidth(1)); 
 		ws->import(*jpsipi);
 		fix_parameters(*ws, "jpsipi" );
 		//[END] FIX SHAPE (J/Psi pi) 
-
 						}
 	// FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
 
@@ -226,60 +212,52 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		_count++;
 		TCanvas* c= new TCanvas(Form("c%d",_count),"",700,700);
 		TCanvas* cMC= new TCanvas(Form("cMC%d",_count),"",700,700);
-		
-		RooDataSet* ds_cut ;
-		RooDataSet* dsMC_cut;
-		ds_cut = new RooDataSet(Form("ds_cut%d", _count),"", ds,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection),       Form(" (abs(%s)>=%f && abs(%s)<=%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) )",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
-		dsMC_cut = new RooDataSet(Form("dsMC_cut%d", _count),"", dsMC,  RooArgSet(*mass, *pt, *y, *nMult, *trackSelection), Form(" (abs(%s)>=%f && abs(%s)<=%f) && ( (Bpt < 10 && abs(By) > 1.5) || (Bpt > 10) ) && (Bmass>%f && Bmass<%f)",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1],minhisto, maxhisto));
-		
-		std::cout << "data entries: " << ds_cut->numEntries() << "\n";
-		std::cout << "MC entries: " << dsMC_cut->numEntries() << "\n";
 
-		if(varExp == "Bpt"){var_mean_av[i] = ds_cut->mean(*pt);}     	
+		
+		//BINNING OF THE DATA
+		RooDataSet* ds_BIN = (RooDataSet*) ds_cut->reduce(Form("(abs(%s)>=%f && abs(%s)<=%f)",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
+		ds_BIN->SetName(Form("ds_cut%d", _count));
+		RooDataSet* dsMC_BIN = (RooDataSet*) dsMC_cut->reduce(Form("(abs(%s)>=%f && abs(%s)<=%f)",varExp.Data(),_ptBins[i],varExp.Data(),_ptBins[i+1]));
+		dsMC_BIN->SetName(Form("dsMC_cut%d", _count));
+		
+		std::cout << "data entries in the "<< i << "-th BIN: " << ds_BIN->numEntries() << "\n";
+		std::cout << "MC entries in the "<< i << "-th BIN: " << dsMC_BIN->numEntries() << "\n";
+
+		RooRealVar * Events_in_MC = new RooRealVar(Form("Events_in_MC_%d",_count),"Events_in_MC", dsMC_BIN->sumEntries());
+		ws->import(*Events_in_MC);
+		//BINNING OF THE DATA
+
+		if(varExp == "Bpt"){var_mean_av[i] = ds_BIN->mean(*pt);}     	
 		else if(varExp == "By"){
     		double sumAbs = 0.0;
 			// Loop over the dataset and compute the sum of absolute values
-			for (int iy = 0; iy < ds_cut->numEntries(); iy++) {
-				RooRealVar* y_abs = (RooRealVar*) ds_cut->get(iy)->find("By");
+			for (int iy = 0; iy < ds_BIN->numEntries(); iy++) {
+				RooRealVar* y_abs = (RooRealVar*) ds_BIN->get(iy)->find("By");
 				double abs_y = TMath::Abs(y_abs->getVal());
 				sumAbs += abs_y;
 			}
-			var_mean_av[i] = sumAbs / ds_cut->numEntries();
+			var_mean_av[i] = sumAbs / ds_BIN->numEntries();
 		}
-		else if(varExp == "nMult"){var_mean_av[i] = ds_cut->mean(*nMult);}
-
-		ds_cut = (RooDataSet*) ds_cut->reduce(seldata);
-		dsMC_cut = (RooDataSet*) dsMC_cut->reduce(selmc);
-		RooRealVar * Events_in_MC = new RooRealVar(Form("Events_in_MC_%d",_count),"Events_in_MC", dsMC_cut->sumEntries());
-		ws->import(*Events_in_MC);
-		std::cout << "data entries: " << ds_cut->sumEntries() << "\n";
-		std::cout << "MC entries: " << dsMC_cut->sumEntries() << "\n";
-
-		// create RooDataHist
-		h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
-		hMC = new TH1D(Form("hMC%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
-
-		skimtree_new->Project(Form("h%d",_count),"Bmass",   Form("(%s&&%s>%f&&%s<%f)*(1/%s)", seldata.Data(),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1],"1"));
-		skimtreeMC_new->Project(Form("hMC%d",_count),"Bmass",           Form("%s*(%s&&%s>%f&&%s<%f)","1",Form("%s&&BgenNew==23333",selmc.Data()),Form("abs(%s)",varExp.Data()),_ptBins[i],Form("abs(%s)",varExp.Data()),_ptBins[i+1]));	
-		
-		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
-		dhMC = new RooDataHist(Form("dhMC%d",_count),"",*mass,Import(*hMC));
-		h->SetAxisRange(0,h->GetMaximum()*1.4,"Y");
+		else if(varExp == "nMult"){var_mean_av[i] = ds_BIN->mean(*nMult);}
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 
 		mass->setRange("m_range", 5.19 , 6.);    //set a range to be used if pdf = mass_range
 		mass->setRange("all", minhisto, maxhisto);    
 		cout << "Starting the fiting function for VARIABLE " << varExp.Data() << endl;
-		RooFitResult* f = fit("", "", tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], *ws, varExp.Data());		
+		RooFitResult* f = fit("", "", tree, c, cMC, ds_BIN, dsMC_BIN, mass, _ptBins[i], _ptBins[i+1], *ws, varExp.Data(), bsbpbins);	
 
 ////////// FITFITFITFITFITFITFITFITFITFITFITFIT
 		
 		//scan_significance(w_val, tree, varExp, full,centmin, centmax, _ptBins[i], _ptBins[i+1]);
 		/*for(int q= 0; q < 100; q++){
-			validate_fit(w_val, tree, varExp, full,q);} ?? */
+			validate_fit(w_val, tree, varExp, full,q);} ?? 
+		RooHist* datahist = new RooHist();*/
 		//datahist = frame->getHist("ds");
 		//TGraphAsymmErrors* datagraph = static_cast<TGraphAsymmErrors*>(datahist);
+
+		double MyBackground;
+		double yield;
 
 		RooRealVar* fitYield = static_cast<RooRealVar*>(f->floatParsFinal().at(f->floatParsFinal().index(Form("nsig%d_%s",_count,""))));
 		yield = fitYield->getVal();
@@ -292,7 +270,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		scale_vec_err_low[i] = Myscale_err;
 		scale_vec_err_high[i] = Myscale_err;
 		double yieldErr = fitYield->getError();
-		printf("yield: %f, yieldErr: %f\n", yield, yieldErr);
 		double _ErrCor=1;
 		yieldErr = yieldErr*_ErrCor;
 		yield_vec[i]=yield;
@@ -329,6 +306,11 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		//Resolution MC
 		
 		//chi2
+		RooDataHist* dh = new RooDataHist();
+		TH1D* h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
+		ds_BIN->fillHistogram(h, *mass);
+		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
+
 		RooAbsPdf* model = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,""));
 		RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
 		RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d_%s",_count,"")), Bins(nbinsmasshisto));
@@ -345,9 +327,11 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		//chi2
 		////////////////////////////
 
+	////////////////////////////
+
 		hPt->SetBinContent(i+1,yield/(_ptBins[i+1]-_ptBins[i]));
 		hPt->SetBinError(i+1,yieldErr/(_ptBins[i+1]-_ptBins[i]));
-		hPt->SetBinCenter(i+1, var_mean_av[i])
+    	hPt->GetXaxis()->SetBinLabel(i+1, Form("%f", *var_mean_av));
 
 	//////////////////////////////////////////////////////////LABELS IN PLOTS
 		TLatex* texB = new TLatex(0.5,0.5,"");
@@ -433,10 +417,12 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
         tex_BIN->SetText(0.21, 0.8, Form("%0.1f < |y| < %0.1f ", _ptBins[i],_ptBins[i+1]));
 		yield_val ->SetText(0.21, 0.70 , Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
 		chi_square->SetText(0.21, 0.65 , Form("#chi^{2}/ndf = %.2f",Mychi2));
-		tex_yCUT->SetText(0.21, 0.75, "p_{T} > 10 GeV/c");
+		tex_yCUT->SetText(0.21, 0.75, "10 GeV/c < p_{T} < 60 GeV/c");
 
-		if(tree=="ntphi"){ tex_y->SetText(0.21, 0.75,"p_{T} > 7 GeV/c" );} 
-		else{tex_y->SetText(0.21, 0.75,"p_{T} > 5 GeV/c" );}
+		if(tree=="ntphi" || BsBPBins==1){ 
+			tex_yCUT->SetText(0.21, 0.75, "10 GeV/c < p_{T} < 50 GeV/c");
+			tex_y->SetText(0.21, 0.75,"7 GeV/c < p_{T} < 50 GeV/c" );} 
+		else{tex_y->SetText(0.21, 0.75,"5 GeV/c < p_{T} < 60 GeV/c" );}
 
 		if( ( _ptBins[i] >= 1.5) || (_ptBins[i+1] <= -1.5) ){ tex_y->Draw();} 
 		else { tex_yCUT->Draw();}
@@ -454,7 +440,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	tex_BIN->Draw();
 	chi_square->Draw();
 	yield_val->Draw();
-	//////////////////////////////////////////////////////////LABELS IN PLOTS
+	///////////////////////////////////////////////////////// /LABELS IN PLOTS
 
 
 	    //CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
@@ -470,11 +456,11 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		lat->DrawLatex(0.64,0.70,Form("Significance: %.1f", real_significance));*/
 
 		if(varExp == "By"){
-			c->SaveAs(  Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i],(float)_ptBins[i+1])+tree+".pdf");
-			cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1])+tree+".pdf");
+			c->SaveAs(  Form("%s/data_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i],(float)_ptBins[i+1])+tree+bsbpbins+".pdf");
+			cMC->SaveAs(Form("%s/mc_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1])+tree+bsbpbins+".pdf");
 		}else{
-			c->SaveAs(  Form("%s%s/%s_%s_%s_%d_%d_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1])+tree+".pdf");
-			cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1])+tree+".pdf");
+			c->SaveAs(  Form("%s/data_%s_%s_%i_%i_",outplotf.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1])+tree+".pdf");
+			cMC->SaveAs(Form("%s/mc_%s_%s_%i_%i_",outplotf.Data(),_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1])+tree+".pdf");
 		}
 
 		std::vector<double> back_variation; 
@@ -485,21 +471,22 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		double max_signal=0.;
 		double max_back=0.;
 		double full_err=0;
-	
+
 		if(syst_study==1){
 
-				for(int j=0; j<background.size(); j++){
-					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], *ws, varExp);
+				for(int j=0; static_cast<int>(background.size()); j++){
+					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_BIN, dsMC_BIN, mass, _ptBins[i], _ptBins[i+1], *ws, varExp, bsbpbins);
+					
 					RooAbsPdf* model_back = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,background[j].c_str()));
 					TString chi2_fitRange = (background[j] == "mass_range") ? "m_range" : "all";
-					cout << "chi2_fitRange " << chi2_fitRange << endl;
 					RooChi2Var chi2_back("chi2_back","chi2_back",*model_back,*dh, Range(chi2_fitRange));
+					double Mychi2_back = chi2_back.getVal()/(nbinsmasshisto - f_back->floatParsFinal().getSize()); //normalised chi square
+					chi2_vec_back[j][i] = Mychi2_back;
+
 					RooPlot* frameMC_back = mass->frame(Title(Form("frameMC_back%d_%s",_count,background[j].c_str())), Bins(nbinsmasshisto));	
 					RooAbsPdf* modelMC_back = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,background[j].c_str()));
 					dsMC_cut->plotOn(frameMC_back);
 					modelMC_back->plotOn(frameMC_back);
-					double Mychi2_back = chi2_back.getVal()/(nbinsmasshisto - f_back->floatParsFinal().getSize()); //normalised chi square
-					chi2_vec_back[j][i] = Mychi2_back;
 					chi2MC_vec_back[j][i] = frameMC_back->chiSquare();
 
 					texB->Draw();
@@ -528,8 +515,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					//CMS_lumi(c,19011,0);
 					//c->Update();
 
-					if(varExp == "By"){c->SaveAs(Form("%s/%s_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
-					else { c->SaveAs(Form("%s/%s_%s_%s_%d_%d_%s_", outplotf.Data(), _isMC.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
+					if(varExp == "By"){c->SaveAs(Form("%s/data_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isPbPb.Data(), Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+ bsbpbins+".pdf");}
+					else { c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_", outplotf.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
 
 					RooRealVar* fitYield_back = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count,background[j].c_str()))));
 					back_variation.push_back(fitYield_back->getVal());
@@ -538,11 +525,12 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 				}
 
 			general_err.push_back(max_back);
-
-			for(int j=0; j<signal.size(); j++){
-				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_cut, dsMC_cut, dh, mass, _ptBins[i], _ptBins[i+1], *ws, varExp);
+			for(int j=0; static_cast<int>(signal.size()); j++){
+				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_BIN, dsMC_BIN, mass, _ptBins[i], _ptBins[i+1], *ws, varExp, bsbpbins);
 				RooAbsPdf* model_sig = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,signal[j].c_str()));
 				RooAbsPdf* modelMC_sig = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,signal[j].c_str()));
+
+
 				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);
 				RooPlot* frameMC_sig = mass->frame(Title(Form("frameMC_sig%d_%s",_count,signal[j].c_str())), Bins(nbinsmasshisto));
 				dsMC_cut->plotOn(frameMC_sig);
@@ -577,12 +565,11 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 				//c->Update();
 
 				if (signal[j] != "fixed") {
-					if(varExp == "By"){ cMC->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+".pdf");} 
-					else { cMC->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_",outplotf.Data(),_prefix.Data(),"mc",_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
+					if(varExp == "By"){ cMC->SaveAs(Form("%s/mc_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+bsbpbins+".pdf");} 
+					else { cMC->SaveAs(Form("%s/mc_%s_%s_%i_%i_%s_",outplotf.Data(),_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				}
-				
-				if(varExp == "By"){ c->SaveAs(Form("%s%s/%s_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
-				else{ c->SaveAs(Form("%s%s/%s_%s_%s_%d_%d_%s_",outplotf.Data(),_prefix.Data(),_isMC.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
+				if(varExp == "By"){ c->SaveAs(Form("%s/data_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+bsbpbins+".pdf");}
+				else{ c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_",outplotf.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count,signal[j].c_str()))));
 				signal_variation.push_back(fitYield_signal->getVal());
@@ -630,12 +617,12 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	if(syst_study==1){ 
 		for(int i=0; i<_nBins; i++){
-			for(int j=0; j<background.size(); j++){
+			for(int j=0; j<static_cast<int>(signal.size()); j++){
 				std::cout<<" back sys in bin "<<i<<" ; with pdf "<< background[j] << " ="<<background_syst[i][j]<<std::endl;
 				std::cout<<" back sys in bin "<<i<<" ; with pdf "<< background[j] << " ="<<back_syst_rel_values[i][j]<<" % "<<std::endl;
 				myfile<<" back sys in bin "<<i<<" ; with pdf "<< background[j] << " ="<<back_syst_rel_values[i][j]<<" % "<<std::endl;
 			}
-			for(int j=0; j<signal.size(); j++){
+			for(int j=0; j<static_cast<int>(signal.size()); j++){
 				std::cout<<" signal sys in bin "<<i<<" ; with pdf "<< signal[j] << " ="<<signal_syst[i][j]<<std::endl;
 				std::cout<<" signal sys in bin "<<i<<" ; with pdf "<< signal[j] << " ="<<sig_syst_rel_values[i][j]<<" % "<<std::endl;
 				myfile<<" signal sys in bin "<<i<<" ; with pdf "<< signal[j] << " ="<<sig_syst_rel_values[i][j]<<" % "<<std::endl;
@@ -1011,7 +998,7 @@ const char* pathc_chi2 =Form("./results/Graphs/chi2_%s_%s.pdf",tree.Data(),varEx
 c_chi2.SaveAs(pathc_chi2);
 
 if(syst_study==1){
-	for(int j=0; j<background.size(); j++){
+	for(int j=0; j<static_cast<int>(signal.size()); j++){
 
 	double chi2_max_back = 0;
 	double chi2_min_back = 10;
@@ -1072,7 +1059,7 @@ const char* pathc_chi2_back =Form("./results/Graphs/chi2_%s_%s_%s.pdf",tree.Data
 c_chi2_back.SaveAs(pathc_chi2_back);
 	}
 
-	for(int j=0; j<signal.size(); j++){
+	for(int j=0; j<static_cast<int>(signal.size()); j++){
 
 	double chi2_max_sig = 0;
 	double chi2_min_sig = 10;
@@ -1147,7 +1134,7 @@ TLegend *leg_chi2_sigsum = new TLegend(0.7,0.8,0.9,0.9);
 	double chi2_max_sigsum = 0;
 	double chi2_min_sigsum = 10;
 
-	for(int j=0; j<signal.size(); j++){
+	for(int j=0; j<static_cast<int>(signal.size()); j++){
 	for(int i = 0; i < _nBins; i++){
 		if(chi2_vec_sig[j][i] > chi2_max_sigsum){
 			chi2_max_sigsum = chi2_vec_sig[j][i];
@@ -1207,7 +1194,7 @@ TLegend *leg_chi2_backsum = new TLegend(0.7,0.8,0.9,0.9);
 	double chi2_max_backsum = 0;
 	double chi2_min_backsum = 10;
 
-	for(int j=0; j<background.size(); j++){
+	for(int j=0; j<static_cast<int>(signal.size()); j++){
 	for(int i = 0; i < _nBins; i++){
 		if(chi2_vec_back[j][i] > chi2_max_backsum){
 			chi2_max_backsum = chi2_vec_back[j][i];
@@ -1262,20 +1249,33 @@ c_chi2_backsum.SaveAs(pathc_chi2_backsum);
 
 }
 
-void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TString treeName, TString sample){
-  TFile* fin = new TFile(fName);
-  TTree* t1;
-  t1 = (TTree*) fin->Get(treeName);
+void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TString treeName, TString sample, TString variable="Bpt", int bsbp=0){
+	cout << "Reading samples for " << sample.Data() << endl;
 
-  RooArgList arg_list ("arg_list");
-  // read the fitting variable
-  arg_list.add(*(w.var("Bmass")));
+	TFile* fin = new TFile(fName);
+	TTree* t1 = (TTree*) fin->Get(treeName);
 
-  // read additional variables
-  for(auto lab : label){arg_list.add(*(w.var(lab)));}
+	//Data Variables
+	RooArgList arg_list ("arg_list");
+	arg_list.add(*(w.var("Bmass")));
+	for(auto lab : label){arg_list.add(*(w.var(lab)));}
 
-  RooDataSet* data_s = new RooDataSet(sample, sample, t1, arg_list);
-  cout << "input filename = " << fName << "; entries: " << data_s->sumEntries() << endl;
-  w.import(*data_s, Rename(sample));
+	RooDataSet* data_s = new RooDataSet(sample, sample, t1, arg_list);
+
+	//CUTS CUTS CUTS CUTS 
+	data_s = (RooDataSet*)data_s->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)");  //FID REGION
+
+	if ( sample == "jpsinp"){
+		data_s = (RooDataSet*)data_s->reduce("(BDT_pt_5_7 > 0.08 && Bpt >= 5 && Bpt < 7) || (BDT_pt_7_10 > 0.07 && Bpt >= 7 && Bpt < 10) || (BDT_pt_10_15 > 0.0 && Bpt >= 10 && Bpt < 15) || (BDT_pt_15_20 > 0.02 && Bpt >= 15 && Bpt < 20) || (BDT_pt_20_50 > 0.04 && Bpt >= 20 && Bpt < 50) || (Bpt >= 50 && Bpt < 60) ");
+	}
+	if (bsbp==1 && variable == "By"){   //Make sure both mesons pT range match (now is 7->50 due to Bs sample)
+		data_s = (RooDataSet*)data_s->reduce(Form("(Bpt < %i && Bpt > %i )", (int) ptBins_full[1], (int) ptBins_full[0])) ;
+	}
+	if ( sample == "dsMC_cut"){         //Make sure no MC events with higher or lower mass than the desired one survive
+		data_s = (RooDataSet*)data_s->reduce("(Bmass>5 && Bmass<6)") ;
+	}
+	
+	cout << "input filename = " << fName << "; entries: " << data_s->sumEntries() << endl;
+	w.import(*data_s);
   
 }

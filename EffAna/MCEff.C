@@ -74,6 +74,21 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP = 0){
 	if (meson_n == "BP"){tree = (TTree * ) fin->Get("Bfinder/ntKp");}
 	else {tree = (TTree * ) fin->Get("Bfinder/ntphi");}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	//	TTree * BDT = (TTree * ) fin->Get("BDT");
 
 	TTree * ntHi = (TTree * ) fin->Get("hiEvtAnalyzer/HiTree");
@@ -1682,8 +1697,6 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n , int BsBP = 0){
 			}
 
 				BptWeightHisSyst->Fill(Bpt[j],abs(By[j]),TotalWeight * BptWeight);
-
-				
 
 			}
 		}

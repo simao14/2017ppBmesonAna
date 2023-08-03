@@ -1,13 +1,17 @@
 DOANALYSISPbPb_FULL_BP=0
+
 DOANALYSISPbPb_BINNED_PT_BP=0
-DOANALYSISPbPb_MATCHING_Bs_BINS_BP=0
 DOANALYSISPbPb_BINNED_Y_BP=0
 DOANALYSISPbPb_BINNED_MULTI_BP=0
 
 DOANALYSISPbPb_BINNED_PT_BP_TRK=0
-DOANALYSISPbPb_MATCHING_Bs_BINS_BP_TRK=0
 DOANALYSISPbPb_BINNED_Y_BP_TRK=0
 DOANALYSISPbPb_BINNED_MULTI_BP_TRK=0
+
+DOANALYSISPbPb_MATCHING_Bs_BINS_BP_pt=0
+DOANALYSISPbPb_MATCHING_Bs_BINS_BP_pt_TRK=0
+DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y=0
+DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y_TRK=0
 
 #Data and MC Samples
 MC_BP="/data3/tasheng/presel/BPMC_nom.root"
@@ -34,6 +38,8 @@ OutputFile_BP_BINNED_Y_trk="ROOTfiles/yields_BP_binned_y_trk"
 OutputFile_BP_BINNED_Mult_trk="ROOTfiles/yields_BP_binned_Mult_trk"
 OutputFile_BP_MatchingBINS_PT="ROOTfiles/yields_BP_binned_pt_BsBPBINS"
 OutputFile_BP_MatchingBINS_PT_trk="ROOTfiles/yields_BP_binned_pt_trk_BsBPBINS"
+OutputFile_BP_MatchingBINS_y="ROOTfiles/yields_BP_binned_y_BsBPBINS"
+OutputFile_BP_MatchingBINS_y_trk="ROOTfiles/yields_BP_binned_y_trk_BsBPBINS"
 
 
 #The Function to be called:
@@ -85,14 +91,29 @@ root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"nMult\"','\
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
-if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_TRK  -eq 1  ]; then
+if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_pt_TRK  -eq 1  ]; then
 root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_PT_trk\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"','1')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
-if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP  -eq 1  ]; then
+if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_pt  -eq 1  ]; then
 root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BP_MatchingBINS_PT\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"','1')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
+
+if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y_TRK  -eq 1  ]; then
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"By\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_y_trk\"','\"results/BP/By\"','\"$INPUTJPSI\"','1')' 
+
+rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
+fi
+
+if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y  -eq 1  ]; then
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"By\"','\"$CUTPbPb\"','\"$OutputFile_BP_MatchingBINS_y\"','\"results/BP/By\"','\"$INPUTJPSI\"','1')' 
+
+rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
+fi
+
+
+

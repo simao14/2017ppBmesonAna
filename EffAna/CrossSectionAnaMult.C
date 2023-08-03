@@ -432,7 +432,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 		for(int k = 0; k < NBins; k++){
 
-			if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - BMass) < 0.08 &&  TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
+			if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - BMass) < 0.08 && TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
 			{
 				
 				XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);

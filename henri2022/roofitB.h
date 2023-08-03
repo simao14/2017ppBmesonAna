@@ -32,7 +32,7 @@
 
 void plot_jpsifit(RooWorkspace& w, int nbin_hist, TString pdf, RooAbsPdf* model, RooDataSet* ds, TString plotName,  bool with_sig);
 void fix_parameters(RooWorkspace& w, TString pdfName, bool release=false);
-void fit_jpsinp (RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float bin_f, TString Var, bool includeSignal=true);
+void fit_jpsinp (RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float bin_f, TString Var, TString bsbp);
 template<typename... Targs>
 void plot_mcfit(RooWorkspace& w, RooAbsPdf* model, RooDataSet* ds, TString plotName,  Targs... options);
 
@@ -49,15 +49,10 @@ double maxhisto=6.;
 int nbinsmasshisto=100;
 Int_t _count=0;
 
-RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooDataHist* dh, RooRealVar* mass, float binmin, float binmax, RooWorkspace& w, TString which_var){
+RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanvas* cMC, RooDataSet* ds, RooDataSet* dsMC, RooRealVar* mass, float binmin, float binmax, RooWorkspace& w, TString which_var, TString bsbpbins ){
 	
 	//if (tree == "ntphi"){nbinsmasshisto = 50;} //100 bins is to much for bs case
 	if ( which_var == "Bpt" && ( (int)binmin == 50 & (int)binmax == 60) ){nbinsmasshisto = 50;} //100 bins is to much for bp 50-60 mass bin case
-
-	cout<<"total data: "<<ds->numEntries()<<endl;
-	TH1* h = dh->createHistogram("Bmass");
-	h->Sumw2(kFALSE);
-	h->SetBinErrorOption(TH1::kPoisson);
 	
 	cMC->cd();
 	RooPlot* frameMC = mass->frame();
@@ -107,8 +102,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	RooRealVar sigma4cbMC(Form("sigma4cbMC%d_%s",_count, pdf.Data()),"",0.0266,0.01,0.5) ;
 	RooRealVar alphaMC(Form("alphaMC%d_%s",_count,pdf.Data()),"",4.,0,15);
 	RooRealVar nMC(Form("nMC_%d_%s", _count, pdf.Data()),"",10,-100,200);
-	RooRealVar* scale;
-	scale = new RooRealVar("scale","scale",1,0,2);
+	RooRealVar* scale = new RooRealVar("scale","scale",1,0,2);
 	RooProduct scaled_sigma1MC(Form("scaled_sigma1MC%d_%s",_count,pdf.Data()),"scaled_sigma1MC", RooArgList(*scale,sigma1MC));
 	RooProduct scaled_sigma2MC(Form("scaled_sigma2MC%d_%s",_count,pdf.Data()),"scaled_sigma2MC", RooArgList(*scale,sigma2MC));
 	RooProduct scaled_sigma3MC(Form("scaled_sigma3MC%d_%s",_count,pdf.Data()),"scaled_sigma3MC", RooArgList(*scale,sigma3MC));
@@ -120,7 +114,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	RooRealVar sig1fracMC(Form("sig1fracMC%d_%s",_count, pdf.Data()),"", 0.2, 0.001, 1);
 	RooRealVar sig2fracMC(Form("sig2fracMC%d_%s",_count, pdf.Data()),"", 0.7, 0.001, 1);
 	RooRealVar nsigMC(Form("nsigMC%d_%s",_count, pdf.Data()),"",dsMC->sumEntries(), 0.9*dsMC->sumEntries(), 1.2 * dsMC->sumEntries());
-	RooAddPdf* sigMC;
+	RooAddPdf* sigMC ;
 	if((variation=="" && pdf=="") || variation== "background" || (variation=="signal" && pdf=="fixed" )) sigMC = new RooAddPdf(Form("sigMC%d_%s",_count,pdf.Data()),"",RooArgList(sig1MC,sig2MC),sig1fracMC);
 	if(variation=="signal" && pdf=="3gauss") sigMC = new RooAddPdf(Form("sigMC%d_%s",_count, pdf.Data()), "", RooArgList(sig1MC, sig2MC, sig3MC), RooArgList(sig1fracMC, sig2fracMC), true);
 	if(variation=="signal" && pdf=="gauss_cb") sigMC = new RooAddPdf(Form("sigMC%d_%s",_count, pdf.Data()), "", RooArgList(sig1MC, CBMC), sig1fracMC);
@@ -288,7 +282,7 @@ if(tree == "ntKp" && variation=="" && pdf==""){
 	w.import(*m_jpsinp_cont);
 	// DEFINE MODEL to fit the non prompt background
 
-	fit_jpsinp(w,  nbinsmasshisto, pdf, binmin, binmax, which_var.Data());
+	fit_jpsinp(w,  nbinsmasshisto, pdf, binmin, binmax, which_var.Data(), bsbpbins);
 	}
 
 // FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp FIT MCnp
@@ -360,7 +354,7 @@ if(tree == "ntKp" && variation=="" && pdf==""){
 	RooRealVar nbkg_part_r(Form("nbkg_part_r%d_%s",_count,pdf.Data()),"",100,0,1e5);
 
 	// B+ PEAKING AND PART. RECONSTRUCTED BACKGROUNDS
-	RooProduct *nbkg_peaking;
+	RooProduct *nbkg_peaking = 0;
 	RooAbsPdf* jpsipi ;   
 	RooAbsPdf* erfc ;   
 	if(tree== "ntKp"){ 
@@ -422,7 +416,7 @@ if(tree == "ntKp"){
 ////// ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT ROOFIT
 
   	TString fitRange = (pdf == "mass_range") ? "m_range" : "all";
-	RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(),Extended(kTRUE), Range(fitRange));
+	RooFitResult* fitResult = model->fitTo(*ds,Save(), Minos(), Extended(kTRUE), Range(fitRange));
 	fitResult->Print("v"); 
 	w.import(*model);
 
@@ -569,9 +563,9 @@ if(tree == "ntKp"){
 	Double_t yieldPrintErrUp = nsig.getAsymErrorHi();
 	Double_t yieldPrintErrDown = nsig.getAsymErrorLo();
 
-	cout << "------------------------------------------------------------------------------------------------------------" << endl;
+	cout << "----------------------------------------------------------------------------------------------------------------" << endl;
 	cout << "Signal Yield = " << nsig.getVal() << "     yield Error = " << yieldPrintErr << "     yield Error Up = " << yieldPrintErrUp << "     yieldPrintErrDown = " << yieldPrintErrDown << endl;
-	cout << "------------------------------------------------------------------------------------------------------------" << endl;
+	cout << "----------------------------------------------------------------------------------------------------------------" << endl;
 
 	p1->cd();
 	return fitResult;
@@ -589,24 +583,18 @@ if(tree == "ntKp"){
 
 
 // FIT TO BINED PAR_R_BKG
-void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float bin_f, TString Var, bool includeSignal) {
+void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float bin_f, TString Var, TString bsbp) {
 
 	RooDataSet* d_s = (RooDataSet*) w.data("jpsinp");
-	// Apply BDT selections
-	d_s->reduce("(BDT_pt_5_7 > 0.08 && Bpt >= 5 && Bpt < 7) || (BDT_pt_7_10 > 0.07 && Bpt >= 7 && Bpt < 10) || (BDT_pt_10_15 > 0.0 && Bpt >= 10 && Bpt < 15) || (BDT_pt_15_20 > 0.02 && Bpt >= 15 && Bpt < 20) || (BDT_pt_20_50 > 0.04 && Bpt >= 20 && Bpt < 50) || (Bpt >= 20 && Bpt < 50) ");
-	// Apply y selections
-	d_s = (RooDataSet*) d_s->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)") ;
+	cout << Var.Data() << " bins study of PART_R_BKG" << endl;  
 
 	if(Var == "Bpt" ){
-		cout << Var.Data() <<" bins study of PART_R_BKG" << endl;
 	  	d_s = (RooDataSet*) d_s->reduce(Form("(Bpt > %d && Bpt < %d)", (int) bin_i , (int) bin_f) );
 
 	} else if(Var == "By") { 		
-		cout << Var.Data() << " bins study of PART_R_BKG" << endl;  
 	  	d_s = (RooDataSet*) d_s->reduce(Form("abs(By)>%f && abs(By)< %f", bin_i , bin_f) );
 		
 	} else if(Var == "nMult"){ 
-		cout << Var.Data() << " bins study of PART_R_BKG" << endl;  
 		cout << "for now MULTIPLICITY uses the INCLUSIVE bin";
 
 	}
@@ -617,23 +605,24 @@ void fit_jpsinp(RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float 
 	RooDataSet* ds_sig = (RooDataSet*) d_s->reduce("Bgen == 23333");
 
 	// Create the necessary folders and define paths
-  	gSystem->mkdir("./results/BP/PAR_R_bkg", true);
+	TString path_to_save = Form("./results/BP/PAR_R_bkg/%s", bsbp.Data() );
+  	gSystem->mkdir(path_to_save, true);
 
 	TString jpsi_fit_plot = "" ;
 	TString incSIG_fit_plot = "" ;
 	TString jpsi_plot_with_sig = "" ;
 	if(Var == "Bpt" ){
-		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%i-%i_%s.pdf", (int) bin_i, (int) bin_f, Var.Data() );
-		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
-  		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
+		jpsi_fit_plot = path_to_save + TString::Format("/np_fit_%i-%i_%s.pdf", (int) bin_i, (int) bin_f, Var.Data() );
+		incSIG_fit_plot = path_to_save + TString::Format("/InclusiveMC_Signal_fit_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
+  		jpsi_plot_with_sig = path_to_save + TString::Format("/np_fit_signal_%i-%i_%s.pdf",(int) bin_i,(int) bin_f, Var.Data() );
 	} else if (Var == "By" ){
-		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
-		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
-  		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
+		jpsi_fit_plot = path_to_save + TString::Format("/np_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
+		incSIG_fit_plot = path_to_save + TString::Format("/InclusiveMC_Signal_fit_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
+  		jpsi_plot_with_sig = path_to_save + TString::Format("/np_fit_signal_%0.1f-%0.1f_%s.pdf", bin_i, bin_f, Var.Data() );
 	} else if(Var == "nMult" ){
-		jpsi_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_%s.pdf", Var.Data());
-		incSIG_fit_plot = "./results/BP/PAR_R_bkg/" + TString::Format("InclusiveMC_Signal_fit_%s.pdf", Var.Data());
-  		jpsi_plot_with_sig = "./results/BP/PAR_R_bkg/" + TString::Format("np_fit_signal_%s.pdf", Var.Data());
+		jpsi_fit_plot = path_to_save + TString::Format("/np_fit_%s.pdf", Var.Data());
+		incSIG_fit_plot = path_to_save + TString::Format("/InclusiveMC_Signal_fit_%s.pdf", Var.Data());
+  		jpsi_plot_with_sig = path_to_save + TString::Format("/np_fit_signal_%s.pdf", Var.Data());
 	}
 
 	//[START] FIX SHAPE (NP background)
@@ -808,6 +797,7 @@ void plot_mcfit(RooWorkspace& w, RooAbsPdf* model, RooDataSet* ds, TString plotN
   leg_jpp->Draw();
   can_mc->SaveAs(plotName);
 }
+
 
 /* Fix or release the parameters for a given PDF */
 void fix_parameters(RooWorkspace& w, TString pdfName, bool release) {
