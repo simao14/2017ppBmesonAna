@@ -23,7 +23,11 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	TString _isPbPb = "pp";
 	TString bsbpbins = "";
-	if ( BsBPBins ==1 ){ bsbpbins = "_BsBPBINS";}
+	TString bsbpbins_ = "";
+	if ( BsBPBins ==1 ){ 
+		bsbpbins = "_BsBPBINS";
+		bsbpbins_ = "BsBPBINS_";
+	}
 	
 	//Create the Folders
 	gSystem->mkdir("filesbp",true); 
@@ -121,7 +125,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	//MODELS for syst studies
 	std::vector<std::string> background;
-	if (tree == "ntKp"){background = {"1st", "2nd", "mass_range", "jpsi_sig"};} 
+	if (tree == "ntKp"){background = {"1st", "2nd", "mass_range","jpsi_sig"};} 
 	else if (tree == "ntphi"){background = {"1st", "2nd", "mass_range"};}
 	std::vector<std::string> signal = {"3gauss", "fixed", "gauss_cb"};
 	std::vector<std::vector<double>> background_syst;
@@ -610,8 +614,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	string Path;
 	if(tree == "ntphi"){ Path = "./filesbs/";}
-	else if (tree == "ntKp" && BsBPBins == 0){Path = "./filesbp/";}
-	else if (tree == "ntKp" && BsBPBins == 1){Path = "./filesbp/BsBPBINS_";}
+	else if (tree == "ntKp" ) {Path = Form("./filesbp/%s", bsbpbins_.Data());}
 
 	std::ofstream myfile;
 	myfile.open (Path + "systematics_" + tree.Data() + ".txt");
@@ -643,7 +646,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	std::vector<std::string> col_name_general_stat;
 
 	string name;
-	int m=_nBins;
 	col_name_back.push_back("Background Model");
 	col_name_signal.push_back("Signal Model");
 	col_name_general.push_back("Systematic Source");
@@ -652,7 +654,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	if(varExp=="Bpt"){name="$<p_T<$";} 
 	else if(varExp=="By"){name="$<y<$";} 
 	else if(varExp=="nMult"){name="$<nTrks<$";}
-	for(int i=0;i<m;i++){
+	for(int i=0;i<_nBins;i++){
 		std::ostringstream clabel;
 		clabel<<_ptBins[i]<<name<<_ptBins[i+1];
 		std::string label1 = clabel.str();
@@ -663,16 +665,16 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	}
 	if(syst_study==1 && full==0){
 		gSystem->mkdir("./results/tables",true); 
-		latex_table(Path + "background_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()), _nBins+1,  (int)(1+background.size()),  col_name_back,labels_back,back_syst_rel_values, "Background PDF Systematic Errors");
-		latex_table(Path + "signal_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()), _nBins+1, (int)(1+signal.size()),    col_name_signal, labels_signal,sig_syst_rel_values, "Signal PDF Systematic Errors");
-		latex_table(Path + "general_systematics_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()),  _nBins+1, 4 , col_name_general, labels_general, general_syst, "Overall PDF Variation Systematic Errors");	
-		latex_table(Path + "Statistical_error_table_"+std::string (varExp.Data())+"_"+std::string (tree.Data()),  _nBins+1, 2 , col_name_general_stat, labels_general_stat, stat_error, "Statistical error");	
+		latex_table(Path + "background_systematics_table_" +std::string (varExp.Data())+"_"+std::string (tree.Data()) , _nBins+1,  (int)(1+background.size()),  col_name_back,labels_back,back_syst_rel_values, "Background PDF Systematic Errors");
+		latex_table(Path + "signal_systematics_table_"     +std::string (varExp.Data())+"_"+std::string (tree.Data()) , _nBins+1, (int)(1+signal.size()),    col_name_signal, labels_signal,sig_syst_rel_values, "Signal PDF Systematic Errors");
+		latex_table(Path + "general_systematics_table_"    +std::string (varExp.Data())+"_"+std::string (tree.Data()) ,  _nBins+1, 4 , col_name_general, labels_general, general_syst, "Overall PDF Variation Systematic Errors");	
+		latex_table(Path + "Statistical_error_table_"      +std::string (varExp.Data())+"_"+std::string (tree.Data()) ,  _nBins+1, 2 , col_name_general_stat, labels_general_stat, stat_error, "Statistical error");	
 		
 		std::vector<std::string> tabeltype ={"background_systematics_table_", "signal_systematics_table_", "general_systematics_table_", "Statistical_error_table_"};
 		std::vector<std::string> filetype ={"_check.aux", "_check.log", "_check.pdf"};
 		for (int i=0;i<(int)(tabeltype.size());i++){
 			for (int j=0;j<(int)(filetype.size());j++){
-				rename((tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[j]).c_str(),(Path+tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[j]).c_str());
+				rename((bsbpbins_.Data()+tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[j]).c_str(),(Path+tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[j]).c_str());
 			}
 		}
 

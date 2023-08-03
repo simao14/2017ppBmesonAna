@@ -829,8 +829,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	std::ofstream file_check;
 	std::ofstream file;
 
-	//Begin Document
-                                                                                    
+	//Begin Document                                                                                    
 	file.open(filename + ".tex");
 	file_check.open(filename + "_check.tex");
 
@@ -892,7 +891,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 	file.close();
 	file_check.close();
 	system(("pdflatex " + filename+ "_check.tex").c_str());
-	system(("open " + filename + "_check.pdf").c_str());
+	//system(("open " + filename + "_check.pdf").c_str());
 }
 
 void validate_fit(RooWorkspace* w, TString pdf, TString tree, TString variable, int full, float binmin, float binmax, string Path)
