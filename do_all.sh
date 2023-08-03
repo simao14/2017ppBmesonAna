@@ -36,7 +36,6 @@ bpEff () {
     ls -l BDTWeights/BPw.root
 
     #root -b -l -q MCEff.C'(1,0,"BP")' > effbp.log
-    #root -b -l -q MCEff.C'(1,0,"BP", 1)'     ##FOR THE BsBP ratios and RAAs
     wait
     root -b -l -q CrossSectionAnaMult.C'(1,1,0)'  
     root -b -l -q CrossSectionAnaMult.C'(1,0,0)'
@@ -61,6 +60,9 @@ pdfVar_sys () {
     # get pdf variation errors
     python master.py "pt"
     python master.py "y"
+
+    python master.py "pt" "BsBPBINS"
+    python master.py "y" "BsBPBINS"
 }
 
 syst2D () {

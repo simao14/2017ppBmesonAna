@@ -10,9 +10,8 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument('var', type=str)
+parser.add_argument('bsbpbins', type=str)
 opt = parser.parse_args()
-
-print(opt.var)
 
 if opt.var == "pt":
     binsBP=7
@@ -34,17 +33,18 @@ bp_pdf_list = [
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
     ]
 
-bsbpbins_pdf_list = [ 
-    "henri2022/filesbp/BsBPBINS_signal_systematics_table_B%s_ntKp.tex" % opt.var,
-    "henri2022/filesbp/BsBPBINS_background_systematics_table_B%s_ntKp.tex" % opt.var,
-]
-
 bs_pdf_list = [
     "henri2022/filesbs/signal_systematics_table_B%s_ntphi.tex" % opt.var,
     "henri2022/filesbs/background_systematics_table_B%s_ntphi.tex" % opt.var,
     # "Bs/RawYieldFits/signal_systematics_table_Bpt_ntphi.tex",
     # "Bs/RawYieldFits/background_systematics_table_Bpt_ntphi.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
+    ]
+
+if opt.bsbpb == "BsBPBINS":
+    bsbpbins_pdf_list = [ 
+        "henri2022/filesbp/BsBPBINS_signal_systematics_table_B%s_ntKp.tex" % opt.var,
+        "henri2022/filesbp/BsBPBINS_background_systematics_table_B%s_ntKp.tex" % opt.var,
     ]
 
 if not os.path.exists("syst_error"):
@@ -87,8 +87,8 @@ def get_pdf_syst(inFileList, outfile, hname, nbins, nshape):
 get_pdf_syst(bp_pdf_list, "syst_error/BP_pdf_%s.root" % opt.var, "BP_error", binsBP, [3, 4])
 get_pdf_syst(bs_pdf_list, "syst_error/Bs_pdf_%s.root" % opt.var, "Bs_error", binsBs, [3, 3])
 
-if opt.var == "pt":
-    get_pdf_syst(bsbpbins_pdf_list, "syst_error/BP_pdf_pt_BsBPBINS.root", "BP_error", binsBs, [3, 4])
+if opt.bsbpb == "BsBPBINS":
+    get_pdf_syst(bsbpbins_pdf_list, "syst_error/BP_pdf_%s_BsBPBINS.root" % opt.var, "BP_error", binsBs, [3, 4])
 
 def make_line(item, array, suf = '', form = '{:.2f}'):
     entry = [item.ljust(22)] + [form.format(num) + suf for num in array]
@@ -140,8 +140,8 @@ def get_tracking_syst(outfile, out_table):
     in_file_bp = "EffAna/BP/FinalFiles/BPPPCorrYield%s.root" % opt.var
     in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % opt.var
 
-    if opt.var == "pt":
-        in_file_bp_bsbpbin = "EffAna/BP/FinalFiles/BPPPCorrYieldpt_BsBPBINS.root"
+    if opt.bsbpb == "BsBPBINS":
+        in_file_bp_bsbpbin = "EffAna/BP/FinalFiles/BPPPCorrYield%s_BsBPBINS.root" % opt.var
         g_bsbpbins, t_bsbpbins = read_tracking_syst(in_file_bp_bsbpbin, binsBs)
         g_bsbpbins.SetName('BP_track_sel_error_BsBPBINS')
 
@@ -152,7 +152,7 @@ def get_tracking_syst(outfile, out_table):
     fout = r.TFile(outfile, "recreate")
     g_bp.Write()
     g_bs.Write()
-    if opt.var == "pt":
+    if opt.bsbpb == "BsBPBINS":
         g_bsbpbins.Write()
     fout.Close()
     with open(out_table, 'w') as fout:
@@ -161,7 +161,7 @@ def get_tracking_syst(outfile, out_table):
         fout.write('\n')
         fout.write('\\PBs track selection systematics\n')
         fout.write(t_bs)
-        if opt.var == "pt":
+        if opt.bsbpb == "BsBPBINS":
             fout.write('\\PBp track selection systematics bsbpbins\n')
             fout.write(t_bsbpbins)
 

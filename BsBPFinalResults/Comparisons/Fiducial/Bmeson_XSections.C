@@ -152,7 +152,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	int lowend    ;
 	TString var_l;
 	TString bsbpbins = "";
-
+	if (BsBP==1){bsbpbins="_BsBPBINS";}
+	
 	if(whichvar == "pt"){
 		if (meson_n=="BP" && BsBP==0){
 			NBins = nptBinsBP;
@@ -167,9 +168,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 			NBinsLow = 1 ;
 			NBinsHigh = 3;
 			NBins2015 = 3;
-			if (meson_n == "BP" ){
-				NBins2015 = 5;
-				bsbpbins="_BsBPBINS";}
+			if (meson_n == "BP" ){ NBins2015 = 3;}
 		}
 		var_l="p_{T} [GeV/c]";
 	

@@ -127,7 +127,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	TString var_n;
 	TString var_N;
 	TString bsbpbins = "";
-	if(BsBP==1 && meson_n==0 && whichvar == 0) {bsbpbins = "_BsBPBINS";}
+	if(BsBP==1 && meson_n==0 ) {bsbpbins = "_BsBPBINS";}
 
 	double BRchain;
 	int NCand;
@@ -246,7 +246,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		var_M="p_{T}";
 		var_file="pt";
 		NBins=nptBinsBP;}
-	if ((whichvar==0 && meson_n==1)|| BsBP==1){
+	if ((whichvar==0 && meson_n==1)|| (whichvar==0 && meson_n==0 && BsBP==1) ){
 		var_M="p_{T}";
 		var_file="pt";
 		NBins=nptBins;}
@@ -298,7 +298,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		ptBins[i] =  ptbinsvecBP[i];             //taken from parameter.h
 		}
 	}
-	if ((whichvar==0 && meson_n==1)|| BsBP==1){
+	if ((whichvar==0 && meson_n==1)|| (whichvar==0 && meson_n==0 && BsBP==1)){
 		for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  ptbinsvec[i];             //taken from parameter.h
 		}
@@ -321,9 +321,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		SumCountsTight[i] = 0;
 		SumCountsLoose[i] = 0;
 	}
-
-
-
 
 
 	int EtaBin;
@@ -414,13 +411,22 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	int XBin;
 	int YBin;
 	double ymax=1.5;
-	//double ymax=-1;
-	//double ymax=10;
+	double pthigh ;
 	double ptlow;
 	double BMass;
 
-	if (meson_n==0){BMass=5.27932;ptlow=5;}
-	else {BMass=5.3663;ptlow=7;}
+	if (meson_n==0){
+		BMass=5.27932;
+		ptlow=5;
+		pthigh = 60;}
+	else {
+		BMass=5.3663;
+		ptlow=7;
+		pthigh = 50;}
+	
+	if(BsBP==1){ // ENSURE SAME PT REGION for both mesons
+		ptlow=7;
+		pthigh=50;}
 
 	for( int i = 0; i < NEvents; i++){
 
@@ -432,7 +438,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 		for(int k = 0; k < NBins; k++){
 
-			if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - BMass) < 0.08 && TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10)))
+			if( (var > ptBins[k] && var < ptBins[k+1]) && (TMath::Abs(BmassNew[j] - BMass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10 && BptNew[j]<pthigh)))
 			{
 				
 				XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
@@ -600,14 +606,15 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 		//	cout << "Real eff = " << SumCountsReal[i]/Counts[i] << endl;
 		//cout << "Counts = " << Counts[i] << endl;
-		cout << "Count =  " <<  Counts[i] << "   NewEff = " << NewEff[i] << "     NewEffErr = " << NewEffErr[i] << endl;
+
+		cout << "--------------------------------------------------------------------------------------------------------------" << endl;
+
+		cout << "   NewEff = " << NewEff[i] << "     NewEffErr = " << NewEffErr[i] << "  Fractional = " << NewEffErr[i]/NewEff[i] << endl;
 		cout << "Count =  " <<  Counts[i] << "   NewEffSyst = " << NewEffSyst[i] << "     NewEffSystErr = " << NewEffSystErr[i] << endl;
 
 
+		cout << "--------------------------------------------------------------------------------------------------------------" << endl;
 
-		cout << "-----------------------------------------------------------------------------------------------" << endl;
-
-		cout << "   NewEff = " << NewEff[i] << "     NewEffErr = " << NewEffErr[i] << "  Fractional = " << NewEffErr[i]/NewEff[i] << endl;
 		//	cout << "   NewEff = " << NewEffUp[i] << "     NewEffErr = " << NewEffErrUp[i] << "  Fractional = " << NewEffErrUp[i]/NewEffUp[i] << endl;
 
 		//NewEffErr[i] = 0; //Remove Error on Efficiency Correction//
@@ -690,7 +697,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	int endLow;
 
 	if (meson_n==0 && whichvar==0 && BsBP==0){startLow=0; endLow=5;}
-	if ((meson_n==1 && whichvar==0)|| BsBP==1){startLow=0; endLow=3;}
+	if ((meson_n==1 && whichvar==0)|| (meson_n==0 && whichvar==0 && BsBP==1)){startLow=0; endLow=3;}
 	if (whichvar==1){startLow=1; endLow=1;}
 
 	for (int i=startLow; i<NBins-endLow;i++){

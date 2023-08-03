@@ -18,7 +18,9 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	double b_m_mass ;
 	TString var_l;
 	TString bsbpbins = "";
-
+	if (BsBP == 1){
+		bsbpbins = "_BsBPBINS";}
+	
 	if(meson_n == "BP"){
 		t_tree = "ntKp";
 		NCand = 10;
@@ -39,7 +41,6 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		} else if(meson_n == "Bs" || BsBP==1){
 			NBins = nptBins;
 			var_l="p_{T} [GeV/c]";
-			if (meson_n == "BP"){bsbpbins = "_BsBPBINS";}
 		}
 	
 	} else if(whichvar =="y"){
@@ -68,7 +69,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		ptBins[i] =  ptbinsvecBP[i];             
 		}
 	}
-	if ((whichvar =="pt" && meson_n == "Bs")||BsBP==1){
+	if (whichvar == "pt" && (meson_n == "Bs"||BsBP==1)){
 		for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  ptbinsvec[i];             
 		}
@@ -130,7 +131,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		SumCountsBptSyst[i] = 0;
 	}
 
-	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D%s.root",meson_n.Data(), meson_n.Data(),bsbpbins.Data()));
+	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D.root",meson_n.Data(), meson_n.Data(),));
 	TH2D * invEff2D = (TH2D *) finSyst2D->Get("invEff2D");
 	TH2D * invEff2DTnPSystUp = (TH2D *) finSyst2D->Get("invEff2DTnPSystUp");
 	TH2D * invEff2DTnPSystDown = (TH2D *) finSyst2D->Get("invEff2DTnPSystDown");
@@ -140,15 +141,25 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	Float_t var;
 	int XBin;
 	int YBin;
+
+	int ptlow = 5;
+	int pthigh = 60;
+	if (meson_n == "Bs" || BsBP==1 ){
+		ptlow = 7;
+		pthigh = 50;
+	}
+
+
 	for( int i = 0; i < NEvents; i++){
 		EffInfoTree->GetEntry(i);
 		for(int j = 0; j < BsizeNew; j++){
 			if (whichvar =="y"){var=ByNew[j];}
 			if (whichvar =="Mult"){var=nMult;}
 			if (whichvar =="pt"){var=BptNew[j];}
+			
 			for(int k = 0; k < NBins; k++){
 				
-				if(var > ptBins[k] && var < ptBins[k+1] && TMath::Abs(BmassNew[j] - b_m_mass) < 0.08 && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > 5 && BptNew[j] < 10 && abs(ByNew[j]) > 1.5)||(BptNew[j] > 10))){
+				if((var > ptBins[k] && var < ptBins[k+1]) && (TMath::Abs(BmassNew[j] - b_m_mass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4 && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > 1.5)||(BptNew[j] > 10 && BptNew[j]<pthigh))){
 					XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 					YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
 					
