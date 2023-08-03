@@ -780,6 +780,8 @@ void plot_mcfit(RooWorkspace& w, RooAbsPdf* model, RooDataSet* ds, TString plotN
   massframe->GetYaxis()->SetLabelSize(0.035);	
   massframe->GetXaxis()->SetRangeUser(5.15,5.45);
   if (plotName == "./results/BP/InclusiveMC_JPsipi_fit.pdf") {massframe->GetXaxis()->SetRangeUser(5,6);}
+  else if (plotName == "./results/BP/InclusiveMC_JPsipi_fit_BsBPBINS.pdf") {massframe->GetXaxis()->SetRangeUser(5,6);}
+
   ds->plotOn(massframe, Name("dsjpp") , MarkerSize(0.5), MarkerStyle(8), LineColor(1), LineWidth(1));
   model->plotOn(massframe, RooFit::Name("MCFit"), options...);
   model->paramOn(massframe, Layout(0.62, 0.89, 0.75), "", Format("NEU", AutoPrecision(1)) ) ;
