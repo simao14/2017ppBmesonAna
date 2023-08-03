@@ -306,24 +306,23 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		//Resolution MC
 		
 		//chi2
-		RooDataHist* dh = new RooDataHist();
 		TH1D* h = new TH1D(Form("h%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
 		ds_BIN->fillHistogram(h, *mass);
-		dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
-
+		RooDataHist* dh = new RooDataHist(Form("dh%d",_count),"",*mass,Import(*h));
 		RooAbsPdf* model = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,""));
-		RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
-		RooPlot* frameMC_chi2 = mass->frame(Title(Form("frameMC_chi2%d_%s",_count,"")), Bins(nbinsmasshisto));
-		dsMC_cut->plotOn(frameMC_chi2);
-		modelMC->plotOn(frameMC_chi2);
 		RooChi2Var chi2(Form("chi2%d",_count),"chi2",*model,*dh);
-		double Mychi2 = chi2.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
-		Double_t XI_PROB ;
-		XI_PROB = TMath::Prob(chi2.getVal(), (nbinsmasshisto - f->floatParsFinal().getSize()) ); // P(chi2)
-		std::cout << "normalised Chi square value is (number of free param. " << f->floatParsFinal().getSize() << " ): " << Mychi2 << endl;
-		std::cout << "Probability of Chi square value is " << XI_PROB << endl;
-		chi2_vec[i] = Mychi2;
-		chi2MC_vec[i] = frameMC_chi2->chiSquare();
+		chi2_vec[i] = chi2.getVal()/(nbinsmasshisto - f->floatParsFinal().getSize()); //normalised chi square
+
+		std::cout << "normalised Chi square value is (number of free param. " << f->floatParsFinal().getSize() << " ): " << chi2_vec[i] << endl;
+		std::cout << "Probability of Chi square value is " << TMath::Prob(chi2.getVal(), (nbinsmasshisto - f->floatParsFinal().getSize()) ) << endl;
+
+		TH1D* hMC = new TH1D(Form("hMC%d",_count),"",nbinsmasshisto,minhisto,maxhisto);
+		dsMC_BIN->fillHistogram(hMC, *mass);
+		RooDataHist* dhMC = new RooDataHist(Form("dhMC%d",_count),"",*mass,Import(*hMC));
+		RooAbsPdf* modelMC = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,""));
+		RooChi2Var chi2MC(Form("chi2MC%d",_count),"chi2MC",*modelMC,*dhMC);
+		RooRealVar * fMC_params = new RooRealVar("fMC_params", "", ws->var(Form("ndfMC_%d_%s", _count, ""))->getVal() );
+		chi2MC_vec[i] = chi2MC.getVal()/(nbinsmasshisto - fMC_params->getVal()); //normalised chi square
 		//chi2
 		////////////////////////////
 
@@ -403,7 +402,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			tex_y->Draw();
 		}
 		yield_val->SetText(0.21, 0.70 - t_sub ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square->SetText(0.21, 0.65 - t_sub ,Form("#chi^{2}/ndf = %.2f",Mychi2));
+		chi_square->SetText(0.21, 0.65 - t_sub ,Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
 
 		if (_ptBins[i] >= 10 && _nBins != 1) {
 			tex_y->SetText(0.21, 0.75, "|y| < 2.4");
@@ -416,7 +415,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	} else if(varExp=="By"){
         tex_BIN->SetText(0.21, 0.8, Form("%0.1f < |y| < %0.1f ", _ptBins[i],_ptBins[i+1]));
 		yield_val ->SetText(0.21, 0.70 , Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square->SetText(0.21, 0.65 , Form("#chi^{2}/ndf = %.2f",Mychi2));
+		chi_square->SetText(0.21, 0.65 , Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
 		tex_yCUT->SetText(0.21, 0.75, "10 GeV/c < p_{T} < 60 GeV/c");
 
 		if(tree=="ntphi" || BsBPBins==1){ 
@@ -432,7 +431,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
         tex_y->SetText(0.21,0.75,"p_{T} > 10 GeV/c : |y| < 2.4");
         tex_yCUT->SetText(0.21,0.70,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
 		yield_val->SetText(0.21, 0.65 ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square->SetText(0.21,0.60,Form("#chi^{2}/ndf = %.2f",Mychi2));
+		chi_square->SetText(0.21,0.60,Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
 		tex_y->Draw();
 		tex_yCUT->Draw();
 	}
@@ -459,8 +458,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			c->SaveAs(  Form("%s/data_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i],(float)_ptBins[i+1])+tree+bsbpbins+".pdf");
 			cMC->SaveAs(Form("%s/mc_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1])+tree+bsbpbins+".pdf");
 		}else{
-			c->SaveAs(  Form("%s/data_%s_%s_%i_%i_",outplotf.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1])+tree+".pdf");
-			cMC->SaveAs(Form("%s/mc_%s_%s_%i_%i_",outplotf.Data(),_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1])+tree+".pdf");
+			c->SaveAs(  Form("%s/data_%s_%s_%i_%i_",outplotf.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1])+tree+bsbpbins+".pdf");
+			cMC->SaveAs(Form("%s/mc_%s_%s_%i_%i_",outplotf.Data(),_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1])+tree+bsbpbins+".pdf");
 		}
 
 		std::vector<double> back_variation; 
@@ -474,20 +473,18 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 		if(syst_study==1){
 
-				for(int j=0; static_cast<int>(background.size()); j++){
+				for(int j=0; j < static_cast<int>(background.size()); j++){
 					RooFitResult* f_back = fit("background", background[j], tree, c, cMC, ds_BIN, dsMC_BIN, mass, _ptBins[i], _ptBins[i+1], *ws, varExp, bsbpbins);
 					
 					RooAbsPdf* model_back = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,background[j].c_str()));
 					TString chi2_fitRange = (background[j] == "mass_range") ? "m_range" : "all";
 					RooChi2Var chi2_back("chi2_back","chi2_back",*model_back,*dh, Range(chi2_fitRange));
-					double Mychi2_back = chi2_back.getVal()/(nbinsmasshisto - f_back->floatParsFinal().getSize()); //normalised chi square
-					chi2_vec_back[j][i] = Mychi2_back;
+					chi2_vec_back[j][i] = chi2_back.getVal()/(nbinsmasshisto - f_back->floatParsFinal().getSize()); //normalised chi square
 
-					RooPlot* frameMC_back = mass->frame(Title(Form("frameMC_back%d_%s",_count,background[j].c_str())), Bins(nbinsmasshisto));	
 					RooAbsPdf* modelMC_back = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,background[j].c_str()));
-					dsMC_cut->plotOn(frameMC_back);
-					modelMC_back->plotOn(frameMC_back);
-					chi2MC_vec_back[j][i] = frameMC_back->chiSquare();
+					RooChi2Var chi2MC_back("chi2MC_back","chi2MC_back",*modelMC_back,*dhMC);
+					RooRealVar * fMC_back_params = new RooRealVar("fMC_back_params", "", ws->var(Form("ndfMC_%d_%s", _count, background[j].c_str()))->getVal() );
+					chi2MC_vec_back[j][i] = chi2MC_back.getVal()/(nbinsmasshisto - fMC_back_params->getVal());
 
 					texB->Draw();
 					tex_BIN->Draw();
@@ -498,7 +495,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					yield_val->SetTextSize(0.025);
 					yield_val->SetLineWidth(2);
 					yield_val->Draw();
-					chi_back = new TLatex(0.21,0.65,Form("#chi^{2}/ndf = %.2f ",Mychi2_back));
+					chi_back = new TLatex(0.21,0.65,Form("#chi^{2}/ndf = %.2f ",chi2_vec_back[j][i]));
 					chi_back->SetNDC();
 					chi_back->SetTextFont(42);
 					chi_back->SetTextSize(0.025);
@@ -516,28 +513,32 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					//c->Update();
 
 					if(varExp == "By"){c->SaveAs(Form("%s/data_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isPbPb.Data(), Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+ bsbpbins+".pdf");}
-					else { c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_", outplotf.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+".pdf");}
+					else { c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_", outplotf.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+bsbpbins+".pdf");}
 
 					RooRealVar* fitYield_back = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count,background[j].c_str()))));
 					back_variation.push_back(fitYield_back->getVal());
 					back_err.push_back(abs(((yield-fitYield_back->getVal())/yield)*100));
 					if(abs(((yield-fitYield_back->getVal())/yield)*100)>max_back) max_back=abs(((yield-fitYield_back->getVal())/yield)*100);
+
 				}
 
 			general_err.push_back(max_back);
-			for(int j=0; static_cast<int>(signal.size()); j++){
+
+			for(int j=0; j< static_cast<int>(signal.size()); j++){
+
 				RooFitResult* f_signal = fit("signal", signal[j], tree, c, cMC, ds_BIN, dsMC_BIN, mass, _ptBins[i], _ptBins[i+1], *ws, varExp, bsbpbins);
+
+				//chi2
 				RooAbsPdf* model_sig = (RooAbsPdf*)ws->pdf(Form("model%d_%s",_count,signal[j].c_str()));
-				RooAbsPdf* modelMC_sig = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,signal[j].c_str()));
-
-
 				RooChi2Var chi2_sig("chi2_sig","chi2_sig",*model_sig,*dh);
-				RooPlot* frameMC_sig = mass->frame(Title(Form("frameMC_sig%d_%s",_count,signal[j].c_str())), Bins(nbinsmasshisto));
-				dsMC_cut->plotOn(frameMC_sig);
-				modelMC_sig->plotOn(frameMC_sig);
-				double Mychi2_sig = chi2_sig.getVal()/(nbinsmasshisto - f_signal->floatParsFinal().getSize()); //normalised chi square
-				chi2_vec_sig[j][i] = Mychi2_sig;
-				chi2MC_vec_sig[j][i] = frameMC_sig->chiSquare();
+				chi2_vec_sig[j][i] = chi2_sig.getVal()/(nbinsmasshisto - f_signal->floatParsFinal().getSize()); //normalised chi square
+
+				RooAbsPdf* modelMC_signal = (RooAbsPdf*)ws->pdf(Form("modelMC%d_%s",_count,signal[j].c_str()));
+				RooChi2Var chi2MC_signal("chi2MC_signal","chi2MC_signal", *modelMC_signal, *dhMC);
+				RooRealVar * fMC_signal_params = new RooRealVar("fMC_signal_params", "", ws->var(Form("ndfMC_%d_%s", _count, signal[j].c_str()))->getVal() );
+				chi2MC_vec_sig[j][i] = chi2MC_signal.getVal()/(nbinsmasshisto - fMC_signal_params->getVal());
+				//chi2
+
 				texB->Draw();
 				tex_BIN->Draw();
 				RooRealVar* fitYield_b_sig = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count, signal[j].c_str()))));
@@ -547,7 +548,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 				yield_val->SetTextSize(0.025);
 				yield_val->SetLineWidth(2);
 				yield_val->Draw();
-				chi_sig=new TLatex(0.21, 0.65, Form("#chi^{2}/ndf = %.2f ", Mychi2_sig));
+				chi_sig=new TLatex(0.21, 0.65, Form("#chi^{2}/ndf = %.2f ", chi2_vec_sig[j][i]));
 				chi_sig->SetNDC();
 				chi_sig->SetTextFont(42);
 				chi_sig->SetTextSize(0.025);
@@ -568,8 +569,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					if(varExp == "By"){ cMC->SaveAs(Form("%s/mc_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+bsbpbins+".pdf");} 
 					else { cMC->SaveAs(Form("%s/mc_%s_%s_%i_%i_%s_",outplotf.Data(),_isPbPb.Data(),varExp.Data(), (int)_ptBins[i], (int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
 				}
-				if(varExp == "By"){ c->SaveAs(Form("%s/data_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+bsbpbins+".pdf");}
-				else{ c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_",outplotf.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str() )+tree+".pdf");}
+				if(varExp == "By"){ c->SaveAs(Form("%s/data_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],signal[j].c_str() )+tree+bsbpbins+bsbpbins+".pdf");}
+				else{ c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_",outplotf.Data(),_isPbPb.Data(),varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],signal[j].c_str() )+tree+bsbpbins+".pdf");}
 				
 				RooRealVar* fitYield_signal = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count,signal[j].c_str()))));
 				signal_variation.push_back(fitYield_signal->getVal());
@@ -617,7 +618,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	if(syst_study==1){ 
 		for(int i=0; i<_nBins; i++){
-			for(int j=0; j<static_cast<int>(signal.size()); j++){
+			for(int j=0; j<static_cast<int>(background.size()); j++){
 				std::cout<<" back sys in bin "<<i<<" ; with pdf "<< background[j] << " ="<<background_syst[i][j]<<std::endl;
 				std::cout<<" back sys in bin "<<i<<" ; with pdf "<< background[j] << " ="<<back_syst_rel_values[i][j]<<" % "<<std::endl;
 				myfile<<" back sys in bin "<<i<<" ; with pdf "<< background[j] << " ="<<back_syst_rel_values[i][j]<<" % "<<std::endl;
@@ -917,8 +918,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 if(varExp == "Bpt"){
 		 mg_resol->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
 		 mg_resol->GetYaxis()->SetTitle("Resolution");
-		 if (tree == "ntKp"){ mg_resol->GetXaxis()->SetLimits(0 ,80); }
-		 if (tree == "ntphi"){ mg_resol->GetXaxis()->SetLimits(0 ,60); }
+		 if (tree == "ntKp"){ mg_resol->GetXaxis()->SetLimits(5 ,60); }
+		 if (tree == "ntphi"){ mg_resol->GetXaxis()->SetLimits(7 ,50); }
 	 }
 	 if(varExp == "nMult"){
 		 mg_resol->GetXaxis()->SetTitle("Multiplicity (Mult)");
@@ -1271,7 +1272,7 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
 		
 		if (bsbp==1 ){ 
 			//consider only 7-50 pT range of JpsiPi
-			data_s = (RooDataSet*)data_s->reduce(Form("(Bpt < %i && Bpt > %i )", (int) ptBins_full[1], (int) ptBins_full[0])) ;
+			data_s = (RooDataSet*)data_s->reduce(Form("(Bpt > %i && Bpt < %i )", (int) ptBins_full[0], (int) ptBins_full[1])) ;
 		}
 	}
 	
@@ -1279,6 +1280,7 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
 		//Make sure no MC events with higher or lower mass than the desired one survive
 		data_s = (RooDataSet*)data_s->reduce("(Bmass>5 && Bmass<6)") ;
 	}
+	//CUTS CUTS CUTS CUTS 
 	
 	cout << "input filename = " << fName << "; entries: " << data_s->sumEntries() << endl;
 	w.import(*data_s);

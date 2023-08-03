@@ -129,9 +129,11 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	if (tree == "ntphi") subt = .10;
 	mass->setRange("signal",init_mean-subt, init_mean+subt);  //focus the MC fit to the signal region to prevent statistical flutuations
 	scale->setConstant();
-	RooFitResult * fitResultMC;
-	fitResultMC = modelMC->fitTo(*dsMC,Save(), Range("signal"));
+	RooFitResult * fitResultMC = modelMC->fitTo(*dsMC,Save(), Range("signal"));
 	w.import(*modelMC);
+	RooRealVar * fMCchi2_params = new RooRealVar(Form("ndfMC_%d_%s",_count, pdf.Data()), "", fitResultMC->floatParsFinal().getSize() );
+	w.import(*fMCchi2_params);
+
 	cout << "Signal MC FIT Done " << endl;
 
 ///////////ROOFIT ROOFIT ROOFIT MC MC MC MC
@@ -339,6 +341,7 @@ if(tree == "ntKp" && variation=="" && pdf==""){
 	if(variation=="signal" && pdf=="gauss_cb") sig = new RooAddPdf(Form("sig%d_%s",_count,pdf.Data()),"",RooArgList(sig1, CB), sig1frac);
 	if((variation=="" && pdf=="") || variation== "background" || (variation=="signal" && pdf=="fixed")) sig = new RooAddPdf(Form("sig%d_%s",_count,pdf.Data()),"",RooArgList(sig1,sig2),sig1frac);
 ///////////////// SIGNAL FUNCTIONS
+
 
 /////////////////  BACKGROUND FUNCTIONS
 
