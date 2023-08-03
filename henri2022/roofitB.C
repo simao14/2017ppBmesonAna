@@ -1265,12 +1265,16 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
 	//CUTS CUTS CUTS CUTS 
 	data_s = (RooDataSet*)data_s->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)");  //FID REGION
 
-	if ( sample == "jpsinp"){
+	if (sample == "jpsinp"){ 
+		//import the full jpsipi smaple
 		data_s = (RooDataSet*)data_s->reduce("(BDT_pt_5_7 > 0.08 && Bpt >= 5 && Bpt < 7) || (BDT_pt_7_10 > 0.07 && Bpt >= 7 && Bpt < 10) || (BDT_pt_10_15 > 0.0 && Bpt >= 10 && Bpt < 15) || (BDT_pt_15_20 > 0.02 && Bpt >= 15 && Bpt < 20) || (BDT_pt_20_50 > 0.04 && Bpt >= 20 && Bpt < 50) || (Bpt >= 50 && Bpt < 60) ");
 	}
-	if (bsbp==1 && variable == "By"){   //Make sure both mesons pT range match (now is 7->50 due to Bs sample)
+	
+	if (bsbp==1 && variable == "By"){ 
+		//consider only 7-50 pT range of JpsiPi Data MC to compare By
 		data_s = (RooDataSet*)data_s->reduce(Form("(Bpt < %i && Bpt > %i )", (int) ptBins_full[1], (int) ptBins_full[0])) ;
 	}
+	
 	if ( sample == "dsMC_cut"){         //Make sure no MC events with higher or lower mass than the desired one survive
 		data_s = (RooDataSet*)data_s->reduce("(Bmass>5 && Bmass<6)") ;
 	}
@@ -1279,3 +1283,4 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
 	w.import(*data_s);
   
 }
+
