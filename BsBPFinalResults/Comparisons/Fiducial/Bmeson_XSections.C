@@ -206,11 +206,12 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	//center of the bin and its left and right margins
 	TFile * RawYield = new TFile(Form("../../../henri2022/ROOTfiles/yields_%s_binned_%s%s.root", meson_n.Data(), whichvar.Data(), bsbpbins.Data()));
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
+
 	float XsecPP_X[NBins];
 	float XsecPP_X_BinRight[NBins] ;
 	float XsecPP_X_BinLeft[NBins] ;
 	for( int c=0; c < NBins; c++){
-		XsecPP_X[c]= hPt->GetXaxis()->GetBinCenter(c+1);  
+		XsecPP_X[c]= std::stod(hPt->GetXaxis()->GetBinLabel(c+1));  
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
 	}
@@ -551,12 +552,18 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	lat->SetTextFont(42);
 
 	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
-	if (meson_n=="BP") {lat->DrawLatex(0.6,0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
-	else {	lat->DrawLatex(0.6,0.7,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
+	if (meson_n=="BP") {
+		if(whichvar=="y"){ lat->DrawLatex(0.2, 0.75 , Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;}
+		else { lat->DrawLatex(0.6, 0.75 ,Form("2017 pp global Unc. #pm %.1f%%",3.5) );} 
+	
+	} else { 
+		if(whichvar=="y"){ lat->DrawLatex(0.2,0.75,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
+		else { lat->DrawLatex(0.6,0.75,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;} 
+	}
 
     TLegend* leged;
-	if (meson_n=="BP") {leged = new TLegend(0.65,0.6,0.9,0.7,NULL,"brNDC");}
-	else {leged = new TLegend(0.65,0.6,0.9,0.7,NULL,"brNDC");}
+	leged = new TLegend(0.7,0.9,0.9,0.8,NULL,"brNDC");
+	if(whichvar == "y"){leged = new TLegend(0.2,0.9,0.3,0.8,NULL,"brNDC");}
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
 	if (whichvar=="pt"){
@@ -566,7 +573,10 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	} 
 	if (whichvar=="y"){
 		leged->AddEntry((TObject*)0, "p_{T} region:", "");
-		if (meson_n=="BP"){leged->AddEntry(BPRAAGraph,"5<p_{T}<60 GeV/c","P");}
+		if (meson_n=="BP"){
+			if(BsBP==1){leged->AddEntry(BPRAAGraph,"7<p_{T}<50 GeV/c","P");}
+			else{leged->AddEntry(BPRAAGraph,"5<p_{T}<60 GeV/c","P");}
+		}
 		else {leged->AddEntry(BPRAAGraph,"7<p_{T}<50 GeV/c","P");}
 		leged->AddEntry(BPRAAGraph_low,"p_{T}>10 GeV/c","P");
 	} 
