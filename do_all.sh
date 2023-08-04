@@ -37,10 +37,12 @@ bpEff () {
 
     #root -b -l -q MCEff.C'(1,0,"BP")' > effbp.log
     wait
-    root -b -l -q CrossSectionAnaMult.C'(1,1,0)'  
-    root -b -l -q CrossSectionAnaMult.C'(1,0,0)'
+    root -b -l -q CrossSectionAnaMult.C'(1,0,0)'  
+    root -b -l -q CrossSectionAnaMult.C'(1,1,0)'
 
+    #For Comparisons of both Bmesons
     root -b -l -q CrossSectionAnaMult.C'(1,0,0,1)'
+    root -b -l -q CrossSectionAnaMult.C'(1,1,0,1)'
     popd
 }
 
