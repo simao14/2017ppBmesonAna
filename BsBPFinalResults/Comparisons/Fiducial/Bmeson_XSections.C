@@ -206,8 +206,6 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	}
 
   	int NBinsHigh = NBins-lowend;
-	cout << "Number of lowBINS" << lowend << endl;
-	cout << "Number of lowBINS" << NBinsHigh << endl;
 
 	//center of the bin and its left and right margins
 	// BINS

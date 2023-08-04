@@ -117,22 +117,25 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         else if(whichvar == "|y|" && abs(X_POS[c]) < 1.5){binlow += 1;}
 	}
     int binhigh = NumberBin- binlow;
-	//center of the bin and its left and right margins
+    cout << "Number of lowBINS" << binlow << endl;
+	cout << "Number of lowBINS" << binhigh << endl;	
+    
+    //center of the bin and its left and right margins
 
     //Separate according to the Fid Region
-    double X_POS_ycut[binlow] ;
-    double X_BinLeft_ycut[binlow] ;
-    double X_BinRight_ycut[binlow] ;
-    double X_POS_yall[binhigh] ;
-    double X_BinLeft_yall[binhigh] ;
-    double X_BinRight_yall[binhigh] ;
+    double X_POS_ycut[binlow+1] ;
+    double X_BinLeft_ycut[binlow+1] ;
+    double X_BinRight_ycut[binlow+1] ;
+    double X_POS_yall[binhigh+1] ;
+    double X_BinLeft_yall[binhigh+1] ;
+    double X_BinRight_yall[binhigh+1] ;
 
-    double Frag_f_ycut[binlow] ;
-    double Frag_f_Stat_U_ycut[binlow] ;
-    double Frag_f_Syst_U_ycut [binlow] ;
-    double Frag_f_yall[binhigh] ;
-    double Frag_f_Stat_U_yall[binhigh] ;
-    double Frag_f_Syst_U_yall[binhigh] ;
+    double Frag_f_ycut[binlow+1] ;
+    double Frag_f_Stat_U_ycut[binlow+1] ;
+    double Frag_f_Syst_U_ycut [binlow+1] ;
+    double Frag_f_yall[binhigh+1] ;
+    double Frag_f_Stat_U_yall[binhigh+1] ;
+    double Frag_f_Syst_U_yall[binhigh+1] ;
 
 	for( int c=0; c < NumberBin+1; c++){
         if(c<binlow){
@@ -144,12 +147,12 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
             Frag_f_Syst_U_ycut[c] = Frag_f_Syst_U[c];
 
         } else {
-            X_POS_yall[c] = X_POS[c];
-            X_BinLeft_yall [c] = X_BinLeft[c];
-            X_BinRight_yall[c] = X_BinRight[c];
-            Frag_f_yall[c] = Frag_f[c];
-            Frag_f_Stat_U_yall[c] = Frag_f_Stat_U[c];
-            Frag_f_Syst_U_yall[c] = Frag_f_Syst_U[c];
+            X_POS_yall[c-binlow] = X_POS[c];
+            X_BinLeft_yall [c-binlow] = X_BinLeft[c];
+            X_BinRight_yall[c-binlow] = X_BinRight[c];
+            Frag_f_yall[c-binlow] = Frag_f[c];
+            Frag_f_Stat_U_yall[c-binlow] = Frag_f_Stat_U[c];
+            Frag_f_Syst_U_yall[c-binlow] = Frag_f_Syst_U[c];
         }
 	}
     //Separate according to the Fid Region
@@ -193,14 +196,14 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	FragRatio_Graph_Stat_low ->SetMarkerStyle(24);
 	FragRatio_Graph_Stat_low ->SetMarkerSize(1);
 
-	FragRatio_Graph_Stat_low ->SetMarkerColor(kGreen+2);
-	FragRatio_Graph_Stat_low ->SetLineColor(kGreen+2);
-	FragRatio_Graph_Syst_low ->SetFillColorAlpha(kGreen-7,0.5);
-	FragRatio_Graph_Syst_low ->SetLineColor(kGreen-7);
-	FragRatio_Graph_Stat ->SetMarkerColor(kGreen+2);
-	FragRatio_Graph_Stat ->SetLineColor(kGreen+2);
-	FragRatio_Graph_Syst ->SetFillColorAlpha(kGreen-7,0.5);
-	FragRatio_Graph_Syst ->SetLineColor(kGreen-7);
+	FragRatio_Graph_Stat_low ->SetMarkerColor(kCyan+2);
+	FragRatio_Graph_Stat_low ->SetLineColor(kCyan+2);
+	FragRatio_Graph_Syst_low ->SetFillColorAlpha(kCyan-7,0.5);
+	FragRatio_Graph_Syst_low ->SetLineColor(kCyan-7);
+	FragRatio_Graph_Stat ->SetMarkerColor(kCyan+2);
+	FragRatio_Graph_Stat ->SetLineColor(kCyan+2);
+	FragRatio_Graph_Syst ->SetFillColorAlpha(kCyan-7,0.5);
+	FragRatio_Graph_Syst ->SetLineColor(kCyan-7);
 
 	HisEmpty->Draw();
 	FragRatio_Graph_Syst_low->Draw("5same");
@@ -218,12 +221,12 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	TLegend* leged = new TLegend(0.65,0.74,0.9,0.85,NULL,"brNDC");
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
-	if (whichvar=="pt"){
+	if (whichvar=="p_{t}"){
 		leged->AddEntry((TObject*)0, "y region:", "");
 		leged->AddEntry(FragRatio_Graph_Stat,"|y|<2.4","P");
 		leged->AddEntry(FragRatio_Graph_Stat_low,"|y|>1.5","P");
 	} 
-	if (whichvar=="y"){
+	if (whichvar=="|y|"){
 		leged->AddEntry((TObject*)0, "p_{T} region:", "");
         leged->AddEntry(FragRatio_Graph_Stat,"7<p_{T}<50 GeV/c","P");
 		leged->AddEntry(FragRatio_Graph_Stat_low,"10 < p_{T} < 50 GeV/c","P");
@@ -241,7 +244,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
 
     // Fragmentation Fraction Double Ratios
-    if(DRatios==1 && NumberBin==4 ){
+    if(DRatios==1){
 
         double X_POS_DR[NumberBin+1] ;
         double Frag_f_DR[NumberBin+1];
@@ -287,12 +290,12 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
             Frag_f_Syst_U_DR_ycut[c] = Frag_f_Syst_U_DR[c];
 
         } else {
-            X_POS_DR_yall[c] = X_POS_DR[c];
-            X_BinLeft_DR_yall [c] = X_BinLeft_DR[c];
-            X_BinRight_DR_yall[c] = X_BinRight_DR[c];
-            Frag_f_DR_yall[c] = Frag_f_DR[c];
-            Frag_f_Stat_U_DR_yall[c] = Frag_f_Stat_U_DR[c];
-            Frag_f_Syst_U_DR_yall[c] = Frag_f_Syst_U_DR[c];
+            X_POS_DR_yall[c-binlow] = X_POS_DR[c];
+            X_BinLeft_DR_yall [c-binlow] = X_BinLeft_DR[c];
+            X_BinRight_DR_yall[c-binlow] = X_BinRight_DR[c];
+            Frag_f_DR_yall[c-binlow] = Frag_f_DR[c];
+            Frag_f_Stat_U_DR_yall[c-binlow] = Frag_f_Stat_U_DR[c];
+            Frag_f_Syst_U_DR_yall[c-binlow] = Frag_f_Syst_U_DR[c];
         }
 	}
     //Separate according to the Fid Region
