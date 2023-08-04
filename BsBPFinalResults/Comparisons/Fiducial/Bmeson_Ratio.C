@@ -113,7 +113,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	for( int c=0; c < NumberBin+1; c++){
 		X_BinLeft[c] = X_POS[c] - ptBins[c];
 		X_BinRight[c]= ptBins[c+1] - X_POS[c];
-        if (X_POS_DR[c]< 10){binlow += 1;}
+        if (X_POS[c]< 10){binlow += 1;}
 	}
     int binhigh = NumberBin- binlow;
 	//center of the bin and its left and right margins
@@ -139,16 +139,16 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
             X_BinLeft_ycut[c] = X_BinLeft[c] ;
             X_BinRight_ycut[c] = X_BinRight[c];
             Frag_f_ycut[c] = Frag_f[c];
-            Frag_f_Stat_U_ycut[c] = Frag_f_Stat[c];
-            Frag_f_Syst_U_ycut[c] = Frag_f_Syst[c];
+            Frag_f_Stat_U_ycut[c] = Frag_f_Stat_U[c];
+            Frag_f_Syst_U_ycut[c] = Frag_f_Syst_U[c];
 
         } else {
             X_POS_yall[c] = X_POS[c];
             X_BinLeft_yall [c] = X_BinLeft[c];
             X_BinRight_yall[c] = X_BinRight[c];
             Frag_f_yall[c] = Frag_f[c];
-            Frag_f_Stat_U_yall[c] = Frag_f_Stat[c];
-            Frag_f_Syst_U_yall[c] = Frag_f_Syst[c];
+            Frag_f_Stat_U_yall[c] = Frag_f_Stat_U[c];
+            Frag_f_Syst_U_yall[c] = Frag_f_Syst_U[c];
         }
 	}
     //Separate according to the Fid Region
@@ -159,9 +159,9 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
     //CANVAS
 	gStyle->SetOptStat(0);
-	TCanvas * c = new TCanvas("c","c",600,600);
-	c->cd(); 
-	c->SetLeftMargin(0.15);
+	TCanvas * canvas = new TCanvas("c","c",600,600);
+	canvas->cd(); 
+	canvas->SetLeftMargin(0.15);
 
     // Plot the result
 	TH2D * HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,0,0.5); 

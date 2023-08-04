@@ -201,8 +201,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		XsecPP_X[c]= std::stod(hPt->GetXaxis()->GetBinLabel(c+1));  
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
-		if (whichvar=="y" && abs(XsecPP_X)<1.5){lowend +=1;}
-		else if (whichvar=="pT" && XsecPP_X<10){lowend +=1;}
+		if (whichvar=="y" && abs(XsecPP_X[c])<1.5){lowend +=1;}
+		else if (whichvar=="pT" && XsecPP_X[c]<10){lowend +=1;}
 	}
   	int NBinsHigh = NBins-lowend;
 
