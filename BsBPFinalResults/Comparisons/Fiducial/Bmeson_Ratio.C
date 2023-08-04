@@ -239,8 +239,6 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
 
 
-
-
     // Fragmentation Fraction Double Ratios
     if(DRatios==1 && NumberBin==4 ){
 
@@ -260,23 +258,23 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         Frag_f_Syst_U_DR[i] = fabs(Frag_f_DR[i]) * sqrt( pow(FRfr2018_Y_SystUpRatio[i] / FRfr2018_Y[i], 2) + pow(Frag_f_Syst_U[i] / Frag_f[i], 2));  //Propagate SYST. UNC.
         cout << i << "-th BIN DOUBLE FRAGratio: " <<  Frag_f_DR[i] << " +/- " << Frag_f_Stat_U_DR[i] << " +/- " << Frag_f_Syst_U_DR[i] << endl;
 		
-        X_BinLeft_DR[c] = X_POS_DR[c] - ptBins[c];
-		X_BinRight_DR[c]= ptBins[c+1] - X_POS_DR[c];
+        X_BinLeft_DR[i] = X_POS_DR[i] - ptBins[i];
+		X_BinRight_DR[i]= ptBins[i+1] - X_POS_DR[i];
 	}
 
     //Separate according to the Fid Region
     double X_POS_DR_ycut[binlow] ;
     double X_BinLeft_DR_ycut[binlow] ;
     double X_BinRight_DR_ycut[binlow] ;
+    double Frag_f_DR_ycut[binlow] ;
+    double Frag_f_Stat_U_DR_ycut[binlow] ;
+    double Frag_f_Syst_U_DR_ycut [binlow] ;
     double X_POS_DR_yall[binhigh] ;
     double X_BinLeft_DR_yall[binhigh] ;
     double X_BinRight_DR_yall[binhigh] ;
-    double Frag_f_DR_ycut[binlow] ;
-    double Frag_f_DR_Stat_U_ycut[binlow] ;
-    double Frag_f_DR_Syst_U_ycut [binlow] ;
     double Frag_f_DR_yall[binhigh] ;
-    double Frag_f_DR_Stat_U_yall[binhigh] ;
-    double Frag_f_DR_Syst_U_yall[binhigh] ;
+    double Frag_f_Stat_U_DR_yall[binhigh] ;
+    double Frag_f_Syst_U_DR_yall[binhigh] ;
 
 	for( int c=0; c < NumberBin+1; c++){
         if(c<binlow){
