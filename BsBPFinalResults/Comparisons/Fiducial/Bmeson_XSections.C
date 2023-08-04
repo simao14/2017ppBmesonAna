@@ -146,10 +146,7 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
                           
 	int NBins = 7;
-	int NBinsLow = 0  ;
-  	int NBinsHigh = 0 ;
 	int NBins2015 = 0 ;
-	int lowend    ;
 	TString var_l;
 	TString bsbpbins = "";
 	if (BsBP==1){bsbpbins="_BsBPBINS";}
@@ -157,16 +154,10 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	if(whichvar == "pt"){
 		if (meson_n=="BP" && BsBP==0){
 			NBins = nptBinsBP;
-			lowend = 1;
-			NBinsLow = 2 ;
-			NBinsHigh = 5;
 			NBins2015 = 5;
 		} 
 		else if (BsBP==1 || meson_n == "Bs"){
 			NBins = nptBins;
-			lowend = 0;
-			NBinsLow = 1 ;
-			NBinsHigh = 3;
 			NBins2015 = 3;
 			if (meson_n == "BP" ){ NBins2015 = 3;}
 		}
@@ -175,15 +166,10 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	} if(whichvar=="y"){
 		NBins = nyBins_both;
 		var_l="|y|";
-		lowend = 2;
-		NBinsLow = 3;
-		NBinsHigh = 2;
 
 	} if(whichvar=="Mult"){
 		NBins = nmBins_both;
 		var_l="Mult";
-		lowend = 100;
-		NBinsLow = nmBins_both;         
 	}
 
 	gSystem->mkdir("Plots/", true);
@@ -210,11 +196,16 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	float XsecPP_X[NBins];
 	float XsecPP_X_BinRight[NBins] ;
 	float XsecPP_X_BinLeft[NBins] ;
+	int lowend  =0  ;
 	for( int c=0; c < NBins; c++){
 		XsecPP_X[c]= std::stod(hPt->GetXaxis()->GetBinLabel(c+1));  
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
+		if (whichvar=="y" && abs(XsecPP_X)<1.5){lowend +=1;}
+		else if (whichvar=="pT" && XsecPP_X<10){lowend +=1;}
 	}
+  	int NBinsHigh = NBins-lowend;
+
 	//center of the bin and its left and right margins
 	// BINS
 
@@ -429,7 +420,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	vector<float> BP1DYSystUp_high ;
 
 	for (int i=0 ; i<NBins; i++){
-		if ( i <= lowend){
+		if ( i < lowend){
 			XsecPP_X_Low.push_back(XsecPP_X[i]);
 			XsecPP_X_BinL_Low.push_back(XsecPP_X_BinLeft[i]);
 			XsecPP_X_BinR_Low.push_back(XsecPP_X_BinRight[i]);
@@ -465,21 +456,12 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		}
 	}
 
-	float zero[NBinsLow];
-	for (int i=0 ; i<NBinsLow; i++){zero[i]=0;}
-
-	TGraphAsymmErrors *BPRAAGraph_low_just_marker   = new TGraphAsymmErrors(NBinsLow, XsecPP_X_Low.data(), XsecPP_Y_Low.data() ,zero, zero, zero, zero);
-	TGraphAsymmErrors *BP1DRAAGraph_low_just_marker = new TGraphAsymmErrors(NBinsLow, XsecPP_X_Low.data(), BP1DXsecPPYLow.data() ,zero, zero, zero, zero);
-
-	TGraphAsymmErrors *BPRAAGraph_low = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , XsecPP_Y_Low.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , XsecPP_Y_StatDown_Low.data() , XsecPP_Y_StatUp_Low.data());
+	TGraphAsymmErrors *BPRAAGraph_low_just_marker   = new TGraphAsymmErrors(lowend, XsecPP_X_Low.data(), XsecPP_Y_Low.data() ,nullptr, nullptr, nullptr, nullptr);
+	TGraphAsymmErrors *BPRAAGraph_low = new TGraphAsymmErrors(lowend , XsecPP_X_Low.data() , XsecPP_Y_Low.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , XsecPP_Y_StatDown_Low.data() , XsecPP_Y_StatUp_Low.data());
 	TGraphAsymmErrors *BPRAAGraph     = new TGraphAsymmErrors(NBinsHigh, XsecPP_X_High.data(), XsecPP_Y_High.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), XsecPP_Y_StatDown_High.data(), XsecPP_Y_StatUp_High.data());     
-	TGraphAsymmErrors *BPRAAGraphSyst_low  = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , XsecPP_Y_Low.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , XsecPP_Y_SystDown_Low.data() , XsecPP_Y_SystUp_Low.data());                 											
+	TGraphAsymmErrors *BPRAAGraphSyst_low  = new TGraphAsymmErrors(lowend , XsecPP_X_Low.data() , XsecPP_Y_Low.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , XsecPP_Y_SystDown_Low.data() , XsecPP_Y_SystUp_Low.data());                 											
 	TGraphAsymmErrors *BPRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, XsecPP_X_High.data(), XsecPP_Y_High.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), XsecPP_Y_SystDown_High.data(), XsecPP_Y_SystUp_High.data());                 											
-	
-	TGraphAsymmErrors *BP1DRAAGraph_low = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , BP1DXsecPPYLow.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , BP1DXsecPPYErrDownLow.data() , BP1DXsecPPYErrUpLow.data());
-	TGraphAsymmErrors *BP1DRAAGraph     = new TGraphAsymmErrors(NBinsHigh, XsecPP_X_High.data(), BP1DXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BP1DXsecPPYErrDownHigh.data(), BP1DXsecPPYErrUpHigh.data());     
-	TGraphAsymmErrors *BP1DRAAGraphSyst_low  = new TGraphAsymmErrors(NBinsLow , XsecPP_X_Low.data() , BP1DXsecPPYLow.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , BP1DYSystDown_low.data() , BP1DYSystUp_low.data());                 											
-	TGraphAsymmErrors *BP1DRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, XsecPP_X_High.data(), BP1DXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BP1DYSystDown_high.data(), BP1DYSystUp_high.data());
+
   // separate plots for different fiducial regions
  
   	cout << endl << "-------------------------------------------------------  "<< Form("%s meson Xsection", meson_n.Data()) <<"  -------------------------------------------------------" << endl;
@@ -521,25 +503,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		BPRAAGraphSyst->SetFillColorAlpha(kBlue-3,0.5);
 		BPRAAGraphSyst->SetLineColor(kBlue-3);
 	}
-
-	BP1DRAAGraph->SetMarkerStyle(20);
-	BP1DRAAGraph->SetMarkerSize(1);
-	BP1DRAAGraph_low_just_marker ->SetMarkerStyle(20);
-	BP1DRAAGraph_low_just_marker ->SetMarkerSize(0.9);
-	BP1DRAAGraph_low_just_marker ->SetMarkerColor(kWhite);
-	BP1DRAAGraph_low ->SetMarkerStyle(24);
-	BP1DRAAGraph_low ->SetMarkerSize(1);
-	BP1DRAAGraph_low ->SetMarkerColor(kPink+2);
-	BP1DRAAGraph_low ->SetLineColor(kPink+2);
-	BP1DRAAGraphSyst_low ->SetFillColorAlpha(kPink-3,0.5);
-	BP1DRAAGraphSyst_low ->SetLineColor(kPink-3);
-	BP1DRAAGraph->SetLineColor(kPink+2);
-	BP1DRAAGraph->SetMarkerColor(kPink+2);
-	BP1DRAAGraphSyst->SetFillColorAlpha(kPink-3,0.5);
-	BP1DRAAGraphSyst->SetLineColor(kPink-3);
 	
 	HisEmpty->Draw();
-
 	BPRAAGraphSyst_low->Draw("5same");
 	BPRAAGraphSyst->Draw("5same");
 	BPRAAGraph->Draw("epSAME");
@@ -593,12 +558,32 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 //////////////////////////////////////////////////////////////////////////////////
 // 	COMPARISON OF 1D vs 2D methods
 	if(BsBP==0){
+
+	TGraphAsymmErrors *BP1DRAAGraph_low_just_marker = new TGraphAsymmErrors(lowend, XsecPP_X_Low.data(), BP1DXsecPPYLow.data() ,nullptr, nullptr, nullptr, nullptr);
+	TGraphAsymmErrors *BP1DRAAGraph_low = new TGraphAsymmErrors(lowend , XsecPP_X_Low.data() , BP1DXsecPPYLow.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , BP1DXsecPPYErrDownLow.data() , BP1DXsecPPYErrUpLow.data());
+	TGraphAsymmErrors *BP1DRAAGraph     = new TGraphAsymmErrors(NBinsHigh, XsecPP_X_High.data(), BP1DXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BP1DXsecPPYErrDownHigh.data(), BP1DXsecPPYErrUpHigh.data());     
+	TGraphAsymmErrors *BP1DRAAGraphSyst_low  = new TGraphAsymmErrors(lowend , XsecPP_X_Low.data() , BP1DXsecPPYLow.data() , XsecPP_X_BinL_Low.data() , XsecPP_X_BinR_Low.data() , BP1DYSystDown_low.data() , BP1DYSystUp_low.data());                 											
+	TGraphAsymmErrors *BP1DRAAGraphSyst      = new TGraphAsymmErrors(NBinsHigh, XsecPP_X_High.data(), BP1DXsecPPYHigh.data(), XsecPP_X_BinL_High.data(), XsecPP_X_BinR_High.data(), BP1DYSystDown_high.data(), BP1DYSystUp_high.data());
+	BP1DRAAGraph->SetMarkerStyle(20);
+	BP1DRAAGraph->SetMarkerSize(0.8);
+
+	BP1DRAAGraph_low_just_marker ->SetMarkerStyle(20);
+	BP1DRAAGraph_low_just_marker ->SetMarkerColor(kWhite);
+	BP1DRAAGraph_low_just_marker ->SetMarkerSize(0.7);
+	BP1DRAAGraph_low ->SetMarkerStyle(24);
+	BP1DRAAGraph_low ->SetMarkerSize(0.8);
+	BP1DRAAGraph_low ->SetMarkerColor(kPink+2);
+	BP1DRAAGraph_low ->SetLineColor(kPink+2);
+	BP1DRAAGraphSyst_low ->SetFillColorAlpha(kPink-3,0.5);
+	BP1DRAAGraphSyst_low ->SetLineColor(kPink-3);
+	BP1DRAAGraph->SetLineColor(kPink+2);
+	BP1DRAAGraph->SetMarkerColor(kPink+2);
+	BP1DRAAGraphSyst->SetFillColorAlpha(kPink-3,0.5);
+	BP1DRAAGraphSyst->SetLineColor(kPink-3);
+
 	if (meson_n=="BP") {lat->DrawLatex(0.65,0.6 ,Form("2017 pp global Unc. #pm %.1f%%",3.5));} 
 	else {	lat->DrawLatex(0.65,0.52,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
 
-	BP1DRAAGraph->SetMarkerSize(0.8);
-	BP1DRAAGraph_low ->SetMarkerSize(0.8);
-	BP1DRAAGraph_low_just_marker ->SetMarkerSize(0.7);
 	BPRAAGraph->SetMarkerSize(0.8);
 	BPRAAGraph_low ->SetMarkerSize(0.8);
 	BPRAAGraph_low_just_marker ->SetMarkerSize(0.7);
@@ -850,7 +835,7 @@ if (whichvar=="pt" && BsBP == 0){
 			c->SaveAs(Form("Plots/%s_Xsection_%s_vs2015.pdf", meson_n.Data(),whichvar.Data()));
 
 	//2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
-	//////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
 	// vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
@@ -926,7 +911,7 @@ if (whichvar=="pt" && BsBP == 0){
 	double YErrLowTemp;
 	double YErrHighTemp;
 
-	for(int i = 0; i < NBinsLow; i ++){                   
+	for(int i = 0; i < lowend; i ++){                   
 		BFONLL2->GetPoint(i,XTempChange,YTempChange);
 		YErrLowTemp = BFONLL2->GetErrorYlow(i);
 		YErrHighTemp = BFONLL2->GetErrorYhigh(i);
@@ -980,22 +965,22 @@ if (whichvar=="pt" && BsBP == 0){
 
 
  // Get ratio plots
-float binlow[NBinsLow];
-float bl_low[NBinsLow];
-float bl_low_yStatL[NBinsLow];
-float bl_low_xErrL[NBinsLow];
-float bl_low_xErrH[NBinsLow];
-float bl_low_ySystL[NBinsLow];
-float binhigh[NBins-NBinsLow];
-float bl_high[NBins-NBinsLow];
-float bl_high_yStatL[NBins-NBinsLow];
-float bl_high_xErrL[NBins-NBinsLow];
-float bl_high_xErrH[NBins-NBinsLow];
-float bl_high_ySystL[NBins-NBinsLow];
+float binlow[lowend];
+float bl_low[lowend];
+float bl_low_yStatL[lowend];
+float bl_low_xErrL[lowend];
+float bl_low_xErrH[lowend];
+float bl_low_ySystL[lowend];
+float binhigh[NBins-lowend];
+float bl_high[NBins-lowend];
+float bl_high_yStatL[NBins-lowend];
+float bl_high_xErrL[NBins-lowend];
+float bl_high_xErrH[NBins-lowend];
+float bl_high_ySystL[NBins-lowend];
 
 for (int i=0;i<NBins;++i){
 	
-	if( i<NBinsLow){
+	if( i<lowend){
 		binlow[i]=XsecPP_X[i];
 		bl_low[i]=BPXsecPPY2DScaled[i];
 		bl_low_yStatL[i]=BPXSecPPY2DErrDownScaled[i];
@@ -1004,12 +989,12 @@ for (int i=0;i<NBins;++i){
 		bl_low_ySystL[i]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
 	} 
 	else {
-		binhigh[i-NBinsLow]=XsecPP_X[i];
-		bl_high[i-NBinsLow]=BPXsecPPY2DScaled[i];
-		bl_high_yStatL[i-NBinsLow]=BPXSecPPY2DErrDownScaled[i];
-		bl_high_xErrL[i-NBinsLow]=XsecPP_X[i]-ptBins[i];
-		bl_high_xErrH[i-NBinsLow]=ptBins[i + 1]-XsecPP_X[i];
-		bl_high_ySystL[i-NBinsLow]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
+		binhigh[i-lowend]=XsecPP_X[i];
+		bl_high[i-lowend]=BPXsecPPY2DScaled[i];
+		bl_high_yStatL[i-lowend]=BPXSecPPY2DErrDownScaled[i];
+		bl_high_xErrL[i-lowend]=XsecPP_X[i]-ptBins[i];
+		bl_high_xErrH[i-lowend]=ptBins[i + 1]-XsecPP_X[i];
+		bl_high_ySystL[i-lowend]=BP2DTotalSystDownRatio[i]*BPXsecPPY2DScaled[i];
 	}
 }
 
@@ -1017,7 +1002,7 @@ for (int i=0;i<NBins;++i){
   vector<float> BXsecStat;
   vector<float> BXsecSyst;
  
-  for (auto i = 0; i < NBinsLow; ++i) {
+  for (auto i = 0; i < lowend; ++i) {
     BXsec.push_back(bl_low[i]);
     BXsecStat.push_back(bl_low_yStatL[i]);
     BXsecSyst.push_back(bl_low_ySystL[i]);
@@ -1056,15 +1041,15 @@ for (int i=0;i<NBins;++i){
 	}
 
 	//DATA
-	TGraphAsymmErrors gRatioBs_low(NBinsLow, binlow, FONLL_Norm_ratio, bl_low_xErrL, bl_low_xErrH, RatioBsStat, RatioBsStat);
-	TGraphAsymmErrors gRatioBs_syst_low(NBinsLow,binlow,FONLL_Norm_ratio,bl_low_xErrL, bl_low_xErrH,RatioBsSyst, RatioBsSyst);
-	TGraphAsymmErrors *BPRAAGraph_low_just_m = new TGraphAsymmErrors(NBinsLow, binlow, FONLL_Norm_ratio ,zero, zero, zero, zero);
-	TGraphAsymmErrors gRatioBs_high(NBinsHigh,binhigh,FONLL_Norm_ratio + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsStat + NBinsLow, RatioBsStat + NBinsLow);
-	TGraphAsymmErrors gRatioBs_syst_high(NBinsHigh,binhigh,FONLL_Norm_ratio + NBinsLow,bl_high_xErrL, bl_high_xErrH,RatioBsSyst + NBinsLow, RatioBsSyst + NBinsLow);
+	TGraphAsymmErrors gRatioBs_low(lowend, binlow, FONLL_Norm_ratio, bl_low_xErrL, bl_low_xErrH, RatioBsStat, RatioBsStat);
+	TGraphAsymmErrors gRatioBs_syst_low(lowend,binlow,FONLL_Norm_ratio,bl_low_xErrL, bl_low_xErrH,RatioBsSyst, RatioBsSyst);
+	TGraphAsymmErrors *BPRAAGraph_low_just_m = new TGraphAsymmErrors(lowend, binlow, FONLL_Norm_ratio ,nullptr, nullptr, nullptr, nullptr);
+	TGraphAsymmErrors gRatioBs_high(NBinsHigh,binhigh,FONLL_Norm_ratio + lowend,bl_high_xErrL, bl_high_xErrH,RatioBsStat + lowend, RatioBsStat + lowend);
+	TGraphAsymmErrors gRatioBs_syst_high(NBinsHigh,binhigh,FONLL_Norm_ratio + lowend,bl_high_xErrL, bl_high_xErrH,RatioBsSyst + lowend, RatioBsSyst + lowend);
 	
 	//FONLL
-	TGraphAsymmErrors gRatioBs_Fon_low(NBinsLow,binlow,Unity.data(),bl_low_xErrL, bl_low_xErrH,RatioBsFonErrLow, RatioBsFonErrHigh);
-	TGraphAsymmErrors gRatioBs_Fon_high(NBinsHigh,binhigh,Unity.data(),bl_high_xErrL, bl_high_xErrH,RatioBsFonErrLow + NBinsLow,RatioBsFonErrHigh + NBinsLow);
+	TGraphAsymmErrors gRatioBs_Fon_low(lowend,binlow,Unity.data(),bl_low_xErrL, bl_low_xErrH,RatioBsFonErrLow, RatioBsFonErrHigh);
+	TGraphAsymmErrors gRatioBs_Fon_high(NBinsHigh,binhigh,Unity.data(),bl_high_xErrL, bl_high_xErrH,RatioBsFonErrLow + lowend,RatioBsFonErrHigh + lowend);
 
 	int color_mark =  kBlue + 2;
 	int color_syst = kBlue -3;
