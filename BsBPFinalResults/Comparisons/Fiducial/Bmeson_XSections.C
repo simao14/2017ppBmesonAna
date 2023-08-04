@@ -193,18 +193,21 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	TFile * RawYield = new TFile(Form("../../../henri2022/ROOTfiles/yields_%s_binned_%s%s.root", meson_n.Data(), whichvar.Data(), bsbpbins.Data()));
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 
-	float XsecPP_X[NBins];
-	float XsecPP_X_BinRight[NBins] ;
-	float XsecPP_X_BinLeft[NBins] ;
-	int lowend  =0  ;
+	float XsecPP_X[NBins+1];
+	float XsecPP_X_BinRight[NBins+1] ;
+	float XsecPP_X_BinLeft[NBins+1] ;
+	int lowend = 0  ;
 	for( int c=0; c < NBins; c++){
 		XsecPP_X[c]= std::stod(hPt->GetXaxis()->GetBinLabel(c+1));  
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
 		if (whichvar=="y" && abs(XsecPP_X[c])<1.5){lowend +=1;}
-		else if (whichvar=="pT" && XsecPP_X[c]<10){lowend +=1;}
+		else if (whichvar=="pt" && XsecPP_X[c] < 10){lowend +=1;}
 	}
+
   	int NBinsHigh = NBins-lowend;
+	cout << "Number of lowBINS" << lowend << endl;
+	cout << "Number of lowBINS" << NBinsHigh << endl;
 
 	//center of the bin and its left and right margins
 	// BINS
@@ -857,7 +860,6 @@ if (whichvar=="pt" && BsBP == 0){
 	MyPadr2 = new TPad("MyPadr2","",0,0.0,1,0.25);
 	MyPadr2->SetBottomMargin(0.3);
 	MyPadr2->SetTopMargin(0);
-	
 	MyPadr2->Draw();
 
 	TH2D * HisEmpty3;
@@ -881,7 +883,7 @@ if (whichvar=="pt" && BsBP == 0){
 
     TFile * finFONLL ;
 	if(meson_n=="BP"){ finFONLL = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_y2p4.root");}
-	else{ finFONLL = new TFile("FONLLs/BsFONLL.root");}
+	else if (meson_n=="Bs"){ finFONLL = new TFile("FONLLs/BsFONLL.root");}
 	finFONLL->cd();
 
 	TGraphAsymmErrors *BPFONLL = (TGraphAsymmErrors*) finFONLL->Get("gaeSigmaBplus");
@@ -894,7 +896,7 @@ if (whichvar=="pt" && BsBP == 0){
 
 	TFile * finFONLL2 ;
 	if(meson_n=="BP"){ finFONLL2 = new TFile("FONLLs/fonllOutput_pp_Bplus_5p03TeV_yFid.root");}
-	else{ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
+	else if(meson_n=="Bs"){ finFONLL2 = new TFile("FONLLs/BsFONLLFid.root");}
     finFONLL2->cd();
 	TGraphAsymmErrors *BFONLL2 = (TGraphAsymmErrors*) finFONLL2->Get("gaeSigmaBplus");
 
@@ -916,8 +918,9 @@ if (whichvar=="pt" && BsBP == 0){
 		YErrLowTemp = BFONLL2->GetErrorYlow(i);
 		YErrHighTemp = BFONLL2->GetErrorYhigh(i);
 		BPFONLL->SetPoint(i,XTempChange,YTempChange);
-		BPFONLL->SetPointEYhigh(i,YErrHighTemp);
 		BPFONLL->SetPointEYlow(i,YErrLowTemp);
+		BPFONLL->SetPointEYhigh(i,YErrHighTemp);
+
 		BFONLLLow->AddPoint(XTempChange,YTempChange);
 		BFONLLLow->SetPointEYhigh(i,YErrHighTemp);
 		BFONLLLow->SetPointEYlow(i,YErrLowTemp);

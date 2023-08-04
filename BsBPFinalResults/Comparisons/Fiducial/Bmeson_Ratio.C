@@ -113,7 +113,8 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	for( int c=0; c < NumberBin+1; c++){
 		X_BinLeft[c] = X_POS[c] - ptBins[c];
 		X_BinRight[c]= ptBins[c+1] - X_POS[c];
-        if (X_POS[c]< 10){binlow += 1;}
+        if ((whichvar=="p_{T}") && X_POS[c]< 10){binlow += 1;}
+        else if(whichvar == "|y|" && abs(X_POS[c]) < 1.5){binlow += 1;}
 	}
     int binhigh = NumberBin- binlow;
 	//center of the bin and its left and right margins
