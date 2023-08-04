@@ -282,8 +282,8 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
             X_BinLeft_DR_ycut[c] = X_BinLeft_DR[c] ;
             X_BinRight_DR_ycut[c] = X_BinRight_DR[c];
             Frag_f_DR_ycut[c] = Frag_f_DR[c];
-            Frag_f_Stat_U_DR_ycut[c] = Frag_f_Stat_DR[c];
-            Frag_f_Syst_U_DR_ycut[c] = Frag_f_Syst_DR[c];
+            Frag_f_Stat_U_DR_ycut[c] = Frag_f_Stat_U_DR[c];
+            Frag_f_Syst_U_DR_ycut[c] = Frag_f_Syst_U_DR[c];
 
         } else {
             X_POS_DR_yall[c] = X_POS_DR[c];
