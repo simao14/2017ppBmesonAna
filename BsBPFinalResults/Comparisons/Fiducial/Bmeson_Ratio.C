@@ -16,7 +16,7 @@ using namespace std;
 using std::cout;
 using std::endl;
 
-void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichvar);
+void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichvar, int DRatios = 0 );
 
 
 
@@ -29,7 +29,7 @@ void Bmeson_Ratio(){
 
 TString BP_FILE_pt = "./ROOTFiles/BP_Xsection_pt_BsBPBINS.root";
 TString Bs_FILE_pt = "./ROOTFiles/Bs_Xsection_pt.root";
-divideTGraphsInFiles(Bs_FILE_pt, BP_FILE_pt, "p_{T}") ;
+divideTGraphsInFiles(Bs_FILE_pt, BP_FILE_pt, "p_{T}", 1) ;
 
 // pT Fragmentation Fraction
 // y Fragmentation Fraction
