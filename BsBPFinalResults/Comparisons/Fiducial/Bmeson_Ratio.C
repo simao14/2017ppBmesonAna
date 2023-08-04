@@ -117,8 +117,6 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         else if(whichvar == "|y|" && abs(X_POS[c]) < 1.5){binlow += 1;}
 	}
     int binhigh = NumberBin- binlow;
-    cout << "Number of lowBINS" << binlow << endl;
-	cout << "Number of lowBINS" << binhigh << endl;	
     
     //center of the bin and its left and right margins
 
@@ -221,15 +219,16 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	TLegend* leged = new TLegend(0.65,0.74,0.9,0.85,NULL,"brNDC");
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
-	if (whichvar=="p_{t}"){
+	if (whichvar=="p_{T}"){
 		leged->AddEntry((TObject*)0, "y region:", "");
 		leged->AddEntry(FragRatio_Graph_Stat,"|y|<2.4","P");
 		leged->AddEntry(FragRatio_Graph_Stat_low,"|y|>1.5","P");
 	} 
 	if (whichvar=="|y|"){
 		leged->AddEntry((TObject*)0, "p_{T} region:", "");
-        leged->AddEntry(FragRatio_Graph_Stat,"7<p_{T}<50 GeV/c","P");
 		leged->AddEntry(FragRatio_Graph_Stat_low,"10 < p_{T} < 50 GeV/c","P");
+        leged->AddEntry(FragRatio_Graph_Stat,"7<p_{T}<50 GeV/c","P");
+
 	} 
     leged->SetTextSize(0.022);
 	leged->Draw("same");
