@@ -334,7 +334,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 		hPt->SetBinContent(i+1,yield/(_ptBins[i+1]-_ptBins[i]));
 		hPt->SetBinError(i+1,yieldErr/(_ptBins[i+1]-_ptBins[i]));
-    	hPt->GetXaxis()->SetBinLabel(i+1, Form("%f", *var_mean_av[i]));
+    	hPt->GetXaxis()->SetBinLabel(i+1, Form("%f", var_mean_av[i]));
 
 	//////////////////////////////////////////////////////////LABELS IN PLOTS
 		TLatex* texB = new TLatex(0.5,0.5,"");
