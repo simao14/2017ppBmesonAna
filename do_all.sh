@@ -60,8 +60,8 @@ bsEff () {
 
 pdfVar_sys () {
     # get pdf variation errors
-    python master.py "pt"
-    python master.py "y"
+    python master.py "pt" ""
+    python master.py "y" ""
 
     python master.py "pt" "BsBPBINS"
     python master.py "y" "BsBPBINS"
