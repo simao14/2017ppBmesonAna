@@ -180,7 +180,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     //compute the Fr fraction double ratio
     for (int i = 0; i < NumberBin+1; ++i) {
 
-        X_POS_DR = (FRfr2018_X[i]+X_POS[i])/2;     //mean of both X positions ?
+        X_POS_DR[i] = (FRfr2018_X[i]+X_POS[i])/2;     //mean of both X positions ?
         Frag_f_DR[i] = FRfr2018_Y[i] / Frag_f[i];
         Frag_f_Stat_U_DR[i] = fabs(Frag_f[i]) * sqrt(pow(FRfr2018_Y_StatUpRatio[i] / FRfr2018_Y[i], 2) + pow(Frag_f_Stat_U[i] / Frag_f[i], 2));  //Propagate STAT. UNC.
         Frag_f_Syst_U_DR[i] = fabs(Frag_f[i]) * sqrt(pow(FRfr2018_Y_SystUpRatio[i] / FRfr2018_Y[i], 2) + pow(Frag_f_Syst_U[i] / Frag_f[i], 2));  //Propagate SYST. UNC.
