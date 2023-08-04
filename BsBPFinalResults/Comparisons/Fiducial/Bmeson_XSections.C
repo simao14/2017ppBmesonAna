@@ -553,17 +553,16 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 
 	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
 	if (meson_n=="BP") {
-		if(whichvar=="y"){ lat->DrawLatex(0.2, 0.75 , Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;}
-		else { lat->DrawLatex(0.6, 0.75 ,Form("2017 pp global Unc. #pm %.1f%%",3.5) );} 
+		if(whichvar=="y"){ lat->DrawLatex(0.2, 0.7 , Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;}
+		else { lat->DrawLatex(0.6, 0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5) );} 
 	
 	} else { 
-		if(whichvar=="y"){ lat->DrawLatex(0.2,0.75,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
-		else { lat->DrawLatex(0.6,0.75,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;} 
+		if(whichvar=="y"){ lat->DrawLatex(0.2,0.7,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;}
+		else { lat->DrawLatex(0.6,0.7,Form("2017 pp Global Unc. #pm %.1f%%",7.7)) ;} 
 	}
 
-    TLegend* leged;
-	leged = new TLegend(0.7,0.9,0.9,0.8,NULL,"brNDC");
-	if(whichvar == "y"){leged = new TLegend(0.2,0.9,0.3,0.8,NULL,"brNDC");}
+	TLegend* leged = new TLegend(0.65,0.74,0.9,0.85,NULL,"brNDC");
+	if(whichvar == "y"){leged = new TLegend(0.2,0.74,0.35,0.85,NULL,"brNDC");}
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
 	if (whichvar=="pt"){

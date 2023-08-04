@@ -34,7 +34,7 @@ divideTGraphsInFiles(Bs_FILE_pt, BP_FILE_pt, "p_{T}") ;
 // pT Fragmentation Fraction
 // y Fragmentation Fraction
 
-TString BP_FILE_y = "./ROOTFiles/BP_Xsection_y.root";
+TString BP_FILE_y = "./ROOTFiles/BP_Xsection_y_BsBPBINS.root";
 TString Bs_FILE_y = "./ROOTFiles/Bs_Xsection_y.root";
 divideTGraphsInFiles(Bs_FILE_y, BP_FILE_y, "|y|") ;
 
