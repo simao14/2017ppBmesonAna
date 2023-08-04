@@ -10,7 +10,7 @@ import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument('var', type=str)
-parser.add_argument('bsbpbins', type=str)
+parser.add_argument('bsbpb', type=str)
 opt = parser.parse_args()
 
 if opt.var == "pt":
