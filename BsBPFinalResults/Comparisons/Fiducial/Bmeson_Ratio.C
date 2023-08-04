@@ -43,7 +43,10 @@ divideTGraphsInFiles(Bs_FILE_y, BP_FILE_y, "|y|") ;
 
 }
 
-void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichvar) {
+
+
+
+void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichvar, int DRatios = 0) {
     //inputFile1 SHOULD BE Bmeson NUMERATOR
     //inputFile2 SHOULD BE Bmeson DENOMINATOR      
     TString Name1= "";
@@ -86,14 +89,13 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         Y2_stat = Y_stat_B2->GetErrorYhigh(i);   // Yield Statistical Unc. of DENOMINATOR Bmeson
         Y2_syst = Y_syst_B2->GetErrorYhigh(i);   // Yield Systematic Unc. of DENOMINATOR Bmeson
 
-        X_POS[i] = (B_X1+B_X2)/2;
+        X_POS[i] = (B_X1+B_X2)/2;     //mean of both X1 x2
         Frag_f[i] = B_Y1 / B_Y2;
         Frag_f_Stat_U[i] = fabs(Frag_f[i]) * sqrt(pow(Y1_stat / B_Y1, 2) + pow(Y2_stat / B_Y2, 2));  //Propagate STAT. UNC.
         Frag_f_Syst_U[i] = fabs(Frag_f[i]) * sqrt(pow(Y1_syst / B_Y1, 2) + pow(Y2_syst / B_Y2, 2));  //Propagate SYST. UNC.
 
         cout << i << "-th BIN FRAGratio: " <<  Frag_f[i] << " +/- " << Frag_f_Stat_U[i] << " +/- " << Frag_f_Syst_U[i] << endl;
         cout << "Bin Xposition " << B_X1 <<"   " <<B_X2 << "  --->  "<< X_POS[i] << endl;
-        //graph1->GetErrorXlow(i)
     }
 
 	//center of the bin and its left and right margins
@@ -162,5 +164,77 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     else { canvas->SaveAs(Form("./Plots/Fragmentation/fs_fu_%s.pdf", whichvar.Data() ));}
 
 
+
+
+
+    // Fragmentation Fraction Double Ratios
+    if(DRatios==1 && NumberBin==4 ){
+
+        double X_POS_DR[NumberBin+1] ;
+        double Frag_f_DR[NumberBin+1];
+        double Frag_f_Stat_U_DR[NumberBin+1];
+        double Frag_f_Syst_U_DR[NumberBin+1];
+	    double XsecPP_X_BinLeft_DR[NumberBin+1] ;
+        double XsecPP_X_BinRight_DR[NumberBin+1] ;
+
+    //compute the Fr fraction double ratio
+    for (int i = 0; i < NumberBin+1; ++i) {
+
+        X_POS_DR = (FRfr2018_X[i]+X_POS[i])/2;     //mean of both X positions ?
+        Frag_f_DR[i] = FRfr2018_Y[i] / Frag_f[i];
+        Frag_f_Stat_U_DR[i] = fabs(Frag_f[i]) * sqrt(pow(FRfr2018_Y_StatUpRatio[i] / FRfr2018_Y[i], 2) + pow(Frag_f_Stat_U[i] / Frag_f[i], 2));  //Propagate STAT. UNC.
+        Frag_f_Syst_U_DR[i] = fabs(Frag_f[i]) * sqrt(pow(FRfr2018_Y_SystUpRatio[i] / FRfr2018_Y[i], 2) + pow(Frag_f_Syst_U[i] / Frag_f[i], 2));  //Propagate SYST. UNC.
+
+        cout << i << "-th BIN DOUBLE FRAGratio: " <<  Frag_f_DR[i] << " +/- " << Frag_f_Stat_U_DR[i] << " +/- " << Frag_f_Syst_U_DR[i] << endl;
+    }
+    //compute the Fr fraction double ratio
+    //left and right limits of the bin
+	for( int c=0; c < NumberBin+1; c++){
+		XsecPP_X_BinLeft_DR[c] = X_POS_DR[c] - ptBins[c];
+		XsecPP_X_BinRight_DR[c]= ptBins[c+1] - X_POS_DR[c];
+	}
+    //left and right limits of the bin
+
+    // Plot the result
+	TH2D * HisEmpty3 = new TH2D("HisEmpty","",100,7,50,100,0.5,1.5); 
+	HisEmpty3->GetXaxis()->SetTitle("p_{T}");
+	HisEmpty3->GetYaxis()->SetTitle("fsfu Double Ratio ");
+	HisEmpty3->GetXaxis()->CenterTitle();
+	HisEmpty3->GetYaxis()->CenterTitle();
+    HisEmpty3->SetStats(0);
+
+    TCanvas* canvas3 = new TCanvas("canvas3", "Result of Division", 700, 700);
+    canvas3->cd();
+
+    // Create a new TGraphAsymmErrors for the result of the division
+    TGraphAsymmErrors* FragRatio_stat_DR = new TGraphAsymmErrors(NumberBin, X_POS_DR, Frag_f_DR, XsecPP_X_BinLeft_DR, XsecPP_X_BinRight_DR, Frag_f_Stat_U_DR, Frag_f_Stat_U_DR);     
+	FragRatio_stat_DR->SetLineColor(1); 
+    TGraphAsymmErrors* FragRatio_syst_DR = new TGraphAsymmErrors(NumberBin, X_POS_DR, Frag_f_DR, nullptr, nullptr, Frag_f_Syst_U_DR, Frag_f_Syst_U_DR);     
+	FragRatio_syst->SetLineColor(2); 
+
+	HisEmpty3->Draw();
+	FragRatio_syst_DR->Draw("5same");
+	FragRatio_stat_DR->Draw("epSAME");
+
+	TLatex *lat2 = new TLatex();
+	lat2->SetNDC();
+	lat2->SetTextSize(0.025); 
+	lat2->SetTextFont(42);
+	lat2->DrawLatex(0.1,0.91 , "CMS work in progress");
+    //lat->DrawLatex(0.57,0.62 ,Form("2017 pp global Unc. #pm %.1f%%",0000)) ;
+
+	TLegend* leg31 = new TLegend(0.6,0.68,0.9,0.85,NULL,"brNDC");
+	leg31->SetBorderSize(0);
+	leg31->SetFillStyle(0);
+	leg31->AddEntry((TObject*)0, "B^{0}_{s}/B^{+}", "");
+	leg31->AddEntry(FragRatio_stat_DR,"2017 pp ","P");
+	//leg3->AddEntry(,"2017 pp (|y|>1.5)","P");
+	leg31->SetTextSize(0.022);
+	leg31->Draw("same");
+
+	canvas3->SaveAs(Form("./Plots/Fragmentation/DOUBLER_fs_fu_pT.pdf"));
+
+
+    }
 
 }

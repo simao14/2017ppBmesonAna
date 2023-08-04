@@ -84,17 +84,16 @@ const std::array<double, nmBins_both + 1> nmbinsvec = { 0,20,30,40,50,60,70,100}
 
 	//TO BE USED IN Bmeson_XSections.C 
 
-
-
-
-
-
-
-
-
-
-
-
+	//TO BE USED IN Bmeson_Ratio.C 
+    //2018 PbPb fsfu
+	double  FRfr2018_X[4]={8.75, 12.6, 17.4, 27.3 };
+	double  FRfr2018_Y[4]={0.5148, 0.2795, 0.3938 , 0.2949};
+	double  FRfr2018_Y_StatUpRatio[4]  ={0.537*0.5148, 0.223*0.2795, 0.226*0.3938, 0.227*0.2949};
+	double  FRfr2018_Y_StatDownRatio[4]={0.504*0.5148, 0.268*0.2795, 0.217*0.3938, 0.171*0.2949};
+	double  FRfr2018_Y_SystUpRatio[4]  ={0.460*0.5148, 0.193*0.2795, 0.910*0.3938, 0.139*0.2949};
+	double  FRfr2018_Y_SystDownRatio[4]={0.461*0.5148, 0.193*0.2795, 0.911*0.3938, 0.139*0.2949};
+    //2018 PbPb fsfu
+	//TO BE USED IN Bmeson_Ratio.C 
 
 
 
