@@ -196,7 +196,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     //left and right limits of the bin
 
     // Plot the result
-	TH2D * HisEmpty3 = new TH2D("HisEmpty","",100,7,50,100,0.5,1.5); 
+	TH2D * HisEmpty3 = new TH2D("HisEmpty","",100,7,50,100,0.7,2.5); 
 	HisEmpty3->GetXaxis()->SetTitle("p_{T}");
 	HisEmpty3->GetYaxis()->SetTitle("fsfu Double Ratio ");
 	HisEmpty3->GetXaxis()->CenterTitle();
