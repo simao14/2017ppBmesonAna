@@ -80,6 +80,8 @@ syst2D () {
 
     #root -b -l -q CalEffSystB.C'("BP","pt",1)'
     #root -b -l -q PlotEffSyst2D.C'("BP","pt",1)'
+    #root -b -l -q CalEffSystB.C'("BP","y",1)'
+    #root -b -l -q PlotEffSyst2D.C'("BP","y",1)'
     popd
 }
 
@@ -107,7 +109,8 @@ XSEC_comp () {
     root -b -l -q Bmeson_XSections.C'("BP","y")'
     root -b -l -q Bmeson_XSections.C'("Bs","y")'
     #root -b -l -q Bmeson_XSections.C'("BP","pt",1)'
-    
+    #root -b -l -q Bmeson_XSections.C'("BP","y",1)'
+
     #root -b -l -q Bmeson_Ratio.C
 
     #python syst_table.py                  #<----------------------- NOT RUNNING
