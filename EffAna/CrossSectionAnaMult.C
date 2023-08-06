@@ -915,30 +915,28 @@ if(BsBP==0){
 	invAcc2D->GetYaxis()->SetTitle("rapidity");
 
 	invAcc2D->Draw("pcolz");
-if(BsBP==0){
-	if (usemc==0){c->SaveAs(Form("%s/EffFinal/acc_2Dmap.pdf",var_n.Data()));}
-	else {c->SaveAs(Form("%s/EffFinal/acc_2Dmap_MC.pdf",var_n.Data()));}
-}
+	if (usemc==0){c->SaveAs(Form("%s/EffFinal/acc_2Dmap%s.pdf",var_n.Data(),bsbpbins.Data()));}
+	else {c->SaveAs(        Form("%s/EffFinal/acc_2Dmap%s_MC.pdf",var_n.Data(),bsbpbins.Data()));}
+
 
 	DrawinvEff2D->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	DrawinvEff2D->GetYaxis()->SetTitle("|y|");
 	DrawinvEff2D->GetZaxis()->SetLabelSize(0.02);
 
 	DrawinvEff2D->Draw("pcolz");
-if(BsBP==0){
-	if (usemc==0){c->SaveAs(Form("%s/EffFinal/totaleff_2Dmap_%s.pdf",var_n.Data(),var_n.Data()));}
-	else {c->SaveAs(        Form("%s/EffFinal/totaleff_2Dmap_%s_MC.pdf",var_n.Data(),var_n.Data()));}
-}
+	if (usemc==0){c->SaveAs(Form("%s/EffFinal/totaleff_2Dmap_%s%s.pdf",var_n.Data(),var_n.Data(), bsbpbins.Data()));}
+	else {c->SaveAs(        Form("%s/EffFinal/totaleff_2Dmap_%s%s_MC.pdf",var_n.Data(),var_n.Data(), bsbpbins.Data()));}
+
 
 	DrawinvEff2DY->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	DrawinvEff2DY->GetYaxis()->SetTitle("|y|");
 	DrawinvEff2DY->GetZaxis()->SetLabelSize(0.02);
 	c->SetLogz();
 	DrawinvEff2DY->Draw("pcolz");
-if(BsBP==0){
-	if (usemc==0){c->SaveAs(Form("%s/EffFinal/totaleff_Fid_2Dmap_%s.pdf",var_n.Data(),var_n.Data()));}
-	else {c->SaveAs(        Form("%s/EffFinal/totaleff_Fid_2Dmap_%s_MC.pdf",var_n.Data(),var_n.Data()));}
-}
+
+	if (usemc==0){c->SaveAs(Form("%s/EffFinal/totaleff_Fid_2Dmap_%s%s.pdf",var_n.Data(),var_n.Data(),bsbpbins.Data()));}
+	else {c->SaveAs(        Form("%s/EffFinal/totaleff_Fid_2Dmap_%s%s_MC.pdf",var_n.Data(),var_n.Data(), bsbpbins.Data()));}
+
 	CorrDiffHis->SetMinimum(0);
 	CorrDiffHisLow->SetMinimum(0);
 	CorrDiffHis->Draw("ep");
