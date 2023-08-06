@@ -69,7 +69,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		ptBins[i] =  ptbinsvecBP[i];             
 		}
 	}
-	if (whichvar == "pt" && (meson_n == "Bs"||BsBP==1)){
+	if (whichvar == "pt" && (meson_n == "Bs"|| BsBP==1)){
 		for(int i = 0; i < NBins + 1; i++){
 		ptBins[i] =  ptbinsvec[i];             
 		}

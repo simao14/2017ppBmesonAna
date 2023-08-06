@@ -192,10 +192,10 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	Eff1DHis->SetMarkerColor(kBlack);
 	Eff1DHis->SetLineColor(kBlack);
 	Eff1DHis->Draw("ep");
-	if (BsBP==0) {
+
 	if (usemc==0){EFFplot->SaveAs(Form("EffSystPlots/%s/%s_EFFplot%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
 	else {EFFplot->SaveAs(Form("EffSystPlots/%s/%s_EFFplot_MC%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
-	}
+
 	//Draw Systematic Uncertainties
 	TCanvas * cSyst  = new TCanvas("cSyst","cSyst",600,600);
 	cSyst->cd();
@@ -224,10 +224,8 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	leg->AddEntry(Eff1DHisTnPUp,"TnP Variation Up","PL");
 	leg->AddEntry(Eff1DHisTnPDown,"TnP Variation Down","PL");
 	leg->Draw("same");
-	if (BsBP==0) {
 	if (usemc==0){cSyst->SaveAs(Form("EffSystPlots/%s/%s_TnPSystComp%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
 	else {cSyst->SaveAs(Form("EffSystPlots/%s/%s_TnPSystComp_MC%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
-	}
 	Eff1DHisBDT->SetMarkerStyle(20);
 	Eff1DHisBDT->SetMarkerSize(1);
 	Eff1DHisBDT->SetMarkerColor(kRed);
@@ -243,10 +241,8 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	leg2->AddEntry(Eff1DHis,"Nominal","PL");
 	leg2->AddEntry(Eff1DHisBDT,"BDT Weighted","PL");
 	leg2->Draw("same");
-	if (BsBP==0) {
 	if (usemc==0) {cSyst->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystComp%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
 	else {cSyst->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystComp_MC%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
-	}
 	Eff1DHisBpt->SetMarkerStyle(20);
 	Eff1DHisBpt->SetMarkerSize(1);
 	Eff1DHisBpt->SetMarkerColor(kRed);
@@ -262,10 +258,8 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	leg3->AddEntry(Eff1DHis,"Nominal","PL");
 	leg3->AddEntry(Eff1DHisBpt,"Bpt Weighted","PL");
 	leg3->Draw("same");
-	if (BsBP==0) {
 	if (usemc==0){cSyst->SaveAs(Form("EffSystPlots/%s/%s_BptSystComp%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
 	else {cSyst->SaveAs(Form("EffSystPlots/%s/%s_BptSystComp_MC%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
-	}
 	//Done drawing  (only draw for BsBP=0)
 
 
@@ -322,20 +316,14 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	}
 
 	TnPSyst->Draw("ep");
-	if (BsBP==0) {
 		if (usemc==0){c->SaveAs(Form("EffSystPlots/%s/%s_TnPSystRatio%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
 		else {c->SaveAs(Form("EffSystPlots/%s/%s_TnPSystRatio_MC%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
-	}
 		BptSyst->Draw("ep");
-	if (BsBP==0) {
 		if (usemc==0){c->SaveAs(Form("EffSystPlots/%s/%s_BptSysRatio%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
 		else {c->SaveAs(Form("EffSystPlots/%s/%s_BptSysRatio_MC%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
-	}
-	BDTSyst->Draw("ep");
-	if (BsBP==0) {
+		BDTSyst->Draw("ep");
 		if (usemc==0){c->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystRatio%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
 		else {c->SaveAs(Form("EffSystPlots/%s/%s_MCDataSystRatio_MC%s.pdf",meson_n.Data(),whichvar.Data(),bsbpbins.Data()));}
-	}
 
   TnPSyst->Write();
   BptSyst->Write();
@@ -412,10 +400,7 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	TH2D * HisEmpty;
 	if(meson_n == "BP" && whichvar == "pt") {HisEmpty = new TH2D("HisEmpty","",100,5,60,100,0,60);} 
 	if(meson_n == "Bs" && whichvar == "pt") {HisEmpty = new TH2D("HisEmpty","",100,7,50,100,0,60);}
-
-	if(meson_n == "BP" && whichvar == "y") {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,0,30);}
-	if(meson_n == "Bs" && whichvar == "y") {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,0,30);}
-
+	if(whichvar == "y") {HisEmpty = new TH2D("HisEmpty","",100,0,2.4,100,0,50);}
 	if(meson_n == "BP" && whichvar == "Mult") {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,60);}   // need to adjust range for when we have nmult results
 	if(meson_n == "Bs" && whichvar == "Mult") {HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,60);}
 
@@ -436,10 +421,10 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	HisEmpty->Draw();
 	BP1DEffGraphSyst->Draw("5same");
 	BP1DEffGraph->Draw("epSAME");
+	cSyst->SaveAs(Form("EffSystPlots/%s/Effcomp_%s%s.pdf", meson_n.Data(), whichvar.Data(),bsbpbins.Data()));
 
 	
 	if (BsBP==0) {
-	cSyst->SaveAs(Form("EffSystPlots/%s/Effcomp_%s%s.pdf", meson_n.Data(), whichvar.Data(),bsbpbins.Data()));
 
 
 	string name;
