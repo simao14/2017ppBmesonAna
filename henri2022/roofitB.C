@@ -771,8 +771,24 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
 
 			TCanvas *c_sig_back= new TCanvas("c_sig_back","",700,700);
-			m_back_sig->GetYaxis()->SetRangeUser(0, 3.6);
-			m_back_sig->GetXaxis()->SetTitle("p_{T}");
+			m_back_sig->GetYaxis()->SetRangeUser(0, 4);
+			
+			if(varExp == "By"){
+				m_back_sig->GetXaxis()->SetTitle("Rapidity (y)");
+				m_back_sig->GetYaxis()->SetTitle("dY_{S}/dy");
+				m_back_sig->GetXaxis()->SetLimits(0,2.4);
+			}
+			else if(varExp == "Bpt"){
+				m_back_sig->GetXaxis()->SetTitle("Transverse Momentum (p_{T})");
+				m_back_sig->GetYaxis()->SetTitle("dY_{S}/dp_{T}");
+				if (tree == "ntKp"){ m_back_sig->GetXaxis()->SetLimits(0 ,65); }
+				if (tree == "ntphi"){ m_back_sig->GetXaxis()->SetLimits(0 ,65); }
+			}
+			else if(varExp == "nMult"){
+				m_back_sig->GetXaxis()->SetTitle("Multiplicity (Mult)");
+				m_back_sig->GetYaxis()->SetTitle("dY_{S}/dMult");
+				m_back_sig->GetXaxis()->SetLimits(0, 110);
+			}
 			m_back_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 			m_back_sig->Draw("AE1*");
 			legsigback->Draw();
@@ -860,8 +876,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 leg_d->SetTextSize(0);
 	 leg_d->Draw();
 
-	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s.pdf",tree.Data(), varExp.Data());
-	 if(BsBPBins==1){c_diff.SaveAs(pathc);}
+	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s%s.pdf",tree.Data(), varExp.Data(), bsbpbins.Data());
+	 c_diff.SaveAs(pathc);
 // Differential plot part ends
 
 // Parameters vs variables part starts
