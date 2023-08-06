@@ -895,10 +895,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	}
 	hInvEff->Draw("ep");
 	
-  	if(BsBP==0){
 	if (usemc==0) {c->SaveAs(Form("%s/EffFinal/ReAnaEff_%dBins_%s.pdf",var_n.Data(),NBins,var_file.Data()));}
 	else {c->SaveAs(Form("%s/EffFinal/ReAnaEff_%dBins_%s_MC.pdf",var_n.Data(),NBins,var_file.Data()));}
-	}
 	hEff->Draw("ep");
 
 	if(BsBP==0){
