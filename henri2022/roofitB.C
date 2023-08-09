@@ -338,48 +338,48 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	//////////////////////////////////////////////////////////LABELS IN PLOTS
 		TLatex* texB = new TLatex(0.5,0.5,"");
-		if(tree=="ntphi"){ texB = new TLatex(0.21,0.85, "B^{0}_{s}");}
-		if(tree=="ntKp"){ texB = new TLatex(0.21,0.85, "B^{+}");}
+		if(tree=="ntphi"){ texB = new TLatex(0.22,0.83, "B^{0}_{s}");}
+		if(tree=="ntKp"){ texB = new TLatex(0.22,0.83, "B^{+}");}
 		texB->SetNDC();
 		texB->SetTextFont(62);
-		texB->SetTextSize(0.04);
+		texB->SetTextSize(0.06);
 		texB->SetLineWidth(2);
 		texB->Draw();
 
 		TLatex* yield_val = new TLatex(0.5,0.5,"");
 		yield_val->SetNDC();
 		yield_val->SetTextFont(42);
-		yield_val->SetTextSize(0.03);
+		yield_val->SetTextSize(0.04);
 		yield_val->SetLineWidth(2);
 
 		TLatex* tex_BIN = new TLatex(0.5,0.5,"");
 		tex_BIN->SetNDC();
 		tex_BIN->SetTextFont(42);
-		tex_BIN->SetTextSize(0.03);
+		tex_BIN->SetTextSize(0.04);
 		tex_BIN->SetLineWidth(2);
 
 		TLatex* tex_nMult = new TLatex(0.5,0.5,"");
 		tex_nMult->SetNDC();
 		tex_nMult->SetTextFont(42);
-		tex_nMult->SetTextSize(0.03);
+		tex_nMult->SetTextSize(0.04);
 		tex_nMult->SetLineWidth(2);
 
 	  	TLatex* tex_y = new TLatex(0.5,0.5,"");
 		tex_y->SetNDC();
 		tex_y->SetTextFont(42);
-		tex_y->SetTextSize(0.03);
+		tex_y->SetTextSize(0.04);
 		tex_y->SetLineWidth(2);
 
 		TLatex* tex_yCUT = new TLatex(0.5,0.5,"");
 		tex_yCUT->SetNDC();
 		tex_yCUT->SetTextFont(42);
-		tex_yCUT->SetTextSize(0.03);
+		tex_yCUT->SetTextSize(0.04);
 		tex_yCUT->SetLineWidth(2);
 
 		TLatex* chi_square = new TLatex(0.5,0.5,"");
 		chi_square->SetNDC();
 		chi_square->SetTextFont(42);
-		chi_square->SetTextSize(0.03);
+		chi_square->SetTextSize(0.04);
 		chi_square->SetLineWidth(2);
 
 		TLatex* chi_back = new TLatex(0.5,0.5,"");
@@ -390,49 +390,58 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		double t_sub = 0;
 		
 	if(varExp=="Bpt"){
-        tex_BIN->SetText(0.21, 0.8, Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_BIN->SetText(0.21, 0.75, Form("%d < p_{T} < %d GeV/c",(int)_ptBins[i],(int)_ptBins[i+1]));
 		
 		if( _nBins == 1 ){ //inclusive bin case
-			t_sub = 0.05 ; 
-			tex_yCUT->SetText(0.21,0.75,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+			t_sub = 0.07 ; 
+			tex_yCUT->SetText(0.21,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
 			tex_yCUT->Draw();
-			tex_y->SetText(0.21,0.70,"p_{T} > 10 GeV/c : |y| < 2.4");
+			tex_y->SetText(0.21,0.61,"p_{T} > 10 GeV/c : |y| < 2.4");
 			tex_y->Draw();
 		}
-		yield_val->SetText(0.21, 0.70 - t_sub ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square->SetText(0.21, 0.65 - t_sub ,Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
+		yield_val ->SetText(0.21, 0.61 - t_sub ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
+		chi_square->SetText(0.21, 0.54 - t_sub ,Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
 
 		if (_ptBins[i] >= 10 && _nBins != 1) {
-			tex_y->SetText(0.21, 0.75, "|y| < 2.4");
+			tex_y->SetText(0.21, 0.68, "|y| < 2.4");
 			tex_y->Draw();
 		}else if( _ptBins[i+1] <= 10){
-			tex_yCUT->SetText(0.21, 0.75, "1.5 < |y| < 2.4");
+			tex_yCUT->SetText(0.21, 0.68, "1.5 < |y| < 2.4");
 			tex_yCUT->Draw();
 		} 
 
 	} else if(varExp=="By"){
-        tex_BIN->SetText(0.21, 0.8, Form("%0.1f < |y| < %0.1f ", _ptBins[i],_ptBins[i+1]));
-		yield_val ->SetText(0.21, 0.70 , Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square->SetText(0.21, 0.65 , Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
-		tex_yCUT->SetText(0.21, 0.75, "10 GeV/c < p_{T} < 60 GeV/c");
+        tex_BIN->SetText(0.21, 0.75, Form("%0.1f < |y| < %0.1f ", _ptBins[i],_ptBins[i+1]));
+		yield_val ->SetText(0.21, 0.61 , Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
+		chi_square->SetText(0.21, 0.54 , Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
+		tex_yCUT->SetText(0.21, 0.68, "10 GeV/c < p_{T} < 60 GeV/c");
 
 		if(tree=="ntphi" || BsBPBins==1){ 
-			tex_yCUT->SetText(0.21, 0.75, "10 GeV/c < p_{T} < 50 GeV/c");
-			tex_y->SetText(0.21, 0.75,"7 GeV/c < p_{T} < 50 GeV/c" );} 
-		else{tex_y->SetText(0.21, 0.75,"5 GeV/c < p_{T} < 60 GeV/c" );}
+			tex_yCUT->SetText(0.21, 0.68, "10 GeV/c < p_{T} < 50 GeV/c");
+			tex_y->SetText(0.21, 0.68,"7 GeV/c < p_{T} < 50 GeV/c" );}
+		else{tex_y->SetText(0.21, 0.68,"5 GeV/c < p_{T} < 60 GeV/c" );}
 
 		if( ( _ptBins[i] >= 1.5) || (_ptBins[i+1] <= -1.5) ){ tex_y->Draw();} 
 		else { tex_yCUT->Draw();}
 
 	} else if(varExp=="nMult"){ 
-        tex_BIN->SetText(0.21,0.8,Form("%d < Mult < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
-        tex_y->SetText(0.21,0.75,"p_{T} > 10 GeV/c : |y| < 2.4");
-        tex_yCUT->SetText(0.21,0.70,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
-		yield_val->SetText(0.21, 0.65 ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
-		chi_square->SetText(0.21,0.60,Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
+        tex_BIN->SetText(0.21,0.75,Form("%d < Mult < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
+        tex_y->SetText(0.21,0.68,"p_{T} > 10 GeV/c : |y| < 2.4");
+        tex_yCUT->SetText(0.21,0.61,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
+		yield_val->SetText(0.21, 0.54 ,Form("Y_{S} = %d #pm %d",yieldI, yieldErrI));
+		chi_square->SetText(0.21,0.47,Form("#chi^{2}/ndf = %.2f",chi2_vec[i]));
 		tex_y->Draw();
 		tex_yCUT->Draw();
 	}
+
+	/*TLatex *lat = new TLatex();
+	lat->SetNDC();
+	lat->SetTextSize(0.04);
+	lat->DrawLatex(0.64,0.85,Form("S = %.1f", yield));
+	lat->DrawLatex(0.64,0.80,Form("S_err = %.1f", yieldErr));		
+	lat->DrawLatex(0.64,0.75,Form("B = %.1f", bkgd));
+	//lat->DrawLatex(0.48,0.70,Form("Significance: S/#sqrt{S+B} = %.1f", Significance));
+	lat->DrawLatex(0.64,0.70,Form("Significance: %.1f", real_significance));*/
 
 	tex_BIN->Draw();
 	chi_square->Draw();
@@ -440,17 +449,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	///////////////////////////////////////////////////////// /LABELS IN PLOTS
 
 
-	    //CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
-	//c->Update();
-
-		/*TLatex *lat = new TLatex();
-		lat->SetNDC();
-		lat->SetTextSize(0.03);
-		lat->DrawLatex(0.64,0.85,Form("S = %.1f", yield));
-		lat->DrawLatex(0.64,0.80,Form("S_err = %.1f", yieldErr));		
-		lat->DrawLatex(0.64,0.75,Form("B = %.1f", bkgd));
-		//lat->DrawLatex(0.48,0.70,Form("Significance: S/#sqrt{S+B} = %.1f", Significance));
-		lat->DrawLatex(0.64,0.70,Form("Significance: %.1f", real_significance));*/
+	CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
+	c->Update();
 
 		if(varExp == "By"){
 			c->SaveAs(  Form("%s/data_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i],(float)_ptBins[i+1])+tree+bsbpbins+".pdf");
@@ -487,16 +487,16 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					texB->Draw();
 					tex_BIN->Draw();
 					RooRealVar* fitYield_b_sys = static_cast<RooRealVar*>(f_back->floatParsFinal().at(f_back->floatParsFinal().index(Form("nsig%d_%s",_count, background[j].c_str()))));
-					yield_val  = new TLatex(0.21,0.7,Form("Y_{S} = %d #pm %d",int(round(fitYield_b_sys->getVal())), int(round(fitYield_b_sys->getError()))));
+					yield_val  = new TLatex(0.21,0.61,Form("Y_{S} = %d #pm %d",int(round(fitYield_b_sys->getVal())), int(round(fitYield_b_sys->getError()))));
 					yield_val->SetNDC();
 					yield_val->SetTextFont(42);
-					yield_val->SetTextSize(0.03);
+					yield_val->SetTextSize(0.04);
 					yield_val->SetLineWidth(2);
 					yield_val->Draw();
-					chi_back = new TLatex(0.21,0.65,Form("#chi^{2}/ndf = %.2f ",chi2_vec_back[j][i]));
+					chi_back = new TLatex(0.21,0.54,Form("#chi^{2}/ndf = %.2f ",chi2_vec_back[j][i]));
 					chi_back->SetNDC();
 					chi_back->SetTextFont(42);
-					chi_back->SetTextSize(0.03);
+					chi_back->SetTextSize(0.04);
 					chi_back->SetLineWidth(2);
 					chi_back->Draw();
 					if (varExp=="Bpt"){
@@ -507,8 +507,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 						else { tex_yCUT->Draw();}
 					} else{tex_y->Draw();}
 
-					//CMS_lumi(c,19011,0);
-					//c->Update();
+					CMS_lumi(c,19011,0);
+					c->Update();
 
 					if(varExp == "By"){c->SaveAs(Form("%s/data_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isPbPb.Data(), Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+ bsbpbins+".pdf");}
 					else { c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_", outplotf.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+bsbpbins+".pdf");}
@@ -540,16 +540,16 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 				texB->Draw();
 				tex_BIN->Draw();
 				RooRealVar* fitYield_b_sig = static_cast<RooRealVar*>(f_signal->floatParsFinal().at(f_signal->floatParsFinal().index(Form("nsig%d_%s",_count, signal[j].c_str()))));
-				yield_val  = new TLatex(0.21,0.7,Form("Y_{S} = %d #pm %d", int(round(fitYield_b_sig->getVal())), int(round(fitYield_b_sig->getError()))));
+				yield_val  = new TLatex(0.21,0.61,Form("Y_{S} = %d #pm %d", int(round(fitYield_b_sig->getVal())), int(round(fitYield_b_sig->getError()))));
 				yield_val->SetNDC();
 				yield_val->SetTextFont(42);
-				yield_val->SetTextSize(0.03);
+				yield_val->SetTextSize(0.04);
 				yield_val->SetLineWidth(2);
 				yield_val->Draw();
-				chi_sig=new TLatex(0.21, 0.65, Form("#chi^{2}/ndf = %.2f ", chi2_vec_sig[j][i]));
+				chi_sig=new TLatex(0.21, 0.54, Form("#chi^{2}/ndf = %.2f ", chi2_vec_sig[j][i]));
 				chi_sig->SetNDC();
 				chi_sig->SetTextFont(42);
-				chi_sig->SetTextSize(0.03);
+				chi_sig->SetTextSize(0.04);
 				chi_sig->SetLineWidth(2);
 				chi_sig->Draw();
 				if (varExp=="Bpt"){
@@ -560,8 +560,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					else { tex_yCUT->Draw();}
 				} else{tex_y->Draw();}
 
-				//CMS_lumi(c,19011,0);
-				//c->Update();
+				CMS_lumi(c,19011,0);
+				c->Update();
 
 				if (signal[j] != "fixed") {
 					if(varExp == "By"){ cMC->SaveAs(Form("%s/mc_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+bsbpbins+".pdf");} 

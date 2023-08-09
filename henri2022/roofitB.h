@@ -434,10 +434,10 @@ if(tree == "ntKp"){
 					}
    	model->plotOn(frame, Name(Form("bkg%d_%s",_count,pdf.Data())) ,  Components(bkg), Range(fitRange), Precision(1e-6),  DrawOption("L"), LineStyle(7), LineColor(4), LineWidth(1));
 
-	model->paramOn(frame,Layout(0.2, 0.45, 0.5), Format("NEU",AutoPrecision(2)));
-	frame->getAttText()->SetTextSize(0.035);
-	frame->getAttFill()->SetFillStyle(0);
-	frame->getAttLine()->SetLineWidth(0);
+	//model->paramOn(frame,Layout(0.2, 0.45, 0.5), Format("NEU",AutoPrecision(2)));
+	//frame->getAttText()->SetTextSize(0.035);
+	//frame->getAttFill()->SetFillStyle(0);
+	//frame->getAttLine()->SetLineWidth(0);
 	frame->SetTitle("");
 	frame->SetXTitle("");
 	frame->GetYaxis()->SetTitle(TString::Format("Events / (%g MeV/c^{2})",(mass->getMax()-mass->getMin())/nbinsmasshisto*1000));
@@ -453,8 +453,8 @@ if(tree == "ntKp"){
 	frame->GetXaxis()->SetNdivisions(-50205);	
 	frame->Draw();
 
-	TLegend *leg = new TLegend(0.75,0.6,0.9,0.9,NULL,"brNDC"); 
-	if (tree == "ntphi"){leg = new TLegend(0.75,0.65,0.9,0.9,NULL,"brNDC");}
+	TLegend *leg = new TLegend(0.75,0.58,0.9,0.89,NULL,"brNDC"); 
+	if (tree == "ntphi"){leg = new TLegend(0.75,0.65,0.9,0.89,NULL,"brNDC");}
 	leg->SetBorderSize(0);
 	leg->SetTextSize(0.04);
 	leg->SetTextFont(42);
@@ -485,15 +485,15 @@ if(tree == "ntKp"){
 	pull_plot->GetYaxis()->SetTitleSize(0.15);
 	pull_plot->GetYaxis()->CenterTitle();
 	pull_plot->GetYaxis()->SetLabelOffset(0.01);
-	pull_plot->GetYaxis()->SetLabelSize(0.1);
+	pull_plot->GetYaxis()->SetLabelSize(0.12);
 	pull_plot->GetYaxis()->SetNdivisions(305);
 	pull_plot->GetYaxis()->SetTitleOffset(0.4);
-	pull_plot->GetXaxis()->SetTitleSize(0.16);
+	pull_plot->GetXaxis()->SetTitleSize(0.15);
 	pull_plot->GetXaxis()->SetTitleOffset(1.0);
 	pull_plot->GetXaxis()->CenterTitle();
 	pull_plot->GetXaxis()->SetLabelFont(42);
 	pull_plot->GetXaxis()->SetLabelOffset(0.01);
-	pull_plot->GetXaxis()->SetLabelSize(0.1);
+	pull_plot->GetXaxis()->SetLabelSize(0.12);
 	pull_plot->GetXaxis()->SetTickLength(0.16);
 	pull_plot->GetXaxis()->SetNdivisions(-50205);
 	pull_plot->Draw();
