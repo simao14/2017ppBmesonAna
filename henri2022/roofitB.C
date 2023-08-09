@@ -349,43 +349,37 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		TLatex* yield_val = new TLatex(0.5,0.5,"");
 		yield_val->SetNDC();
 		yield_val->SetTextFont(42);
-		yield_val->SetTextSize(0.025);
+		yield_val->SetTextSize(0.03);
 		yield_val->SetLineWidth(2);
 
 		TLatex* tex_BIN = new TLatex(0.5,0.5,"");
 		tex_BIN->SetNDC();
 		tex_BIN->SetTextFont(42);
-		tex_BIN->SetTextSize(0.025);
+		tex_BIN->SetTextSize(0.03);
 		tex_BIN->SetLineWidth(2);
 
 		TLatex* tex_nMult = new TLatex(0.5,0.5,"");
 		tex_nMult->SetNDC();
 		tex_nMult->SetTextFont(42);
-		tex_nMult->SetTextSize(0.025);
+		tex_nMult->SetTextSize(0.03);
 		tex_nMult->SetLineWidth(2);
 
 	  	TLatex* tex_y = new TLatex(0.5,0.5,"");
 		tex_y->SetNDC();
 		tex_y->SetTextFont(42);
-		tex_y->SetTextSize(0.025);
+		tex_y->SetTextSize(0.03);
 		tex_y->SetLineWidth(2);
 
 		TLatex* tex_yCUT = new TLatex(0.5,0.5,"");
 		tex_yCUT->SetNDC();
 		tex_yCUT->SetTextFont(42);
-		tex_yCUT->SetTextSize(0.025);
+		tex_yCUT->SetTextSize(0.03);
 		tex_yCUT->SetLineWidth(2);
-
-		TLatex* tex_yCUT2 = new TLatex(0.5,0.5,"");
-		tex_yCUT2->SetNDC();
-		tex_yCUT2->SetTextFont(42);
-		tex_yCUT2->SetTextSize(0.025);
-		tex_yCUT2->SetLineWidth(2);
 
 		TLatex* chi_square = new TLatex(0.5,0.5,"");
 		chi_square->SetNDC();
 		chi_square->SetTextFont(42);
-		chi_square->SetTextSize(0.025);
+		chi_square->SetTextSize(0.03);
 		chi_square->SetLineWidth(2);
 
 		TLatex* chi_back = new TLatex(0.5,0.5,"");
@@ -451,7 +445,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 		/*TLatex *lat = new TLatex();
 		lat->SetNDC();
-		lat->SetTextSize(0.025);
+		lat->SetTextSize(0.03);
 		lat->DrawLatex(0.64,0.85,Form("S = %.1f", yield));
 		lat->DrawLatex(0.64,0.80,Form("S_err = %.1f", yieldErr));		
 		lat->DrawLatex(0.64,0.75,Form("B = %.1f", bkgd));
@@ -496,13 +490,13 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					yield_val  = new TLatex(0.21,0.7,Form("Y_{S} = %d #pm %d",int(round(fitYield_b_sys->getVal())), int(round(fitYield_b_sys->getError()))));
 					yield_val->SetNDC();
 					yield_val->SetTextFont(42);
-					yield_val->SetTextSize(0.025);
+					yield_val->SetTextSize(0.03);
 					yield_val->SetLineWidth(2);
 					yield_val->Draw();
 					chi_back = new TLatex(0.21,0.65,Form("#chi^{2}/ndf = %.2f ",chi2_vec_back[j][i]));
 					chi_back->SetNDC();
 					chi_back->SetTextFont(42);
-					chi_back->SetTextSize(0.025);
+					chi_back->SetTextSize(0.03);
 					chi_back->SetLineWidth(2);
 					chi_back->Draw();
 					if (varExp=="Bpt"){
@@ -549,13 +543,13 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 				yield_val  = new TLatex(0.21,0.7,Form("Y_{S} = %d #pm %d", int(round(fitYield_b_sig->getVal())), int(round(fitYield_b_sig->getError()))));
 				yield_val->SetNDC();
 				yield_val->SetTextFont(42);
-				yield_val->SetTextSize(0.025);
+				yield_val->SetTextSize(0.03);
 				yield_val->SetLineWidth(2);
 				yield_val->Draw();
 				chi_sig=new TLatex(0.21, 0.65, Form("#chi^{2}/ndf = %.2f ", chi2_vec_sig[j][i]));
 				chi_sig->SetNDC();
 				chi_sig->SetTextFont(42);
-				chi_sig->SetTextSize(0.025);
+				chi_sig->SetTextSize(0.03);
 				chi_sig->SetLineWidth(2);
 				chi_sig->Draw();
 				if (varExp=="Bpt"){
@@ -1263,7 +1257,7 @@ leg_chi2_backsum->Draw();
 const char* pathc_chi2_backsum =Form("./results/Graphs/chi2_%s_%s_background_summary.pdf",tree.Data(),varExp.Data()); 
 c_chi2_backsum.SaveAs(pathc_chi2_backsum);
 //chi2 plot part (backsum) ends
-}	
+}
 //chi2 plot part ends
 
 }
@@ -1284,7 +1278,7 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
 	//CUTS CUTS CUTS CUTS 
 	data_s = (RooDataSet*)data_s->reduce("(Bpt < 10 &&  abs(By) > 1.5 ) || (Bpt > 10)");  //FID REGION
 
-	if (sample == "jpsinp"){ 
+	if (sample == "jpsinp"){
 		//import the full jpsipi smaple
 		data_s = (RooDataSet*)data_s->reduce("(BDT_pt_5_7 > 0.08 && Bpt >= 5 && Bpt < 7) || (BDT_pt_7_10 > 0.07 && Bpt >= 7 && Bpt < 10) || (BDT_pt_10_15 > 0.0 && Bpt >= 10 && Bpt < 15) || (BDT_pt_15_20 > 0.02 && Bpt >= 15 && Bpt < 20) || (BDT_pt_20_50 > 0.04 && Bpt >= 20 && Bpt < 50) || (Bpt >= 50 && Bpt < 60) ");
 		
@@ -1302,6 +1296,5 @@ void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TS
 	
 	cout << "input filename = " << fName << "; entries: " << data_s->sumEntries() << endl;
 	w.import(*data_s);
-  
 }
 

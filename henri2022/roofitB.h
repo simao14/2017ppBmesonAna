@@ -36,8 +36,6 @@ void fit_jpsinp (RooWorkspace& w, int nbin_hist, TString pdf, float bin_i, float
 template<typename... Targs>
 void plot_mcfit(RooWorkspace& w, RooAbsPdf* model, RooDataSet* ds, TString plotName,  Targs... options);
 
-// draw legend and suppress parameters
-const bool drawLegend = false;
 using namespace RooFit;
 using namespace std;
 
@@ -145,7 +143,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	dsMC->plotOn(frameMC,Name(Form("dsMC_cut%d",_count)),Binning(nbinsmasshisto),MarkerSize(0.5),MarkerStyle(8),LineColor(1),LineWidth(1));
 	modelMC->plotOn(frameMC,Name(Form("modelMC%d_%s",_count, pdf.Data())),Precision(1e-6),DrawOption("LF"), FillStyle(3002), FillColor(kOrange-3), LineStyle(7),LineColor(kOrange-3),LineWidth(1));
 	modelMC->paramOn(frameMC,Layout(0.2, 0.5, 0.70), Format("NEU",AutoPrecision(2)));
-	frameMC->getAttText()->SetTextSize(0.025);
+	frameMC->getAttText()->SetTextSize(0.035);
 	frameMC->getAttFill()->SetFillStyle(0);
 	frameMC->getAttLine()->SetLineWidth(0);
     if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{+}} [GeV/c^{2}]");
@@ -186,15 +184,14 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	texB->Draw();
 
 	//cMC->SetLogy();
-	TLegend *legMC = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
-	legMC = new TLegend(0.75,0.75,0.89,0.89,NULL,"brNDC");
+	TLegend *legMC = new TLegend(0.8,0.77,0.89,0.89,NULL,"brNDC"); 
 	legMC->SetBorderSize(0);
 	legMC->SetTextSize(0.025);     
 	legMC->SetTextFont(42);
 	legMC->SetFillStyle(0);
 	legMC->AddEntry(frameMC->findObject(Form("dsMC_cut%d", _count)), " MC","lp");
 	legMC->AddEntry(frameMC->findObject(Form("modelMC%d_%s",_count,pdf.Data()))," Sig. PDF","f");
-  	if (drawLegend) {legMC -> Draw();}
+  	legMC -> Draw();
 
 //PLOT MC
 //PULL MC
@@ -435,11 +432,10 @@ if(tree == "ntKp"){
     model->plotOn(frame, RooFit::Name(Form("erfc%d_%s",_count,"")) , Components(*erfc), Range(fitRange),  NormRange(fitRange), LineColor(kGreen+3), LineStyle(9), LineWidth(2), DrawOption("L"));
 	model->plotOn(frame, RooFit::Name("B->J/#psi #pi"), Components(*jpsipi), NormRange(fitRange), DrawOption("LF"), FillColor(kMagenta+1), LineStyle(1), LineColor(kMagenta+1), LineWidth(1)); 
 					}
-   model->plotOn(frame, Name(Form("bkg%d_%s",_count,pdf.Data())) ,  Components(bkg), Range(fitRange), Precision(1e-6),  DrawOption("L"), LineStyle(7), LineColor(4), LineWidth(1));
+   	model->plotOn(frame, Name(Form("bkg%d_%s",_count,pdf.Data())) ,  Components(bkg), Range(fitRange), Precision(1e-6),  DrawOption("L"), LineStyle(7), LineColor(4), LineWidth(1));
 
-	if(drawLegend){model->paramOn(frame,Layout(1, 1, 1), Format("NEU",AutoPrecision(3)));}
-	else{model->paramOn(frame,Layout(0.2, 0.45, 0.6), Format("NEU",AutoPrecision(2)));}
-	frame->getAttText()->SetTextSize(0.025);
+	model->paramOn(frame,Layout(0.2, 0.45, 0.5), Format("NEU",AutoPrecision(2)));
+	frame->getAttText()->SetTextSize(0.035);
 	frame->getAttFill()->SetFillStyle(0);
 	frame->getAttLine()->SetLineWidth(0);
 	frame->SetTitle("");
@@ -457,11 +453,10 @@ if(tree == "ntKp"){
 	frame->GetXaxis()->SetNdivisions(-50205);	
 	frame->Draw();
 
-	TLegend *leg = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
-	if (tree == "ntphi"){leg = new TLegend(0.80,0.75,0.89,0.89,NULL,"brNDC");}
-	else{leg = new TLegend(0.8,0.7,0.89,0.89,NULL,"brNDC");}
+	TLegend *leg = new TLegend(0.75,0.6,0.9,0.9,NULL,"brNDC"); 
+	if (tree == "ntphi"){leg = new TLegend(0.75,0.65,0.9,0.9,NULL,"brNDC");}
 	leg->SetBorderSize(0);
-	leg->SetTextSize(0.025);
+	leg->SetTextSize(0.04);
 	leg->SetTextFont(42);
 	leg->SetFillStyle(0);
 	leg->AddEntry(frame->findObject(Form("ds_cut%d", _count)), " Data","LEP");
@@ -470,8 +465,9 @@ if(tree == "ntKp"){
 	leg->AddEntry(frame->findObject(Form("bkg%d_%s",_count,pdf.Data()))," Comb. Bkg.","l");
 	if(tree== "ntKp"){
 		leg -> AddEntry(frame->findObject("B->J/#psi #pi")," B^{+} #rightarrow J/#psi #pi^{+}","f");
-		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");}
-	if(drawLegend){leg -> Draw();}
+		leg -> AddEntry(frame->findObject(Form("erfc%d_%s",_count,pdf.Data()))," B #rightarrow J/#psi X","l");
+	}
+	leg -> Draw();
 	
 	p2->cd();
 	RooHist* pull_hist = frame->pullHist(Form("ds_cut%d",_count),Form("model%d_%s",_count,pdf.Data()));
