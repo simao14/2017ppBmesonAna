@@ -29,7 +29,7 @@ using std::endl;
 bool reweightPtOnY = true;
 
 
-void  MCEff(int DoTnP, int Rescale, TString meson_n ){
+void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	
 	int NCand;
 	TString var_N;
@@ -649,10 +649,10 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 	int NPtBins1D = 0;
 	double  PtBin1D[NPtBins1D + 1];
 
-	if (meson_n == "BP" ){NPtBins1D = nptBinsBP;}
+	if (meson_n == "BP" && BPBsbins == 0 ){NPtBins1D = nptBinsBP;}
 	else {NPtBins1D = nptBins;}
 
-	if (meson_n == "BP" ){ for(int i=0; i<NPtBins1D+1; i++){ PtBin1D[i] = ptbinsvecBP[i];}}
+	if (meson_n == "BP" && BPBsbins == 0 ){ for(int i=0; i<NPtBins1D+1; i++){ PtBin1D[i] = ptbinsvecBP[i];}}
 	else{ for(int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvec[i];} }
 
 	//const int nyBins_both = 12;
@@ -1273,11 +1273,14 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 	TString outfileName;
 
 	if(Rescale == 0){
-		if(DoTnP == 0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP.root",meson_n.Data());
-		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDT.root",meson_n.Data());
+		if(DoTnP == 0 && BPBsbins==0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP.root",meson_n.Data());
+		if(DoTnP == 1 && BPBsbins==0) outfileName = Form("%s/NewEff2DMaps/EffFineBDT.root",meson_n.Data());
+		if(DoTnP == 0 && BPBsbins!=0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP_BPBsbins.root",meson_n.Data());
+		if(DoTnP == 1 && BPBsbins!=0) outfileName = Form("%s/NewEff2DMaps/EffFineBDT_BPBsbins.root",meson_n.Data());
 	}
 	if(Rescale == 1){
-		if(DoTnP == 1) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew.root",meson_n.Data());
+		if(DoTnP == 1 && BPBsbins==0) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew.root",meson_n.Data());
+		if(DoTnP == 1 && BPBsbins!=0) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew_BPBsbins.root",meson_n.Data());
 	}
 
 	TFile * fout = new TFile(outfileName.Data(),"RECREATE");
@@ -1291,8 +1294,9 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 	bool passTrackingLoose;
 
 	double ptlow;
-	if (meson_n == "BP"){ptlow=5;}
-	else {ptlow=7;}
+	double pthigh;
+	if (meson_n == "BP" && BPBsbins==0){ptlow=5;pthigh=60;}
+	else {ptlow=7;pthigh=50;}
 
 	for(int i = 0; i < NEvents; i++){
 
@@ -1427,7 +1431,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 				//TotalWeight=1;
 
 
-        if (passTrackingTight && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10))) {
+        if (passTrackingTight && Bpt[j]>ptlow && Bpt[j]<pthigh && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10))) {
           TrkTightHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
 		  TrkTight1DRECOHis->Fill(Bpt[j],TotalWeight);
 		  TrkTight1DRECOHisY->Fill(By[j],TotalWeight);
@@ -1446,7 +1450,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
           muidtrkWeightHis->Fill(Bpt[j],abs(By[j]),muidtrkWeight);
         }
 
-		if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
+		if (passTracking && Bpt[j]>ptlow && Bpt[j]<pthigh && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
           Eff1DRECOHis->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHis->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHis->Fill(By[j],TotalWeight);
@@ -1454,21 +1458,21 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 		  recoyonlyHispt->Fill(Bpt[j],TotalWeight);
 
         }
-		 if (passTracking && Bpt[j]>10) {
+		 if (passTracking && Bpt[j]<pthigh && Bpt[j]>10) {
           Eff1DRECOHisfid10->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHisfid10->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHisfid10->Fill(By[j],TotalWeight);
 		  recoyonlyHisfid10->Fill(abs(By[j]),TotalWeight);
 		  recoyonlyHisptfid10->Fill(Bpt[j],TotalWeight);
         }
-		if (passTracking && ((Bpt[j]>ptlow) )) {
+		if (passTracking && Bpt[j]>ptlow && Bpt[j]<pthigh ) {
           Eff1DRECOHisfid->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHisfid->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHisfid->Fill(By[j],TotalWeight);
 		  recoyonlyHisfid->Fill(abs(By[j]),TotalWeight);
 		  recoyonlyHisptfid->Fill(Bpt[j],TotalWeight);
         }
-		if (((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10))) {
+		if (Bpt[j]<pthigh && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10))) {
           TrkLooseHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
 		  TrkLoose1DRECOHis->Fill(Bpt[j],TotalWeight);
 		  TrkLoose1DRECOHisY->Fill(By[j],TotalWeight);
@@ -1540,7 +1544,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 				TnPWeightHisSystUp->Fill(Bpt[j],abs(By[j]),TotalWeightSystUp);
 				TnPWeightHisSystDown->Fill(Bpt[j],abs(By[j]),TotalWeightSystDown);
 
-				if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
+				if (passTracking && Bpt[j]>pthigh && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
 
 					Eff1DRECOHisTnPUp->Fill(Bpt[j],TotalWeightSystUp);
 					Eff1DRECOHisTnPDown->Fill(Bpt[j],TotalWeightSystDown);
@@ -1661,7 +1665,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 				BptWeight = BptWtF[iY]->Eval(Bgenpt[j]);  // comes from FONLL/MC ratios
 				//BptWeight = 1;
 		
-			if (passTracking && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
+			if (passTracking && Bpt[j]>pthigh && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
 
 				Eff1DRECOHisBDT->Fill(Bpt[j],TotalWeight * BDTWeight);
 				Eff1DRECOHisBpt->Fill(Bpt[j],TotalWeight * BptWeight);
@@ -1761,7 +1765,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 				
 				}
 
-				if ( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>ptlow ){
+				if ( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>ptlow && Gpt[j]<pthigh){
 				
 					EvtWeightGenFidHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);			
 
@@ -1778,7 +1782,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 
 				}
 
-				if( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>10 ){
+				if( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>10 && Gpt[j]<pthigh ){
 
 					EvtWeightGenFid10His->Fill(Gpt[j],abs(Gy[j]),EventWeight);	
 					genyonlyHisfid10->Fill(abs(Gy[j]),EventWeight);	
@@ -1789,7 +1793,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 					
 				}
 
-				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && ((Gpt[j]>ptlow && Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))) ){
+				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && Gpt[j]<pthigh && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && ((Gpt[j]>ptlow && Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))) ){
 				
 					NoWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
 					EvtWeightGenAccHis->Fill(Gpt[j],abs(Gy[j]),EventWeight);
@@ -1798,7 +1802,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 					Eff1DGENAccMultHis->Fill(GenMult,EventWeight);
 
 				}
-				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && Gpt[j]>ptlow ) ){
+				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && Gpt[j]<pthigh && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && Gpt[j]>ptlow ) ){
 
 
 					Eff1DGENAccHisFid->Fill(Gpt[j],EventWeight);
@@ -1807,7 +1811,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 
 				}
 
-				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && Gpt[j]>10 ) ){
+				if((TMath::Abs(Gy[j])<2.4 && genselect && genselect2 && Gpt[j]<pthigh && ((TMath::Abs(Gmu1eta[j])<1.2 && Gmu1pt[j]>3.5) || (TMath::Abs(Gmu1eta[j])>1.2 && TMath::Abs(Gmu1eta[j])<2.1 && Gmu1pt[j]>5.47-1.89*TMath::Abs(Gmu1eta[j])) || (TMath::Abs(Gmu1eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu1pt[j]>1.5)) && ((TMath::Abs(Gmu2eta[j])<1.2 && Gmu2pt[j]>3.5) || (TMath::Abs(Gmu2eta[j])>1.2 && TMath::Abs(Gmu2eta[j])<2.1 && Gmu2pt[j]>5.47-1.89*TMath::Abs(Gmu2eta[j])) || (TMath::Abs(Gmu2eta[j])>2.1 && TMath::Abs(Gmu2eta[j])<2.4 && Gmu2pt[j]>1.5)) && Gpt[j]>10 ) ){
 
 
 					Eff1DGENAccHisFid10->Fill(Gpt[j],EventWeight);
@@ -2841,7 +2845,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n ){
 
 		TCanvas *c = new TCanvas("c","c",600,600);
 		c->cd();
-
+		
 
 		Eff1DHis->Draw("ep");
 		c->SaveAs(Form("%s/1DEffPlots/Eff1DHis.png",meson_n.Data()));
