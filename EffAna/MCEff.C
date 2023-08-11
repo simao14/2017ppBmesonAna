@@ -29,11 +29,11 @@ using std::endl;
 bool reweightPtOnY = true;
 
 
-void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
+void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	
 	int NCand;
 	TString var_N;
-	if (meson_n == "BP"){
+	if (meson_n == "BP" || meson_n== "BPBsbins"){
 		var_N="B^{+}";
 		NCand = 13000;
 	}
@@ -54,6 +54,8 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	gSystem->mkdir( Form("%s/Plot1DEfficiency/Mult",meson_n.Data()) , true);
 	gSystem->mkdir( Form("%s/Plot1DEfficiency/By",meson_n.Data()) , true);
 
+	
+
 	gStyle->SetOptStat(0);
 
 	int ptmin = 10;
@@ -66,12 +68,15 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	if (meson_n == "Bs"){
 		infile = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",meson_n.Data());
 	}
+	if (meson_n == "BPBsbins"){
+		infile = "/data3/tasheng/presel/output/_BP_MC_BDTs_nom_tnp.root";
+	}
 
 	TFile * fin = new TFile(infile.Data());
 	fin->cd();
 
 	TTree * tree;
-	if (meson_n == "BP"){tree = (TTree * ) fin->Get("Bfinder/ntKp");}
+	if (meson_n == "BP" || meson_n=="BPBsbins"){tree = (TTree * ) fin->Get("Bfinder/ntKp");}
 	else {tree = (TTree * ) fin->Get("Bfinder/ntphi");}
 
 	//	TTree * BDT = (TTree * ) fin->Get("BDT");
@@ -113,7 +118,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	TTree * BDT4 = (TTree *) fin->Get(BDT4Name.Data());
 	TTree * BDT5 = (TTree *) fin->Get(BDT5Name.Data());
 	TTree * BDT6 ;
-	if (meson_n == "BP"){
+	if (meson_n == "BP" || meson_n=="BPBsbins"){
 		BDT2 = (TTree *) fin->Get(BDT2Name.Data());
 		BDT6 = (TTree *) fin->Get(BDT6Name.Data());
 	}
@@ -259,7 +264,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	tree->SetBranchAddress("Bmu1pt",Bmu1pt);
 	tree->SetBranchAddress("Bmu2pt",Bmu2pt);
 
-	if (meson_n != 0) {
+	if (meson_n == "Bs" ) {
 		tree->SetBranchAddress("Btrk2Pt",Btrk2Pt);
 		tree->SetBranchAddress("Btrk2PtErr",Btrk2PtErr);
 		tree->SetBranchAddress("Btrk2Eta",Btrk2Eta);
@@ -317,7 +322,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	BDT4->SetBranchAddress("BDT_pt_10_15",BDT_pt_10_15);
 	BDT5->SetBranchAddress("BDT_pt_15_20",BDT_pt_15_20);
 	
-	if (meson_n == "BP"){
+	if (meson_n == "BP" || meson_n=="BPBsbins"){
 		BDT2->SetBranchAddress("BDT_pt_5_7",BDT_pt_5_7);
 		BDT6->SetBranchAddress("BDT_pt_20_50",BDT_pt_20_50);
 	}
@@ -335,7 +340,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	BDT4->SetBranchAddress("BDT_pt_New_10_15",BDT_pt_10_15);
 	BDT5->SetBranchAddress("BDT_pt_New_15_20",BDT_pt_15_20);
 	
-	if (meson_n == "BP"){
+	if (meson_n == "BP" || meson_n=="BPBsbins"){
 		BDT2->SetBranchAddress("BDT_pt_New_5_7",BDT_pt_5_7);
 		BDT6->SetBranchAddress("BDT_pt_New_20_50",BDT_pt_20_50);
 	}
@@ -388,7 +393,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	ntGen->SetBranchAddress("Gtk1eta",Gtk1eta);
 	ntGen->SetBranchAddress("Gtk1phi",Gtk1phi);
 
-	if (meson_n != 0) {
+	if (meson_n == "Bs") {
 		ntGen->SetBranchAddress("Gtk2pt",Gtk2pt);
 		ntGen->SetBranchAddress("Gtk2eta",Gtk2eta);
 		ntGen->SetBranchAddress("Gtk2phi",Gtk2phi);
@@ -544,7 +549,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
   };
   	
   std::vector<double> bptBinVec;
-  if (meson_n == "BP"){bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});}
+  if (meson_n == "BP" || meson_n=="BPBsbins"){bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});}
   else {bptBinVec = createBins({0, 10, 40, 50}, {1/8., 1/4., 1/2.});}
   auto BptBinning = bptBinVec.data();
   const int BptBin = bptBinVec.size() - 1;
@@ -649,10 +654,10 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	int NPtBins1D = 0;
 	double  PtBin1D[NPtBins1D + 1];
 
-	if (meson_n == "BP" && BPBsbins == 0 ){NPtBins1D = nptBinsBP;}
+	if (meson_n == "BP"){NPtBins1D = nptBinsBP;}
 	else {NPtBins1D = nptBins;}
 
-	if (meson_n == "BP" && BPBsbins == 0 ){ for(int i=0; i<NPtBins1D+1; i++){ PtBin1D[i] = ptbinsvecBP[i];}}
+	if (meson_n == "BP"){ for(int i=0; i<NPtBins1D+1; i++){ PtBin1D[i] = ptbinsvecBP[i];}}
 	else{ for(int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvec[i];} }
 
 	//const int nyBins_both = 12;
@@ -747,7 +752,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	TH1D * weights_BDT_pt_15_20 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_15_20");
 	TH1D * weights_BDT_pt_20_50 ;
 
-	if (meson_n == "BP"){
+	if (meson_n == "BP" || meson_n=="BPBsbins"){
 		weights_BDT_pt_5_7 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_5_7");
 		weights_BDT_pt_20_50 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_20_50");
 	}
@@ -856,7 +861,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.000000/(x*x) +0.435893*TMath::Log(x) - 0.116910",0,100);
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.070585/x**(8.245110) + 0.833796 + 0.016723 * x",0,100);
 	TF1 * BptWFunc;
-	if (meson_n == "BP"){BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);}
+	if (meson_n == "BP" || meson_n="BPBsbins"){BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);}
 	else {BptWFunc = new TF1("BptWFunc","10.120482/x**(1.847846) + 0.634875 + 0.013032 * x",0,100);}
 
   TFile fBptWeight(Form("../NewBptStudies/ResultFile/BptWeight_%s.root",meson_n.Data()));
@@ -1295,7 +1300,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 
 	double ptlow;
 	double pthigh;
-	if (meson_n == "BP" && BPBsbins==0){ptlow=5;pthigh=60;}
+	if (meson_n == "BP"){ptlow=5;pthigh=60;}
 	else {ptlow=7;pthigh=50;}
 
 	for(int i = 0; i < NEvents; i++){
@@ -1319,7 +1324,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 		BDT4->GetEntry(i);
 		BDT5->GetEntry(i);
 		
-		if (meson_n == "BP"){
+		if (meson_n == "BP" || meson_n=="BPBsbins"){
 			BDT2->GetEntry(i);
 			BDT6->GetEntry(i);
 		}
@@ -1334,7 +1339,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 		
 
 		for(int j = 0; j < Bsize; j++){
-		if (meson_n == "BP"){
+		if (meson_n == "BP" || meson_n=="BPBsbins"){
       	 	passBDT = ((Bpt[j] > 5 && Bpt[j] < 7 && BDT_pt_5_7[j] > 0.08)
                       || (Bpt[j] > 7 && Bpt[j] < 10 && BDT_pt_7_10[j] > 0.07)
                       || (Bpt[j] > 10 && Bpt[j] < 15 && BDT_pt_10_15[j] > 0)
@@ -1390,7 +1395,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
                   < chi2Nlayer[cut]);
         };
 
-	  if (meson_n == "BP"){
+	  if (meson_n == "BP" || meson_n=="BPBsbins"){
 		passTracking = passTrackingBP(Tracking::standard);
 		passTrackingLoose = passTrackingBP(Tracking::loose);
 		passTrackingTight = passTrackingBP(Tracking::tight);
@@ -1456,7 +1461,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 		  Eff1DRECOYHis->Fill(By[j],TotalWeight);
 		  recoyonlyHis->Fill(abs(By[j]),TotalWeight);
 		  recoyonlyHispt->Fill(Bpt[j],TotalWeight);
-
+			
         }
 		 if (passTracking && Bpt[j]<pthigh && Bpt[j]>10) {
           Eff1DRECOHisfid10->Fill(Bpt[j],TotalWeight);
@@ -1712,7 +1717,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 			//	PVzWeight = (0.163562 * TMath::Exp(- 0.021039 * (PVz - 0.426587)*(PVz - 0.426587)))/(0.159629 * TMath::Exp(- 0.020014 * (PVz - 0.589381)*(PVz - 0.589381)));
 
 			//	PVzWeight = (TMath::Gaus(PVz,0.432315,4.874300)/(sqrt(2*3.14159)*4.874300))/(TMath::Gaus(PVz,0.909938,4.970989)/(sqrt(2*3.14159)*4.970989));
-      if (meson_n == "BP"){
+      if (meson_n == "BP" || meson_n=="BPBsbins"){
 	  	PVzWeight = (0.013245 * TMath::Exp(-(PVz-0.753876)*(PVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(PVz-0.608178)*(PVz-0.608178)/(2 * 5.785230 * 5.785230)));
 	  }
 	  else{
@@ -1729,7 +1734,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 		
 			//	EventWeight = PVzWeight * BptWeight * weight;
 
-				if (meson_n == "BP"){ 
+				if (meson_n == "BP" || meson_n=="BPBsbins"){ 
 					genselect = TMath::Abs(GpdgId[j])==521 && GisSignal[j]==1 && GcollisionId[j]==0;
 					genselect2 = TMath::Abs(Gtk1eta[j])<2.4;
 				}
@@ -2136,9 +2141,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n,int BPBsbins = 0 ){
 		leg->AddEntry(Eff1DHisTnPDown,"T&P Variation Down","PL");
 		leg->Draw("same");
 
-
 		cSyst->SaveAs(Form("%s/Syst/TnPSyst.png",meson_n.Data()));
-
 
 
 		Eff1DHisBDT->SetMarkerStyle(20);
