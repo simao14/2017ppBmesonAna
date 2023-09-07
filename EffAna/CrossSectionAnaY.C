@@ -403,7 +403,7 @@ void CrossSectionAnaY(int DoTnP,int whichvar,int meson_n,int usemc=0){
 
 	fin1DEff->cd();
 
-
+	
 	//Add 2D eff calculations
 	
 	TH1D * invEff2D;
