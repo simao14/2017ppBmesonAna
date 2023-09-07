@@ -126,6 +126,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	TString var_n;
 	TString var_N;
+	TString var_n2;
 	TString bsbpbins = "";
 	if(BsBP==1 && meson_n==0 ) {bsbpbins = "_BsBPBINS";}
 
@@ -133,17 +134,19 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	int NCand;
 	if (meson_n == 0){
 		var_n="BP";
+		var_n2="Bp";
 		var_N="B^{+}";
 		NCand = 10;
 		BRchain = 6.02061e-5;
 	}
 	else {
 		var_n="Bs";
+		var_n2="Bs";
 		var_N="B^{0}_{s}";
 		NCand = 15;
 		BRchain = 3.1189e-5;
 	}
-
+	
 	gSystem->mkdir( var_n.Data() , true);
 	gSystem->mkdir(Form("%s/EffFinal",var_n.Data()) ,true);
 	gSystem->mkdir(Form("%s/FinalFiles",var_n.Data()) ,true);
@@ -168,19 +171,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	TTree * root;
 
 	if (usemc==0){
-		if (meson_n==0){
-			FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
-		} else {
-			FileName = Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
-		}
+			FileName =Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
 	}
 	else {
-		if (meson_n==0){
 			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
-		} else {
-			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
-		}
-		
 	}
 	fin = new TFile(FileName.Data());
 
@@ -191,15 +185,13 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	int NEvents = EffInfoTree->GetEntries();
 	
-	Int_t BsizeNew;
-	Int_t runNew;
-	Int_t lumiNew;
-	Int_t evtNew;
+	
 	Float_t BmassNew[NCand];
 	Float_t BptNew[NCand];
 	Float_t ByNew[NCand];
 	Float_t BEff[NCand];
 	Float_t BEffErr[NCand];
+	
 
 	Int_t nMult;
 	Int_t trackSelection;
@@ -222,12 +214,13 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	Float_t BEffInvDown[NCand];
 	Float_t BEffInvErrDown[NCand];
 
-	EffInfoTree->SetBranchAddress("Bsize",&BsizeNew);
+	
 	EffInfoTree->SetBranchAddress("Bmass",BmassNew);
 	EffInfoTree->SetBranchAddress("By",ByNew);
 	EffInfoTree->SetBranchAddress("Bpt",BptNew);
-	EffInfoTree->SetBranchAddress("nMult",&nMult); 
+	//EffInfoTree->SetBranchAddress("nMult",&nMult); 
 	EffInfoTree->SetBranchAddress("track", &trackSelection);
+
 	
 
 	Float_t var;
@@ -281,7 +274,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	double NewEffDown[NBins];
 	double NewEffErrDown[NBins];
 
-
+	
 	double lumi = 302.3;
 	if (whichvar==1){
 	for(int i = 0; i < NBins + 1; i++){
@@ -318,6 +311,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		SumCountsErrUp[i] = 0;
 		SumCountsDown[i] = 0;
 		SumCountsErrDown[i] = 0;
+		SumCountsTight[i] = 0;
+		SumCountsLoose[i] = 0;
 		SumCountsTight[i] = 0;
 		SumCountsLoose[i] = 0;
 	}
@@ -393,7 +388,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	TH2D * invEff2D;
 
 
-	invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
+	invEff2D= (TH2D *) fin1DEff->Get("invEff2D");
 	//invEff2D= (TH2D *) fin1DEff->Get("invEff2DBptSyst");
 	TH2D * invEffTrkTight = (TH2D *) fin1DEff->Get("invEffTrkTight");
 	TH2D * invEffTrkLoose = (TH2D *) fin1DEff->Get("invEffTrkLoose");
@@ -436,14 +431,15 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		if (whichvar==2){var=nMult;}
 		if (whichvar==0){var=BptNew[j];}
 
+		
 		for(int k = 0; k < NBins; k++){
 
-			if( (var > ptBins[k] && var < ptBins[k+1]) && (TMath::Abs(BmassNew[j] - BMass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10 && BptNew[j]<pthigh)))
+			if( (var > ptBins[k] && var < ptBins[k+1]) && (TMath::Abs(BmassNew[j] - BMass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4 && BptNew[j] > ptlow && BptNew[j]<pthigh  && (( BptNew[j] < 10 && abs(ByNew[j]) > ymax)||(BptNew[j] > 10)) )
 			{
 				
 				XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 				YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
-
+			
 				BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
 				BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
 
@@ -623,13 +619,13 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	//TFile * RawYield = new TFile(Form("../../henri2022/ROOTfiles/yields_Bp_binned_%s.root",var_file.Data()));
 
-	TFile * RawYield = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s%s.root",var_n.Data(),var_file.Data(), bsbpbins.Data()));
+	TFile * RawYield = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s%s.root",var_n2.Data(),var_file.Data(), bsbpbins.Data()));
 	RawYield->cd();
 	TH1D * hPt = (TH1D *) RawYield->Get("hPt");
 
 	TFile * RawYieldTight;
 	TH1D * hPtTight;
-	RawYieldTight = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s_trk%s.root",var_n.Data(),var_file.Data(), bsbpbins.Data()));
+	RawYieldTight = new TFile(Form("../henri2022/ROOTfiles/yields_%s_binned_%s_trk%s.root",var_n2.Data(),var_file.Data(), bsbpbins.Data()));
 	hPtTight = (TH1D *) RawYieldTight->Get("hPt");
 
 	double RawCount;

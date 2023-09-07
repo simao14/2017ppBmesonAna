@@ -8,8 +8,14 @@ double ptBins_fullBP[nBins_full+1] = {5,60};
 const int nptBins = 4;
 const std::array<double, nptBins + 1> ptbinsvec = { 7, 10, 15, 20, 50};
 
+//const int nptBins = 1;
+//const std::array<double, nptBins + 1> ptbinsvec = {7, 10};
+
 const int nptBinsBP = 7;
 const std::array<double, nptBinsBP + 1> ptbinsvecBP = { 5, 7, 10, 15, 20, 30, 50, 60};
+
+//const int nptBinsBP = 1;
+//const std::array<double, nptBinsBP + 1> ptbinsvecBP = { 7, 10};
 
 const int nptBinsBP_test  = 1;
 const std::array<double, nptBinsBP_test  + 1> ptbinsvecBP_test  = {7, 10};

@@ -861,7 +861,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.000000/(x*x) +0.435893*TMath::Log(x) - 0.116910",0,100);
 	// TF1 * BptWFunc = new TF1("BptWFunc","1.070585/x**(8.245110) + 0.833796 + 0.016723 * x",0,100);
 	TF1 * BptWFunc;
-	if (meson_n == "BP" || meson_n="BPBsbins"){BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);}
+	if (meson_n == "BP" || meson_n=="BPBsbins"){BptWFunc = new TF1("BptWFunc","10.577117/x**(1.906323) + 0.654119 + 0.012688 * x",0,100);}
 	else {BptWFunc = new TF1("BptWFunc","10.120482/x**(1.847846) + 0.634875 + 0.013032 * x",0,100);}
 
   TFile fBptWeight(Form("../NewBptStudies/ResultFile/BptWeight_%s.root",meson_n.Data()));
@@ -1278,14 +1278,11 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	TString outfileName;
 
 	if(Rescale == 0){
-		if(DoTnP == 0 && BPBsbins==0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP.root",meson_n.Data());
-		if(DoTnP == 1 && BPBsbins==0) outfileName = Form("%s/NewEff2DMaps/EffFineBDT.root",meson_n.Data());
-		if(DoTnP == 0 && BPBsbins!=0) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP_BPBsbins.root",meson_n.Data());
-		if(DoTnP == 1 && BPBsbins!=0) outfileName = Form("%s/NewEff2DMaps/EffFineBDT_BPBsbins.root",meson_n.Data());
+		if(DoTnP == 0 ) outfileName = Form("%s/NewEff2DMaps/EffFineNoTnP.root",meson_n.Data());
+		if(DoTnP == 1 ) outfileName = Form("%s/NewEff2DMaps/EffFineBDT.root",meson_n.Data());
 	}
 	if(Rescale == 1){
-		if(DoTnP == 1 && BPBsbins==0) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew.root",meson_n.Data());
-		if(DoTnP == 1 && BPBsbins!=0) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew_BPBsbins.root",meson_n.Data());
+		if(DoTnP == 1 ) outfileName = Form("%s/NewEff2DMaps/EffFineBDTNew.root",meson_n.Data());
 	}
 
 	TFile * fout = new TFile(outfileName.Data(),"RECREATE");
@@ -1455,7 +1452,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
           muidtrkWeightHis->Fill(Bpt[j],abs(By[j]),muidtrkWeight);
         }
 
-		if (passTracking && Bpt[j]>ptlow && Bpt[j]<pthigh && ((Bpt[j]>ptlow && Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
+		if (passTracking && TMath::Abs(By[j])<2.4 && Bpt[j]>ptlow && Bpt[j]<pthigh && ((Bpt[j]<10 && TMath::Abs(By[j])>1.5) || (Bpt[j]>10)) ) {
           Eff1DRECOHis->Fill(Bpt[j],TotalWeight);
           Eff1DRECOMultHis->Fill(nMult,TotalWeight);
 		  Eff1DRECOYHis->Fill(By[j],TotalWeight);
@@ -1743,7 +1740,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 					genselect2 = TMath::Abs(Gtk1eta[j])<2.4 && TMath::Abs(Gtk2eta[j])<2.4;
 				}
 				
-				if( (TMath::Abs(Gy[j])<2.4 && genselect )  && ((Gpt[j]>ptlow && Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))  ){
+				if( (TMath::Abs(Gy[j])<2.4 && genselect )  && Gpt[j]>ptlow && Gpt[j]<pthigh && ((Gpt[j]<10 && TMath::Abs(Gy[j])>1.5) || (Gpt[j]>10))  ){
 				
 					auto iY = std::upper_bound(yBins.begin(), yBins.end(), abs(Gy[j]))
 						- yBins.begin() - 1;
@@ -1767,7 +1764,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 					
 					Eff1DGENMultHis->Fill(GenMult,EventWeight);
 					Eff1DGENYHis->Fill(Gy[j],EventWeight);
-				
+
 				}
 
 				if ( (TMath::Abs(Gy[j])<2.4 && genselect) && Gpt[j]>ptlow && Gpt[j]<pthigh){
@@ -3001,7 +2998,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 		c1DSave->SaveAs(Form("%s/Plot1DEfficiency/By/Eff1DHisFid10.png",meson_n.Data()));
 
 
-		TFile * foutSyst = new TFile(Form("%s/NewEff2DMaps/%sSyst%s.root",meson_n.Data(),meson_n.Data()),"RECREATE");
+		TFile * foutSyst = new TFile(Form("%s/NewEff2DMaps/%sSyst.root",meson_n.Data(),meson_n.Data()),"RECREATE");
 		foutSyst->cd();
 		
 		Eff1DHisTnPUp->Write();
@@ -3033,7 +3030,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	
 
 		foutSyst->Close();
-		TFile * foutSyst2D = new TFile(Form("%s/NewEff2DMaps/%sSyst2D%s.root",meson_n.Data(),meson_n.Data()),"RECREATE");
+		TFile * foutSyst2D = new TFile(Form("%s/NewEff2DMaps/%sSyst2D.root",meson_n.Data(),meson_n.Data()),"RECREATE");
 
 		invEff2D->Write();
 		invEff2DTnPSystUp->Write();
