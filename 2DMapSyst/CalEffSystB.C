@@ -130,7 +130,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		SumCountsBDTSyst[i] = 0;
 		SumCountsBptSyst[i] = 0;
 	}
-
+	
 	TFile * finSyst2D = new TFile(Form("../EffAna/%s/NewEff2DMaps/%sSyst2D.root",meson_n.Data(), meson_n.Data()));
 	TH2D * invEff2D = (TH2D *) finSyst2D->Get("invEff2D");
 	TH2D * invEff2DTnPSystUp = (TH2D *) finSyst2D->Get("invEff2DTnPSystUp");
@@ -153,7 +153,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	for( int i = 0; i < NEvents; i++){
 		EffInfoTree->GetEntry(i);
 		for(int j = 0; j < BsizeNew; j++){
-			if (whichvar =="y"){var=ByNew[j];}
+			if (whichvar =="y"){var=abs(ByNew[j]);}
 			if (whichvar =="Mult"){var=nMult;}
 			if (whichvar =="pt"){var=BptNew[j];}
 			

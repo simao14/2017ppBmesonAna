@@ -16,26 +16,29 @@ opt = parser.parse_args()
 if opt.var == "pt":
     binsBP=7
     binsBs=4
+    corrvar="Bpt"
 elif opt.var == "y":
      binsBP=5
      binsBs=5
+     corrvar="By"
 elif opt.var == "Mult":
-     binsBP=8
-     binsBs=8
+     binsBP=7
+     binsBs=7
+     corrvar="nMult"
 else:
     print("Invalid Input")
 
 bp_pdf_list = [
-    "henri2022/filesbp/signal_systematics_table_B%s_ntKp.tex" % opt.var,
-    "henri2022/filesbp/background_systematics_table_B%s_ntKp.tex" % opt.var,
+    "henri2022/filesbp/signal_systematics_table_%s_ntKp.tex" % corrvar,
+    "henri2022/filesbp/background_systematics_table_%s_ntKp.tex" % corrvar,
     # "BP/RawYieldFits/signal_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/background_systematics_table_Bpt_ntKp.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
     ]
 
 bs_pdf_list = [
-    "henri2022/filesbs/signal_systematics_table_B%s_ntphi.tex" % opt.var,
-    "henri2022/filesbs/background_systematics_table_B%s_ntphi.tex" % opt.var,
+    "henri2022/filesbs/signal_systematics_table_%s_ntphi.tex" % corrvar,
+    "henri2022/filesbs/background_systematics_table_%s_ntphi.tex" % corrvar,
     # "Bs/RawYieldFits/signal_systematics_table_Bpt_ntphi.tex",
     # "Bs/RawYieldFits/background_systematics_table_Bpt_ntphi.tex",
     # "BP/RawYieldFits/general_systematics_table_Bpt_ntKp.tex",
@@ -43,8 +46,8 @@ bs_pdf_list = [
 
 if opt.bsbpb == "BsBPBINS":
     bsbpbins_pdf_list = [ 
-        "henri2022/filesbp/BsBPBINS_signal_systematics_table_B%s_ntKp.tex" % opt.var,
-        "henri2022/filesbp/BsBPBINS_background_systematics_table_B%s_ntKp.tex" % opt.var,
+        "henri2022/filesbp/BsBPBINS_signal_systematics_table_%s_ntKp.tex" % corrvar,
+        "henri2022/filesbp/BsBPBINS_background_systematics_table_%s_ntKp.tex" % corrvar,
     ]
 
 if not os.path.exists("syst_error"):
@@ -141,7 +144,7 @@ def get_tracking_syst(outfile, out_table):
     in_file_bs = "EffAna/Bs/FinalFiles/BsPPCorrYield%s.root" % opt.var
 
     if opt.bsbpb == "BsBPBINS":
-        in_file_bp_bsbpbin = "EffAna/BP/FinalFiles/BPPPCorrYield%s_BsBPBINS.root" % opt.var
+        in_file_bp_bsbpbin = "EffAna/BPBs/FinalFiles/BPPPCorrYield%s_BsBPBINS.root" % opt.var
         g_bsbpbins, t_bsbpbins = read_tracking_syst(in_file_bp_bsbpbin, binsBs)
         g_bsbpbins.SetName('BP_track_sel_error_BsBPBINS')
 

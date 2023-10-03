@@ -215,7 +215,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	lat->SetNDC();
 	lat->SetTextSize(0.025); 
 	lat->SetTextFont(42);
-	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
+	//lat->DrawLatex(0.15,0.91 , "CMS work in progress");
 	TLegend* leged = new TLegend(0.65,0.74,0.9,0.85,NULL,"brNDC");
 	leged->SetBorderSize(0);
 	leged->SetFillStyle(0);
@@ -324,7 +324,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	lat2->SetNDC();
 	lat2->SetTextSize(0.025); 
 	lat2->SetTextFont(42);
-	lat2->DrawLatex(0.1,0.91 , "CMS work in progress");
+	//lat2->DrawLatex(0.1,0.91 , "CMS work in progress");
     //lat->DrawLatex(0.57,0.62 ,Form("2017 pp global Unc. #pm %.1f%%",0000)) ;
 
 	TLegend* leg31 = new TLegend(0.6,0.68,0.9,0.85,NULL,"brNDC");

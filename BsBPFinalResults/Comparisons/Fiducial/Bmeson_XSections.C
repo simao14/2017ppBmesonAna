@@ -110,44 +110,12 @@ void latex_table(std::string filename, int n_col, int n_lin, std::vector<std::st
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
                           
 	int NBins = 7;
 	int NBins2015 = 0 ;
 	TString var_l;
+	TString meson_n2;
 	TString bsbpbins = "";
 	if (BsBP==1){bsbpbins="_BsBPBINS";}
 	
@@ -172,10 +140,13 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		var_l="Mult";
 	}
 
+	if (meson_n=="BP" && BsBP==0){meson_n2 = "BP";} 
+	else if (BsBP==1 && meson_n == "BP"){meson_n2 = "BPBs";} 
+	else if (meson_n == "Bs"){meson_n2 = "Bs";}
 	gSystem->mkdir("Plots/", true);
 	gSystem->mkdir(Form("Plots/%s",meson_n.Data()), true);
 	
-	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYield%s%s.root",meson_n.Data(),meson_n.Data(),whichvar.Data(),bsbpbins.Data());
+	TString InfileB = Form("../../../EffAna/%s/FinalFiles/%sPPCorrYield%s%s.root",meson_n2.Data(),meson_n.Data(),whichvar.Data(),bsbpbins.Data());
 	TFile * FileB= new TFile(InfileB.Data());
 	
 	// BINS
@@ -281,6 +252,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 
 	float XsecPP_Y_SystUp[NBins];
 	float XsecPP_Y_SystDown[NBins];
+	float XsecPP_Y_SystUp_ratio[NBins];
+	float XsecPP_Y_SystDown_ratio[NBins];
 	float BPXSecPPY1DSystUp[NBins];
 	float BPXSecPPY1DSystDown[NBins];
 	float BPXSecPPYSystUpScaled[NBins];
@@ -331,6 +304,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 
 	float BP2DTotalSystDownRatio[NBins];
 	float BP2DTotalSystUpRatio[NBins];
+	float BP2DTotalSystDownRatio_ratio[NBins];
+	float BP2DTotalSystUpRatio_ratio[NBins];
 	float BP1DTotalSystDownRatio[NBins];
 	float BP1DTotalSystUpRatio[NBins];
 
@@ -340,6 +315,14 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
                                           TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystDown[i], 2)) / 100;
 
     	BP2DTotalSystUpRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst[i], 2) +
+                                        TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
+                                        TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystUp[i], 2)) / 100;
+
+		BP2DTotalSystDownRatio_ratio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i]-2.4, 2) + TMath::Power(BPMCDataSyst[i], 2) +
+                                          TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
+                                          TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystDown[i], 2)) / 100;
+
+    	BP2DTotalSystUpRatio_ratio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i]-2.4, 2) + TMath::Power(BPMCDataSyst[i], 2) +
                                         TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
                                         TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystUp[i], 2)) / 100;
 		
@@ -356,14 +339,17 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
   // Fixed, copied from the paper draft
 
 	double numb;
-	if(meson_n=="BP"){numb = 0.035;}
-	else {numb = 0.077;}
+	double numb_ratio;
+	if(meson_n=="BP"){numb = 0.035; numb_ratio = 0.029;}
+	else {numb = 0.077; numb_ratio=0.075;}
   	vector<float> globUncert(NBins, numb);
 	for(int i = 0; i < NBins; i++){
-		XsecPP_Y_SystUp[i] = XsecPP_Y[i] * BP2DTotalSystUpRatio[i];
-		XsecPP_Y_SystDown[i] = XsecPP_Y[i] * BP2DTotalSystDownRatio[i];
-		BPXSecPPY1DSystUp[i] = BPXsecPPY1D[i] * BP1DTotalSystUpRatio[i];
-		BPXSecPPY1DSystDown[i] = BPXsecPPY1D[i] * BP1DTotalSystDownRatio[i];
+		XsecPP_Y_SystUp[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystUpRatio[i], 2) + TMath::Power(numb, 2)); 
+		XsecPP_Y_SystDown[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystDownRatio[i], 2) + TMath::Power(numb, 2));
+		XsecPP_Y_SystUp_ratio[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystUpRatio_ratio[i], 2) + TMath::Power(numb_ratio, 2));
+		XsecPP_Y_SystDown_ratio[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystDownRatio_ratio[i], 2) + TMath::Power(numb_ratio, 2));
+		BPXSecPPY1DSystUp[i] = BPXsecPPY1D[i] * TMath::Sqrt(TMath::Power(BP1DTotalSystUpRatio[i], 2) + TMath::Power(numb, 2));
+		BPXSecPPY1DSystDown[i] = BPXsecPPY1D[i] * TMath::Sqrt(TMath::Power(BP1DTotalSystDownRatio[i], 2) + TMath::Power(numb, 2));
 		}
 
 // CREATE THE CANVAS and the pads
@@ -380,8 +366,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	if(meson_n=="BP" && whichvar=="y") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,1250000.0,10000000);}
 	if(meson_n=="Bs" && whichvar=="y") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,220000.0,1250000);}
 
-	if(meson_n=="BP" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,4200000);}   // need to adjust range for when we have nmult results
-	if(meson_n=="Bs" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,600000);}
+	if(meson_n=="BP" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,400000);}   // need to adjust range for when we have nmult results
+	if(meson_n=="Bs" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,55000);}
 
 	HisEmpty->GetXaxis()->SetTitle(var_l.Data());
 	if (whichvar=="pt") {HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");}
@@ -517,7 +503,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	lat->SetTextSize(0.025); 
 	lat->SetTextFont(42);
 
-	lat->DrawLatex(0.15,0.91 , "CMS work in progress");
+	//lat->DrawLatex(0.15,0.91 , "CMS work in progress");
 	if (meson_n=="BP") {
 		if(whichvar=="y"){ lat->DrawLatex(0.2, 0.7 , Form("2017 pp global Unc. #pm %.1f%%",3.5)) ;}
 		else { lat->DrawLatex(0.6, 0.7 ,Form("2017 pp global Unc. #pm %.1f%%",3.5) );} 
@@ -549,7 +535,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	leged->SetTextSize(0.022);
 	leged->Draw("same");
 
-	c->SaveAs(Form("Plots/%s_Xsection_%s%s.pdf", meson_n.Data(), whichvar.Data(),bsbpbins.Data()));
+	c->SaveAs(Form("Plots/%s/Xsection_%s%s.pdf", meson_n.Data(), whichvar.Data(),bsbpbins.Data()));
 
 
 // CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection CrossSection 
@@ -683,7 +669,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	rename(("1D2DXseccomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (meson_n.Data())+"/1D2DXseccomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 	rename(("1D2DXsecdiff_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (meson_n.Data())+"/1D2DXsecdiff_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
-	}
+	
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -766,7 +752,7 @@ if (whichvar=="pt" && BsBP == 0){
 			leg1->SetTextSize(0.025);
 			leg1->Draw("same");
 
-			c->SaveAs(Form("Plots/%s_Xsection_%s_vsPbPb.pdf", meson_n.Data(),whichvar.Data()));
+			c->SaveAs(Form("Plots/%s/Xsection_%s_vsPbPb.pdf", meson_n.Data(),whichvar.Data()));
 
 	//  XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb XSEC vs PbPb 
 	//2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
@@ -833,7 +819,7 @@ if (whichvar=="pt" && BsBP == 0){
 			lege->SetTextSize(0.025);
 			lege->Draw("same");
 
-			c->SaveAs(Form("Plots/%s_Xsection_%s_vs2015.pdf", meson_n.Data(),whichvar.Data()));
+			c->SaveAs(Form("Plots/%s/Xsection_%s_vs2015.pdf", meson_n.Data(),whichvar.Data()));
 
 	//2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 2015 Reference 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1095,7 +1081,7 @@ for (int i=0;i<NBins;++i){
 	MyPadr->Update();
   
   	cr->SetLogy();   
-	cr->SaveAs(Form("Plots/%s_Xsection_%s_vsFONL.pdf", meson_n.Data(),whichvar.Data()));
+	cr->SaveAs(Form("Plots/%s/Xsection_%s_vsFONL.pdf", meson_n.Data(),whichvar.Data()));
 	//FONLL
 }
 // vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL vs FONL 
@@ -1114,7 +1100,7 @@ for (int i=0;i<NBins;++i){
 	gr_staterr->SetLineColor(1); 
 	mg->Add(gr_staterr, "stat");
 
-	TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(NBins, XsecPP_X, XsecPP_Y, nullptr, nullptr, XsecPP_Y_SystDown, XsecPP_Y_SystUp);
+	TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(NBins, XsecPP_X, XsecPP_Y, nullptr, nullptr, XsecPP_Y_SystDown_ratio, XsecPP_Y_SystUp_ratio);
 	gr_systerr->SetName("Y_syst");
 	gr_systerr->SetLineColor(2);
 	mg->Add(gr_systerr,"syst");

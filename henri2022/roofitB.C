@@ -449,8 +449,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	///////////////////////////////////////////////////////// /LABELS IN PLOTS
 
 
-	CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
-	c->Update();
+	//CMS_lumi(c,19011,0);  //CMS PRELIMINARY + etc
+	//c->Update();
 
 		if(varExp == "By"){
 			c->SaveAs(  Form("%s/data_%s_%s_%0.1f_%0.1f_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i],(float)_ptBins[i+1])+tree+bsbpbins+".pdf");
@@ -507,8 +507,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 						else { tex_yCUT->Draw();}
 					} else{tex_y->Draw();}
 
-					CMS_lumi(c,19011,0);
-					c->Update();
+					//CMS_lumi(c,19011,0);
+					//c->Update();
 
 					if(varExp == "By"){c->SaveAs(Form("%s/data_%s_%s_%0.1f_%0.1f_%s_", outplotf.Data(), _isPbPb.Data(), Form("abs(%s)",varExp.Data()),(float)_ptBins[i],(float)_ptBins[i+1],background[j].c_str())+tree+ bsbpbins+".pdf");}
 					else { c->SaveAs(Form("%s/data_%s_%s_%i_%i_%s_", outplotf.Data(), _isPbPb.Data(), varExp.Data(),(int)_ptBins[i],(int)_ptBins[i+1],background[j].c_str())+tree+bsbpbins+".pdf");}
@@ -560,8 +560,8 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 					else { tex_yCUT->Draw();}
 				} else{tex_y->Draw();}
 
-				CMS_lumi(c,19011,0);
-				c->Update();
+				//CMS_lumi(c,19011,0);
+				//c->Update();
 
 				if (signal[j] != "fixed") {
 					if(varExp == "By"){ cMC->SaveAs(Form("%s/mc_%s_%s_%0.1f_%0.1f_%s_",outplotf.Data(),_isPbPb.Data(),Form("abs(%s)",varExp.Data()), (float)_ptBins[i], (float)_ptBins[i+1],signal[j].c_str())+tree+bsbpbins+".pdf");} 

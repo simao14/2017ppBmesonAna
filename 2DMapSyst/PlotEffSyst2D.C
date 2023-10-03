@@ -424,7 +424,7 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	cSyst->SaveAs(Form("EffSystPlots/%s/Effcomp_%s%s.pdf", meson_n.Data(), whichvar.Data(),bsbpbins.Data()));
 
 	
-	if (BsBP==0) {
+	
 
 
 	string name;
@@ -458,14 +458,15 @@ void PlotEffSyst2D(TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 
 	gSystem->mkdir("Trash",true);
 
-	latex_table(Form("2DEfftable_%s",whichvarname.Data()), 4,  NBins+1,  labels , col_name , eff_values, "Efficiency values and errors");
+	
+	latex_table(Form("2DEfftable_%s%s",whichvarname.Data(),bsbpbins.Data()), 4,  NBins+1,  labels , col_name , eff_values, "Efficiency values and errors");
 
 	std::vector<std::string> filetype ={"_check.aux", "_check.log",".tex","_check.tex"};
 	for (int j=0;j<(int)(filetype.size());j++){
-				rename(("2DEfftable_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),("Trash/2DEfftable_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+				rename(("2DEfftable_"+ std::string (whichvarname.Data()) + std::string (bsbpbins.Data()) +filetype[j]).c_str(),("Trash/2DEfftable_"+std::string (whichvarname.Data())  + std::string (bsbpbins.Data()) +filetype[j]).c_str());
 			}
-	rename(("2DEfftable_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("EffSystPlots/"+std::string (meson_n.Data())+"/2DEfftable_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
-	}
+	rename(("2DEfftable_"+ std::string (whichvarname.Data()) + std::string (bsbpbins.Data()) +"_check.pdf").c_str(),("EffSystPlots/"+std::string (meson_n.Data())+"/2DEfftable_"+std::string (whichvarname.Data())  + std::string (bsbpbins.Data()) +"_check.pdf").c_str());
+	
 
 
 }

@@ -12,11 +12,11 @@
 
 
 void DataView() {
-    TFile* file = TFile::Open("BPMC_nom.root"); 
+    TFile* file = TFile::Open("~/Downloads/BPMC_nom_sm.root"); 
     TTree* tree = (TTree*)file->Get("ntKp");
 
 
-     TCanvas *canvas3D = new TCanvas("canvas3D", "3D Histogram", 800, 600);
+    TCanvas *canvas3D = new TCanvas("canvas3D", "3D Histogram", 800, 600);
     canvas3D->SetTheta(30);
     canvas3D->SetPhi(30);
     gStyle->SetOptStat(0);

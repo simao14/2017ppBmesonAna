@@ -167,14 +167,39 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 
 	TString FileName;
 	TFile * fin;
+	TFile * fin_0;
+	TFile * fin_1;
+	TFile * fin_2;
+	TFile * fin_3;
+	TFile * fin_4;
+	TFile * fin_5;
+	TFile * fin_6;
 	TTree * EffInfoTree;
+	TTree * EffInfoTree_0;
+	TTree * EffInfoTree_1;
+	TTree * EffInfoTree_2;
+	TTree * EffInfoTree_3;
+	TTree * EffInfoTree_4;
+	TTree * EffInfoTree_5;
+	TTree * EffInfoTree_6;
 	TTree * root;
 
 	if (usemc==0){
 		if (meson_n==0){
 			FileName ="/data3/smcosta/presel/ntKp_w_sWeights.root";
+			fin_0 = new TFile("/data3/smcosta/presel/5_7_ntKp_w_sWeights.root");
+			fin_1 = new TFile("/data3/smcosta/presel/7_10_ntKp_w_sWeights.root");
+			fin_2 = new TFile("/data3/smcosta/presel/10_15_ntKp_w_sWeights.root");
+			fin_3 = new TFile("/data3/smcosta/presel/15_20_ntKp_w_sWeights.root");
+			fin_4 = new TFile("/data3/smcosta/presel/20_30_ntKp_w_sWeights.root");
+			fin_5 = new TFile("/data3/smcosta/presel/30_50_ntKp_w_sWeights.root");
+			fin_6 = new TFile("/data3/smcosta/presel/50_60_ntKp_w_sWeights.root");
 		} else {
 			FileName = "/data3/smcosta/presel/ntphi_w_sWeights.root";
+			fin_0 = new TFile("/data3/smcosta/presel/7_10_ntphi_w_sWeights.root");
+			fin_1 = new TFile("/data3/smcosta/presel/10_15_ntphi_w_sWeights.root");
+			fin_2 = new TFile("/data3/smcosta/presel/15_20_ntphi_w_sWeights.root");
+			fin_3 = new TFile("/data3/smcosta/presel/20_50_ntphi_w_sWeights.root");
 		}
 	}
 	else {
@@ -187,8 +212,25 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 	}
 	fin = new TFile(FileName.Data());
 
-	if (meson_n==0){EffInfoTree = (TTree * ) fin->Get("ntKp");}
-	else {EffInfoTree = (TTree * ) fin->Get("ntphi");}
+	
+
+	if (meson_n==0){
+		EffInfoTree = (TTree * ) fin->Get("ntKp");
+		EffInfoTree_0 = (TTree * ) fin_0->Get("ntKp");
+		EffInfoTree_1 = (TTree * ) fin_1->Get("ntKp");
+		EffInfoTree_2 = (TTree * ) fin_2->Get("ntKp");
+		EffInfoTree_3 = (TTree * ) fin_3->Get("ntKp");
+		EffInfoTree_4 = (TTree * ) fin_4->Get("ntKp");
+		EffInfoTree_5 = (TTree * ) fin_5->Get("ntKp");
+		EffInfoTree_6 = (TTree * ) fin_6->Get("ntKp");
+		}
+	else {
+		EffInfoTree = (TTree * ) fin->Get("ntphi");
+		EffInfoTree_0 = (TTree * ) fin_0->Get("ntphi");
+		EffInfoTree_1 = (TTree * ) fin_1->Get("ntphi");
+		EffInfoTree_2 = (TTree * ) fin_2->Get("ntphi");
+		EffInfoTree_3 = (TTree * ) fin_3->Get("ntphi");
+		}
 
 	fin->cd();
 
@@ -200,7 +242,15 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 	Double_t ByNew[NCand];
 	Float_t BEff[NCand];
 	Float_t BEffErr[NCand];
-	Double_t sweight[NCand];
+
+	Double_t sweight_0[NCand];
+	Double_t sweight_1[NCand];
+	Double_t sweight_2[NCand];
+	Double_t sweight_3[NCand];
+	Double_t sweight_4[NCand];
+	Double_t sweight_5[NCand];
+	Double_t sweight_6[NCand];
+	
 
 	Int_t nMult;
 	Double_t trackSelection;
@@ -229,8 +279,15 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 	EffInfoTree->SetBranchAddress("Bpt",BptNew);
 	//EffInfoTree->SetBranchAddress("nMult",&nMult); 
 	EffInfoTree->SetBranchAddress("track", &trackSelection);
-	EffInfoTree->SetBranchAddress("sWeight", &sweight);
-	
+	EffInfoTree_0->SetBranchAddress("sWeight", &sweight_0);
+	EffInfoTree_1->SetBranchAddress("sWeight", &sweight_1);
+	EffInfoTree_2->SetBranchAddress("sWeight", &sweight_2);
+	EffInfoTree_3->SetBranchAddress("sWeight", &sweight_3);
+	if (meson_n==0){
+		EffInfoTree_4->SetBranchAddress("sWeight", &sweight_4);
+		EffInfoTree_5->SetBranchAddress("sWeight", &sweight_5);
+		EffInfoTree_6->SetBranchAddress("sWeight", &sweight_6);
+	}
 
 	Float_t var;
 	Float_t sw;
@@ -257,19 +314,25 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 	double ptBins[NBins + 1];
 
 	int Counts[NBins];
-	int Counts_weighted[NBins];
+	int ck[NBins];
+	double Counts_weighted[NBins];
+	double Counts_weighted_mass[NBins];
 	int CountsTight[NBins];
 	int CountsLoose[NBins];
 	double SumCounts[NBins];
 	double SumCountsErr[NBins];
 	double SumCounts_weighted[NBins];
 	double SumCountsErr_weighted[NBins];
+	double SumCounts_weighted_mass[NBins];
+	double SumCountsErr_weighted_mass[NBins];
 	double SumCountsTight[NBins];
 	double SumCountsLoose[NBins];
 	double NewEff[NBins];
 	double NewEffErr[NBins];
 	double NewEff_weighted[NBins];
 	double NewEffErr_weighted[NBins];
+	double NewEff_weighted_mass[NBins];
+	double NewEffErr_weighted_mass[NBins];
 	double NewEffTight[NBins];
 	double NewEffLoose[NBins];
 	double NewEffReal[NBins];
@@ -311,13 +374,17 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 
 	for(int i = 0; i < NBins; i++){
 		Counts[i] = 0;
+		ck[i]=0;
 		Counts_weighted[i] = 0;
+		Counts_weighted_mass[i] = 0;
 		CountsTight[i] = 0;
 		CountsLoose[i] = 0;
 		SumCounts[i] = 0;
 		SumCountsErr[i] = 0;
 		SumCounts_weighted[i] = 0;
 		SumCountsErr_weighted[i] = 0;
+		SumCounts_weighted_mass[i] = 0;
+		SumCountsErr_weighted_mass[i] = 0;
 		SumCountsEff[i] = 0;
 		SumCountsEffErr[i] = 0;
 		SumCountsEff_weighted[i] = 0;
@@ -448,15 +515,20 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 		if (whichvar==1){var=ByNew[j];}
 		if (whichvar==2){var=nMult;}
 		if (whichvar==0){var=BptNew[j];}
-		sw = sweight[j];
-		//sw = abs(sw);
-		//sw>0 ? sw:0;
-		//sw = std::exp(sw);
-		//sw=1;
+		
 		for(int k = 0; k < NBins; k++){
 
-			if( (var > ptBins[k] && var < ptBins[k+1]) && (TMath::Abs(BmassNew[j] - BMass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10 && BptNew[j]<pthigh)))
-			{
+			if (k==0){EffInfoTree_0->GetEntry(ck[k]);   sw=sweight_0[j];}
+			if (k==1){EffInfoTree_1->GetEntry(ck[k]);  sw=sweight_1[j];}
+			if (k==2){EffInfoTree_2->GetEntry(ck[k]); sw=sweight_2[j];}
+			if (k==3){EffInfoTree_3->GetEntry(ck[k]); sw=sweight_3[j];}
+			if (k==4){EffInfoTree_4->GetEntry(ck[k]); sw=sweight_4[j];}
+			if (k==5){EffInfoTree_5->GetEntry(ck[k]); sw=sweight_5[j];}
+			if (k==6){EffInfoTree_6->GetEntry(ck[k]); sw=sweight_6[j];}
+			
+			if(var > ptBins[k] && var < ptBins[k+1]){
+				
+				ck[k]=ck[k]+1;
 				
 				XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 				YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
@@ -469,23 +541,32 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 				BEffInv1D[j] = invEff1D->GetBinContent(DBin);
 				BEffInvErr1D[j] = invEff1D->GetBinError(DBin);
 
-				if(trackSelection>0 && BEffInv[j] > 0){
-					SumCounts[k] = SumCounts[k] + BEffInv[j];
-					SumCountsErr[k] = SumCountsErr[k] + BEffInvErr[j] * BEffInvErr[j];
-					
-					SumCountsEff[k] = SumCountsEff[k] + BEffInv1D[j];
-					SumCountsEffErr[k] = SumCountsEffErr[k] + BEffInvErr1D[j] * BEffInvErr1D[j];
+				
+				SumCounts_weighted_mass[k] = SumCounts_weighted_mass[k] + BEffInv[j]*sw;
+				SumCountsErr_weighted_mass[k] = SumCountsErr_weighted_mass[k] + BEffInvErr[j] * BEffInvErr[j]*sw*sw;
+				Counts_weighted_mass[k] = Counts_weighted_mass[k] + sw;
 
-					SumCounts_weighted[k] = SumCounts_weighted[k] + BEffInv[j]*sw;
-					SumCountsErr_weighted[k] = SumCountsErr_weighted[k] + BEffInvErr[j] * BEffInvErr[j]*sw*sw;
+				if( (TMath::Abs(BmassNew[j] - BMass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4  && ((BptNew[j] > ptlow && BptNew[j] < 10 && abs(ByNew[j]) > ymax )||(BptNew[j] > 10 && BptNew[j]<pthigh)))
+				{
 					
-					SumCountsEff_weighted[k] = SumCountsEff_weighted[k] + BEffInv1D[j]*sw;
-					SumCountsEffErr_weighted[k] = SumCountsEffErr_weighted[k] + BEffInvErr1D[j] * BEffInvErr1D[j]*sw*sw;
-		
+					
+					if(trackSelection>0 && BEffInv[j] > 0){
+						SumCounts[k] = SumCounts[k] + BEffInv[j];
+						SumCountsErr[k] = SumCountsErr[k] + BEffInvErr[j] * BEffInvErr[j];
+						
+						SumCountsEff[k] = SumCountsEff[k] + BEffInv1D[j];
+						SumCountsEffErr[k] = SumCountsEffErr[k] + BEffInvErr1D[j] * BEffInvErr1D[j];
 
-					Counts[k] = Counts[k] + 1;
-					Counts_weighted[k] = Counts_weighted[k] + sw;
+						SumCounts_weighted[k] = SumCounts_weighted[k] + BEffInv[j]*sw;
+						SumCountsErr_weighted[k] = SumCountsErr_weighted[k] + BEffInvErr[j] * BEffInvErr[j]*sw*sw;
+						
+						SumCountsEff_weighted[k] = SumCountsEff_weighted[k] + BEffInv1D[j]*sw;
+						SumCountsEffErr_weighted[k] = SumCountsEffErr_weighted[k] + BEffInvErr1D[j] * BEffInvErr1D[j]*sw*sw;
+
+						Counts[k] = Counts[k] + 1;
+						Counts_weighted[k] = Counts_weighted[k] + sw;
 				}
+			}
 			}
 		}
 	}
@@ -511,6 +592,17 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 	hInvEff_weighted->SetMarkerColor(1);
 	hInvEff_weighted->SetLineColor(1);
 	hInvEff_weighted->SetMarkerStyle(20);
+	//hInvEff->SetMinimum(0);
+
+	TH1D * hInvEff_weighted_mass = new TH1D("hInvEff_weighted_mass","",NBins,ptBins);
+	hInvEff_weighted_mass->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_file.Data()));
+	hInvEff_weighted_mass->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon >^{-1}");
+	hInvEff_weighted_mass->GetYaxis()->SetTitleOffset(1.4);
+	hInvEff_weighted_mass->GetXaxis()->CenterTitle();
+	hInvEff_weighted_mass->GetYaxis()->CenterTitle();
+	hInvEff_weighted_mass->SetMarkerColor(1);
+	hInvEff_weighted_mass->SetLineColor(1);
+	hInvEff_weighted_mass->SetMarkerStyle(20);
 	//hInvEff->SetMinimum(0);
 
 
@@ -551,6 +643,9 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 		NewEff_weighted[i] = SumCounts_weighted[i]/Counts_weighted[i];
 		NewEffErr_weighted[i] = TMath::Sqrt(SumCountsErr_weighted[i])/Counts_weighted[i];
 
+		NewEff_weighted_mass[i] = SumCounts_weighted_mass[i]/Counts_weighted_mass[i];
+		NewEffErr_weighted_mass[i] = TMath::Sqrt(SumCountsErr_weighted_mass[i])/Counts_weighted_mass[i];
+
 		NewEffReal_weighted[i] = SumCountsEff_weighted[i]/Counts_weighted[i];
 		NewEffRealErr_weighted[i] = TMath::Sqrt(SumCountsEffErr_weighted[i])/Counts_weighted[i];
 
@@ -562,6 +657,9 @@ void CrossSectionAnaMult_sweight(int DoTnP,int whichvar,int meson_n, int BsBP=0,
 
 		hInvEff_weighted->SetBinContent(i+1,1/NewEff_weighted[i]);
 		hInvEff_weighted->SetBinError(i+1,NewEffErr_weighted[i]/(NewEff_weighted[i] * NewEff_weighted[i]));
+
+		hInvEff_weighted_mass->SetBinContent(i+1,1/NewEff_weighted_mass[i]);
+		hInvEff_weighted_mass->SetBinError(i+1,NewEffErr_weighted_mass[i]/(NewEff_weighted_mass[i] * NewEff_weighted_mass[i]));
 
 		hEffInv1D_weighted->SetBinContent(i+1,1/NewEffReal_weighted[i]);
 		hEffInv1D_weighted->SetBinError(i+1,NewEffRealErr_weighted[i]/(NewEffReal_weighted[i]*NewEffReal_weighted[i]));
@@ -766,20 +864,18 @@ if(BsBP==0){
 		if (cmin_both > hInvEff->GetBinContent(i+1)){cmin_both=hInvEff->GetBinContent(i+1);}
 		
 	}
-	hInvEff_weighted->GetYaxis()->SetRangeUser( cmin_both*0.9, cmax_both*1.1);
+	Eff1DHisvar->GetYaxis()->SetRangeUser( cmin_both*0.9, cmax_both*1.1);
 
-	hInvEff_weighted->SetMarkerColor(kRed+1);
-	hInvEff_weighted->SetLineColor(kRed+1);
-	hEffInv1D_weighted->SetMarkerColor(kBlue+1);
-	hEffInv1D_weighted->SetLineColor(kBlue+1);
-	hInvEff->SetMarkerColor(kRed+3);
-	hInvEff->SetLineColor(kRed+3);
-	hEffInv1D->SetMarkerColor(kBlue-8);
-	hEffInv1D->SetLineColor(kBlue-8);
+	//hInvEff_weighted->SetMarkerColor(kRed+1);
+	//hInvEff_weighted->SetLineColor(kRed+1);
+	hInvEff_weighted_mass->SetMarkerColor(kRed+1);
+	hInvEff_weighted_mass->SetLineColor(kRed+1);
+	hInvEff->SetMarkerColor(kBlue+1);
+	hInvEff->SetLineColor(kBlue+1);
 
-	hInvEff_weighted->Draw("ep");
-	hEffInv1D_weighted->Draw("epsame");
-	hEffInv1D->Draw("epsame");
+	Eff1DHisvar->Draw("ep");
+	//hInvEff_weighted->Draw("epsame");
+	hInvEff_weighted_mass->Draw("epsame");
 	hInvEff->Draw("epsame");
 
 	TLegend *leg_both = new TLegend(0.15,0.82,0.4,0.87,NULL,"brNDC");
@@ -789,10 +885,10 @@ if(BsBP==0){
 	leg_both->SetFillStyle(0);
 	leg_both->SetLineWidth(1);
 
-	leg_both->AddEntry(hInvEff_weighted,"sweight 2D < 1/ #alpha #times #epsilon >^{-1}","pl");
-	leg_both->AddEntry(hEffInv1D_weighted,"sweight 1D < 1/ #alpha #times #epsilon >^{-1}","pl");
 	leg_both->AddEntry(hInvEff,"2D < 1/ #alpha #times #epsilon >^{-1}","pl");
-	leg_both->AddEntry(hEffInv1D,"1D < 1/ #alpha #times #epsilon >^{-1}","pl");
+	//leg_both->AddEntry(hInvEff_weighted,"weighted 2D ","pl");
+	leg_both->AddEntry(hInvEff_weighted_mass,"2D weighted ","pl");
+	leg_both->AddEntry(Eff1DHisvar,"1D ","pl");
 	
 	leg_both->Draw("SAME");
 
@@ -808,6 +904,7 @@ if(BsBP==0){
 	std::vector<double> cvweight1D;
 	std::vector<double> cvweight2D;
 	std::vector<double> cvboth2D;
+	std::vector<double> cvboth2Dmass;
 	std::vector<double> cvboth1D;
 	
 	std::vector<double> eff_val1d;
@@ -815,11 +912,13 @@ if(BsBP==0){
 	std::vector<double> eff_val2d;
 	std::vector<double> eff_valweight1d;
 	std::vector<double> eff_valweight2d;
+	std::vector<double> eff_valweight2dmass;
 	std::vector<double> eff_err1d;
 	std::vector<double> eff_err1dFG;
 	std::vector<double> eff_err2d;
 	std::vector<double> eff_errweight1d;
 	std::vector<double> eff_errweight2d;
+	std::vector<double> eff_errweight2dmass;
 	std::vector<std::vector<double>> comparison_values;
 	std::vector<std::vector<double>> comparison_values_weighted;
 	std::vector<std::vector<double>> comparison_values_both;
@@ -830,8 +929,9 @@ if(BsBP==0){
 	std::vector<std::vector<double>> eff_val_both;
 	std::vector<std::vector<double>> eff_err_both;
 	std::vector<std::string> labels = {"2D", "1D F-G"};
+	std::vector<std::string> labelsboth = {"1D", "2D weighted"};
 	std::vector<std::string> labelseff = {"1D","2D", "1D F-G"};
-	std::vector<std::string> labelseffboth = {"2D", "2D weighted", "1D F-G", "1D F-G weighted"};
+	std::vector<std::string> labelseffboth = {"2D", "2D weighted", "1D"};
 	std::vector<std::string> col_name;
 	std::vector<std::string> col_name_both;
 	std::vector<std::string> col_name_eff;
@@ -839,7 +939,7 @@ if(BsBP==0){
 	string name;
 	TString whichvarname;
 	col_name.push_back("Relative difference 1D vs:");
-	col_name_both.push_back("Relative difference unweighted vs weighted of:");
+	col_name_both.push_back("Relative difference 2D vs:");
 	col_name_eff.push_back("Eff values");
 	if(whichvar==0){name="$<p_T<$"; whichvarname="pt";} else if(whichvar==1){name="$<y<$";whichvarname="y";} else if(whichvar==2){name="$<nTrks<$";whichvarname="nMult";}
 	for(int i=0;i<NBins;i++){
@@ -849,14 +949,17 @@ if(BsBP==0){
 		col_name.push_back(label1);
 		col_name_eff.push_back(label1);
 		col_name_both.push_back(label1);
+
 		cv1D.push_back(abs(1/NewEffReal[i]-Eff1D[i])/Eff1D[i]*100);
 		cv2D.push_back(abs(1/NewEff[i]-Eff1D[i])/Eff1D[i]*100);
 
 		cvweight1D.push_back(abs(1/NewEffReal_weighted[i]-Eff1D[i])/Eff1D[i]*100);
 		cvweight2D.push_back(abs(1/NewEff_weighted[i]-Eff1D[i])/Eff1D[i]*100);
 
-		cvboth1D.push_back(abs(1/NewEffReal_weighted[i]-1/NewEffReal[i])*NewEffReal[i]*100);
+
+		cvboth1D.push_back(abs(Eff1D[i]-1/NewEff[i])*NewEff[i]*100);
 		cvboth2D.push_back(abs(1/NewEff_weighted[i]-1/NewEff[i])*NewEff[i]*100);
+		cvboth2Dmass.push_back(abs(1/NewEff_weighted_mass[i]-1/NewEff[i])*NewEff[i]*100);
 
 		eff_val1d.push_back(Eff1D[i]);
 		eff_val2d.push_back(1/NewEff[i]);
@@ -868,10 +971,12 @@ if(BsBP==0){
 
 		
 		eff_valweight2d.push_back(1/NewEff_weighted[i]);
+		eff_valweight2dmass.push_back(1/NewEff_weighted_mass[i]);
 		eff_valweight1d.push_back(1/NewEffReal_weighted[i]);
 
 		
 		eff_errweight2d.push_back(NewEffErr_weighted[i]/(NewEff_weighted[i]*NewEff_weighted[i]));
+		eff_errweight2dmass.push_back(NewEffErr_weighted_mass[i]/(NewEff_weighted_mass[i]*NewEff_weighted_mass[i]));
 		eff_errweight1d.push_back(NewEffRealErr[i]/(NewEffReal_weighted[i]*NewEffReal_weighted[i]));
 		
 	}
@@ -881,8 +986,8 @@ if(BsBP==0){
 	comparison_values_weighted.push_back(cvweight2D);
 	comparison_values_weighted.push_back(cvweight1D);
 
-	comparison_values_both.push_back(cvboth2D);
 	comparison_values_both.push_back(cvboth1D);
+	comparison_values_both.push_back(cvboth2Dmass);
 
 	eff_val.push_back(eff_val1d);
 	eff_val.push_back(eff_val2d);
@@ -899,14 +1004,12 @@ if(BsBP==0){
 	eff_err_weight.push_back(eff_errweight1d);
 
 	eff_val_both.push_back(eff_val2d);
-	eff_val_both.push_back(eff_valweight2d);
-	eff_val_both.push_back(eff_val1dFG);
-	eff_val_both.push_back(eff_valweight1d);
+	eff_val_both.push_back(eff_valweight2dmass);
+	eff_val_both.push_back(eff_val1d);
 	
 	eff_err_both.push_back(eff_err2d);
-	eff_err_both.push_back(eff_errweight2d);
-	eff_err_both.push_back(eff_err1dFG);
-	eff_err_both.push_back(eff_errweight1d);
+	eff_err_both.push_back(eff_errweight2dmass);
+	eff_err_both.push_back(eff_err1d);
 	
 	
 	
@@ -923,9 +1026,9 @@ if(BsBP==0){
 	latex_table(Form("Effyields_weighted_%s",whichvarname.Data()), NBins+1,  4,  col_name_eff , labelseff , eff_val_weight , "Eff Values per bin",1, eff_err_weight);
 
 	
-	latex_table(Form("1D2Dcomparisons_both_%s",whichvarname.Data()), NBins+1,  3,  col_name_both , labels , comparison_values_both, "unweighted vs weighted efficiency comparisons",0);
+	latex_table(Form("1D2Dcomparisons_both_%s",whichvarname.Data()), NBins+1,  3,  col_name_both , labelsboth , comparison_values_both, "2D method comparisons",0);
 	
-	latex_table(Form("Effyields_both_%s",whichvarname.Data()), NBins+1,  5,  col_name_eff , labelseffboth , eff_val_both , "Eff Values per bin",1, eff_err_both);
+	latex_table(Form("Effyields_both_%s",whichvarname.Data()), NBins+1,  4,  col_name_eff , labelseffboth , eff_val_both , "Eff Values per bin",1, eff_err_both);
 
 	
 	

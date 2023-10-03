@@ -132,14 +132,24 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	double BRchain;
 	int NCand;
-	if (meson_n == 0){
+
+	if (meson_n == 0 && BsBP == 0){
 		var_n="BP";
-		var_n2="Bp";
+		var_n2="BP";
 		var_N="B^{+}";
 		NCand = 10;
 		BRchain = 6.02061e-5;
 	}
-	else {
+
+	if (meson_n == 0 && BsBP == 1){
+		var_n="BPBs";
+		var_n2="BP";
+		var_N="B^{+}";
+		NCand = 10;
+		BRchain = 6.02061e-5;
+	}
+
+	if (meson_n == 1) {
 		var_n="Bs";
 		var_n2="Bs";
 		var_N="B^{0}_{s}";
@@ -170,11 +180,12 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	TTree * EffInfoTree;
 	TTree * root;
 
+	
 	if (usemc==0){
-			FileName =Form("/data3/tasheng/presel/%sData_nom.root",var_n.Data());
+			FileName =Form("/data3/tasheng/presel/%sData_nom.root",var_n2.Data());
 	}
 	else {
-			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n.Data());
+			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n2.Data());
 	}
 	fin = new TFile(FileName.Data());
 
@@ -218,7 +229,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	EffInfoTree->SetBranchAddress("Bmass",BmassNew);
 	EffInfoTree->SetBranchAddress("By",ByNew);
 	EffInfoTree->SetBranchAddress("Bpt",BptNew);
-	//EffInfoTree->SetBranchAddress("nMult",&nMult); 
+	EffInfoTree->SetBranchAddress("nMult",&nMult); 
 	EffInfoTree->SetBranchAddress("track", &trackSelection);
 
 	
@@ -376,8 +387,8 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	//pt Binned Correction//
 	TFile * fin1DEff; 
 
-	if(DoTnP == 0) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineNoTnP.root",var_n.Data()));
-	if(DoTnP == 1) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineBDT.root",var_n.Data()));	
+	if(DoTnP == 0) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineNoTnP.root",var_n2.Data()));
+	if(DoTnP == 1) fin1DEff = new TFile(Form("%s/NewEff2DMaps/EffFineBDT.root",var_n2.Data()));	
 
 
 	fin1DEff->cd();
@@ -388,7 +399,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	TH2D * invEff2D;
 
 
-	invEff2D= (TH2D *) fin1DEff->Get("invEff2D");
+	invEff2D= (TH2D *) fin1DEff->Get("invEff2DY");
 	//invEff2D= (TH2D *) fin1DEff->Get("invEff2DBptSyst");
 	TH2D * invEffTrkTight = (TH2D *) fin1DEff->Get("invEffTrkTight");
 	TH2D * invEffTrkLoose = (TH2D *) fin1DEff->Get("invEffTrkLoose");
@@ -427,7 +438,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 		EffInfoTree->GetEntry(i);
 		int j=0;
-		if (whichvar==1){var=ByNew[j];}
+		if (whichvar==1){var=abs(ByNew[j]);}
 		if (whichvar==2){var=nMult;}
 		if (whichvar==0){var=BptNew[j];}
 
@@ -436,10 +447,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 			if( (var > ptBins[k] && var < ptBins[k+1]) && (TMath::Abs(BmassNew[j] - BMass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4 && BptNew[j] > ptlow && BptNew[j]<pthigh  && (( BptNew[j] < 10 && abs(ByNew[j]) > ymax)||(BptNew[j] > 10)) )
 			{
-				
+	
 				XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
 				YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
-			
+				
 				BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
 				BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
 
@@ -737,10 +748,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	CorrDiffHisReal->SetMarkerStyle(20);
 
 	TFile * foutCorr;
-	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnP%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
-	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%s%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
-	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnPMC%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
-	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%sMC%s.root",var_n.Data(),var_n.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==0)	foutCorr = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnP%s.root",var_n.Data(),var_n2.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==0)	foutCorr = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%s%s.root",var_n.Data(),var_n2.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
+	if(DoTnP == 0 && usemc==1)	foutCorr = new TFile(Form("%s/FinalFiles/%sPPCorrYield%sNoTnPMC%s.root",var_n.Data(),var_n2.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
+	if(DoTnP == 1 && usemc==1)	foutCorr = new  TFile(Form("%s/FinalFiles/%sPPCorrYield%sMC%s.root",var_n.Data(),var_n2.Data(),var_file.Data(),bsbpbins.Data()),"RECREATE");
 
 	TH1D * Eff1DHisvar;
 	TH1D * InvEff1DHisvarTight;
@@ -885,25 +896,25 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	hEffInv->Draw("ep");
 	
   	//c->BuildLegend(0.6, 0.6, 0.9, 0.8);
-  	if(BsBP==0){
+  	
 	if (usemc==0) {c->SaveAs(Form("%s/EffFinal/ReAnaEffInv_%dBins_%s.pdf",var_n.Data(),NBins,var_file.Data()));}
 	else {c->SaveAs(Form("%s/EffFinal/ReAnaEffInv_%dBins_%s_MC.pdf",var_n.Data(),NBins,var_file.Data()));}
-	}
+	
 	hInvEff->Draw("ep");
 	
 	if (usemc==0) {c->SaveAs(Form("%s/EffFinal/ReAnaEff_%dBins_%s.pdf",var_n.Data(),NBins,var_file.Data()));}
 	else {c->SaveAs(Form("%s/EffFinal/ReAnaEff_%dBins_%s_MC.pdf",var_n.Data(),NBins,var_file.Data()));}
 	hEff->Draw("ep");
 
-	if(BsBP==0){
+	
 	if (usemc==0) {c->SaveAs(Form("%s/EffFinal/ReAnaEffReal_%dBins_%s.pdf",var_n.Data(),NBins,var_file.Data()));}
 	else {c->SaveAs(Form("%s/EffFinal/ReAnaEffReal_%dBins_%s_MC.pdf",var_n.Data(),NBins,var_file.Data()));}
-	}
+
 	Eff1DHisvar->Draw("ep");
-if(BsBP==0){
+
 	if (usemc==0) {c->SaveAs(Form("%s/EffFinal/ReAnaEff1D_%dBins_%s.pdf",var_n.Data(),NBins,var_file.Data()));}
 	else {c->SaveAs(Form("%s/EffFinal/ReAnaEff1D_%dBins_%s_MC.pdf",var_n.Data(),NBins,var_file.Data()));}
-}
+
 	TH2D * invAcc2D=(TH2D *) fin1DEff->Get("invAcc2D");
 	invAcc2D->GetXaxis()->SetTitle("p_{T} [GeV/c]");
 	invAcc2D->GetYaxis()->SetTitle("rapidity");
@@ -943,10 +954,10 @@ if(BsBP==0){
 	if(whichvar == 0) {leg3->AddEntry(CorrDiffHisLow,"Cross Section (|y| > 1.5)","PL");}
 	if(whichvar == 1) {leg3->AddEntry(CorrDiffHisLow,"Cross Section (p_{T} > 10 GeV/c)","PL");}
 	leg3->Draw("same");
-if(BsBP==0){
+
 	if (usemc==0){c->SaveAs(Form("%s/EffFinal/xsection_%s_%s.pdf",var_n.Data(),var_file.Data(),var_n.Data()));}
 	else {c->SaveAs(        Form("%s/EffFinal/xsection_%s_%s_MC.pdf",var_n.Data(),var_file.Data(),var_n.Data()));}
-}
+
 
 	double cmax = -10000;
 	double cmin =  10000;
@@ -981,10 +992,10 @@ if(BsBP==0){
 
 	leg->Draw("SAME");
 
-if(BsBP==0){
+
 	if (usemc==0){c->SaveAs(Form("%s/EffFinal/ReAnaEffcomp_%dBins_%s.pdf",var_n.Data(),NBins,var_file.Data()));}
 	else {c->SaveAs(Form("%s/EffFinal/ReAnaEffcomp_%dBins_%s_MC.pdf",var_n.Data(),NBins,var_file.Data()));}
-}
+
 
 	double tusk;
 	double d4c;
@@ -1000,10 +1011,20 @@ if(BsBP==0){
 	std::vector<double> eff_err1d;
 	std::vector<double> eff_err2d;
 	std::vector<double> eff_err2dinv;
+
+	std::vector<double> eff_inv_val1d;
+	std::vector<double> eff_inv_val2d;
+	std::vector<double> eff_inv_val2dinv;
+	std::vector<double> eff_inv_err1d;
+	std::vector<double> eff_inv_err2d;
+	std::vector<double> eff_inv_err2dinv;
+
 	std::vector<std::vector<double>> comparison_values;
 	std::vector<std::vector<double>> comparison_inv_values;
 	std::vector<std::vector<double>> eff_val;
 	std::vector<std::vector<double>> eff_err;
+	std::vector<std::vector<double>> eff_inv_val;
+	std::vector<std::vector<double>> eff_inv_err;
 	std::vector<std::vector<double>> xs_val;
 	std::vector<std::vector<double>> xs_err;
 	std::vector<std::string> labels = {"2D", "2D Inv."};
@@ -1039,6 +1060,14 @@ if(BsBP==0){
 		eff_err1d.push_back(Eff1DErr[i]);
 		eff_err2d.push_back(NewEffRealErr[i]);
 		eff_err2dinv.push_back(NewEffErr[i]/(NewEff[i]*NewEff[i]));
+
+		eff_inv_val1d.push_back(1/Eff1D[i]);
+		eff_inv_val2d.push_back(1/NewEffReal[i]);
+		eff_inv_val2dinv.push_back(NewEff[i]);
+		eff_inv_err1d.push_back(Eff1DErr[i]/(Eff1D[i]*Eff1D[i]));
+		eff_inv_err2d.push_back(NewEffRealErr[i]/(NewEffReal[i]*NewEffReal[i]));
+		eff_inv_err2dinv.push_back(NewEffErr[i]);
+
 		cvxs.push_back(CorrDiffHis->GetBinContent(i+1));
 		cvxserr.push_back(CorrDiffHis->GetBinError(i+1)/CorrDiffHis->GetBinContent(i+1));
 	}
@@ -1053,6 +1082,12 @@ if(BsBP==0){
 	eff_err.push_back(eff_err1d);
 	eff_err.push_back(eff_err2d);
 	eff_err.push_back(eff_err2dinv);
+	eff_inv_val.push_back(eff_inv_val1d);
+	eff_inv_val.push_back(eff_inv_val2d);
+	eff_inv_val.push_back(eff_inv_val2dinv);
+	eff_inv_err.push_back(eff_inv_err1d);
+	eff_inv_err.push_back(eff_inv_err2d);
+	eff_inv_err.push_back(eff_inv_err2dinv);
 	xs_val.push_back(cvxs);
 	xs_val.push_back(cvxserr);
 
@@ -1063,6 +1098,8 @@ if(BsBP==0){
 
 	latex_table(Form("1D2Dcomparisons_inv_%s",whichvarname.Data()), NBins+1,  3,  col_name , labels , comparison_inv_values, "1D vs 2D inverse efficiency comparisons",0);
 
+	latex_table(Form("Effyields_inv_%s",whichvarname.Data()), NBins+1,  4,  col_name_eff , labelseff , eff_inv_val , "Inverse Eff Values per bin",1, eff_inv_err);
+
 	latex_table(Form("xsectionvalues_%s",whichvarname.Data()), NBins+1,  3,  col_name_xs , labelsxs , xs_val , "Cross Section Values per bin",2);
 
 	std::vector<std::string> filetype ={"_check.aux", "_check.log",".tex","_check.tex"};
@@ -1070,15 +1107,17 @@ if(BsBP==0){
 				rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),(std::string (var_n.Data())+"/Trash/1D2Dcomparisons_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 				rename(("1D2Dcomparisons_inv_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),(std::string (var_n.Data())+"/Trash/1D2Dcomparisons_inv_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 				rename(("Effyields_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),(std::string (var_n.Data())+"/Trash/Effyields_"+std::string (whichvarname.Data())+filetype[j]).c_str());
+				rename(("Effyields_inv_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),(std::string (var_n.Data())+"/Trash/Effyields_inv_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 				rename(("xsectionvalues_"+ std::string (whichvarname.Data()) +filetype[j]).c_str(),(std::string (var_n.Data())+"/Trash/xsectionvalues_"+std::string (whichvarname.Data())+filetype[j]).c_str());
 			}
 	rename(("1D2Dcomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),(std::string (var_n.Data())+"/EffFinal/1D2Dcomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 	rename(("1D2Dcomparisons_inv_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),(std::string (var_n.Data())+"/EffFinal/1D2Dcomparisons_inv_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 	rename(("Effyields_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),(std::string (var_n.Data())+"/EffFinal/Effyields_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
+	rename(("Effyields_inv_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),(std::string (var_n.Data())+"/EffFinal/Effyields_inv_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 	rename(("xsectionvalues_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),(std::string (var_n.Data())+"/EffFinal/xsectionvalues_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
 
-
+	cout<<Form("%s/FinalFiles/%sPPCorrYield%s%s.root",var_n.Data(),var_n2.Data(),var_file.Data(),bsbpbins.Data())<<endl;
 	foutCorr->cd();
 	CorrDiffHis->Write();
 	CorrDiffHisBin->Write();
