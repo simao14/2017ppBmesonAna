@@ -138,6 +138,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 
 	// FIT INFO
 	double yield_vec[_nBins];
+	double sig_vec[_nBins];
+	double back_vec[_nBins];
+	double fom_vec[_nBins];
 	double yield_vec_err_low[_nBins];
 	double yield_vec_err_high[_nBins];
 	double scale_vec[_nBins];
@@ -277,6 +280,9 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		double _ErrCor=1;
 		yieldErr = yieldErr*_ErrCor;
 		yield_vec[i]=yield;
+		sig_vec[i]=yield;
+		back_vec[i]=MyBackground;
+		fom_vec[i]=yield/sqrt(yield+MyBackground);
 		yield_vec_err_low[i]=yieldErr;
 		yield_vec_err_high[i]=yieldErr;
 		//divide by bin width
@@ -329,7 +335,6 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		chi2MC_vec[i] = chi2MC.getVal()/(nbinsmasshisto - fMC_params->getVal()); //normalised chi square
 		//chi2
 		////////////////////////////
-
 	////////////////////////////
 
 		hPt->SetBinContent(i+1,yield/(_ptBins[i+1]-_ptBins[i]));
@@ -394,6 +399,11 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		
 		if( _nBins == 1 ){ //inclusive bin case
 			t_sub = 0.07 ; 
+			tex_BIN->SetTextSize(0.03);
+			tex_yCUT->SetTextSize(0.03);
+			tex_y->SetTextSize(0.03);
+			yield_val->SetTextSize(0.03);
+			chi_square->SetTextSize(0.03);
 			tex_yCUT->SetText(0.21,0.68,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
 			tex_yCUT->Draw();
 			tex_y->SetText(0.21,0.61,"p_{T} > 10 GeV/c : |y| < 2.4");
@@ -425,6 +435,11 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		else { tex_yCUT->Draw();}
 
 	} else if(varExp=="nMult"){ 
+		tex_BIN->SetTextSize(0.03);
+		tex_yCUT->SetTextSize(0.03);
+		tex_y->SetTextSize(0.03);
+		yield_val->SetTextSize(0.03);
+		chi_square->SetTextSize(0.03);
         tex_BIN->SetText(0.21,0.75,Form("%d < Mult < %d",(int)_ptBins[i],(int)_ptBins[i+1]));
         tex_y->SetText(0.21,0.68,"p_{T} > 10 GeV/c : |y| < 2.4");
         tex_yCUT->SetText(0.21,0.61,"p_{T} < 10 GeV/c : 1.5 < |y| < 2.4");
@@ -605,7 +620,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	hPt->Write();		
 	outf->Close();	
 
-
+	
 	string Path;
 	if(tree == "ntphi"){ Path = "./filesbs/";}
 	else if (tree == "ntKp" ) {Path = Form("./filesbp/%s", bsbpbins_.Data());}
@@ -658,7 +673,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		col_name_general_stat.push_back(label1);
 	}
 	if(syst_study==1 && full==0){
-		gSystem->mkdir("./results/tables",true); 
+		gSystem->mkdir(Form("./%s/tables",outplotf.Data()),true); 
 		latex_table(Path + "background_systematics_table_" +std::string (varExp.Data())+"_"+std::string (tree.Data()) , _nBins+1,  (int)(1+background.size()),  col_name_back,labels_back,back_syst_rel_values, "Background PDF Systematic Errors");
 		latex_table(Path + "signal_systematics_table_"     +std::string (varExp.Data())+"_"+std::string (tree.Data()) , _nBins+1, (int)(1+signal.size()),    col_name_signal, labels_signal,sig_syst_rel_values, "Signal PDF Systematic Errors");
 		latex_table(Path + "general_systematics_table_"    +std::string (varExp.Data())+"_"+std::string (tree.Data()) ,  _nBins+1, 4 , col_name_general, labels_general, general_syst, "Overall PDF Variation Systematic Errors");	
@@ -667,11 +682,13 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		std::vector<std::string> tabeltype ={"background_systematics_table_", "signal_systematics_table_", "general_systematics_table_", "Statistical_error_table_"};
 		std::vector<std::string> filetype ={"_check.aux", "_check.log", "_check.pdf"};
 		for (int i=0;i<(int)(tabeltype.size());i++){
-			for (int j=0;j<(int)(filetype.size());j++){
+			for (int j=0;j<(int)(filetype.size()-1);j++){
 				rename((bsbpbins_.Data()+tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[j]).c_str(),(Path+tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[j]).c_str());
 			}
 		}
-
+		for (int i=0;i<(int)(tabeltype.size());i++){
+			rename((bsbpbins_.Data()+tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[2]).c_str(),("./"+std::string (outplotf.Data())+"/tables/"+tabeltype[i]+std::string (varExp.Data())+"_"+std::string (tree.Data())+filetype[2]).c_str());
+		}
 		double zero[_nBins];
 		for (int i=0;i<_nBins;i++){zero[i]=0.;}
 		double low_high_b[_nBins];
@@ -729,7 +746,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 		m_back->GetYaxis()->SetRangeUser(0, y_max_back*1.5);
 		m_back->Draw("AE1*");
 		legback->Draw();
-		c_back->SaveAs(Form("./results/tables/background_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+		c_back->SaveAs(Form("./%s/tables/background_systematics_plot_%s_%s%s.pdf",outplotf.Data(),tree.Data(),varExp.Data(),bsbpbins.Data())); 
 
 		TCanvas* c_sig= new TCanvas("c_sig","",700,700);
 		TLegend *legsig = new TLegend(0.62,0.8,0.89,0.75,NULL,"brNDC"); 
@@ -762,7 +779,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			m_sig->GetYaxis()->SetRangeUser(0, y_max_sig*1.5);
 			m_sig->Draw("AE1*");
 			legsig->Draw();
-			c_sig->SaveAs(Form("./results/tables/signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+			c_sig->SaveAs(Form("./%s/tables/signal_systematics_plot_%s_%s%s.pdf",outplotf.Data(),tree.Data(),varExp.Data(),bsbpbins.Data())); 
 
 			TCanvas *c_sig_back= new TCanvas("c_sig_back","",700,700);
 			m_back_sig->GetYaxis()->SetRangeUser(0, 4);
@@ -786,7 +803,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			m_back_sig->GetYaxis()->SetTitle("Systematic Uncertainty(%)");
 			m_back_sig->Draw("AE1*");
 			legsigback->Draw();
-			c_sig_back->SaveAs(Form("./results/tables/background_signal_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+			c_sig_back->SaveAs(Form("./%s/tables/background_signal_systematics_plot_%s_%s%s.pdf",outplotf.Data(),tree.Data(),varExp.Data(),bsbpbins.Data())); 
 
 			TCanvas* c_gen= new TCanvas("c_gen","",700,700);
 			TLegend *legen = new TLegend(0.62,0.55,0.89,0.75,NULL,"brNDC"); 
@@ -824,15 +841,15 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 			m_gen->GetYaxis()->SetRangeUser(0, y_max_gen*1.5);
 			m_gen->Draw("AE1*");
 			legen->Draw();
-			c_gen->SaveAs(Form("./results/tables/general_systematics_plot_%s_%s.pdf",tree.Data(),varExp.Data())); 
+			c_gen->SaveAs(Form("./%s/tables/general_systematics_plot_%s_%s%s.pdf",outplotf.Data(),tree.Data(),varExp.Data(),bsbpbins.Data())); 
 			}
 
 // Differential plot part starts
-	gSystem->mkdir("./results/Graphs",true); 
+	gSystem->mkdir(Form("./%s/Graphs",outplotf.Data()),true); 
 
 	 TCanvas c_diff;
 	 TMultiGraph* mg = new TMultiGraph();
-	 TLegend *leg_d = new TLegend(0.7,0.7,0.9,0.9);
+	 TLegend *leg_d = new TLegend(0.83,0.8,0.955,0.9);
 	 TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(_nBins,var_mean_av,yield_vec,hori_av_low,hori_av_high,yield_vec_err_low,yield_vec_err_high);
 	 gr_staterr->SetLineColor(1); 
 	 gr_staterr->SetName("Y_stat");
@@ -870,7 +887,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 leg_d->SetTextSize(0);
 	 leg_d->Draw();
 
-	 const char* pathc =Form("./results/Graphs/raw_yield_%s_%s%s.pdf",tree.Data(), varExp.Data(), bsbpbins.Data());
+	 const char* pathc =Form("./%s/Graphs/raw_yield_%s_%s%s.pdf",outplotf.Data(),tree.Data(), varExp.Data(), bsbpbins.Data());
 	 c_diff.SaveAs(pathc);
 // Differential plot part ends
 
@@ -905,7 +922,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 mg_par->GetYaxis()->SetRangeUser(0,scale_max*1.4);
 	 mg_par->Draw("ap");
 
-	 const char* pathc_par =Form("./results/Graphs/parameters_variation_%s_%s.pdf",tree.Data(),varExp.Data()); 
+	 const char* pathc_par =Form("./%s/Graphs/parameters_variation_%s_%s.pdf",outplotf.Data(),tree.Data(),varExp.Data()); 
 	 c_par.SaveAs(pathc_par);
 //Parameters vs variables part ends
 
@@ -943,7 +960,7 @@ void roofitB(TString tree = "ntphi", int full = 0, TString inputdata = "", TStri
 	 mg_resol->Add(gr_resol);
 	 mg_resol->Draw("ap");
 
-	 const char* pathc_resol =Form("./results/Graphs/resolution_%s_%s.pdf",tree.Data(),varExp.Data()); 
+	 const char* pathc_resol =Form("./%s/Graphs/resolution_%s_%s.pdf",outplotf.Data(),tree.Data(),varExp.Data()); 
 	 c_resol.SaveAs(pathc_resol);
 
 //Resolution plot part ends
@@ -1007,7 +1024,7 @@ leg_chi2->SetTextSize(0);
 leg_chi2->Draw();
 
 
-const char* pathc_chi2 =Form("./results/Graphs/chi2_%s_%s.pdf",tree.Data(),varExp.Data()); 
+const char* pathc_chi2 =Form("./%s/Graphs/chi2_%s_%s.pdf",outplotf.Data(),tree.Data(),varExp.Data()); 
 c_chi2.SaveAs(pathc_chi2);
 
 if(syst_study==1){
@@ -1068,7 +1085,7 @@ leg_chi2_back->SetFillStyle(0);
 leg_chi2_back->SetTextSize(0);
 leg_chi2_back->Draw();
 
-const char* pathc_chi2_back =Form("./results/Graphs/chi2_%s_%s_%s.pdf",tree.Data(),varExp.Data(),background[j].c_str()); 
+const char* pathc_chi2_back =Form("./%s/Graphs/chi2_%s_%s_%s.pdf",outplotf.Data(),tree.Data(),varExp.Data(),background[j].c_str()); 
 c_chi2_back.SaveAs(pathc_chi2_back);
 	}
 
@@ -1131,7 +1148,7 @@ leg_chi2_sig->SetTextSize(0);
 leg_chi2_sig->Draw();
 
 
-const char* pathc_chi2_sig =Form("./results/Graphs/chi2_%s_%s_%s.pdf",tree.Data(),varExp.Data(),signal[j].c_str()); 
+const char* pathc_chi2_sig =Form("./%s/Graphs/chi2_%s_%s_%s.pdf",outplotf.Data(),tree.Data(),varExp.Data(),signal[j].c_str()); 
 c_chi2_sig.SaveAs(pathc_chi2_sig);
 
 	}
@@ -1194,7 +1211,7 @@ leg_chi2_sigsum->SetTextSize(0);
 leg_chi2_sigsum->Draw();
 
 
-const char* pathc_chi2_sigsum =Form("./results/Graphs/chi2_%s_%s_signal_summary.pdf",tree.Data(),varExp.Data()); 
+const char* pathc_chi2_sigsum =Form("./%s/Graphs/chi2_%s_%s_signal_summary.pdf",outplotf.Data(),tree.Data(),varExp.Data()); 
 c_chi2_sigsum.SaveAs(pathc_chi2_sigsum);
 
 //chi2 plot part (sigsum) ends
@@ -1254,12 +1271,18 @@ leg_chi2_backsum->SetTextSize(0);
 leg_chi2_backsum->Draw();
 
 
-const char* pathc_chi2_backsum =Form("./results/Graphs/chi2_%s_%s_background_summary.pdf",tree.Data(),varExp.Data()); 
+const char* pathc_chi2_backsum =Form("./%s/Graphs/chi2_%s_%s_background_summary.pdf",outplotf.Data(),tree.Data(),varExp.Data()); 
 c_chi2_backsum.SaveAs(pathc_chi2_backsum);
 //chi2 plot part (backsum) ends
 }
 //chi2 plot part ends
-
+for(int i = 0; i < _nBins; i++){
+	cout<<_ptBins[i] <<"--"<<_ptBins[i+1]<<endl;
+	cout<<"signal: " << sig_vec[i] << endl;
+	cout<<"signal norm: " << yield_vec[i]<<" error: "<<yield_vec_err_high[i] <<endl;
+	cout<<"back: " << back_vec[i]<<endl;
+	cout<<"significance: " << fom_vec[i]<<endl;
+}
 }
 
 void read_samples(RooWorkspace& w, std::vector<TString> label, TString fName, TString treeName, TString sample, TString variable="Bpt", int bsbp=0){

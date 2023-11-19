@@ -29,7 +29,7 @@ using std::endl;
 bool reweightPtOnY = true;
 
 
-void  MCEff(int DoTnP, int Rescale, TString meson_n){
+void  MCEff_old(int DoTnP, int Rescale, TString meson_n){
 	
 	int NCand;
 	TString var_N;
@@ -55,118 +55,194 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	gSystem->mkdir( Form("%s/Plot1DEfficiency/By",meson_n.Data()) , true);
 
 	
-
+	
 	gStyle->SetOptStat(0);
 
 	int ptmin = 10;
 	int ptmax = 50;
 
-	TString infilereco;
-	TString infilegen;
-	TString infiletnp;
-	infilereco = Form("/data3/smcosta/data/%sMC_nom_BDT.root",meson_n.Data());
-	infilegen = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",meson_n.Data());
-	infiletnp = Form("/data3/smcosta/data/%sTnPInfo.root",meson_n.Data());
-
+	TString infile;
+	if (meson_n == "BP"){
+		infile = Form("/data3/tasheng/presel/output/_%s_MC_BDTs_nom_tnp.root",meson_n.Data());
+	}
+	if (meson_n == "Bs"){
+		infile = Form("/data3/tasheng/presel/output/%s_MC_BDTs_nom_tnp.root",meson_n.Data());
+	}
 	if (meson_n == "BPBsbins"){
-		infilereco = "/data3/smcosta/data/BPMC_nom_BDT.root";
-		infilegen = "/data3/smcosta/data/BPGen.root";
-		infiletnp = "/data3/smcosta/data/BPTnPInfo.root";
+		infile = "/data3/tasheng/presel/output/_BP_MC_BDTs_nom_tnp.root";
 	}
 
-	TFile * finreco = new TFile(infilereco.Data());
-	TFile * fingen = new TFile(infilegen.Data());
-	TFile * finTnP = new TFile(infiletnp.Data());
-	
+	TFile * fin = new TFile(infile.Data());
+	fin->cd();
 
 	TTree * tree;
-	TTree * ntGenP;
-	if (meson_n == "BP" || meson_n=="BPBsbins"){
-		tree = (TTree * ) finreco->Get("ntKp");
-		ntGenP = (TTree * ) fingen->Get("Bfinder/ntKp");}
-	else {
-		tree = (TTree * ) finreco->Get("ntphi");
-		ntGenP = (TTree * ) fingen->Get("Bfinder/ntphi");}
+	if (meson_n == "BP" || meson_n=="BPBsbins"){tree = (TTree * ) fin->Get("Bfinder/ntKp");}
+	else {tree = (TTree * ) fin->Get("Bfinder/ntphi");}
+
+	//	TTree * BDT = (TTree * ) fin->Get("BDT");
+
+	TTree * ntHi = (TTree * ) fin->Get("hiEvtAnalyzer/HiTree");
+	TTree * ntSkim = (TTree * ) fin->Get("skimanalysis/HltTree");
+	TTree * ntHlt = (TTree *) fin->Get("hltanalysis/HltTree");
+
+	//	TTree * TnPInfo = (TTree * ) fin->Get("TnPInfo");
+	//	TTree * CentWeightTree =	(TTree * ) fin->Get("CentWeightTree");
+
+	TTree * ntGen = (TTree * ) fin->Get("Bfinder/ntGen");
+	
+//	TString BDT1Name = "BDT_pt_3_5";
+	TString BDT2Name = "BDT_pt_5_7";
+	TString BDT3Name = "BDT_pt_7_10";
+	TString BDT4Name = "BDT_pt_10_15";
+	TString BDT5Name = "BDT_pt_15_20";
+	TString BDT6Name = "BDT_pt_20_50";
+//	TString BDT7Name = "BDT_pt_2_3";
+//	TString BDT8Name = "BDT_pt_1_2";
+
+	if(Rescale == 1){
+//	 BDT1Name = "BDT_pt_New_3_5";
+	 BDT2Name = "BDT_pt_New_5_7";
+	 BDT3Name = "BDT_pt_New_7_10";
+	 BDT4Name = "BDT_pt_New_10_15";
+	 BDT5Name = "BDT_pt_New_15_20";
+	 BDT6Name = "BDT_pt_New_20_50";
+//	 BDT7Name = "BDT_pt_New_2_3";
+//	 BDT8Name = "BDT_pt_New_1_2";
+
+	}
 
 	
+//	TTree * BDT1 = (TTree *) fin->Get(BDT1Name.Data());
+	TTree * BDT2 ;
+	TTree * BDT3 = (TTree *) fin->Get(BDT3Name.Data());
+	TTree * BDT4 = (TTree *) fin->Get(BDT4Name.Data());
+	TTree * BDT5 = (TTree *) fin->Get(BDT5Name.Data());
+	TTree * BDT6 ;
+	if (meson_n == "BP" || meson_n=="BPBsbins"){
+		BDT2 = (TTree *) fin->Get(BDT2Name.Data());
+		BDT6 = (TTree *) fin->Get(BDT6Name.Data());
+	}
+//	TTree * BDT7 = (TTree *) fin->Get("BDT_pt_2_3");
+//	TTree * BDT7 = (TTree *) fin->Get(BDT7Name.Data());
+//	TTree * BDT8 = (TTree *) fin->Get(BDT8Name.Data());
+	
 
-	TTree * ntGen = (TTree * ) fingen->Get("Bfinder/ntGen");
-	TTree * ntGenW = (TTree * ) fingen->Get("hiEvtAnalyzer/HiTree");
+	TTree * rootGen;
+	TTree * root = (TTree * ) fin->Get("Bfinder/root");  //reconstructed variable
+	rootGen = (TTree * ) fin->Get("Bfinder/root");
 
+	//if (meson_n == "BP"){rootGen = (TTree * ) fin2->Get("Bfinder/hi");} //gen variable
+	//else {rootGen = (TTree * ) fin->Get("Bfinder/root");}
 
-	TTree * TnPInfo = (TTree *) finTnP->Get("TnPInfo");
+	TTree * TnPInfo = (TTree *) fin->Get("TnPInfo");
 
-	Long64_t nMult;
+	Int_t nMult;
 	Int_t GenMult;
 
-	tree->SetBranchAddress("nMult",&nMult);
+	root->SetBranchAddress("EvtInfo.nMult",&nMult);
 	//rootGen->SetBranchAddress("mult",&GenMult);
-	
-	Double_t PVz;
-	Long64_t   Bsize;
-	Double_t Btrk1Pt[NCand];
-	Double_t Btrk2Pt[NCand];
-	Double_t Btrk1PtErr[NCand];
-	Double_t Btrk2PtErr[NCand];
-	Double_t Bchi2cl[NCand];
-	Double_t BsvpvDistance[NCand];
-	Double_t BsvpvDisErr[NCand];
-	Double_t Bpt[NCand];
-	Double_t Btrk1Eta[NCand];
-	Double_t Btrk2Eta[NCand];
-	Double_t By[NCand];
+
+	int lumi;
+	int evt;
+	Float_t PVz;
+	Int_t pclusterCompatibilityFilter;
+	Int_t pprimaryVertexFilter;
+	Int_t phfCoincFilter2Th4;
+	Int_t   Bsize;
+	Float_t Btrk1Pt[NCand];
+	Float_t Btrk2Pt[NCand];
+	Float_t Btrk1PtErr[NCand];
+	Float_t Btrk2PtErr[NCand];
+	Float_t Bchi2cl[NCand];
+	Float_t BsvpvDistance[NCand];
+	Float_t BsvpvDisErr[NCand];
+	Float_t Bpt[NCand];
+	Float_t Btrk1Eta[NCand];
+	Float_t Btrk2Eta[NCand];
+	Float_t By[NCand];
 	Bool_t Bmu1isTriggered[NCand];
 	Bool_t Bmu2isTriggered[NCand];
-	Double_t Bmass[NCand];
-	Double_t Bmumumass[NCand];
-	Double_t Bmu1eta[NCand];
-	Double_t Bmu1pt[NCand];
-	Double_t Bmu2eta[NCand];
-	Double_t Bmu2pt[NCand];
+	Float_t Bmass[NCand];
+	Float_t Bmumumass[NCand];
+	Float_t Bmu1eta[NCand];
+	Float_t Bmu1pt[NCand];
+	Float_t Bmu2eta[NCand];
+	Float_t Bmu2pt[NCand];
+
+	//	Float_t Bmu1phi[NCand];
+	//	Float_t Bmu2phi[NCand];
 
 	Bool_t Bmu1TMOneStationTight[NCand];
-	Long64_t Bmu1InPixelLayer[NCand];
-	Long64_t Bmu1InStripLayer[NCand];
+	Int_t Bmu1InPixelLayer[NCand];
+	Int_t Bmu1InStripLayer[NCand];
 	Bool_t Bmu2TMOneStationTight[NCand];	
-	Long64_t Bmu2InPixelLayer[NCand];
-	Long64_t Bmu2InStripLayer[NCand];
+	Int_t Bmu2InPixelLayer[NCand];
+	Int_t Bmu2InStripLayer[NCand];
 	Bool_t Bmu1isGlobalMuon[NCand];
 	Bool_t Bmu2isGlobalMuon[NCand];
 	Bool_t Bmu1isTrackerMuon[NCand];
 	Bool_t Bmu2isTrackerMuon[NCand];
-	Double_t Bmu1dxyPV[NCand];
-	Double_t Bmu2dxyPV[NCand];
-	Double_t Bmu1dzPV[NCand];
-	Double_t Bmu2dzPV[NCand];
+	Float_t Bmu1dxyPV[NCand];
+	Float_t Bmu2dxyPV[NCand];
+	Float_t Bmu1dzPV[NCand];
+	Float_t Bmu2dzPV[NCand];
 	Bool_t Btrk1highPurity[NCand];
 	Bool_t Btrk2highPurity[NCand];
-	Double_t Btktkmass[NCand];
-	Double_t Btrk1PixelHit[NCand];
-	Double_t Btrk2PixelHit[NCand];
-	Double_t Btrk1StripHit[NCand];
-	Double_t Btrk2StripHit[NCand];
-	Double_t Btrk1Chi2ndf[NCand];
-	Double_t Btrk2Chi2ndf[NCand];
-	Double_t Btrk1nStripLayer[NCand];
-	Double_t Btrk2nStripLayer[NCand];
-	Double_t Btrk1nPixelLayer[NCand];
-	Double_t Btrk2nPixelLayer[NCand];
-	Double_t Bgen[NCand];
-	Double_t Bgenpt[NCand];
-	Double_t Bgeny[NCand];
+	Float_t Btktkmass[NCand];
+	Float_t Btrk1PixelHit[NCand];
+	Float_t Btrk2PixelHit[NCand];
+	Float_t Btrk1StripHit[NCand];
+	Float_t Btrk2StripHit[NCand];
+	Float_t Btrk1Chi2ndf[NCand];
+	Float_t Btrk2Chi2ndf[NCand];
+	Float_t Btrk1nStripLayer[NCand];
+	Float_t Btrk2nStripLayer[NCand];
+	Float_t Btrk1nPixelLayer[NCand];
+	Float_t Btrk2nPixelLayer[NCand];
+	Float_t Bgen[NCand];
+	Float_t Bgenpt[NCand];
+	Float_t Bgeny[NCand];
 
-	Double_t weight;
+
+	//	Float_t pthatweight;
+
+	Float_t weight;
+	Float_t Bdtheta[NCand];
+//	Double_t BDT_pt_3_5[NCand];
+	Double_t BDT_pt_5_7[NCand];
+	Double_t BDT_pt_7_10[NCand];
+	Double_t BDT_pt_10_15[NCand];
+	Double_t BDT_pt_15_20[NCand];
+	Double_t BDT_pt_20_50[NCand];
+//	Double_t BDT_pt_2_3[NCand];
+//	Double_t BDT_pt_2_3[NCand];
+//	Double_t BDT_pt_1_2[NCand];
 	
-	Double_t BDT_pt_5_7;
-	Double_t BDT_pt_7_10;
-	Double_t BDT_pt_10_15;
-	Double_t BDT_pt_15_20;
-	Double_t BDT_pt_20_50;
-	Double_t BDT_pt_50_60;
+	/*
 
-	tree->SetBranchAddress("weight",&weight);
+	   BDT->SetBranchAddress("BDT_5_7",BDT_pt_5_7);
+	   BDT->SetBranchAddress("BDT_7_10",BDT_pt_7_10);
+	   BDT->SetBranchAddress("BDT_10_15",BDT_pt_10_15);
+	   BDT->SetBranchAddress("BDT_15_20",BDT_pt_15_20);
+	   BDT->SetBranchAddress("BDT_22_30",BDT_pt_22_30);
+	   BDT->SetBranchAddress("BDT_30_40",BDT_pt_30_40);
+	   BDT->SetBranchAddress("BDT_40_50",BDT_pt_40_50);
+	   BDT->SetBranchAddress("BDT_50_60",BDT_pt_50_60);
 
+	   BDT->SetBranchAddress("evt",&evt);
+	   BDT->SetBranchAddress("lumi",&lumi);
 
+*/
+
+	ntHi->SetBranchAddress("weight",&weight);
+
+	int HBHENoiseFilterResult;
+	int pPAprimaryVertexFilter;
+	int pBeamScrapingFilter;
+
+	ntSkim->SetBranchAddress("pBeamScrapingFilter",&pBeamScrapingFilter);
+	ntSkim->SetBranchAddress("pPAprimaryVertexFilter",&pPAprimaryVertexFilter);
+	ntSkim->SetBranchAddress("HBHENoiseFilterResult",&HBHENoiseFilterResult);
 	tree->SetBranchAddress("Bsize",&Bsize);
 	tree->SetBranchAddress("PVz",&PVz);
 	tree->SetBranchAddress("Btrk1Pt",Btrk1Pt);
@@ -179,6 +255,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	tree->SetBranchAddress("By",By);
 	tree->SetBranchAddress("Btrk1Eta",Btrk1Eta);
 	tree->SetBranchAddress("Bmass",Bmass);
+	tree->SetBranchAddress("Bdtheta",Bdtheta);
 	tree->SetBranchAddress("Bmu1isTriggered",Bmu1isTriggered);
 	tree->SetBranchAddress("Bmu2isTriggered",Bmu2isTriggered);
 	tree->SetBranchAddress("Bmumumass",Bmumumass);
@@ -236,51 +313,50 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	tree->SetBranchAddress("Btrk1nPixelLayer",Btrk1nPixelLayer);
 	tree->SetBranchAddress("Btrk2nPixelLayer",Btrk2nPixelLayer);
 
-	
-
 	if(Rescale == 0){
 
 
 //	BDT1->SetBranchAddress("BDT_pt_3_5",BDT_pt_3_5);
 	
-	tree->SetBranchAddress("BDT_pt_7_10",&BDT_pt_7_10);
-	tree->SetBranchAddress("BDT_pt_10_15",&BDT_pt_10_15);
-	tree->SetBranchAddress("BDT_pt_15_20",&BDT_pt_15_20);
+	BDT3->SetBranchAddress("BDT_pt_7_10",BDT_pt_7_10);
+	BDT4->SetBranchAddress("BDT_pt_10_15",BDT_pt_10_15);
+	BDT5->SetBranchAddress("BDT_pt_15_20",BDT_pt_15_20);
 	
 	if (meson_n == "BP" || meson_n=="BPBsbins"){
-		tree->SetBranchAddress("BDT_pt_5_7",&BDT_pt_5_7);
-		tree->SetBranchAddress("BDT_pt_20_50",&BDT_pt_20_50);
-	}
-	if (meson_n == "BP"){
-		tree->SetBranchAddress("BDT_pt_50_60",&BDT_pt_50_60);
+		BDT2->SetBranchAddress("BDT_pt_5_7",BDT_pt_5_7);
+		BDT6->SetBranchAddress("BDT_pt_20_50",BDT_pt_20_50);
 	}
 //	BDT7->SetBranchAddress("BDT_pt_2_3",BDT_pt_2_3);
 
 //	BDT7->SetBranchAddress("BDT_pt_2_3",BDT_pt_2_3);
 //	BDT8->SetBranchAddress("BDT_pt_1_2",BDT_pt_1_2);
+
 	}
 	if(Rescale == 1){
 
 //	BDT1->SetBranchAddress("BDT_pt_New_3_5",BDT_pt_3_5);
 	
-	tree->SetBranchAddress("BDT_pt_New_7_10",&BDT_pt_7_10);
-	tree->SetBranchAddress("BDT_pt_New_10_15",&BDT_pt_10_15);
-	tree->SetBranchAddress("BDT_pt_New_15_20",&BDT_pt_15_20);
-	tree->SetBranchAddress("BDT_pt_New_20_50",&BDT_pt_20_50);
-
+	BDT3->SetBranchAddress("BDT_pt_New_7_10",BDT_pt_7_10);
+	BDT4->SetBranchAddress("BDT_pt_New_10_15",BDT_pt_10_15);
+	BDT5->SetBranchAddress("BDT_pt_New_15_20",BDT_pt_15_20);
+	
 	if (meson_n == "BP" || meson_n=="BPBsbins"){
-		tree->SetBranchAddress("BDT_pt_New_5_7",&BDT_pt_5_7);
-		
-	}
-
-	if (meson_n == "BP"){
-		tree->SetBranchAddress("BDT_pt_New_50_60",&BDT_pt_50_60);
+		BDT2->SetBranchAddress("BDT_pt_New_5_7",BDT_pt_5_7);
+		BDT6->SetBranchAddress("BDT_pt_New_20_50",BDT_pt_20_50);
 	}
 //	BDT7->SetBranchAddress("BDT_pt_New_2_3",BDT_pt_2_3);
 //	BDT8->SetBranchAddress("BDT_pt_New_1_2",BDT_pt_1_2);
 
 	}
+	Bool_t Bmu1SoftMuID[NCand];
+	Bool_t Bmu2SoftMuID[NCand];
+	Bool_t Bmu1isAcc[NCand];
+	Bool_t Bmu2isAcc[NCand];
 
+	tree->SetBranchAddress("Bmu1SoftMuID",Bmu1SoftMuID);
+	tree->SetBranchAddress("Bmu2SoftMuID",Bmu2SoftMuID);
+	tree->SetBranchAddress("Bmu1isAcc",Bmu1isAcc);
+	tree->SetBranchAddress("Bmu2isAcc",Bmu2isAcc);
 
 	Int_t Gsize;
 	Float_t Gy[NCand];
@@ -300,12 +376,8 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	Float_t Gtk2pt[NCand];
 	Float_t Gtk2eta[NCand];
 	Float_t Gtk2phi[NCand];
-	Float_t Gweight;
-	Float_t GPVz;
 
 	ntGen->SetBranchAddress("Gsize",&Gsize);
-	ntGenW->SetBranchAddress("weight",&Gweight);
-	ntGenP->SetBranchAddress("PVz",&GPVz);
 	ntGen->SetBranchAddress("Gy",Gy);
 	ntGen->SetBranchAddress("Gpt",Gpt);
 	ntGen->SetBranchAddress("GisSignal",GisSignal);
@@ -327,7 +399,8 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 		ntGen->SetBranchAddress("Gtk2phi",Gtk2phi);
 	}
 
-	
+	Int_t HLT_HIL1DoubleMu0_v1;
+	ntHlt->SetBranchAddress("HLT_HIL1DoubleMu0_v1",&HLT_HIL1DoubleMu0_v1);
 
 	double CentWeight;
 
@@ -341,7 +414,14 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	double trg1[NCand];
 	double trg2[NCand];
 
-
+	/*
+	   TnPInfo->SetBranchAddress("muid1",muid1);
+	   TnPInfo->SetBranchAddress("muid2",muid2);
+	   TnPInfo->SetBranchAddress("trk1",trk1);
+	   TnPInfo->SetBranchAddress("trk2",trk2);
+	   TnPInfo->SetBranchAddress("trg1",trg1);
+	   TnPInfo->SetBranchAddress("trg2",trg2);
+	   */
 
 
 
@@ -414,13 +494,40 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	double tnptotalerr;
 
 
-	
+	/*
+
+
+
+	   TnPInfo->SetBranchAddress("muid1statup",muid1statup);
+	   TnPInfo->SetBranchAddress("trk1statup",trk1statup);
+	   TnPInfo->SetBranchAddress("trg1statup",trg1statup);
+	   TnPInfo->SetBranchAddress("muid1statdown",muid1statdown);
+	   TnPInfo->SetBranchAddress("trk1statdown",trk1statdown);
+	   TnPInfo->SetBranchAddress("trg1statdown",trg1statdown);
+	   TnPInfo->SetBranchAddress("muid1systup",muid1systup);
+	   TnPInfo->SetBranchAddress("trk1systup",trk1systup);
+	   TnPInfo->SetBranchAddress("trg1systup",trg1systup);
+	   TnPInfo->SetBranchAddress("muid1systdown",muid1systdown);
+	   TnPInfo->SetBranchAddress("trk1systdown",trk1systdown);
+	   TnPInfo->SetBranchAddress("trg1systdown",trg1systdown);
+
+
+
+	   TnPInfo->SetBranchAddress("muid2statup",muid2statup);
+	   TnPInfo->SetBranchAddress("trk2statup",trk2statup);
+	   TnPInfo->SetBranchAddress("trg2statup",trg2statup);
+	   TnPInfo->SetBranchAddress("muid2statdown",muid2statdown);
+	   TnPInfo->SetBranchAddress("trk2statdown",trk2statdown);
+	   TnPInfo->SetBranchAddress("trg2statdown",trg2statdown);
+	   TnPInfo->SetBranchAddress("muid2systup",muid2systup);
+	   TnPInfo->SetBranchAddress("trk2systup",trk2systup);
+	   TnPInfo->SetBranchAddress("trg2systup",trg2systup);
+	   TnPInfo->SetBranchAddress("muid2systdown",muid2systdown);
+	   TnPInfo->SetBranchAddress("trk2systdown",trk2systdown);
+	   TnPInfo->SetBranchAddress("trg2systdown",trg2systdown);
+	   */
 
 	int NEvents = tree->GetEntries();
-	int NGen = ntGen->GetEntries();
-
-	cout << NEvents << endl;
-	cout << NGen << endl;
 
  	std::vector<double> yBins ({0.0, 0.5, 1.0, 1.5, 2.0, 2.4});
 	double yBinning[nyBins_both+1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.4};
@@ -440,7 +547,6 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
     }
     return bins;
   };
-  
 		
   std::vector<double> bptBinVec;
   if (meson_n == "BP" || meson_n=="BPBsbins"){bptBinVec = createBins({0, 10, 40, 50, 60}, {1/8., 1/4., 1/2., 1});}
@@ -452,7 +558,6 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
   //std::vector<double> yBinVec = createBins({0.0 ,0.5, 1.0, 1.5, 1.8, 2.1, 2.4}, {1/160., 1/160.,1/160., 1/200., 1/200., 1/200.});
   auto yonlyBinning = yBinVec.data(); 
   const int yonlyBin = yBinVec.size() - 1;
-  
 
 	double PVzWeight;
 
@@ -553,8 +658,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	else {NPtBins1D = nptBins;}
 
 	if (meson_n == "BP"){ for(int i=0; i<NPtBins1D+1; i++){ PtBin1D[i] = ptbinsvecBP[i];}}
-	else{for(int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvec[i];}}
-	
+	else{ for(int i=0; i<NPtBins1D+1; i++){PtBin1D[i] = ptbinsvec[i];} }
 
 	//const int nyBins_both = 12;
 	//double  ybinsvec.data()[nyBins_both + 1] = {-2.4,-2.1,-1.8,-1.5,-1.0,-0.5,0.0 ,0.5, 1.0, 1.5,1.8,2.1, 2.4};
@@ -639,22 +743,20 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	Eff1DRECOHisBDT->GetYaxis()->SetTitleOffset(1.5);
 	
 
+
 	TFile * finBDTWeight = new TFile(Form("BDTWeights/%sw.root",meson_n.Data()));
-	
+
 	TH1D * weights_BDT_pt_5_7 ;
 	TH1D * weights_BDT_pt_7_10 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_7_10");
 	TH1D * weights_BDT_pt_10_15 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_10_15");
 	TH1D * weights_BDT_pt_15_20 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_15_20");
-	TH1D * weights_BDT_pt_20_50  = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_20_50");
-	TH1D * weights_BDT_pt_50_60 ;
+	TH1D * weights_BDT_pt_20_50 ;
 
 	if (meson_n == "BP" || meson_n=="BPBsbins"){
 		weights_BDT_pt_5_7 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_5_7");
-	} 
-	if (meson_n == "BP"){
-		weights_BDT_pt_50_60 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_50_60");
-	} 
-	
+		weights_BDT_pt_20_50 = (TH1D * ) finBDTWeight->Get("weights_BDT_pt_20_50");
+	}
+
 	
 	TH1D * Eff1DRECOHisBpt = new TH1D("Eff1DRECOHisBpt","",NPtBins1D,PtBin1D);
 
@@ -769,7 +871,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
       BptWtF[iy] = (TF1*) fBptWeight.Get(TString::Format("BptWeight_y%d", iy));
     	}
   }
-	
+
 	int BDTWeightBin;
 	float BDTWeight;
 
@@ -1137,20 +1239,16 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	Bmu2TrgSF->GetYaxis()->SetTitleOffset(1.5);
 
 	
-	Float_t TnPNominal;
-	Float_t TnPMu1Nominal;
-	Float_t TnPMu2Nominal;
-	Float_t TnPError;
-	
-	
-	TnPInfo->SetBranchAddress("TnPNominal",&TnPNominal);
-	
-	TnPInfo->SetBranchAddress("TnPMu1Nominal",&TnPMu1Nominal);
-	
-	TnPInfo->SetBranchAddress("TnPMu2Nominal",&TnPMu2Nominal);
-	
-	TnPInfo->SetBranchAddress("TnPError",&TnPError);
-	
+	Float_t TnPNominal[NCand];
+	Float_t TnPMu1Nominal[NCand];
+	Float_t TnPMu2Nominal[NCand];
+	Float_t TnPError[NCand];
+
+	TnPInfo->SetBranchAddress("TnPNominal",TnPNominal);
+	TnPInfo->SetBranchAddress("TnPMu1Nominal",TnPMu1Nominal);
+	TnPInfo->SetBranchAddress("TnPMu2Nominal",TnPMu2Nominal);
+	TnPInfo->SetBranchAddress("TnPError",TnPError);
+
 	
 	TH1D * TnPSFHis = new TH1D("TnPSFHis","",100,0.8,1.2);
 	TnPSFHis->GetXaxis()->SetTitle("SF^{#mu_{1}} #times SF^{#mu_{2}}");
@@ -1176,7 +1274,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	TnPSFHisMu2->GetXaxis()->SetTitleOffset(1.2);	
 	TnPSFHisMu2->GetYaxis()->SetTitleOffset(1.5);
 
-	
+
 	TString outfileName;
 
 	if(Rescale == 0){
@@ -1191,6 +1289,8 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	fout->cd();
 
 	//NEvents = 10;
+	bool passBDT;
+	bool preselection;
 	bool passTracking;
 	bool passTrackingTight;
 	bool passTrackingLoose;
@@ -1200,24 +1300,82 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 	if (meson_n == "BP"){ptlow=5;pthigh=60;}
 	else {ptlow=7;pthigh=50;}
 
-	int j = 0;
-
 	for(int i = 0; i < NEvents; i++){
 
 
 		if(i%10000==0) cout << "Now Working on = " << i  <<  endl;
 
 		tree->GetEntry(i);
-	
+		ntSkim->GetEntry(i);
+		ntHi->GetEntry(i);
+		ntHlt->GetEntry(i);
+		//	BDT->GetEntry(i);
+		//	CentWeightTree->GetEntry(i);
+		//	TnPInfo->GetEntry(i);
 		ntGen->GetEntry(i);
 
+		//BDT//
+//		BDT1->GetEntry(i);
+		
+		BDT3->GetEntry(i);
+		BDT4->GetEntry(i);
+		BDT5->GetEntry(i);
+		
+		if (meson_n == "BP" || meson_n=="BPBsbins"){
+			BDT2->GetEntry(i);
+			BDT6->GetEntry(i);
+		}
+//		BDT7->GetEntry(i);
+//		BDT8->GetEntry(i);
+	
+		root->GetEntry(i);
+
+	
 		TnPInfo->GetEntry(i);
 
 		
-		
+
+		for(int j = 0; j < Bsize; j++){
 		if (meson_n == "BP" || meson_n=="BPBsbins"){
+      	 	passBDT = ((Bpt[j] > 5 && Bpt[j] < 7 && BDT_pt_5_7[j] > 0.08)
+                      || (Bpt[j] > 7 && Bpt[j] < 10 && BDT_pt_7_10[j] > 0.07)
+                      || (Bpt[j] > 10 && Bpt[j] < 15 && BDT_pt_10_15[j] > 0)
+                      || (Bpt[j] > 15 && Bpt[j] < 20 && BDT_pt_15_20[j] > 0.02)
+                      || (Bpt[j] > 20 && Bpt[j] < 50 && BDT_pt_20_50[j] > 0.04)
+                      || (Bpt[j] > 50 && Bpt[j] < 60));
+			preselection = (pPAprimaryVertexFilter == 1
+                           && pBeamScrapingFilter == 1 && HLT_HIL1DoubleMu0_v1 == 1)
+						   && (Bmu1isTriggered[j] == 1 && Bmu2isTriggered[j] == 1)
+						   && (Btrk1Pt[j] > 0.5 && Bchi2cl[j] > 0.05 && BsvpvDistance[j]/BsvpvDisErr[j] > 2.0
+						   && Bpt[j] > 2 && abs(Btrk1Eta[j]-0.0) < 2.4  &&
+						   (TMath::Abs(By[j])<2.4 && TMath::Abs(Bmumumass[j]-3.096916)<0.15
+						   &&((abs(Bmu1eta[j])<1.2&&Bmu1pt[j]>3.5)
+						   ||(abs(Bmu1eta[j])>1.2&&abs(Bmu1eta[j])<2.1 &&Bmu1pt[j]>(5.47-1.89*abs(Bmu1eta[j])))
+						   ||(abs(Bmu1eta[j])>2.1&&abs(Bmu1eta[j])<2.4&&Bmu1pt[j]>1.5))
+						   &&((abs(Bmu2eta[j])<1.2&&Bmu2pt[j]>3.5)
+						   ||(abs(Bmu2eta[j])>1.2&&abs(Bmu2eta[j])<2.1&&Bmu2pt[j]>(5.47-1.89*abs(Bmu2eta[j])))
+						   ||(abs(Bmu2eta[j])>2.1&&abs(Bmu2eta[j])<2.4&&Bmu2pt[j]>1.5))
+						   &&Bmu1TMOneStationTight[j]&&Bmu2TMOneStationTight[j]
+						   &&Bmu1InPixelLayer[j]>0&&(Bmu1InPixelLayer[j]+Bmu1InStripLayer[j])>5
+						   &&Bmu2InPixelLayer[j]>0&& (Bmu2InPixelLayer[j]+Bmu2InStripLayer[j])>5
+						   &&Bmu1dxyPV[j]<0.3&&Bmu2dxyPV[j]<0.3
+						   &&Bmu1dzPV[j]<20&&Bmu2dzPV[j]<20
+						   &&Bmu1isTrackerMuon[j]&&Bmu2isTrackerMuon[j]
+						   &&Bmu1isGlobalMuon[j]&&Bmu2isGlobalMuon[j]
+						   &&Btrk1highPurity[j]
+						   &&abs(Btrk1Eta[j])<2.4&&Btrk1Pt[j]>0.5)
+						   && (Btrk1PixelHit[j] + Btrk1StripHit[j] > 10) && (abs(PVz)<15));
+		}      
+		else{      
+			passBDT = ((Bpt[j] > 7 && Bpt[j] < 10 &&  BDT_pt_7_10[j] > 0.06)
+                      || (Bpt[j] > 10 && Bpt[j] < 15 &&  BDT_pt_10_15[j] > -0.04)
+                      || (Bpt[j] > 15 && Bpt[j] < 20 &&  BDT_pt_15_20[j] > 0.05 )
+                      || (Bpt[j] > 20 && Bpt[j] < 50)
+                      || (Bpt[j] > 50) );
+			preselection = ((abs(Btktkmass[j]-1.019455)<0.015)&&(((((abs(Btktkmass[j]-1.019455)<0.015)&& TMath::Abs(Bmumumass[j]-3.096916)<0.15 && Bpt[j] > 0 && Bpt[j] < 5 && (abs(Btrk1Eta[j])<2.4 && abs(Btrk2Eta[j])<2.4 && Btrk1Pt[j]>0.0 && Btrk2Pt[j]>0.0) && Btrk1Pt[j] > 0.5 && Btrk2Pt[j] > 0.5  && Bchi2cl[j] > 0.05 && BsvpvDistance[j]/BsvpvDisErr[j] > 2.0)  && ( (Bpt[j] < 2 && Bpt[j] > 0) || (Bpt[j] < 3 && Bpt[j] > 2) || (Bpt[j] < 5 && Bpt[j] > 3)  )))  ||  ( Bpt[j] > 3 && ((pPAprimaryVertexFilter == 1 && pBeamScrapingFilter == 1 && HLT_HIL1DoubleMu0_v1 == 1 && (abs(PVz)<15))  &&  (Bmu1isTriggered[j] == 1 && Bmu2isTriggered[j] == 1 ) &&  (Bchi2cl[j] > 0.05 && BsvpvDistance[j]/BsvpvDisErr[j] > 2.0)    && (TMath::Abs(By[j])<2.4&&TMath::Abs(Bmumumass[j]-3.096916)<0.15&&((abs(Bmu1eta[j])<1.2&&Bmu1pt[j]>3.5)||(abs(Bmu1eta[j])>1.2&&abs(Bmu1eta[j])<2.1&&Bmu1pt[j]>(5.47-1.89*abs(Bmu1eta[j])))||(abs(Bmu1eta[j])>2.1&&abs(Bmu1eta[j])<2.4&&Bmu1pt[j]>1.5))&&((abs(Bmu2eta[j])<1.2&&Bmu2pt[j]>3.5)||(abs(Bmu2eta[j])>1.2&&abs(Bmu2eta[j])<2.1&&Bmu2pt[j]>(5.47-1.89*abs(Bmu2eta[j])))||(abs(Bmu2eta[j])>2.1&&abs(Bmu2eta[j])<2.4&&Bmu2pt[j]>1.5))&&Bmu1InPixelLayer[j]>0&&(Bmu1InPixelLayer[j]+Bmu1InStripLayer[j])>5&&Bmu2InPixelLayer[j]>0&&(Bmu2InPixelLayer[j]+Bmu2InStripLayer[j])>5&&Bmu1dxyPV[j]<0.3&&Bmu2dxyPV[j]<0.3&&Bmu1dzPV[j]<20&&Bmu2dzPV[j]<20&&Bmu1isTrackerMuon[j]&&Bmu2isTrackerMuon[j]&&Bmu1isGlobalMuon[j]&&Bmu2isGlobalMuon[j])  && ( Btrk1Pt[j] > 0.5 && Btrk2Pt[j] > 0.5 && abs(Btrk1Eta[j]-0.0) < 2.4 && abs(Btrk2Eta[j]-0.0) < 2.4  && Btrk1highPurity[j]  && Btrk2highPurity[j]  && Btrk1PixelHit[j] + Btrk1StripHit[j] > 10  && Btrk2PixelHit[j] + Btrk2StripHit[j] > 10)))));
 		}
-		
+      	 
+
       // tracking selection variation
       auto passTrackingBP = [&] (Tracking cut) {
         return (Btrk1PtErr[j]/Btrk1Pt[j] < ptErr[cut] &&
@@ -1245,7 +1403,8 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 		passTrackingTight = passTrackingBs(Tracking::tight);
 	  }
 
-      if ((Bgen[j] == 23333) && passTrackingLoose ){
+      if ((Bgen[j] == 23333) && preselection
+          && passTrackingLoose && passBDT){
 
 				
 				EventWeight = weight;
@@ -1264,7 +1423,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 
 				}
 
-				if(DoTnP == 1) TnPWeight = TnPNominal;
+				if(DoTnP == 1) TnPWeight = TnPNominal[j];
 
 				muidWeight = EventWeight * muid1[j] * muid2[j];
 				trkWeight = EventWeight * trk1[j] * trk2[j];
@@ -1284,8 +1443,8 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
         if (TMath::Abs(By[j])<2.4 && passTracking && Bpt[j]>ptlow && Bpt[j]<pthigh) {
           TnPWeightHis->Fill(Bpt[j],abs(By[j]),TotalWeight);
           TnPSFHis->Fill(TnPWeight);
-          TnPSFHisMu1->Fill(TnPMu1Nominal);
-          TnPSFHisMu2->Fill(TnPMu2Nominal);
+          TnPSFHisMu1->Fill(TnPMu1Nominal[j]);
+          TnPSFHisMu2->Fill(TnPMu2Nominal[j]);
           NoWeightHis->Fill(Bpt[j],abs(By[j]),1);
           EvtWeightHis->Fill(Bpt[j],abs(By[j]),EventWeight);
           muidWeightHis->Fill(Bpt[j],abs(By[j]),muidWeight);
@@ -1379,7 +1538,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 
 				//	cout << "tnptotalerr = " << tnptotalerr << endl;
 			 
-				if(DoTnP == 1) tnptotalerr = TnPError;
+				if(DoTnP == 1) tnptotalerr = TnPError[j];
 
 				TotalWeightSystUp = TotalWeight * ( 1 + tnptotalerr);
 				TotalWeightSystDown = TotalWeight * ( 1 - tnptotalerr);
@@ -1473,42 +1632,32 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 				BDTWeight = 1;
 				
 				if(Bpt[j] < 7 && Bpt[j] > 5 && meson_n == "BP"){
-		
-					BDTWeightBin = weights_BDT_pt_5_7->GetXaxis()->FindBin(BDT_pt_5_7);
+					BDTWeightBin = weights_BDT_pt_5_7->GetXaxis()->FindBin(BDT_pt_5_7[j]);
 					BDTWeight = weights_BDT_pt_5_7->GetBinContent(BDTWeightBin);
 				}	
 				
 				if(Bpt[j] < 10 && Bpt[j] > 7){
-					
-					BDTWeightBin = weights_BDT_pt_7_10->GetXaxis()->FindBin(BDT_pt_7_10);
+					BDTWeightBin = weights_BDT_pt_7_10->GetXaxis()->FindBin(BDT_pt_7_10[j]);
 					BDTWeight = weights_BDT_pt_7_10->GetBinContent(BDTWeightBin);
 				}	
 
 				if(Bpt[j] < 15 && Bpt[j] > 10){
-					
-					BDTWeightBin = weights_BDT_pt_10_15->GetXaxis()->FindBin(BDT_pt_10_15);
+					BDTWeightBin = weights_BDT_pt_10_15->GetXaxis()->FindBin(BDT_pt_10_15[j]);
 					BDTWeight = weights_BDT_pt_10_15->GetBinContent(BDTWeightBin);	
 				}
 				
 				if(Bpt[j] < 20 && Bpt[j] > 15){
-				
-					BDTWeightBin = weights_BDT_pt_15_20->GetXaxis()->FindBin(BDT_pt_15_20);
+					BDTWeightBin = weights_BDT_pt_15_20->GetXaxis()->FindBin(BDT_pt_15_20[j]);
 					BDTWeight = weights_BDT_pt_15_20->GetBinContent(BDTWeightBin);	
 				}
 				
-				if(Bpt[j] < 50 && Bpt[j] > 20 ){
-					
-					BDTWeightBin = weights_BDT_pt_20_50->GetXaxis()->FindBin(BDT_pt_20_50);
+				if(Bpt[j] < 50 && Bpt[j] > 20 && meson_n == "BP"){
+					BDTWeightBin = weights_BDT_pt_20_50->GetXaxis()->FindBin(BDT_pt_20_50[j]);
 					BDTWeight = weights_BDT_pt_20_50->GetBinContent(BDTWeightBin);
 				}
 
-				if(Bpt[j] < 60 && Bpt[j] > 50 && meson_n == "BP") {
+				if(Bpt[j] < 60 && Bpt[j] > 50 && meson_n == "BP") BDTWeight = 1;
 
-					BDTWeightBin = weights_BDT_pt_50_60->GetXaxis()->FindBin(BDT_pt_50_60);
-					BDTWeight = weights_BDT_pt_50_60->GetBinContent(BDTWeightBin);
-				}
-
-				
 				BDTWeightHisSyst->Fill(Bpt[j],abs(By[j]),TotalWeight * BDTWeight);
 
 
@@ -1537,20 +1686,22 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 				BptWeightHisSyst->Fill(Bpt[j],abs(By[j]),TotalWeight * BptWeight);
 
 			}
-		
+		}
   }
 
 		cout << "Now Loop Gen" << endl;
 		
 		bool genselect;
 		bool genselect2;
-		for(int i = 0; i < NGen; i++){
+		for(int i = 0; i < NEvents; i++){
 
-			if(i%10000==0) cout << "Now Working on = " << i  <<  endl;
+
 			ntGen->GetEntry(i);
-			ntGenW->GetEntry(i);
-			ntGenP->GetEntry(i);
-			
+			ntHi->GetEntry(i);
+			//CentWeightTree->GetEntry(i);
+			tree->GetEntry(i);
+			//rootGen->GetEntry(i);
+			root->GetEntry(i);
 
 			// PVzWeight = 1;
 		//	PVzWeight = (0.0132 * TMath::Exp((PVz -  0.7538) * (PVz -  0.7538)/(2* 6.024* 6.024)))/(  0.0137 * TMath::Exp((PVz -  0.7538) * (PVz -  0.7538)) );
@@ -1564,13 +1715,13 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 
 			//	PVzWeight = (TMath::Gaus(PVz,0.432315,4.874300)/(sqrt(2*3.14159)*4.874300))/(TMath::Gaus(PVz,0.909938,4.970989)/(sqrt(2*3.14159)*4.970989));
       if (meson_n == "BP" || meson_n=="BPBsbins"){
-	  	PVzWeight = (0.013245 * TMath::Exp(-(GPVz-0.753876)*(GPVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(GPVz-0.608178)*(GPVz-0.608178)/(2 * 5.785230 * 5.785230)));
+	  	PVzWeight = (0.013245 * TMath::Exp(-(PVz-0.753876)*(PVz-0.753876)/(2 * 6.023671 * 6.023671)))/(0.013790 * TMath::Exp(-(PVz-0.608178)*(PVz-0.608178)/(2 * 5.785230 * 5.785230)));
 	  }
 	  else{
-	  	PVzWeight = (0.013244 * TMath::Exp(-(GPVz-0.753860)*(GPVz-0.753860)/(2 * 6.023788 * 6.023788)))/(0.013793 * TMath::Exp(-(GPVz-0.611353)*(GPVz-0.611353)/(2 * 5.783899 * 5.783899)));
+	  	PVzWeight = (0.013244 * TMath::Exp(-(PVz-0.753860)*(PVz-0.753860)/(2 * 6.023788 * 6.023788)))/(0.013793 * TMath::Exp(-(PVz-0.611353)*(PVz-0.611353)/(2 * 5.783899 * 5.783899)));
 	  }
 			
-			EventWeight = PVzWeight * CentWeight * Gweight;
+			EventWeight = PVzWeight * CentWeight * weight;
 			//EventWeight = 1;	
 
 			
@@ -2903,7 +3054,7 @@ void  MCEff(int DoTnP, int Rescale, TString meson_n){
 
 		foutSyst2D->Close();
 		fout->Close();
-		finreco->Close();
+		fin->Close();
 		}
 
 

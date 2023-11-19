@@ -12,30 +12,30 @@
 
 
 void DataView() {
-    TFile* file = TFile::Open("~/Downloads/BPMC_nom_sm.root"); 
+    TFile* file = TFile::Open("~/Downloads/NEWRESULTS/results_sel/rootfiles/BPData_nom_BDT.root"); 
     TTree* tree = (TTree*)file->Get("ntKp");
 
-
+    gStyle->SetPalette(1);
     TCanvas *canvas3D = new TCanvas("canvas3D", "3D Histogram", 800, 600);
     canvas3D->SetTheta(30);
     canvas3D->SetPhi(30);
     gStyle->SetOptStat(0);
 
-    tree->Draw("abs(By):Bpt >>+ hist2D(50,5,60,50,1.4,2.1)", "Bmass > 5.26915 && Bmass < 5.28915", "colz");
+    tree->Draw("abs(By):Bpt >>+ hist2D(50,[5,15],50,[0,2.4])", "Bmass > 5.26415 && Bmass < 5.29415", "LEGO");
 
     // Retrieve the 2D histogram from the current pad
-    TH2D *hist2D = (TH2D*)gPad->GetPrimitive("hist2D");
-    TLine *line = new TLine(hist2D->GetXaxis()->GetXmin(), 1.5, hist2D->GetXaxis()->GetXmax(), 1.5);
-    line->SetLineColor(kRed);
-    line->SetLineWidth(2);
-    TLine *line1 = new TLine(hist2D->GetXaxis()->GetXmin(), 2, hist2D->GetXaxis()->GetXmax(), 2);
-    line1->SetLineColor(kRed);
-    line1->SetLineWidth(2);
-    line1->Draw();
-    line->Draw();
+    //TH2D *hist2D = (TH2D*)gPad->GetPrimitive("hist2D");
+    //TLine *line = new TLine(hist2D->GetXaxis()->GetXmin(), 1.5, hist2D->GetXaxis()->GetXmax(), 1.5);
+    //line->SetLineColor(kRed);
+    //line->SetLineWidth(2);
+    //TLine *line1 = new TLine(hist2D->GetXaxis()->GetXmin(), 2, hist2D->GetXaxis()->GetXmax(), 2);
+    //line1->SetLineColor(kRed);
+    //line1->SetLineWidth(2);
+    //line1->Draw();
+    //line->Draw();
 
     // Keep the canvas on the screen
-    //canvas3D->Draw();
+    canvas3D->Draw();
 }
 
 

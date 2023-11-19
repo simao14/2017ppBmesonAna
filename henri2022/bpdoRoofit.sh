@@ -1,6 +1,6 @@
-DOANALYSISPbPb_FULL_BP=0
+DOANALYSISPbPb_FULL_BP=1
 
-DOANALYSISPbPb_BINNED_PT_BP=1
+DOANALYSISPbPb_BINNED_PT_BP=0
 DOANALYSISPbPb_BINNED_Y_BP=0
 DOANALYSISPbPb_BINNED_MULTI_BP=0
 
@@ -12,17 +12,16 @@ DOANALYSISPbPb_MATCHING_Bs_BINS_BP_pt=0
 DOANALYSISPbPb_MATCHING_Bs_BINS_BP_pt_TRK=0
 DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y=0
 DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y_TRK=0
-
 DOANALYSISPbPb_MATCHING_Bs_BINS_BP_MULTI=0
 DOANALYSISPbPb_MATCHING_Bs_BINS_BP_MULTI_TRK=0
 
 #Data and MC Samples
 #MC_BP="/data3/tasheng/presel/BPMC_nom.root"
 #Data_BP="/data3/tasheng/presel/BPData_nom.root"
-#MC_BP="/data3/smcosta/data/BPMC_nom_BDT.root"
-#Data_BP="/data3/smcosta/data/BPData_nom_BDT.root"
-MC_BP="/data3/smcosta/data/BPMC_nom_NN.root"
-Data_BP="/data3/smcosta/data/BPData_nom_NN.root"
+MC_BP="/data3/smcosta/data/BPMC_nom_BDT.root"
+Data_BP="/data3/smcosta/data/BPData_nom_BDT.root"
+#MC_BP="/data3/smcosta/data/BPMC_nom_NN.root"
+#Data_BP="/data3/smcosta/data/BPData_nom_NN.root"
 
 INPUTJPSI="/data3/tasheng/presel/jpsinp_nom.root"
 #INPUTJPSI="/data3/smcosta/data/jpsinp_nom.root"
@@ -56,7 +55,7 @@ OutputFile_BP_MatchingBINS_Mult_trk="ROOTfiles/yields_BP_binned_Mult_trk_BsBPBIN
 
 
 if [ $DOANALYSISPbPb_FULL_BP -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','1','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BP_FULL\"','\"results/BP\"','\"$INPUTJPSI\"')'
+root -b  -q 'roofitB.C('\"ntKp\"','1','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$CUTPbPb\"','\"$OutputFile_BP_FULL\"','\"results/BP/inclusive\"','\"$INPUTJPSI\"')'
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
@@ -68,7 +67,7 @@ rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_BINNED_PT_BP_TRK -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$cut_trk_tight\"','\"$OutputFile_BP_BINNED_PT_trk\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$cut_trk_tight\"','\"$OutputFile_BP_BINNED_PT_trk\"','\"results/trkBP/Bpt\"','\"$INPUTJPSI\"')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
@@ -80,7 +79,7 @@ rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_BINNED_Y_BP_TRK  -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"By\"','\"$cut_trk_tight\"','\"$OutputFile_BP_BINNED_Y_trk\"','\"results/BP/By\"','\"$INPUTJPSI\"')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"By\"','\"$cut_trk_tight\"','\"$OutputFile_BP_BINNED_Y_trk\"','\"results/trkBP/By\"','\"$INPUTJPSI\"')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
@@ -92,13 +91,13 @@ rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_BINNED_MULTI_BP_TRK  -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"nMult\"','\"$cut_trk_tight\"','\"$OutputFile_BP_BINNED_Mult_trk\"','\"results/BP/nMult\"','\"$INPUTJPSI\"')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"nMult\"','\"$cut_trk_tight\"','\"$OutputFile_BP_BINNED_Mult_trk\"','\"results/trkBP/nMult\"','\"$INPUTJPSI\"')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_pt_TRK  -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_PT_trk\"','\"results/BP/Bpt\"','\"$INPUTJPSI\"','1')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"Bpt\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_PT_trk\"','\"results/trkBP/Bpt\"','\"$INPUTJPSI\"','1')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
@@ -110,7 +109,7 @@ rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_y_TRK  -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"By\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_y_trk\"','\"results/BP_Bs/By\"','\"$INPUTJPSI\"','1')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"By\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_y_trk\"','\"results/trkBP_Bs/By\"','\"$INPUTJPSI\"','1')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
@@ -122,7 +121,7 @@ rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi
 
 if [ $DOANALYSISPbPb_MATCHING_Bs_BINS_BP_MULTI_TRK  -eq 1  ]; then
-root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"nMult\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_Mult_trk\"','\"results/BP_Bs/nMult\"','\"$INPUTJPSI\"','1')' 
+root -b  -q 'roofitB.C('\"ntKp\"','0','\"$Data_BP\"','\"$MC_BP\"','\"nMult\"','\"$cut_trk_tight\"','\"$OutputFile_BP_MatchingBINS_Mult_trk\"','\"results/trkBP_Bs/nMult\"','\"$INPUTJPSI\"','1')' 
 
 rm roofitB_C.d roofitB_C_ACLiC_dict_rdict.pcm roofitB_C.so
 fi

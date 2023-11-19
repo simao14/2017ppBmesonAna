@@ -1,5 +1,6 @@
 #include "TH1.h"
 #include "TH2.h"
+#include "TF1.h"
 #include "TMath.h"
 #include "TSystem.h"
 #include <fstream>
@@ -41,6 +42,12 @@ divideTGraphsInFiles(Bs_FILE_y, BP_FILE_y, "|y|") ;
 // y Fragmentation Fraction
 // fs/fu 
 
+
+
+TString BP_FILE_mult = "./ROOTFiles/BP_Xsection_Mult_BsBPBINS.root";
+TString Bs_FILE_mult = "./ROOTFiles/Bs_Xsection_Mult.root";
+divideTGraphsInFiles(Bs_FILE_mult, BP_FILE_mult, "N_{trk}") ;
+
 }
 
 
@@ -52,15 +59,22 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     TString Name1= "";
     TString Name2= "";
     int NumberBin =0 ;
+    int NumberBin2 =0 ;
 
     if (whichvar == "p_{T}"){
         Name2= "BP_Xsection_pt";
         Name1= "Bs_Xsection_pt";
         NumberBin = nptBins;
-    } else {
+        NumberBin2 = 12;
+    } else if (whichvar == "|y|") {
         Name2= "BP_Xsection_y";
         Name1= "Bs_Xsection_y";
         NumberBin = nyBins_both;
+        NumberBin2 = 7;
+    } else {
+        Name2= "BP_Xsection_Mult";
+        Name1= "Bs_Xsection_Mult";
+        NumberBin = nmBins_both;
     }
 
     TFile* file1 = TFile::Open(inputFile1, "READ");
@@ -72,6 +86,21 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	TMultiGraph *mg2= (TMultiGraph*) file2->Get(Name2);
     TGraphAsymmErrors* Y_stat_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_stat"));
     TGraphAsymmErrors* Y_syst_B2 = dynamic_cast<TGraphAsymmErrors*>(mg2->GetListOfGraphs()->FindObject("Y_syst"));
+
+    TFile* filecomp = TFile::Open("./CompFiles/HEPData-ins2610522-v3-root.root", "READ");
+    TDirectory* dir;
+    
+    if (whichvar == "p_{T}"){
+       dir = filecomp->GetDirectory("Figure 2a");
+    } else {
+       dir = filecomp->GetDirectory("Figure 2b");
+    }
+    
+
+    TGraphAsymmErrors* Y_comp = dynamic_cast<TGraphAsymmErrors*> (dir->Get("Graph1D_y1"));
+
+    Double_t Bfracscale = (1.04e-3) * (0.491) / (1.02e-3);
+    
 
     double X_POS[NumberBin+1] ;
     double Frag_f[NumberBin+1];
@@ -90,12 +119,32 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         Y2_syst = Y_syst_B2->GetErrorYhigh(i);   // Yield Systematic Unc. of DENOMINATOR Bmeson
 
         X_POS[i] = (B_X1+B_X2)/2;     //mean of both X1 x2
-        Frag_f[i] = B_Y1 / B_Y2;
+        Frag_f[i] = B_Y1 / B_Y2 ;
         Frag_f_Stat_U[i] = fabs(Frag_f[i]) * sqrt(pow(Y1_stat / B_Y1, 2) + pow(Y2_stat / B_Y2, 2));  //Propagate STAT. UNC.
         Frag_f_Syst_U[i] = fabs(Frag_f[i]) * sqrt(pow(Y1_syst / B_Y1, 2) + pow(Y2_syst / B_Y2, 2));  //Propagate SYST. UNC.
 
         cout << i << "-th BIN FRAGratio: " <<  Frag_f[i] << " +/- " << Frag_f_Stat_U[i] << " +/- " << Frag_f_Syst_U[i] << endl;
         cout << "Bin Xposition " << B_X1 <<"   " << B_X2 << "  --->  "<< X_POS[i] << endl;
+    }
+
+    
+
+    double X_POS_comp[NumberBin2] ;
+    double X_err_comp[NumberBin2] ;
+    double Frag_comp[NumberBin2];
+    double Frag_f_Stat_comp[NumberBin2];
+
+   
+    Double_t B_Xcomp, B_Ycomp, Ycomp_stat ;
+    for (int i = 0; i < NumberBin2; ++i) {
+
+        Y_comp->GetPoint(i, B_Xcomp, B_Ycomp);      
+        Frag_f_Stat_comp[i] = Y_comp->GetErrorYhigh(i);   
+        X_err_comp[i] = Y_comp->GetErrorX(i);   
+       
+
+        X_POS_comp[i] = B_Xcomp;
+        Frag_comp[i] = B_Ycomp/Bfracscale;
     }
 
 	//center of the bin and its left and right margins
@@ -108,7 +157,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	for(int i = 0; i < NumberBin + 1; i++){
 		if (whichvar=="p_{T}"){ ptBins[i] = ptbinsvec[i];}
 		else if (whichvar=="|y|"){ ptBins[i] =  ybinsvec[i];}          
-		else if (whichvar=="BMult"){ ptBins[i] =  nmbinsvec[i];}
+		else if (whichvar=="N_{trk}"){ ptBins[i] =  nmbinsvec[i];}
 	}
 	for( int c=0; c < NumberBin+1; c++){
 		X_BinLeft[c] = X_POS[c] - ptBins[c];
@@ -127,6 +176,7 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
     double X_POS_yall[binhigh+1] ;
     double X_BinLeft_yall[binhigh+1] ;
     double X_BinRight_yall[binhigh+1] ;
+
 
     double Frag_f_ycut[binlow+1] ;
     double Frag_f_Stat_U_ycut[binlow+1] ;
@@ -172,6 +222,11 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         units = "[GeV/c]" ;
         HisEmpty = new TH2D("HisEmpty","",100,7,50,100,0,0.5); 
     }
+
+    if( whichvar == "N_{trk}"){ 
+        HisEmpty = new TH2D("HisEmpty","",100,0,100,100,0,0.5); 
+    }
+
 	HisEmpty->GetXaxis()->SetTitle(Form("%s %s",whichvar.Data(), units.Data()));
 	HisEmpty->GetYaxis()->SetTitle("f_{s}/f_{u}");
 	HisEmpty->GetXaxis()->CenterTitle();
@@ -180,6 +235,8 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
 
     // Create a new TGraphAsymmErrors for the result of the division
+    TGraphAsymmErrors *FragRatio_Graph_comp = new TGraphAsymmErrors(NumberBin2, X_POS_comp, Frag_comp, X_err_comp, X_err_comp, Frag_f_Stat_comp, Frag_f_Stat_comp);
+    TGraphAsymmErrors *FragRatio_Graph_fit      = new TGraphAsymmErrors(NumberBin, X_POS, Frag_f, X_BinLeft, X_BinRight, Frag_f_Stat_U, Frag_f_Stat_U);
 	TGraphAsymmErrors *FragRatio_Graph_low_marker= new TGraphAsymmErrors(binlow, X_POS_ycut, Frag_f_ycut ,nullptr, nullptr, nullptr, nullptr);
 	TGraphAsymmErrors *FragRatio_Graph_Stat_low  = new TGraphAsymmErrors(binlow, X_POS_ycut, Frag_f_ycut , X_BinLeft_ycut , X_BinRight_ycut , Frag_f_Stat_U_ycut , Frag_f_Stat_U_ycut);
 	TGraphAsymmErrors *FragRatio_Graph_Syst_low  = new TGraphAsymmErrors(binlow, X_POS_ycut, Frag_f_ycut , X_BinLeft_ycut , X_BinRight_ycut , Frag_f_Syst_U_ycut , Frag_f_Syst_U_ycut);                 											
@@ -188,6 +245,8 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 
 	FragRatio_Graph_Stat->SetMarkerStyle(20);
 	FragRatio_Graph_Stat->SetMarkerSize(1);
+    FragRatio_Graph_comp->SetMarkerStyle(21);
+	FragRatio_Graph_comp->SetMarkerSize(1);
 	FragRatio_Graph_low_marker ->SetMarkerStyle(20);
 	FragRatio_Graph_low_marker ->SetMarkerSize(0.9);
 	FragRatio_Graph_low_marker ->SetMarkerColor(kWhite);
@@ -200,15 +259,21 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
 	FragRatio_Graph_Syst_low ->SetLineColor(kCyan-7);
 	FragRatio_Graph_Stat ->SetMarkerColor(kCyan+2);
 	FragRatio_Graph_Stat ->SetLineColor(kCyan+2);
+    FragRatio_Graph_comp ->SetMarkerColor(kRed-4);
+	FragRatio_Graph_comp ->SetLineColor(kRed-4);
 	FragRatio_Graph_Syst ->SetFillColorAlpha(kCyan-7,0.5);
 	FragRatio_Graph_Syst ->SetLineColor(kCyan-7);
 
 	HisEmpty->Draw();
-	FragRatio_Graph_Syst_low->Draw("5same");
-	FragRatio_Graph_Syst->Draw("5same");
-	FragRatio_Graph_Stat->Draw("epSAME");
-	FragRatio_Graph_Stat_low->Draw("epSAME");
-	FragRatio_Graph_low_marker->Draw("epSAME");
+    auto fit = new TF1("fit","[0]+[1]*x",ptBins[0],ptBins[NumberBin]);
+    //fit->SetParamaters(0.0,0.2);
+    FragRatio_Graph_fit->Fit("fit");
+    FragRatio_Graph_fit->Draw("epSAME");
+	//FragRatio_Graph_Syst_low->Draw("5same");
+	//FragRatio_Graph_Syst->Draw("5same");
+	//FragRatio_Graph_Stat->Draw("epSAME");
+	//FragRatio_Graph_Stat_low->Draw("epSAME");
+	//FragRatio_Graph_low_marker->Draw("epSAME");
 
     //LABELS
 	TLatex *lat = new TLatex();
@@ -230,18 +295,51 @@ void divideTGraphsInFiles(TString inputFile1, TString inputFile2, TString whichv
         leged->AddEntry(FragRatio_Graph_Stat,"7<p_{T}<50 GeV/c","P");
 
 	} 
+    
     leged->SetTextSize(0.022);
 	leged->Draw("same");
     //LABELS
 
     gSystem->mkdir("./Plots/Fragmentation",true); 
 	if( whichvar == "p_{T}"){ canvas->SaveAs(Form("./Plots/Fragmentation/fs_fu_pT.pdf"));}
+    else if( whichvar == "N_{trk}"){ canvas->SaveAs(Form("./Plots/Fragmentation/fs_fu_mult.pdf"));}
     else { canvas->SaveAs(Form("./Plots/Fragmentation/fs_fu_%s.pdf", whichvar.Data() ));}
 
 
+    TCanvas * canvascomp = new TCanvas("c","c",600,600);
+	canvascomp->cd(); 
+	canvascomp->SetLeftMargin(0.15);
 
+    HisEmpty->Draw();
 
+    FragRatio_Graph_Syst_low->Draw("5same");
+	FragRatio_Graph_Syst->Draw("5same");
+	FragRatio_Graph_Stat->Draw("epSAME");
+	FragRatio_Graph_Stat_low->Draw("epSAME");
+	FragRatio_Graph_low_marker->Draw("epSAME");
+    FragRatio_Graph_comp->Draw("epSAME");
+    
 
+    TLegend* legedcomp = new TLegend(0.65,0.74,0.9,0.85,NULL,"brNDC");
+	legedcomp->SetBorderSize(0);
+	legedcomp->SetFillStyle(0);
+	if (whichvar=="p_{T}"){
+		legedcomp->AddEntry(FragRatio_Graph_Stat,"2017 pp (|y|<2.4)","P");
+		legedcomp->AddEntry(FragRatio_Graph_Stat_low,"2017 pp (|y|>1.5)","P");
+	} 
+	if (whichvar=="|y|"){
+		legedcomp->AddEntry(FragRatio_Graph_Stat_low,"2017 pp (p_{T} > 10)","P");
+        legedcomp->AddEntry(FragRatio_Graph_Stat,"2017 pp (7<p_{T}<50)","P");
+
+	} 
+    legedcomp->AddEntry(FragRatio_Graph_comp,"2018 pp","P");
+    legedcomp->SetTextSize(0.022);
+	legedcomp->Draw("same");
+    legedcomp->Draw("same");
+    if( whichvar == "p_{T}"){ canvascomp->SaveAs(Form("./Plots/Fragmentation/fs_fu_pT_comp.pdf"));}
+    else if( whichvar == "N_{trk}"){ canvascomp->SaveAs(Form("./Plots/Fragmentation/fs_fu_mult_comp.pdf"));}
+    else { canvascomp->SaveAs(Form("./Plots/Fragmentation/fs_fu_%s_comp.pdf", whichvar.Data() ));}
+    
     // Fragmentation Fraction Double Ratios
     if(DRatios==1){
 

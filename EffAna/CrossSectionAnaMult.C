@@ -182,10 +182,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	
 	if (usemc==0){
-			FileName =Form("/data3/tasheng/presel/%sData_nom.root",var_n2.Data());
+			FileName =Form("/data3/smcosta/data/%sData_nom_BDT.root",var_n2.Data());
 	}
 	else {
-			FileName = Form("/data3/tasheng/presel/%sMC_nom.root",var_n2.Data());
+			FileName = Form("/data3/smcosta/data/%sMC_nom_BDT.root",var_n2.Data());
 	}
 	fin = new TFile(FileName.Data());
 
@@ -197,15 +197,15 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	int NEvents = EffInfoTree->GetEntries();
 	
 	
-	Float_t BmassNew[NCand];
-	Float_t BptNew[NCand];
-	Float_t ByNew[NCand];
+	Double_t BmassNew[NCand];
+	Double_t BptNew[NCand];
+	Double_t ByNew[NCand];
 	Float_t BEff[NCand];
 	Float_t BEffErr[NCand];
 	
 
-	Int_t nMult;
-	Int_t trackSelection;
+	Long64_t nMult;
+	Long64_t trackSelection;
 
 	Float_t BEffInv[NCand];
 	Float_t BEffInvErr[NCand];
@@ -219,7 +219,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	Float_t BEffInvErrBDTWeighted[NCand];
 
 
-
+	
 	Float_t BEffInvUp[NCand];
 	Float_t BEffInvErrUp[NCand];
 	Float_t BEffInvDown[NCand];
@@ -233,7 +233,6 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	EffInfoTree->SetBranchAddress("track", &trackSelection);
 
 	
-
 	Float_t var;
 	TString var_M;
 	TString var_file;
@@ -256,7 +255,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		NBins=nptBins;}
 
 	double ptBins[NBins + 1];
-
+	double Ntrk[NBins];
 	int Counts[NBins];
 	int CountsTight[NBins];
 	int CountsLoose[NBins];
@@ -309,6 +308,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	}
 
 	for(int i = 0; i < NBins; i++){
+		Ntrk[i] = 0;
 		Counts[i] = 0;
 		CountsTight[i] = 0;
 		CountsLoose[i] = 0;
@@ -447,13 +447,13 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 			if( (var > ptBins[k] && var < ptBins[k+1]) && (TMath::Abs(BmassNew[j] - BMass) < 0.08) && TMath::Abs(ByNew[j]) < 2.4 && BptNew[j] > ptlow && BptNew[j]<pthigh  && (( BptNew[j] < 10 && abs(ByNew[j]) > ymax)||(BptNew[j] > 10)) )
 			{
-	
-				XBin = invEff2D->GetXaxis()->FindBin( BptNew[j]);
-				YBin = invEff2D->GetYaxis()->FindBin( TMath::Abs(ByNew[j]));
+				
+				XBin = invEff2D->GetXaxis()->FindBin(BptNew[j]);
+				YBin = invEff2D->GetYaxis()->FindBin(TMath::Abs(ByNew[j]));
 				
 				BEffInv[j] = invEff2D->GetBinContent(XBin,YBin);
 				BEffInvErr[j] = invEff2D->GetBinError(XBin,YBin);
-
+				
 				BEff[j] = 1.0/invEff2D->GetBinContent(XBin,YBin);
 				BEffErr[j] = BEffInvErr[j]/(BEffInv[j] * BEffInv[j]);
 
@@ -468,7 +468,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 				if (trackSelection > 1 && EffInvTrkTight > 0) {
 					SumCountsTight[k] += EffInvTrkTight;
 					CountsTight[k]++;
-				}
+				} 
 
 				if(trackSelection>0 && BEffInv[j] > 0){
 					SumCounts[k] = SumCounts[k] + BEffInv[j];
@@ -486,6 +486,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 					SumCountsErrDown[k] = SumCountsErrUp[k] + BEffInvErrDown[j] * BEffInvErrDown[j];
 
 					Counts[k] = Counts[k] + 1;
+					Ntrk[k] += nMult;
+					
+					
 				}
 			}
 		}
@@ -493,7 +496,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 
 	TH1D * hInvEff = new TH1D("hInvEff","",NBins,ptBins);
-	hInvEff->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_file.Data()));
+	hInvEff->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_M.Data()));
 	hInvEff->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon >");
 	hInvEff->GetYaxis()->SetTitleOffset(1.4);
 	hInvEff->GetXaxis()->CenterTitle();
@@ -505,7 +508,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 
 	TH1D * hInvEffSyst = new TH1D("hInvEffSyst","",NBins,ptBins);
-	hInvEffSyst->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_file.Data()));
+	hInvEffSyst->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_M.Data()));
 	hInvEffSyst->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon > - BDT Data-MC Weighted");
 	hInvEffSyst->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffSyst->GetXaxis()->CenterTitle();
@@ -516,7 +519,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	//hInvEffSyst->SetMinimum(0);
 
 	TH1D * hEff = new TH1D("hEff","",NBins,ptBins);
-	hEff->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_file.Data()));
+	hEff->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_M.Data()));
 	hEff->GetYaxis()->SetTitle("< #alpha #times #epsilon >");
 	hEff->GetYaxis()->SetTitleOffset(1.4);
 	hEff->GetXaxis()->CenterTitle();
@@ -528,7 +531,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	//hEff->SetMinimum(0);
 
 	TH1D * hEffInv = new TH1D("hEffInv","",NBins,ptBins);
-	hEffInv->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_file.Data()));
+	hEffInv->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_M.Data()));
 	hEffInv->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon >^{-1}");
 	hEffInv->GetYaxis()->SetTitleOffset(1.4);
 	hEffInv->GetXaxis()->CenterTitle();
@@ -541,7 +544,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 
 	TH1D * hInvEffUp = new TH1D("hInvEffUp","",NBins,ptBins);
-	hInvEffUp->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_file.Data()));
+	hInvEffUp->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_M.Data()));
 	hInvEffUp->GetYaxis()->SetTitle("<1./ #alpha #times #epsilon >");
 	hInvEffUp->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffUp->GetXaxis()->CenterTitle();
@@ -554,7 +557,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 
 	TH1D * hInvEffDown = new TH1D("hInvEffDown","",NBins,ptBins);
-	hInvEffDown->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_file.Data()));
+	hInvEffDown->GetXaxis()->SetTitle(Form("%s %s [GeV/c]",var_N.Data(),var_M.Data()));
 	hInvEffDown->GetYaxis()->SetTitle("<1/ #alpha #times #epsilon >");
 	hInvEffDown->GetYaxis()->SetTitleOffset(1.4);
 	hInvEffDown->GetXaxis()->CenterTitle();
@@ -570,9 +573,31 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
  	TH1D *hInvEffLoose = (TH1D*) hInvEff->Clone("hInvEffLoose");
 	hInvEffLoose->GetYaxis()->SetTitle("<1/(Eff * Acc)> - Loose track selection");
 
+
+	TH1D * hNtrk = new TH1D("hNtrk","",NBins,ptBins);
+	hNtrk->GetXaxis()->SetTitle(Form("%s %s",var_N.Data(),var_M.Data()));
+	hNtrk->GetYaxis()->SetTitle("N_{trk} count >");
+	hNtrk->GetYaxis()->SetTitleOffset(1.4);
+	hNtrk->GetXaxis()->CenterTitle();
+	hNtrk->GetYaxis()->CenterTitle();
+	hNtrk->SetMarkerColor(1);
+	hNtrk->SetLineColor(1);
+	hNtrk->SetMarkerStyle(20);
+
+	TH1D * hcounts = new TH1D("hcounts","",NBins,ptBins);
+	hcounts->GetXaxis()->SetTitle(Form("%s %s",var_N.Data(),var_M.Data()));
+	hcounts->GetYaxis()->SetTitle("event count >");
+	hcounts->GetYaxis()->SetTitleOffset(1.4);
+	hcounts->GetXaxis()->CenterTitle();
+	hcounts->GetYaxis()->CenterTitle();
+	hcounts->SetMarkerColor(1);
+	hcounts->SetLineColor(1);
+	hcounts->SetMarkerStyle(20);
+
 	for(int i = 0; i < NBins; i++){
 
 		NewEff[i] = SumCounts[i]/Counts[i];
+	
 		NewEffErr[i] = TMath::Sqrt(SumCountsErr[i])/Counts[i];
 		NewEffUp[i] = SumCountsUp[i]/Counts[i];
 		NewEffErrUp[i] = TMath::Sqrt(SumCountsErrUp[i])/Counts[i];
@@ -583,6 +608,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 		NewEffTight[i] = SumCountsTight[i]/CountsTight[i];
 		NewEffLoose[i] = SumCountsLoose[i]/CountsLoose[i];
+
 
 		hInvEffTight->SetBinContent(i+1, NewEffTight[i]);
 		hInvEffTight->SetBinError(i+1, epsilon);
@@ -610,6 +636,9 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 		hInvEffDown->SetBinContent(i+1,NewEffDown[i]);
 		hInvEffDown->SetBinError(i+1,NewEffErrDown[i]);
+
+		hNtrk->SetBinContent(i+1,Ntrk[i]);
+		hcounts->SetBinContent(i+1,Counts[i]);
 
 		//	cout << "Real eff = " << SumCountsReal[i]/Counts[i] << endl;
 		//cout << "Counts = " << Counts[i] << endl;
@@ -663,6 +692,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 
 	}
 
+	
 	TH1D * CorrDiffHis = new TH1D("hPtSigma","",NBins,ptBins);
 	CorrDiffHis->GetXaxis()->SetTitle(Form("%s [GeV/c]",var_file.Data()));
 	CorrDiffHis->GetYaxis()->SetTitle(Form("d #sigma/d %s (pb GeV^{-1} c)",var_M.Data()));
@@ -1060,7 +1090,7 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 		eff_err1d.push_back(Eff1DErr[i]);
 		eff_err2d.push_back(NewEffRealErr[i]);
 		eff_err2dinv.push_back(NewEffErr[i]/(NewEff[i]*NewEff[i]));
-
+		
 		eff_inv_val1d.push_back(1/Eff1D[i]);
 		eff_inv_val2d.push_back(1/NewEffReal[i]);
 		eff_inv_val2dinv.push_back(NewEff[i]);
@@ -1117,9 +1147,10 @@ void CrossSectionAnaMult(int DoTnP,int whichvar,int meson_n, int BsBP=0, int use
 	rename(("xsectionvalues_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),(std::string (var_n.Data())+"/EffFinal/xsectionvalues_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
 
-	cout<<Form("%s/FinalFiles/%sPPCorrYield%s%s.root",var_n.Data(),var_n2.Data(),var_file.Data(),bsbpbins.Data())<<endl;
 	foutCorr->cd();
 	CorrDiffHis->Write();
+	hNtrk->Write();
+	hcounts->Write();
 	CorrDiffHisBin->Write();
 	CorrDiffHisBin_tight->Write();
 	CorrDiffHisReal->Write();

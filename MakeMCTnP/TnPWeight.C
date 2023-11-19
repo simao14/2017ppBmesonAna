@@ -32,8 +32,8 @@ void TnPWeight(int Opt){
 	//	infile = "../UnskimmedSamples/OfficialMC/BPMC.root";
 		// infile = "../../bmva/TMVA/BP/sample/BPMC_5_60.root";
 		// infile = "../../dat/BP_MC_all.root";
-		infile = "/data3/tasheng/presel/output/BP_MC_BDTs_nom_tnp.root";
-		TreeName = "Bfinder/ntKp";
+		infile = "/data3/smcosta/data/BPMC_nom_BDT.root";
+		TreeName = "ntKp";
 		outfile = "BPTnPInfo.root";
 
 	}
@@ -42,18 +42,18 @@ void TnPWeight(int Opt){
 		// infile = "../UnskimmedSamples/OfficialMC/BsMC.root";
 		// infile = "../../bmva/TMVA/Bs/sample/BsMC_7_50.root";
 		// infile = "../../dat/Bs_MC_all.root";
-		infile = "/data3/tasheng/presel/output/Bs_MC_BDTs_nom_tnp.root";
-		TreeName = "Bfinder/ntphi";
+		infile = "/data3/smcosta/data/BsMC_nom_BDT.root";
+		TreeName = "ntphi";
 		//	outfile = "BsTnPInfo.root";
 		outfile = "BsTnPInfo.root";
 	}
 
-	float Bmu1pt[NCand];
-	float Bmu2pt[NCand];
-	float Bmu1eta[NCand];
-	float Bmu2eta[NCand];
-	int Bsize;
-	int BsizeNew;
+	Double_t Bmu1pt;
+	Double_t Bmu2pt;
+	Double_t Bmu1eta;
+	Double_t Bmu2eta;
+	Long64_t Bsize;
+	Int_t BsizeNew;
 
 	TFile * fin = new TFile(infile.Data());
 	fin->cd();
@@ -64,26 +64,26 @@ void TnPWeight(int Opt){
 	TTree * t = (TTree * ) fin->Get(TreeName.Data());
 
 
-	t->SetBranchAddress("Bmu1pt",Bmu1pt);
-	t->SetBranchAddress("Bmu2pt",Bmu2pt);
-	t->SetBranchAddress("Bmu1eta",Bmu1eta);
-	t->SetBranchAddress("Bmu2eta",Bmu2eta);
+	t->SetBranchAddress("Bmu1pt",&Bmu1pt);
+	t->SetBranchAddress("Bmu2pt",&Bmu2pt);
+	t->SetBranchAddress("Bmu1eta",&Bmu1eta);
+	t->SetBranchAddress("Bmu2eta",&Bmu2eta);
 	t->SetBranchAddress("Bsize",&Bsize);
 
 
-	int BsizeTnP;
-	float TnPMu1Nominal[NCand];
-	float TnPMu1StatError[NCand];
-	float TnPMu1SystError[NCand];
-	float TnPMu1Error[NCand];
-	float TnPMu2Nominal[NCand];
-	float TnPMu2StatError[NCand];
-	float TnPMu2SystError[NCand];
-	float TnPMu2Error[NCand];
-	float TnPNominal[NCand];
-	float TnPStatError[NCand];
-	float TnPSystError[NCand];
-	float TnPError[NCand];
+	Int_t BsizeTnP;
+	Float_t TnPMu1Nominal;
+	Float_t TnPMu1StatError;
+	Float_t TnPMu1SystError;
+	Float_t TnPMu1Error;
+	Float_t TnPMu2Nominal;
+	Float_t TnPMu2StatError;
+	Float_t TnPMu2SystError;
+	Float_t TnPMu2Error;
+	Float_t TnPNominal;
+	Float_t TnPStatError;
+	Float_t TnPSystError;
+	Float_t TnPError;
 
 
 	TFile * fout = new TFile(outfile.Data(),"RECREATE");
@@ -93,18 +93,18 @@ void TnPWeight(int Opt){
 	//TnPInfo->Branch("BsizeTnP",BsizeTnP,"BsizeTnP/F");
 
 	TnPInfo->Branch("BsizeNew",&BsizeNew,"BsizeNew/I");
-	TnPInfo->Branch("TnPMu1Nominal",TnPMu1Nominal,"TnPMu1Nominal[BsizeNew]/F");
-	TnPInfo->Branch("TnPMu1StatError",TnPMu1StatError,"TnPMu1StatError[BsizeNew]/F");
-	TnPInfo->Branch("TnPMu1SystError",TnPMu1SystError,"TnPMu1SystError[BsizeNew]/F");
-	TnPInfo->Branch("TnPMu1Error",TnPMu1Error,"TnPMu1Error[BsizeNew]/F");
-	TnPInfo->Branch("TnPMu2Nominal",TnPMu2Nominal,"TnPMu2Nominal[BsizeNew]/F");
-	TnPInfo->Branch("TnPMu2StatError",TnPMu2StatError,"TnPMu2StatError[BsizeNew]/F");
-	TnPInfo->Branch("TnPMu2SystError",TnPMu2SystError,"TnPMu2SystError[BsizeNew]/F");
-	TnPInfo->Branch("TnPMu2Error",TnPMu2Error,"TnPMu2Error[BsizeNew]/F");
-	TnPInfo->Branch("TnPNominal",TnPNominal,"TnPNominal[BsizeNew]/F");
-	TnPInfo->Branch("TnPStatError",TnPStatError,"TnPStatError[BsizeNew]/F");
-	TnPInfo->Branch("TnPSystError",TnPSystError,"TnPSystError[BsizeNew]/F");
-	TnPInfo->Branch("TnPError",TnPError,"TnPError[BsizeNew]/F");
+	TnPInfo->Branch("TnPMu1Nominal",&TnPMu1Nominal,"TnPMu1Nominal/F");
+	TnPInfo->Branch("TnPMu1StatError",&TnPMu1StatError,"TnPMu1StatError/F");
+	TnPInfo->Branch("TnPMu1SystError",&TnPMu1SystError,"TnPMu1SystError/F");
+	TnPInfo->Branch("TnPMu1Error",&TnPMu1Error,"TnPMu1Error/F");
+	TnPInfo->Branch("TnPMu2Nominal",&TnPMu2Nominal,"TnPMu2Nominal/F");
+	TnPInfo->Branch("TnPMu2StatError",&TnPMu2StatError,"TnPMu2StatError/F");
+	TnPInfo->Branch("TnPMu2SystError",&TnPMu2SystError,"TnPMu2SystError/F");
+	TnPInfo->Branch("TnPMu2Error",&TnPMu2Error,"TnPMu2Error/F");
+	TnPInfo->Branch("TnPNominal",&TnPNominal,"TnPNominal/F");
+	TnPInfo->Branch("TnPStatError",&TnPStatError,"TnPStatError/F");
+	TnPInfo->Branch("TnPSystError",&TnPSystError,"TnPSystError/F");
+	TnPInfo->Branch("TnPError",&TnPError,"TnPError/F");
 
 	int NEvent = t->GetEntries();
 
@@ -120,33 +120,30 @@ void TnPWeight(int Opt){
 //		cout  << "i = " << i << "  Bmu1pt =" << Bmu1pt << "  Bmu1eta = " << Bmu1eta << endl;
 		BsizeNew = Bsize;
 
-		for(int j = 0; j < Bsize; j++){
-
-		auto TnPSF1 = tnp_weight_HybridSoftIDTrigger_TightAcceptance_pp(Bmu1pt[j],Bmu1eta[j]);
-		auto TnPSF2 = tnp_weight_HybridSoftIDTrigger_TightAcceptance_pp(Bmu2pt[j],Bmu2eta[j]);
+		auto TnPSF1 = tnp_weight_HybridSoftIDTrigger_TightAcceptance_pp(Bmu1pt,Bmu1eta);
+		auto TnPSF2 = tnp_weight_HybridSoftIDTrigger_TightAcceptance_pp(Bmu2pt,Bmu2eta);
 		
 		//cout << "Bmu1pt[j] = " << Bmu1pt[j] << " Bmu1eta[j] =  " << Bmu1eta[j] << endl;
 		//cout << "Bmu2pt[j] = " << Bmu2pt[j] << " Bmu2eta[j] =  " << Bmu2eta[j] << endl;
 
-		TnPMu1Nominal[j] =  std::get<0>(TnPSF1);
-		TnPMu1StatError[j] = std::get<1>(TnPSF1);
-		TnPMu1SystError[j] = std::get<2>(TnPSF1);
-		TnPMu1Error[j] = std::get<3>(TnPSF1);
+		TnPMu1Nominal =  std::get<0>(TnPSF1);
+		TnPMu1StatError = std::get<1>(TnPSF1);
+		TnPMu1SystError = std::get<2>(TnPSF1);
+		TnPMu1Error = std::get<3>(TnPSF1);
 
 
-		TnPMu2Nominal[j] =  std::get<0>(TnPSF2);
-		TnPMu2StatError[j] = std::get<1>(TnPSF2);
-		TnPMu2SystError[j] = std::get<2>(TnPSF2);
-		TnPMu2Error[j] = std::get<3>(TnPSF2);
+		TnPMu2Nominal =  std::get<0>(TnPSF2);
+		TnPMu2StatError = std::get<1>(TnPSF2);
+		TnPMu2SystError = std::get<2>(TnPSF2);
+		TnPMu2Error = std::get<3>(TnPSF2);
 
 //		cout << "TnPNominal = " << TnPNominal << "   TnPMu1Nominal = " << TnPMu1Nominal <<  "   TnPMu2Nominal = " << TnPMu2Nominal  << endl;
 
-		TnPNominal[j] =  TnPMu1Nominal[j] * TnPMu2Nominal[j];
-		TnPStatError[j] = TnPNominal[j] * TMath::Sqrt(TnPMu1StatError[j]/TnPMu1Nominal[j] * TnPMu1StatError[j]/TnPMu1Nominal[j] + TnPMu2StatError[j]/TnPMu2Nominal[j] * TnPMu2StatError[j]/TnPMu2Nominal[j]);
-		TnPSystError[j] = TnPNominal[j] * TMath::Sqrt(TnPMu1SystError[j]/TnPMu1Nominal[j] * TnPMu1SystError[j]/TnPMu1Nominal[j] + TnPMu2SystError[j]/TnPMu2Nominal[j] * TnPMu2SystError[j]/TnPMu2Nominal[j]);
-		TnPError[j] = TnPNominal[j] * TMath::Sqrt(TnPMu1Error[j]/TnPMu1Nominal[j] * TnPMu1Error[j]/TnPMu1Nominal[j] + TnPMu2Error[j]/TnPMu2Nominal[j] * TnPMu2Error[j]/TnPMu2Nominal[j]);
+		TnPNominal =  TnPMu1Nominal * TnPMu2Nominal;
+		TnPStatError = TnPNominal * TMath::Sqrt(TnPMu1StatError/TnPMu1Nominal * TnPMu1StatError/TnPMu1Nominal + TnPMu2StatError/TnPMu2Nominal * TnPMu2StatError/TnPMu2Nominal);
+		TnPSystError = TnPNominal * TMath::Sqrt(TnPMu1SystError/TnPMu1Nominal * TnPMu1SystError/TnPMu1Nominal + TnPMu2SystError/TnPMu2Nominal * TnPMu2SystError/TnPMu2Nominal);
+		TnPError = TnPNominal * TMath::Sqrt(TnPMu1Error/TnPMu1Nominal * TnPMu1Error/TnPMu1Nominal + TnPMu2Error/TnPMu2Nominal * TnPMu2Error/TnPMu2Nominal);
 
-		}
 
 
 		TnPInfo->Fill();	

@@ -167,24 +167,38 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	float XsecPP_X[NBins+1];
 	float XsecPP_X_BinRight[NBins+1] ;
 	float XsecPP_X_BinLeft[NBins+1] ;
+	float XsecPP_X_ratio[NBins+1];
+	float XsecPP_X_BinRight_ratio[NBins+1] ;
+	float XsecPP_X_BinLeft_ratio[NBins+1] ;
 	int lowend = 0  ;
 	for( int c=0; c < NBins; c++){
 		XsecPP_X[c]= std::stod(hPt->GetXaxis()->GetBinLabel(c+1));  
 		XsecPP_X_BinLeft[c] = XsecPP_X[c] - ptBins[c];
 		XsecPP_X_BinRight[c]= ptBins[c+1] - XsecPP_X[c];
+
+		XsecPP_X_ratio[c]= std::stod(hPt->GetXaxis()->GetBinLabel(c+1));  
+		XsecPP_X_BinLeft_ratio[c] = XsecPP_X_ratio[c] - ptBins[c];
+		XsecPP_X_BinRight_ratio[c]= ptBins[c+1] - XsecPP_X_ratio[c];
 		if (whichvar=="y" && abs(XsecPP_X[c])<1.5){lowend +=1;}
 		else if (whichvar=="pt" && XsecPP_X[c] < 10){lowend +=1;}
 	}
 
   	int NBinsHigh = NBins-lowend;
-
+	
 	//center of the bin and its left and right margins
 	// BINS
 
-  // cross section with 2D Map eff correction
+  	// cross section with 2D Map eff correction
 	float XsecPP_Y[NBins];
+	float XsecPP_Y_ratio[NBins];
+	float XsecPP_Y_mean = 0;
+	float XsecPP_Y_mean_err = 0;
+	float XsecPP_Y_0 = 0;
+	float XsecPP_Y_0_err = 0;
 	float XsecPP_Y_StatUp[NBins];
 	float XsecPP_Y_StatDown[NBins];
+	float XsecPP_Y_StatUp_ratio[NBins];
+	float XsecPP_Y_StatDown_ratio[NBins];
 	float BPXSecPPY2DErrUpRatio[NBins];
 	float BPXSecPPY2DErrDownRatio[NBins];
   
@@ -192,35 +206,88 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	float BPXSecPPY2DErrUpScaled[NBins];
 	float BPXSecPPY2DErrDownScaled[NBins];
 
-	TH1D * BCross2D = (TH1D *) FileB->Get("hPtSigma");
-	for(int i = 0; i < NBins; i++){
-		XsecPP_Y[i] = BCross2D->GetBinContent(i+1);
-		XsecPP_Y_StatUp[i] = BCross2D->GetBinError(i+1);
-		XsecPP_Y_StatDown[i] = BCross2D->GetBinError(i+1);
-		BPXSecPPY2DErrUpRatio[i] = XsecPP_Y_StatUp[i] / XsecPP_Y[i];
-		BPXSecPPY2DErrDownRatio[i] = XsecPP_Y_StatDown[i] / XsecPP_Y[i];
-		
-		BPXsecPPY2DScaled[i] = BCross2D->GetBinContent(i+1);
-		BPXSecPPY2DErrUpScaled[i] = BCross2D->GetBinError(i+1);
-		BPXSecPPY2DErrDownScaled[i] = BCross2D->GetBinError(i+1);
-	}
-	
-	// cross section with 2D Map eff correction
 	float BPXsecPPY1D[NBins];
 	float BPXSecPPY1DErrUp[NBins];
 	float BPXSecPPY1DErrDown[NBins];
 	float BPXSecPPY1DErrUpRatio[NBins];
 	float BPXSecPPY1DErrDownRatio[NBins];
 
+	float Ntrk[NBins];
+	float Ncounts[NBins];
+	float meanNtrk = 0;
+	float meanNcounts = 0;
+	float trkfactor = 0;
+
+	TH1D * BCross2D = (TH1D *) FileB->Get("hPtSigma");
 	TH1D * BCross1D = (TH1D *) FileB->Get("CorrDiffHisBin");
+	TH1D * BNtrk = (TH1D *) FileB->Get("hNtrk");
+	TH1D * hCounts = (TH1D *) FileB->Get("hcounts");
+	
 	for(int i = 0; i < NBins; i++){
+		XsecPP_Y_mean += BCross2D->GetBinContent(i+1);
+		XsecPP_Y_mean_err += BCross2D->GetBinError(i+1)*BCross2D->GetBinError(i+1);
+		meanNtrk += BNtrk->GetBinContent(i+1);
+		meanNcounts += hCounts->GetBinContent(i+1);
+		Ntrk[i] = BNtrk->GetBinContent(i+1)/hCounts->GetBinContent(i+1);
+	}
+	XsecPP_Y_mean = XsecPP_Y_mean/NBins;
+	XsecPP_Y_mean_err = sqrt(XsecPP_Y_mean_err)/NBins;
+	XsecPP_Y_0 = BCross2D->GetBinContent(1);
+	XsecPP_Y_0_err = BCross2D->GetBinError(1);
+	meanNtrk = meanNtrk/meanNcounts;
+
+	for(int i = 0; i < NBins; i++){
+		if(whichvar=="Mult"){
+			
+			trkfactor = Ntrk[i]/Ntrk[0];
+			XsecPP_X[i]= XsecPP_X[i]/Ntrk[0];  
+			XsecPP_X_BinLeft[i] = XsecPP_X[i] - ptBins[i]/Ntrk[0];
+			XsecPP_X_BinRight[i]= ptBins[i+1]/Ntrk[0] - XsecPP_X[i];
+		
+			XsecPP_Y[i] = BCross2D->GetBinContent(i+1)/(XsecPP_Y_0*trkfactor);
+			XsecPP_Y_StatUp[i] = XsecPP_Y[i]*TMath::Sqrt(TMath::Power(BCross2D->GetBinError(i+1)/BCross2D->GetBinContent(i+1), 2)+TMath::Power(XsecPP_Y_0_err/XsecPP_Y_0, 2));
+			XsecPP_Y_StatDown[i] = XsecPP_Y[i]*TMath::Sqrt(TMath::Power(BCross2D->GetBinError(i+1)/BCross2D->GetBinContent(i+1), 2)+TMath::Power(XsecPP_Y_0_err/XsecPP_Y_0, 2));
+			BPXSecPPY2DErrUpRatio[i] = XsecPP_Y_StatUp[i] / XsecPP_Y[i];
+			BPXSecPPY2DErrDownRatio[i] = XsecPP_Y_StatDown[i] / XsecPP_Y[i];
+			
+			BPXsecPPY2DScaled[i] = BCross2D->GetBinContent(i+1)/(XsecPP_Y_0*trkfactor);
+			BPXSecPPY2DErrUpScaled[i] =BPXsecPPY2DScaled[i]*TMath::Sqrt(TMath::Power(BCross2D->GetBinError(i+1)/BCross2D->GetBinContent(i+1), 2)+TMath::Power(XsecPP_Y_0_err/XsecPP_Y_0, 2));
+			BPXSecPPY2DErrDownScaled[i] =BPXsecPPY2DScaled[i]*TMath::Sqrt(TMath::Power(BCross2D->GetBinError(i+1)/BCross2D->GetBinContent(i+1), 2)+TMath::Power(XsecPP_Y_0_err/XsecPP_Y_0, 2));
+		}
+
+		else{
+
+			XsecPP_Y[i] = BCross2D->GetBinContent(i+1);
+			XsecPP_Y_StatUp[i] = BCross2D->GetBinError(i+1);
+			XsecPP_Y_StatDown[i] = BCross2D->GetBinError(i+1);
+			BPXSecPPY2DErrUpRatio[i] = XsecPP_Y_StatUp[i] / XsecPP_Y[i];
+			BPXSecPPY2DErrDownRatio[i] = XsecPP_Y_StatDown[i] / XsecPP_Y[i];
+			
+			BPXsecPPY2DScaled[i] = BCross2D->GetBinContent(i+1);
+			BPXSecPPY2DErrUpScaled[i] = BCross2D->GetBinError(i+1);
+			BPXSecPPY2DErrDownScaled[i] = BCross2D->GetBinError(i+1);
+		}
+
+		XsecPP_Y_ratio[i] = BCross2D->GetBinContent(i+1);
+		XsecPP_Y_StatUp_ratio[i] = BCross2D->GetBinError(i+1);
+		XsecPP_Y_StatDown_ratio[i] = BCross2D->GetBinError(i+1);
+		
+
 		BPXsecPPY1D[i] = BCross1D->GetBinContent(i+1);
 		BPXSecPPY1DErrUp[i] = BCross1D->GetBinError(i+1);
 		BPXSecPPY1DErrDown[i] = BCross1D->GetBinError(i+1);
 		BPXSecPPY1DErrUpRatio[i] = BPXSecPPY1DErrUp[i] / BPXsecPPY1D[i];
 		BPXSecPPY1DErrDownRatio[i] = BPXSecPPY1DErrDown[i] / BPXsecPPY1D[i];
+
 		
 	}
+	
+	// cross section with 2D Map eff correction
+	
+	
+
+	
+	
 
 	//Syst Add Up PP//
   	TString errorFile = Form("../../../2DMapSyst/OutFiles/%sError2D_%s%s.root", meson_n.Data(),whichvar.Data(),bsbpbins.Data());
@@ -310,9 +377,19 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	float BP1DTotalSystUpRatio[NBins];
 
 	for(int i = 0; i < NBins; i++){
+
 		BP2DTotalSystDownRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst[i], 2) +
                                           TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
                                           TMath::Power(BPPtShapeSyst[i], 2) + TMath::Power(BPTnPSystDown[i], 2)) / 100;
+
+		cout<<"///////////////////// BIN: "<< ptBins[i] << " - " <<ptBins[i+1] <<endl;
+		cout<<"Track eff: "<< BPTrackingSyst[i] << endl;
+		cout<<"MCDATA: "<< BPMCDataSyst[i] << endl;
+		cout<<"PDF: "<< BPPDFSyst[i] << endl;
+		cout<<"Track sel: "<< BPTrackSelSyst[i] << endl;
+		cout<<"pt shape: "<< BPPtShapeSyst[i] << endl;
+		cout<<"TnP: "<< BPTnPSystDown[i] << endl;
+		cout<<"sum: "<< BP2DTotalSystDownRatio[i] * 100 << endl;
 
     	BP2DTotalSystUpRatio[i] = TMath::Sqrt(TMath::Power(BPTrackingSyst[i], 2) + TMath::Power(BPMCDataSyst[i], 2) +
                                         TMath::Power(BPPDFSyst[i], 2) + TMath::Power(BPTrackSelSyst[i], 2) +
@@ -346,8 +423,8 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	for(int i = 0; i < NBins; i++){
 		XsecPP_Y_SystUp[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystUpRatio[i], 2) + TMath::Power(numb, 2)); 
 		XsecPP_Y_SystDown[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystDownRatio[i], 2) + TMath::Power(numb, 2));
-		XsecPP_Y_SystUp_ratio[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystUpRatio_ratio[i], 2) + TMath::Power(numb_ratio, 2));
-		XsecPP_Y_SystDown_ratio[i] = XsecPP_Y[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystDownRatio_ratio[i], 2) + TMath::Power(numb_ratio, 2));
+		XsecPP_Y_SystUp_ratio[i] = XsecPP_Y_ratio[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystUpRatio_ratio[i], 2) + TMath::Power(numb_ratio, 2));
+		XsecPP_Y_SystDown_ratio[i] = XsecPP_Y_ratio[i] * TMath::Sqrt(TMath::Power(BP2DTotalSystDownRatio_ratio[i], 2) + TMath::Power(numb_ratio, 2));
 		BPXSecPPY1DSystUp[i] = BPXsecPPY1D[i] * TMath::Sqrt(TMath::Power(BP1DTotalSystUpRatio[i], 2) + TMath::Power(numb, 2));
 		BPXSecPPY1DSystDown[i] = BPXsecPPY1D[i] * TMath::Sqrt(TMath::Power(BP1DTotalSystDownRatio[i], 2) + TMath::Power(numb, 2));
 		}
@@ -366,12 +443,16 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	if(meson_n=="BP" && whichvar=="y") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,1250000.0,10000000);}
 	if(meson_n=="Bs" && whichvar=="y") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,220000.0,1250000);}
 
-	if(meson_n=="BP" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,400000);}   // need to adjust range for when we have nmult results
-	if(meson_n=="Bs" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0],ptBins[NBins],100,0,55000);}
+	if(meson_n=="BP" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0]/Ntrk[0],ptBins[NBins]/Ntrk[0],100,0,1.5);}   // need to adjust range for when we have nmult results
+	if(meson_n=="Bs" && whichvar=="Mult") {HisEmpty = new TH2D("HisEmpty","",100,ptBins[0]/Ntrk[0],ptBins[NBins]/Ntrk[0],100,0,1.5);}
 
-	HisEmpty->GetXaxis()->SetTitle(var_l.Data());
+	if (whichvar=="Mult") {HisEmpty->GetXaxis()->SetTitle(" N_{trk}/N_{trk}^{0}");}
+	else {HisEmpty->GetXaxis()->SetTitle(var_l.Data());}
+
 	if (whichvar=="pt") {HisEmpty->GetYaxis()->SetTitle("d#sigma/dp_{T} [pb c/GeV]");}
+	else if (whichvar=="Mult") {HisEmpty->GetYaxis()->SetTitle("N_{trk}^{0}/N_{trk} d#sigma/d#sigma^{0}");}
 	else {HisEmpty->GetYaxis()->SetTitle(Form("d#sigma/d%s [pb c/GeV]",whichvar.Data()));}
+
 	HisEmpty->GetXaxis()->CenterTitle();
 	HisEmpty->GetYaxis()->CenterTitle();
 // CREATE THE CANVAS and the pads
@@ -642,11 +723,13 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 		val1D.push_back(BPXsecPPY1D[i]);
 		stat1D.push_back(BPXSecPPY1DErrDown[i]/BPXsecPPY1D[i]);
 		syst1D.push_back(BPXSecPPY1DSystDown[i]/BPXsecPPY1D[i]);
-		val2D.push_back(XsecPP_Y[i]);
+		val2D.push_back(XsecPP_Y_ratio[i]);
 		stat2D.push_back(XsecPP_Y_StatUp[i]/XsecPP_Y[i]);
 		syst2D.push_back(XsecPP_Y_SystDown[i]/XsecPP_Y[i]);
 
-		xdiff.push_back(abs(XsecPP_Y[i]-BPXsecPPY1D[i])/XsecPP_Y[i]*100);
+		xdiff.push_back(abs(XsecPP_Y_ratio[i]-BPXsecPPY1D[i])/XsecPP_Y_ratio[i]*100);
+
+		cout<< ptBins[i]<< name<< ptBins[i+1] <<" Xsec: " << std::setprecision (15) << XsecPP_Y_ratio[i] << endl;
 	}
 
 	xsec_values.push_back(val1D);
@@ -669,7 +752,7 @@ void Bmeson_XSections(TString meson_n, TString whichvar, int BsBP = 0){
 	rename(("1D2DXseccomparisons_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (meson_n.Data())+"/1D2DXseccomparisons_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 	rename(("1D2DXsecdiff_"+ std::string (whichvarname.Data()) +"_check.pdf").c_str(),("Plots/"+std::string (meson_n.Data())+"/1D2DXsecdiff_"+std::string (whichvarname.Data())+"_check.pdf").c_str());
 
-	
+	}
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -1095,12 +1178,12 @@ for (int i=0;i<NBins;++i){
 	ratio_f->cd();
 
 	TMultiGraph* mg = new TMultiGraph();
-	TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(NBins, XsecPP_X, XsecPP_Y, XsecPP_X_BinLeft, XsecPP_X_BinRight, XsecPP_Y_StatDown, XsecPP_Y_StatUp);
+	TGraphAsymmErrors* gr_staterr = new TGraphAsymmErrors(NBins, XsecPP_X_ratio, XsecPP_Y_ratio, XsecPP_X_BinLeft_ratio, XsecPP_X_BinRight_ratio, XsecPP_Y_StatDown_ratio, XsecPP_Y_StatUp_ratio);
 	gr_staterr->SetName("Y_stat");
 	gr_staterr->SetLineColor(1); 
 	mg->Add(gr_staterr, "stat");
 
-	TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(NBins, XsecPP_X, XsecPP_Y, nullptr, nullptr, XsecPP_Y_SystDown_ratio, XsecPP_Y_SystUp_ratio);
+	TGraphAsymmErrors* gr_systerr = new TGraphAsymmErrors(NBins, XsecPP_X_ratio, XsecPP_Y_ratio, nullptr, nullptr, XsecPP_Y_SystDown_ratio, XsecPP_Y_SystUp_ratio);
 	gr_systerr->SetName("Y_syst");
 	gr_systerr->SetLineColor(2);
 	mg->Add(gr_systerr,"syst");
@@ -1165,7 +1248,7 @@ if(BsBP==0){
 }
 
 
- }
-
+ 
+}
 
 						

@@ -80,7 +80,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 
 	TString FileName;
 	if (usemc==0){
-	FileName = Form("/data3/tasheng/presel/%sData_nom.root",meson_n.Data());
+	FileName = Form("/data3/smcosta/data/%sData_nom_BDT.root",meson_n.Data());
 	}
 	else {
 	FileName = Form("/data3/tasheng/presel/%sMC_nom.root",meson_n.Data());
@@ -90,11 +90,11 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 	TTree * EffInfoTree = (TTree * ) fin->Get(t_tree.Data());
 	int NEvents = EffInfoTree->GetEntries();
 
-	Int_t BsizeNew;
-	Float_t BmassNew[NCand];
-	Float_t ByNew[NCand];
-	Float_t BptNew[NCand];
-	Int_t nMult;
+	Long64_t BsizeNew;
+	Double_t BmassNew[NCand];
+	Double_t ByNew[NCand];
+	Double_t BptNew[NCand];
+	Long64_t nMult;
 	EffInfoTree->SetBranchAddress("Bsize", &BsizeNew);
 	EffInfoTree->SetBranchAddress("Bmass", BmassNew);
 	EffInfoTree->SetBranchAddress("By", ByNew);
@@ -149,7 +149,7 @@ void CalEffSystB( TString meson_n, TString whichvar, int BsBP=0, int usemc=0){
 		pthigh = 50;
 	}
 
-
+	
 	for( int i = 0; i < NEvents; i++){
 		EffInfoTree->GetEntry(i);
 		for(int j = 0; j < BsizeNew; j++){

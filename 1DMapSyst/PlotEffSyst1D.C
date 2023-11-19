@@ -322,7 +322,7 @@ void PlotEffSyst1D(int Opt, int whichvar){
   	BDTSyst->Write();
 
 	//eff with syst (comparison with 2D)
-	TString InfileB = Form("../EffAna/%s/FinalFiles/%sPPCorrYield%s.root",BmesonName.Data(),BmesonName.Data(),var_N.Data());
+	TString InfileB = Form("../EffAna/%s/FinalFiles/%sPPCorrYield%s.root",BmesonName.Data(),BmesonName.Data(),var_n.Data());
 	TFile * FileB= new TFile(InfileB.Data());
 
 	TString errorFile = Form("../2DMapSyst/OutFiles/%sError2D_%s.root", BmesonName.Data(),var_n.Data());

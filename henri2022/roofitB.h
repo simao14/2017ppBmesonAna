@@ -143,7 +143,7 @@ RooFitResult *fit(TString variation, TString pdf,TString tree, TCanvas* c, TCanv
 	dsMC->plotOn(frameMC,Name(Form("dsMC_cut%d",_count)),Binning(nbinsmasshisto),MarkerSize(0.5),MarkerStyle(8),LineColor(1),LineWidth(1));
 	modelMC->plotOn(frameMC,Name(Form("modelMC%d_%s",_count, pdf.Data())),Precision(1e-6),DrawOption("LF"), FillStyle(3002), FillColor(kOrange-3), LineStyle(7),LineColor(kOrange-3),LineWidth(1));
 	modelMC->paramOn(frameMC,Layout(0.2, 0.5, 0.70), Format("NEU",AutoPrecision(2)));
-	frameMC->getAttText()->SetTextSize(0.035);
+	frameMC->getAttText()->SetTextSize(0.02);
 	frameMC->getAttFill()->SetFillStyle(0);
 	frameMC->getAttLine()->SetLineWidth(0);
     if(tree=="ntKp")frameMC->SetXTitle("m_{J/#psiK^{+}} [GeV/c^{2}]");
